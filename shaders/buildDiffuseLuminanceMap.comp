@@ -1,0 +1,91 @@
+//buildDiffuseLuminanceMap.comp
+
+layout (local_size_x = 8,
+        local_size_y = 5,
+        local_size_z = 1) in;
+
+layout( set = staticSet,
+        binding = luminanceTextureBinding) uniform samplerCube luminanceSampler;
+
+layout( rgba8,
+        set = staticSet,
+        binding = storageTextureBinding)
+                                  writeonly uniform image2DArray storageTexture;
+
+const mat3 sideRotate[] = { mat3( 0,  0, -1,
+                                  0, -1,  0,
+                                  1,  0,  0),
+                            
+                            mat3( 0,  0,  1,
+                                  0, -1,  0,
+                                 -1,  0,  0),
+                                  
+                            mat3( 1,  0,  0,
+                                  0,  0,  1,
+                                  0,  1,  0),
+
+                            mat3( 1,  0,  0,
+                                  0,  0, -1,
+                                  0, -1,  0),
+
+                            mat3( 1,  0,  0,
+                                  0, -1,  0,
+                                  0,  0,  1),
+
+                            mat3(-1,  0,  0,
+                                  0, -1,  0,
+                                  0,  0, -1)};
+
+void main()
+{
+  uvec2 pixelCoord = gl_GlobalInvocationID.xy;
+  if(pixelCoord.x >= imageSize(storageTexture).x) return;
+  if(pixelCoord.y >= imageSize(storageTexture).y) return;
+  
+  uint side = gl_GlobalInvocationID.z;
+
+  vec2 planePosition = (vec2(pixelCoord) + vec2(.5f)) /
+                                            vec2(imageSize(storageTexture).xy);
+  planePosition *= 2.f;
+  planePosition -= vec2(1.f);
+
+  vec3 frontDirection = normalize(vec3(planePosition, 1.f));
+  vec3 rightDirection = normalize(cross(frontDirection, vec3(0, 0, 1)));
+  vec3 upDirection = normalize(cross(rightDirection,frontDirection));
+  frontDirection = sideRotate[side] * frontDirection;
+  rightDirection = sideRotate[side] * rightDirection;
+  upDirection = sideRotate[side] * upDirection;
+  
+  vec3 colorAccumulator = vec3(0);
+  uint samplesNumber = 0;
+
+  int circleSteps = max(textureSize(luminanceSampler, 0).x / 4, 40);
+
+  float latAngleStep = 2.f * M_PI / circleSteps;
+  float latAngle = 0.f;
+  for(int latIndex = 0; latIndex < circleSteps / 4 - 1; latIndex++)
+  {
+    float latCos = cos(latAngle);
+    float latSin = sin(latAngle);
+    int lonSteps = max(1, int(latSin * circleSteps));
+    float lonAngleStep = 2.f * M_PI / lonSteps;
+    float lonAngle = 0;
+    for(int lonIndex = 0; lonIndex < lonSteps; lonIndex++)
+    {
+      vec3 direction = frontDirection * latCos +
+          latSin * (rightDirection * cos(lonAngle) + upDirection * sin(lonAngle));
+      
+      colorAccumulator += texture(luminanceSampler, direction).rgb * latCos;
+      
+      samplesNumber++;
+      lonAngle += lonAngleStep;
+    }
+
+    latAngle += latAngleStep;
+  }
+
+  colorAccumulator /= samplesNumber;
+  colorAccumulator *= M_PI;
+
+  imageStore(storageTexture, ivec3(pixelCoord, side), vec4(colorAccumulator, 0));
+}
