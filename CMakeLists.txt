@@ -4,3 +4,4 @@ project(mtt)
 
 add_subdirectory(src/Utilities)
 add_subdirectory(src/Render)
+add_subdirectory(src/Fbx)

@@ -17,6 +17,7 @@ find_path(VKMEMALLOC_PATH
           REQUIRED)
 
 find_package(Vulkan REQUIRED)
+
 set(CMAKE_MODULE_PATH &{CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake)
 find_package(Shaderc REQUIRED)
 
