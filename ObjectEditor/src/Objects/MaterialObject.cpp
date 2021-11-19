@@ -3,7 +3,8 @@
 MaterialObject::MaterialObject(const mtt::UID& id) :
   Object(id),
   _emissionColor(1),
-  _emissionFactor(0)
+  _emissionFactor(0),
+  _useAlphaFromAlbedoTexture(false)
 {
   _materialData.albedo = glm::vec3(1);
   _materialData.roughness = 1;
