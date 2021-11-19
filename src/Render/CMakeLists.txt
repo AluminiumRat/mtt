@@ -228,6 +228,5 @@ set(SOURCES
     )
 
 add_library(Render
-            STATIC
             ${HEADERS}
             ${SOURCES})

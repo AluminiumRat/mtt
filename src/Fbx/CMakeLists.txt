@@ -35,7 +35,6 @@ set(SOURCES
     )
 
 add_library(Fbx
-            STATIC
             ${HEADERS}
             ${SOURCES})
 

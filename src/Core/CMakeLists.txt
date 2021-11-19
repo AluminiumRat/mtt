@@ -165,7 +165,6 @@ set(SOURCES
     )
 
 add_library(Core
-            STATIC
             ${HEADERS}
             ${SOURCES}
             ${UI_FILES}

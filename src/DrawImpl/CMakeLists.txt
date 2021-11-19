@@ -95,6 +95,5 @@ set(SOURCES
     )
 
 add_library(DrawImpl
-            STATIC
             ${HEADERS}
             ${SOURCES})

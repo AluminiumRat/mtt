@@ -43,6 +43,5 @@ set(SOURCES
     )
 
 add_library(Utilities
-            STATIC
             ${HEADERS}
             ${SOURCES})
