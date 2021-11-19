@@ -1,7 +1,7 @@
 #pragma once
 
-#include <mtt/Core/EditCommands/UndoStack.h>
-#include <mtt/Core/Manipulator/UniformScale3DManipulator.h>
+#include <mtt/Application/EditCommands/UndoStack.h>
+#include <mtt/Application/Manipulator/UniformScale3DManipulator.h>
 
 class ScalableObject;
 

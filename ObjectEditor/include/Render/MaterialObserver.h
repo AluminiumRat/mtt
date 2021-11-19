@@ -4,7 +4,7 @@
 
 #include <QtCore/QObject>
 
-#include <mtt/Core/AsyncTasks/AsyncTaskQueue.h>
+#include <mtt/Application/AsyncTasks/AsyncTaskQueue.h>
 #include <mtt/Render/Pipeline/Sampler.h>
 #include <mtt/Utilities/SurfaceMaterialData.h>
 

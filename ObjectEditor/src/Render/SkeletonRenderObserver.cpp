@@ -1,4 +1,4 @@
-#include <mtt/Core/Application.h>
+#include <mtt/Application/Application.h>
 #include <mtt/DrawImpl/MeshTechniques/InstrumentalCompositeTechnique.h>
 #include <mtt/DrawImpl/constants.h>
 #include <mtt/Render/Mesh/UidMeshTechnique.h>

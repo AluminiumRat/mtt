@@ -1,7 +1,6 @@
 #include <stdexcept>
 
-#include <mtt/Core/Application.h>
-
+#include <mtt/Application/Application.h>
 #include <mtt/DrawImpl/MeshTechniques/MeshCompositeColorTechnique.h>
 #include <mtt/DrawImpl/MeshTechniques/ShadowmapMeshTechnique.h>
 #include <mtt/DrawImpl/constants.h>

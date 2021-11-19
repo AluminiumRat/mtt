@@ -4,8 +4,8 @@
 
 #include <glm/mat4x4.hpp>
 
-#include <mtt/Core/Scene/ObjectLink.h>
-#include <mtt/Core/Scene/Object.h>
+#include <mtt/Application/Scene/ObjectLink.h>
+#include <mtt/Application/Scene/Object.h>
 
 #include <Objects/OEVisitorExtension.h>
 #include <Objects/SkeletonObject.h>

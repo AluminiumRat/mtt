@@ -2,7 +2,7 @@
 
 #include <optional>
 
-#include <mtt/Core/Scene/ObjectLink.h>
+#include <mtt/Application/Scene/ObjectLink.h>
 
 #include <Objects/ScalableObject.h>
 #include <Objects/SkeletonObject.h>

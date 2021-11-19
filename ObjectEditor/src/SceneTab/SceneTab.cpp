@@ -4,19 +4,19 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QVBoxLayout>
 
-#include <mtt/Core/EditCommands/UndoStack.h>
-#include <mtt/Core/Widgets/PropertiesWidgets/BoolPropertyWidget.h>
-#include <mtt/Core/Widgets/PropertiesWidgets/ColorPropertyWidget.h>
-#include <mtt/Core/Widgets/PropertiesWidgets/FloatPropertyLinearSlider.h>
-#include <mtt/Core/Widgets/PropertiesWidgets/FloatPropertyProgressiveSlider.h>
-#include <mtt/Core/Widgets/PropertiesWidgets/FloatPropertySpin.h>
-#include <mtt/Core/Widgets/PropertiesWidgets/IntPropertySpin.h>
-#include <mtt/Core/Widgets/PropertiesWidgets/ReferencePropertyWidget.h>
-#include <mtt/Core/Widgets/PropertiesWidgets/RotationPropertyWidget.h>
-#include <mtt/Core/Widgets/PropertiesWidgets/StringPropertyWidget.h>
-#include <mtt/Core/Widgets/PropertiesWidgets/Vec3PropertyWidget.h>
-#include <mtt/Core/Widgets/ObjectsTreeView.h>
-#include <mtt/Core/CommonEditData.h>
+#include <mtt/Application/EditCommands/UndoStack.h>
+#include <mtt/Application/Widgets/PropertiesWidgets/BoolPropertyWidget.h>
+#include <mtt/Application/Widgets/PropertiesWidgets/ColorPropertyWidget.h>
+#include <mtt/Application/Widgets/PropertiesWidgets/FloatPropertyLinearSlider.h>
+#include <mtt/Application/Widgets/PropertiesWidgets/FloatPropertyProgressiveSlider.h>
+#include <mtt/Application/Widgets/PropertiesWidgets/FloatPropertySpin.h>
+#include <mtt/Application/Widgets/PropertiesWidgets/IntPropertySpin.h>
+#include <mtt/Application/Widgets/PropertiesWidgets/ReferencePropertyWidget.h>
+#include <mtt/Application/Widgets/PropertiesWidgets/RotationPropertyWidget.h>
+#include <mtt/Application/Widgets/PropertiesWidgets/StringPropertyWidget.h>
+#include <mtt/Application/Widgets/PropertiesWidgets/Vec3PropertyWidget.h>
+#include <mtt/Application/Widgets/ObjectsTreeView.h>
+#include <mtt/Application/CommonEditData.h>
 #include <mtt/Utilities/Abort.h>
 
 #include <Objects/OEVisitor.h>

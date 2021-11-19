@@ -1,6 +1,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <mtt/Core/Scene/object_cast.h>
+#include <mtt/Application/Scene/object_cast.h>
 
 #include <Objects/Object3D.h>
 #include <Objects/OEVisitor.h>

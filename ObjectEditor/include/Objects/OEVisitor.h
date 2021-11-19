@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mtt/Core/Scene/ObjectVisitor.h>
+#include <mtt/Application/Scene/ObjectVisitor.h>
 
 #include <Objects/OEVisitorExtension.h>
 

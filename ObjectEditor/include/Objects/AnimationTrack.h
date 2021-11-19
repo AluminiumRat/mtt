@@ -10,9 +10,9 @@
 #include <mtt/Animation/CompositeAnimatedTransform.h>
 #include <mtt/Animation/KeypointsAnimatedValue.h>
 #include <mtt/Animation/ValueKeypoint.h>
-#include <mtt/Core/EditCommands/AbstractEditCommand.h>
-#include <mtt/Core/Scene/ObjectLink.h>
-#include <mtt/Core/Scene/Object.h>
+#include <mtt/Application/EditCommands/AbstractEditCommand.h>
+#include <mtt/Application/Scene/ObjectLink.h>
+#include <mtt/Application/Scene/Object.h>
 
 #include <Objects/OEVisitorExtension.h>
 #include <Objects/SkeletonObject.h>

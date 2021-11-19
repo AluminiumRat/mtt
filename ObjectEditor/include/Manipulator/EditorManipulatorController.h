@@ -2,7 +2,7 @@
 
 #include <optional>
 
-#include <mtt/Core/Manipulator/ManipulatorController.h>
+#include <mtt/Application/Manipulator/ManipulatorController.h>
 
 #include <Manipulator/MoveManipulator.h>
 #include <Manipulator/RotationManipulator.h>

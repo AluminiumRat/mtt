@@ -1,4 +1,4 @@
-#include <mtt/Core/Scene/object_cast.h>
+#include <mtt/Application/Scene/object_cast.h>
 
 #include <Objects/AnimationTrack.h>
 #include <Objects/DisplayedObject.h>

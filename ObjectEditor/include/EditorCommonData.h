@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mtt/Core/CommonEditData.h>
+#include <mtt/Application/CommonEditData.h>
 #include <mtt/Render/RenderScene.h>
 
 #include <AnimationPlayer.h>

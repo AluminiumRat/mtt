@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mtt/Core/WorkCycle/RenderSceneAction.h>
+#include <mtt/Application/WorkCycle/RenderSceneAction.h>
 
 class QWidget;
 

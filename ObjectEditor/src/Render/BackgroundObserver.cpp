@@ -1,6 +1,6 @@
 #include <stdexcept>
 
-#include <mtt/Core/Application.h>
+#include <mtt/Application/Application.h>
 #include <mtt/Utilities/Log.h>
 
 #include <AsyncTasks/UploadCubetextureTask.h>

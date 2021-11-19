@@ -223,7 +223,7 @@ target_link_libraries(ObjectEditor
                       ${FbxSDK_LIBRARIES}
                       Qt5::Core
                       Qt5::Widgets
-                      Core
+                      Application
                       DrawImpl
                       Fbx
                       Render

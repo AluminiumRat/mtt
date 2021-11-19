@@ -2,8 +2,8 @@
 
 #include <glm/mat4x4.hpp>
 
-#include <mtt/Core/EditCommands/UndoStack.h>
-#include <mtt/Core/Manipulator/PlaneMove3DManipulator.h>
+#include <mtt/Application/EditCommands/UndoStack.h>
+#include <mtt/Application/Manipulator/PlaneMove3DManipulator.h>
 
 class MovableObject;
 

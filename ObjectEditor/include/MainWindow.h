@@ -2,8 +2,8 @@
 
 #include <QtWidgets/QMainWindow>
 
-#include <mtt/Core/Widgets/AsyncTaskDialog/AsyncTaskDialog.h>
-#include <mtt/Core/Widgets/StatisticWidget.h>
+#include <mtt/Application/Widgets/AsyncTaskDialog/AsyncTaskDialog.h>
+#include <mtt/Application/Widgets/StatisticWidget.h>
 
 #include <Render/SceneRenderObserver.h>
 #include <RenderWidget/EditorRenderWidget.h>

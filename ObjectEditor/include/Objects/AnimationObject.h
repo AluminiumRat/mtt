@@ -4,8 +4,8 @@
 
 #include <QtCore/QTimer>
 
-#include <mtt/Core/EditCommands/AbstractEditCommand.h>
-#include <mtt/Core/Scene/SpecialGroup.h>
+#include <mtt/Application/EditCommands/AbstractEditCommand.h>
+#include <mtt/Application/Scene/SpecialGroup.h>
 
 #include <Objects/AnimationTrack.h>
 

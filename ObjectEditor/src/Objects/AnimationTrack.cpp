@@ -1,5 +1,5 @@
-#include <mtt/Core/EditCommands/CompositeCommand.h>
-#include <mtt/Core/EditCommands/SetPropertyCommand.h>
+#include <mtt/Application/EditCommands/CompositeCommand.h>
+#include <mtt/Application/EditCommands/SetPropertyCommand.h>
 #include <mtt/Utilities/Abort.h>
 
 #include <Objects/AnimationTrack.h>

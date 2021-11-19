@@ -4,9 +4,9 @@
 #include <QtCore/QString>
 #include <QtWidgets/QFileDialog>
 
-#include <mtt/Core/EditCommands/SetPropertyCommand.h>
-#include <mtt/Core/EditCommands/UndoStack.h>
-#include <mtt/Core/Widgets/PropertiesWidgets/ReferenceWidget.h>
+#include <mtt/Application/EditCommands/SetPropertyCommand.h>
+#include <mtt/Application/EditCommands/UndoStack.h>
+#include <mtt/Application/Widgets/PropertiesWidgets/ReferenceWidget.h>
 #include <mtt/Utilities/Abort.h>
 
 template <typename ObjectClass>

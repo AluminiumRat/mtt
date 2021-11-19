@@ -1,4 +1,4 @@
-#include <mtt/Core/EditCommands/CompositeCommand.h>
+#include <mtt/Application/EditCommands/CompositeCommand.h>
 #include <mtt/Utilities/Log.h>
 
 #include <Objects/AnimationObject.h>

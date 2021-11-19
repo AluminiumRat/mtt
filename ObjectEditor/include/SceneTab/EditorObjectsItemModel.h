@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mtt/Core/Scene/ObjectItemTreeModel.h>
+#include <mtt/Application/Scene/ObjectItemTreeModel.h>
 
 class AnimationTrack;
 class DisplayedObject;

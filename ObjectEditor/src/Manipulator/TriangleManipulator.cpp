@@ -1,5 +1,5 @@
-#include <mtt/Core/EditCommands/SetPropertyCommand.h>
-#include <mtt/Core/EditCommands/UndoStack.h>
+#include <mtt/Application/EditCommands/SetPropertyCommand.h>
+#include <mtt/Application/EditCommands/UndoStack.h>
 #include <mtt/DrawImpl/MeshTechniques/InstrumentalTechnique.h>
 #include <mtt/DrawImpl/constants.h>
 #include <mtt/Utilities/Abort.h>

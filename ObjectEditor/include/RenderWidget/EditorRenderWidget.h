@@ -1,8 +1,8 @@
 #pragma once
 
-#include <mtt/Core/Widgets/RenderWidget/OrbitalCameraController.h>
-#include <mtt/Core/Widgets/RenderWidget/RenderWidget.h>
-#include <mtt/Core/Widgets/RenderWidget/ClickSelectHandler.h>
+#include <mtt/Application/Widgets/RenderWidget/OrbitalCameraController.h>
+#include <mtt/Application/Widgets/RenderWidget/RenderWidget.h>
+#include <mtt/Application/Widgets/RenderWidget/ClickSelectHandler.h>
 #include <mtt/DrawImpl/ColorFrameBuilder.h>
 #include <mtt/Render/SceneGraph/CameraNode.h>
 

@@ -3,8 +3,8 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QObject>
 
-#include <mtt/Core/EditCommands/AddObjectCommand.h>
-#include <mtt/Core/EditCommands/CompositeCommand.h>
+#include <mtt/Application/EditCommands/AddObjectCommand.h>
+#include <mtt/Application/EditCommands/CompositeCommand.h>
 
 #include <AsyncTasks/AddModelFromFbxTask.h>
 #include <Objects/LODObject.h>

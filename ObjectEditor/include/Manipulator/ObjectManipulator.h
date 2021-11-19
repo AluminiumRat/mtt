@@ -4,7 +4,7 @@
 
 #include <QtCore/QObject>
 
-#include <mtt/Core/Manipulator/Composite3DManipulator.h>
+#include <mtt/Application/Manipulator/Composite3DManipulator.h>
 
 class Object3D;
 

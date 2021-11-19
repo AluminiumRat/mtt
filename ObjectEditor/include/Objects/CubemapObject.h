@@ -2,7 +2,7 @@
 
 #include <array>
 
-#include <mtt/Core/Scene/Object.h>
+#include <mtt/Application/Scene/Object.h>
 
 #include <Objects/OEVisitorExtension.h>
 
