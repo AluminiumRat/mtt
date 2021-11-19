@@ -8,7 +8,7 @@
 #include <mtt/Core/Widgets/RenderWidget/ClickSelectHandler.h>
 #include <mtt/Core/Widgets/RenderWidget/RenderWidget.h>
 #include <mtt/Core/WorkCycle/RenderImageAction.h>
-#include <mtt/Core/Appliction.h>
+#include <mtt/Core/Application.h>
 #include <mtt/Core/CommonEditData.h>
 #include <mtt/Render/SceneGraph/CameraNode.h>
 #include <mtt/Render/RenderScene.h>

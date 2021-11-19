@@ -1,5 +1,5 @@
 #include <mtt/Core/Widgets/StatisticWidget.h>
-#include <mtt/Core/Appliction.h>
+#include <mtt/Core/Application.h>
 
 #include <GeneratedFiles/ui_StatisticWidget.h>
 

@@ -3,7 +3,7 @@
 #include <mtt/Core/AsyncTasks/AsyncTaskQueue.h>
 #include <mtt/Core/ResourceManager/CubeTextureLibrary.h>
 #include <mtt/Core/ResourceManager/Texture2DLibrary.h>
-#include <mtt/Core/Appliction.h>
+#include <mtt/Core/Application.h>
 #include <mtt/Fbx/FbxLib.h>
 #include <mtt/Utilities/Abort.h>
 

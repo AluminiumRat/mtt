@@ -101,7 +101,7 @@ set(HEADERS
     "../../include/mtt/Core/WorkCycle/WorkCycle.h"
 
     "../../include/mtt/Core/ApplicationStatistic.h"
-    "../../include/mtt/Core/Appliction.h"
+    "../../include/mtt/Core/Application.h"
     "../../include/mtt/Core/CommonEditData.h"
     )
 

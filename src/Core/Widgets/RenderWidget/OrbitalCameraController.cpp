@@ -10,7 +10,7 @@
 #include <mtt/Core/Widgets/RenderWidget/OrbitalCameraController.h>
 #include <mtt/Core/Widgets/RenderWidget/RenderWidget.h>
 #include <mtt/Core/WorkCycle/RenderImageAction.h>
-#include <mtt/Core/Appliction.h>
+#include <mtt/Core/Application.h>
 #include <mtt/Render/SceneGraph/CameraNode.h>
 #include <mtt/Utilities/Abort.h>
 

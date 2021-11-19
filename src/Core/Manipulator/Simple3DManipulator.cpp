@@ -4,7 +4,7 @@
 #include <glm/vec2.hpp>
 
 #include <mtt/Core/Manipulator/Simple3DManipulator.h>
-#include <mtt/Core/Appliction.h>
+#include <mtt/Core/Application.h>
 #include <mtt/Render/SceneGraph/CameraNode.h>
 #include <mtt/Utilities/Log.h>
 #include <mtt/Utilities/Segment.h>

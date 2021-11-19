@@ -5,7 +5,7 @@
 #include <QtWidgets/QVBoxLayout>
 
 #include <mtt/Core/Widgets/RenderWidget/RenderWidget.h>
-#include <mtt/Core/Appliction.h>
+#include <mtt/Core/Application.h>
 
 using namespace mtt;
 

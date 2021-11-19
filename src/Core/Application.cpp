@@ -4,7 +4,7 @@
 
 #include <QtGui/QWindow>
 
-#include <mtt/Core/Appliction.h>
+#include <mtt/Core/Application.h>
 #include <mtt/Render/RenderSurface.h>
 
 using namespace mtt;
