@@ -37,7 +37,8 @@ if(FbxSDK_INCLUDE_DIRS)
                 REQUIRED)
   set(FbxSDK_LIBRARY_RELEASE ${FbxSDK_LIBRARY_RELEASE} ${zlib_LIBRARY_RELEASE})
 
-  mark_as_advanced( FbxSDK_LIBRARY_DEBUG
+  mark_as_advanced( FbxSDK_INCLUDE_DIRS
+                    FbxSDK_LIBRARY_DEBUG
                     FbxSDK_LIBRARY_RELEASE
                     libxml2_LIBRARY_DEBUG
                     libxml2_LIBRARY_RELEASE

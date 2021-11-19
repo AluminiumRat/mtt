@@ -49,7 +49,8 @@ if(Shaderc_INCLUDE_DIRS)
                 REQUIRED)
   set(Shaderc_LIBRARY_RELEASE ${Shaderc_LIBRARY_RELEASE} ${Glslang_LIBRARY_RELEASE})
 
-  mark_as_advanced( Shaderc_LIBRARY_DEBUG
+  mark_as_advanced( Shaderc_INCLUDE_DIRS
+                    Shaderc_LIBRARY_DEBUG
                     Shaderc_LIBRARY_RELEASE
                     Shaderccombined_LIBRARY_DEBUG
                     Shaderccombined_LIBRARY_RELEASE
