@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/ObjectEditor">
+      <file>directLight.png</file>
+      <file>ambientLight.png</file>
+    </qresource>
+</RCC>
