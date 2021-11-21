@@ -5,7 +5,7 @@
 using namespace mtt;
 
 AbstractFramePlan::AbstractFramePlan(AbstractFrame& theFrame) :
-  _memoryPool(1024 * 1024 * 1024),
+  _memoryPool(1024 * 1024),
   _frame(theFrame),
   _frameBuilder(theFrame.builder())
 {
