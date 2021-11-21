@@ -3,7 +3,8 @@
 #include <Objects/MovableObject.h>
 
 MovableObject::MovableObject(const mtt::UID& id) :
-  RotatableObject(id)
+  RotatableObject(id),
+  _position(0)
 {
 }
 

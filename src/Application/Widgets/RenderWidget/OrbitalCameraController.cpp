@@ -23,6 +23,7 @@ OrbitalCameraController::OrbitalCameraController(
   _widgetCamera(nullptr),
   _renderScene(nullptr),
   _depthRenderer(depthRenderer),
+  _centerPosition(0),
   _distance(5),
   _zAngle(-glm::pi<float>() / 4.f),
   _yAngle(-glm::pi<float>() / 4.f),
