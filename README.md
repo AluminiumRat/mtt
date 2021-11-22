@@ -2,7 +2,7 @@
 Toolset for creating graphical applications.
 This is simple 
 
-#How to build
+# How to build
 To date, i have only tested building on Windows and Visual Studio 2022.
 You well need the following components:
 * С++20 compiler (I am using Visual Studio 2019 and Visual Studio 2022)
