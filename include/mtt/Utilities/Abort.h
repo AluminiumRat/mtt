@@ -5,7 +5,7 @@
 namespace mtt
 {
   template <typename ReasonType>
-  inline void Abort(ReasonType reason)
+  inline void Abort [[noreturn]] (ReasonType reason)
   {
     Log() << reason;
     abort();
