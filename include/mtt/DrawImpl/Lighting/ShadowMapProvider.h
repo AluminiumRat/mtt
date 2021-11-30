@@ -16,9 +16,8 @@ namespace mtt
   class ShadowMapProvider
   {
   public:
-    /// R component is normalized distance, G component is square of
-    /// normalized distance;
-    static constexpr VkFormat shadowmapFormat = VK_FORMAT_R32G32_SFLOAT;
+    /// R component is normalized linear distance to occluder
+    static constexpr VkFormat shadowmapFormat = VK_FORMAT_R32_SFLOAT;
     static constexpr VkImageLayout shadowmapLayout =
                                       VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
   public:
@@ -47,7 +46,6 @@ namespace mtt
     void setTargetField(VisitedField* newField) noexcept;
 
     ImageView& createShadowMap( const Area& mapPart,
-                                float blurLevel,
                                 DrawPlan& drawPlan,
                                 const AbstractFramePlan& dependentFrame,
                                 ViewInfo& rootViewInfo);

@@ -2,7 +2,6 @@
 
 #include <memory>
 
-#include <mtt/DrawImpl/Lighting/ShadowmapBlurFilter.h>
 #include <mtt/DrawImpl/RenderPass/ShadowmapRenderPass.h>
 #include <mtt/Render/SceneRenderer/AbstractFrame.h>
 #include <mtt/Render/SceneRenderer/OneTargetFrameBuilder.h>
@@ -14,7 +13,7 @@ namespace mtt
 
   /// Target image in ShadowmapRenderPass::shadowmapFormat and
   /// VK_IMAGE_ASPECT_COLOR_BIT aspect.
-  /// R component is distance, G component is square of distance;
+  /// R component is normalized linear distance to occluder
   class ShadowmapBuilder : public OneTargetFrameBuilder
   {
   public:
@@ -28,9 +27,6 @@ namespace mtt
       ShadowMapFramePlan(const ShadowMapFramePlan&) = delete;
       ShadowMapFramePlan& operator = (const ShadowMapFramePlan&) = delete;
       virtual ~ShadowMapFramePlan() noexcept = default;
-
-    public:
-      float blurLevel;
 
     private:
       DrawBin _shadowmapBin;
@@ -55,9 +51,6 @@ namespace mtt
     /// ShadowMapFramePlan will be created
     virtual std::unique_ptr<AbstractFramePlan> createFramePlan(
                                           AbstractFrame& frame) const override;
-    /// ShadowMapFramePlan will be created
-    std::unique_ptr<ShadowMapFramePlan> createFramePlan(AbstractFrame& frame,
-                                                        float blurLevel) const;
 
     virtual void scheduleRender(AbstractFramePlan& plan,
                                 CommandProducer& drawProducer) override;
@@ -66,7 +59,6 @@ namespace mtt
     VkImageLayout _shadowmapLayout;
     VkImageUsageFlags _shadowmapUsage;
     Ref<ShadowmapRenderPass> _renderPass;
-    Ref<ShadowmapBlurFilter> _blurFilter;
     LogicalDevice& _device;
   };
 

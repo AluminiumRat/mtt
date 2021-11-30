@@ -56,16 +56,6 @@ class DirectLightObject : public LightObject
               STORED true
               USER false)
 
-  Q_PROPERTY( float shadowCorrection
-              READ shadowCorrection
-              WRITE setShadowCorrection
-              RESET resetShadowCorrection
-              NOTIFY shadowCorrectionChanged
-              DESIGNABLE true
-              SCRIPTABLE true
-              STORED true
-              USER false)
-
   DEFINE_EXTENSION_ACCEPT(OEVisitorExtension)
 
 public:
@@ -94,17 +84,12 @@ public:
   virtual void setBlurSize(float newValue) noexcept;
   inline void resetBlurSize() noexcept;
 
-  inline float shadowCorrection() const noexcept;
-  virtual void setShadowCorrection(float newValue) noexcept;
-  inline void resetShadowCorrection() noexcept;
-
 signals:
   void radiusChanged(float newValue);
   void shadowsEnabledChanged(bool newValue);
   void shadowmapSizeChanged(size_t newValue);
   void cascadeSizeChanged(size_t newValue);
   void blurSizeChanged(size_t newValue);
-  void shadowCorrectionChanged(float newValue);
 
 private:
   float _radius;
@@ -112,7 +97,6 @@ private:
   size_t _shadowmapSize;
   size_t _cascadeSize;
   float _blurSize;
-  float _shadowCorrection;
 };
 
 inline float DirectLightObject::radius() const noexcept
@@ -163,14 +147,4 @@ inline float DirectLightObject::blurSize() const noexcept
 inline void DirectLightObject::resetBlurSize() noexcept
 {
   setBlurSize(0.f);
-}
-
-inline float DirectLightObject::shadowCorrection() const noexcept
-{
-  return _shadowCorrection;
-}
-
-inline void DirectLightObject::resetShadowCorrection() noexcept
-{
-  setShadowCorrection(0);
 }

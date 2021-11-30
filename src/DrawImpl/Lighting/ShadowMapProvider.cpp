@@ -37,7 +37,6 @@ void ShadowMapProvider::setTargetField(VisitedField* newField) noexcept
 
 ImageView& ShadowMapProvider::createShadowMap(
                                         const Area& mapPart,
-                                        float blurLevel,
                                         DrawPlan& drawPlan,
                                         const AbstractFramePlan& dependentFrame,
                                         ViewInfo& rootViewInfo)
@@ -55,8 +54,7 @@ ImageView& ShadowMapProvider::createShadowMap(
   VkRect2D scissor {0, 0, uint32_t(_frameExtent.x), uint32_t(_frameExtent.y)};
 
   std::unique_ptr<AbstractFramePlan> framePlanPtr =
-                                      _frameBuilder.createFramePlan(frame,
-                                                                    blurLevel);
+                                          _frameBuilder.createFramePlan(frame);
   AbstractFramePlan& framePlan = *framePlanPtr;
   drawPlan.addFramePlan(std::move(framePlanPtr));
   drawPlan.addDependency(framePlan, dependentFrame);

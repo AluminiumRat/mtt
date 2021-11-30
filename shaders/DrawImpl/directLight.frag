@@ -21,13 +21,6 @@ layout(binding = lightDataBinding, set = volatileSet) uniform LightData
   layout(binding = shadowMapBinding, set = volatileSet)
                               uniform sampler2D shadowMap[SHADOW_CASCADE_SIZE];
 
-  layout(binding = shadowCorrectionBinding, set = volatileSet)
-                                                        uniform ShadowCorrection
-  {
-    float shadowFactorNullShift;
-    float shadowFactorMultiplicator;
-  } shadowCorrection;
-
   layout(binding = shadowCoordsCorrectionBinding, set = volatileSet)
                                                   uniform ShadowCoordsCorrection
   {
@@ -62,22 +55,8 @@ layout(location = 0) out vec4 outColor;
   {
     vec4 coordsCorrection = shadowCoordsCorrection.values[layer];
     shadowCoords = shadowCoords * coordsCorrection.x + coordsCorrection.yz;
-
-    vec2 shadowValues = texture(shadowMap[layer], shadowCoords).rg;
-    float expectedShadowDepth = shadowValues.x;
-    float variance = shadowValues.y - expectedShadowDepth * expectedShadowDepth;
-
-    float shadowFactor = 1;
-    if(normalizedDistanceToLight > expectedShadowDepth)
-    {
-      float deviation = normalizedDistanceToLight - expectedShadowDepth;
-      shadowFactor = variance / (variance + deviation * deviation);
-    }
-    shadowFactor -= shadowCorrection.shadowFactorNullShift;
-    shadowFactor *= shadowCorrection.shadowFactorMultiplicator;
-    shadowFactor = clamp(shadowFactor, 0.f, 1.f);
-
-    return shadowFactor;
+    float shadowDepth = texture(shadowMap[layer], shadowCoords).x;
+    return step(normalizedDistanceToLight, shadowDepth);
   }
 #endif
 

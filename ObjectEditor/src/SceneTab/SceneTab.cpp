@@ -286,15 +286,6 @@ struct PropertiesWidgetBuilder : public OEVisitor
     blurWidget->setMaximum(100);
     blurWidget->setSingleStep(.01);
     layout->addRow(QObject::tr("Blur"), blurWidget);
-
-    using FloatSlider = mtt::FloatPropertyLinearSlider<DirectLightObject>;
-    FloatSlider* shadowCorrectionWidget = new FloatSlider(
-                                    object,
-                                    &DirectLightObject::shadowCorrection,
-                                    &DirectLightObject::setShadowCorrection,
-                                    &DirectLightObject::shadowCorrectionChanged,
-                                    editCommonData->undoStack());
-    layout->addRow(QObject::tr("Shadow correction"), shadowCorrectionWidget);
   }
 
   virtual void visit(DisplayedObject& object) override

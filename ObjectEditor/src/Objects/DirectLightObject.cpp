@@ -6,8 +6,7 @@ DirectLightObject::DirectLightObject(const mtt::UID theId) :
   _shadowsEnabled(false),
   _shadowmapSize(256),
   _cascadeSize(1),
-  _blurSize(0.f),
-  _shadowCorrection(0)
+  _blurSize(0.f)
 {
 }
 
@@ -44,11 +43,4 @@ void DirectLightObject::setBlurSize(float newValue) noexcept
   if(_blurSize == newValue) return;
   _blurSize = newValue;
   emit blurSizeChanged(_blurSize);
-}
-
-void DirectLightObject::setShadowCorrection(float newValue) noexcept
-{
-  if(_shadowCorrection == newValue) return;
-  _shadowCorrection = newValue;
-  emit shadowCorrectionChanged(_shadowCorrection);
 }

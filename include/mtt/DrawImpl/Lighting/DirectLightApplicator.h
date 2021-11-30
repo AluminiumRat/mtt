@@ -30,9 +30,6 @@ namespace mtt
     inline float radius() const noexcept;
     inline virtual void setRadius(float newValue) noexcept;
 
-    inline float shadowCorrection() const noexcept;
-    inline void setShadowCorrection(float newValue) noexcept;
-
     inline ShadowMapProvider* shadowMapProvider() const noexcept;
     void setShadowMapProvider(ShadowMapProvider* newProvider) noexcept;
 
@@ -142,9 +139,6 @@ namespace mtt
     float _radius;
     VolatileUniform<LightData> _lightDataUniform;
 
-    ShadowCorrectionData _shadowCorrectionData;
-    VolatileUniform<ShadowCorrectionData> _shadowCorrectionUniform;
-
     using CoordsCorrectionData = std::vector<glm::vec4>;
     VolatileUniform<CoordsCorrectionData> _coordsCorrectionUniform;
     VolatileUniform<DrawMatrices> _matricesUniform;
@@ -174,23 +168,6 @@ namespace mtt
   inline void DirectLightApplicator::setRadius(float newValue) noexcept
   {
     _radius = newValue;
-  }
-
-  inline float DirectLightApplicator::shadowCorrection() const noexcept
-  {
-    return _shadowCorrectionData.shadowFactorNullShift;
-  }
-
-  inline void DirectLightApplicator::setShadowCorrection(
-                                                        float newValue) noexcept
-  {
-    _shadowCorrectionData.shadowFactorNullShift = newValue;
-    if (_shadowCorrectionData.shadowFactorNullShift != 1.f)
-    {
-      _shadowCorrectionData.shadowFactorMultiplicator =
-                      1.f / (1.f - _shadowCorrectionData.shadowFactorNullShift);
-    }
-    else _shadowCorrectionData.shadowFactorMultiplicator = 0.f;
   }
 
   inline ShadowMapProvider*

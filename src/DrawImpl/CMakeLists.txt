@@ -31,7 +31,7 @@ set(HEADERS
     "../../include/mtt/DrawImpl/Lighting/AbstractLightApplicator.h"
     "../../include/mtt/DrawImpl/Lighting/AmbientLightApplicator.h"
     "../../include/mtt/DrawImpl/Lighting/DirectLightApplicator.h"
-    "../../include/mtt/DrawImpl/Lighting/ShadowmapBlurFilter.h"
+
     "../../include/mtt/DrawImpl/Lighting/ShadowmapBuilder.h"
     "../../include/mtt/DrawImpl/Lighting/ShadowMapProvider.h"
 
@@ -65,7 +65,7 @@ set(SOURCES
     "Lighting/AbstractLightApplicator.cpp"
     "Lighting/AmbientLightApplicator.cpp"
     "Lighting/DirectLightApplicator.cpp"
-    "Lighting/ShadowmapBlurFilter.cpp"
+
     "Lighting/ShadowmapBuilder.cpp"
     "Lighting/ShadowMapProvider.cpp"
 

@@ -12,12 +12,11 @@ layout(binding = nearfarBindong, set = volatileSet) uniform NearFar
 
 layout(location = 5) in vec3 inViewCoord;
 
-layout(location = 0) out vec2 outColor;
+layout(location = 0) out float outDistance;
 
 void main()
 {
-  float distance = -inViewCoord.z;
-  distance -= nearFar.near;
-  distance /= nearFar.nearFar;
-  outColor = vec2(distance, distance * distance);
+  outDistance = -inViewCoord.z;
+  outDistance -= nearFar.near;
+  outDistance /= nearFar.nearFar;
 }

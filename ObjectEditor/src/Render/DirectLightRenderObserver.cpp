@@ -93,13 +93,6 @@ DirectLightRenderObserver::DirectLightRenderObserver(
           &DirectLightRenderObserver::_updateBlur,
           Qt::DirectConnection);
   _updateBlur();
-
-  connect(&_lightObject,
-          &DirectLightObject::shadowCorrectionChanged,
-          this,
-          &DirectLightRenderObserver::_updateShadowCorrection,
-          Qt::DirectConnection);
-  _updateShadowCorrection();
 }
 
 void DirectLightRenderObserver::updateBounding()
@@ -261,9 +254,4 @@ void DirectLightRenderObserver::_updateCascadeSize() noexcept
 void DirectLightRenderObserver::_updateBlur() noexcept
 {
   _lightDrawable.setBlurSize(_lightObject.blurSize());
-}
-
-void DirectLightRenderObserver::_updateShadowCorrection() noexcept
-{
-  _lightDrawable.setShadowCorrection(_lightObject.shadowCorrection());
 }

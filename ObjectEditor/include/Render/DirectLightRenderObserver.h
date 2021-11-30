@@ -38,7 +38,6 @@ private:
   void _updateShadowMapSize() noexcept;
   void _updateCascadeSize() noexcept;
   void _updateBlur() noexcept;
-  void _updateShadowCorrection() noexcept;
 
 private:
   DirectLightObject& _lightObject;

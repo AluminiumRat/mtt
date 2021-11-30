@@ -73,10 +73,6 @@ void DirectLightApplicator::DrawTechnique::_adjustPipeline()
                             _parent._shadowmapSampler.value(),
                             VK_SHADER_STAGE_FRAGMENT_BIT);
 
-    _pipeline->addResource( "shadowCorrectionBinding",
-                            _parent._shadowCorrectionUniform,
-                            VK_SHADER_STAGE_FRAGMENT_BIT);
-
     _pipeline->addResource( "shadowCoordsCorrectionBinding",
                             _parent._coordsCorrectionUniform,
                             VK_SHADER_STAGE_FRAGMENT_BIT);
@@ -225,8 +221,6 @@ void DirectLightApplicator::DrawTechnique::_makeShadowCommand(
                                     LightData,
                                     VolatileUniform<CoordsCorrectionData>,
                                     CoordsCorrectionData,
-                                    VolatileUniform<ShadowCorrectionData>,
-                                    ShadowCorrectionData,
                                     VolatileUniform<DrawMatrices>,
                                     DrawMatrices,
                                     std::vector<Texture2D*>,
@@ -248,8 +242,6 @@ void DirectLightApplicator::DrawTechnique::_makeShadowCommand(
                                       lightData,
                                       _parent._coordsCorrectionUniform,
                                       correctionData,
-                                      _parent._shadowCorrectionUniform,
-                                      _parent._shadowCorrectionData,
                                       _parent._matricesUniform,
                                       buildInfo.drawMatrices,
                                       shadowTextures,
@@ -276,7 +268,6 @@ DirectLightApplicator::DirectLightApplicator(LogicalDevice& device) :
   _specularMapSampler(PipelineResource::VOLATILE, device),
   _specularTexture(nullptr),
   _radius(10),
-  _shadowCorrectionData{0, 1},
   _cascadeSize(3),
   _blurSize(0)
 {
@@ -437,12 +428,10 @@ DirectLightApplicator::CascadeInfo
     float mapSize = float(_shadowMapProvider->frameExtent().x);
     float pixelSize = radius() * alignedArea.size.x / mapSize;
     float blurWidth = blurSize() / pixelSize;
-    float blurLevel = blurWidth >= 1.f ? log2(blurWidth) : 0;
 
     ShadowMapInfo info{};
     info.map = &shadowMapProvider()->createShadowMap(
                                                     alignedArea,
-                                                    blurLevel,
                                                     buildInfo.drawPlan,
                                                     *buildInfo.currentFramePlan,
                                                     buildInfo.rootViewInfo);
