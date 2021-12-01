@@ -26,7 +26,7 @@ layout(binding = lightDataBinding, set = volatileSet) uniform LightData
   {
     vec4 values[SHADOW_CASCADE_SIZE]; // x is multiplicator
                                       // yz if uv shift
-                                      // w is dead zone near the border of map
+                                      // w is blur radius in texture coordinates
   } shadowCoordsCorrection;
 #endif
 
@@ -41,22 +41,79 @@ layout(location = 0) out vec4 outColor;
       vec4 coordsCorrection = shadowCoordsCorrection.values[layer];
       vec2 correctedCoords = shadowCoords * coordsCorrection.x +
                                                             coordsCorrection.yz;
-      vec2 sign = step(vec2(coordsCorrection.w),correctedCoords);
-      sign *= step(correctedCoords, vec2(1.f - coordsCorrection.w));
+      float deadZone = coordsCorrection.w +
+                                      .5f / textureSize(shadowMap[layer], 0).x;
+      vec2 sign = step(vec2(deadZone),correctedCoords);
+      sign *= step(correctedCoords, vec2(1.f - deadZone));
 
       if(sign.x * sign.y != 0) result = layer;
     }
     return result;
   }
 
+  float rand(vec2 co)
+  {
+    return fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453);
+  }
+
   float getShadowFactor(int layer,
                         vec2 shadowCoords,
-                        float normalizedDistanceToLight)
+                        float normalizedDistanceToLight,
+                        float slope)
   {
     vec4 coordsCorrection = shadowCoordsCorrection.values[layer];
-    shadowCoords = shadowCoords * coordsCorrection.x + coordsCorrection.yz;
-    float shadowDepth = texture(shadowMap[layer], shadowCoords).x;
-    return step(normalizedDistanceToLight, shadowDepth);
+    vec2 centerCoords = shadowCoords * coordsCorrection.x + coordsCorrection.yz;
+
+    float mapSize = textureSize(shadowMap[layer], 0).x;
+    vec2 centerTexelCoords = mapSize * centerCoords;
+    vec2 blurSize =
+                  vec2(shadowCoordsCorrection.values[layer].w * mapSize + .5f);
+
+    vec2 startTexel = centerTexelCoords - blurSize;
+    ivec2 iStartTexel = ivec2(startTexel);
+    vec2 startWeights = vec2(1.f) - fract(startTexel);
+    startTexel = floor(startTexel) + vec2(.5f);
+
+    vec2 finishTexel = centerTexelCoords + blurSize;
+    ivec2 iFinishTexel = ivec2(finishTexel);
+    vec2 finishWeights = fract(finishTexel);
+    finishTexel = floor(finishTexel) + vec2(.5f);
+
+    float shadowFactor = 0;
+    float weight = 0;
+
+    ivec2 iTexelCoord = iStartTexel;
+    vec2 fTexelCoord = startTexel;
+    float xWeight = startWeights.x;
+    for(; iTexelCoord.x <= iFinishTexel.x;)
+    {
+      iTexelCoord.y = iStartTexel.y;
+      fTexelCoord.y = startTexel.y;
+      float yWeight = startWeights.y;
+      for(; iTexelCoord.y <= iFinishTexel.y;)
+      {
+        float shadowDepth = texelFetch( shadowMap[layer],
+                                        iTexelCoord,
+                                        0).x;
+        float currentWeight = xWeight * yWeight;
+        float texelDistance = length(fTexelCoord - centerTexelCoords);
+        float slopeCorrection = texelDistance * slope;
+        shadowFactor += currentWeight *
+                              step( normalizedDistanceToLight - slopeCorrection,
+                                    shadowDepth);
+        weight += currentWeight;
+
+        fTexelCoord.y++;
+        iTexelCoord.y++;
+        yWeight = iTexelCoord.y == iFinishTexel.y ? finishWeights.y : 1.f;
+      }
+
+      iTexelCoord.x++;
+      fTexelCoord.x++;
+      xWeight = iTexelCoord.x == iFinishTexel.x ? finishWeights.x : 1.f;
+    }
+
+    return shadowFactor / weight;
   }
 #endif
 
@@ -97,16 +154,17 @@ void main()
 
     int layer = getLayer(shadowCoords);
 
+    float texelSize = 2 * lightData.radius / textureSize(shadowMap[layer], 0).x;
+    texelSize /= shadowCoordsCorrection.values[layer].x;
+    
     float lightDotNorm = max(dot(lightData.lightInverseDirection, normal), 0.f);
-    float angleCorrection = 2 *
-                    (lightData.radius / textureSize(shadowMap[layer], 0).x) /
-                                                                  lightDotNorm;
-    angleCorrection /= shadowCoordsCorrection.values[layer].x;
+    float slope = texelSize / lightDotNorm;
+    slope /= lightData.distance;
 
-    float correctedDistanceToLight = toLightDistance - angleCorrection;
-    correctedDistanceToLight /= lightData.distance;
-
-    luminance *= getShadowFactor(layer, shadowCoords, correctedDistanceToLight);
+    luminance *= getShadowFactor( layer,
+                                  shadowCoords,
+                                  toLightDistance / lightData.distance,
+                                  slope);
   #endif
 
   #ifdef ENABLE_DEPTH_PEELING

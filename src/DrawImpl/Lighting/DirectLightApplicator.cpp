@@ -355,8 +355,8 @@ void DirectLightApplicator::_rebuildShadowmapSampler()
                                             layerIndex);
     }
 
-    _shadowmapSampler->setMinFilter(VK_FILTER_LINEAR);
-    _shadowmapSampler->setMagFilter(VK_FILTER_LINEAR);
+    _shadowmapSampler->setMinFilter(VK_FILTER_NEAREST);
+    _shadowmapSampler->setMagFilter(VK_FILTER_NEAREST);
     _shadowmapSampler->setMipmapMode(VK_SAMPLER_MIPMAP_MODE_NEAREST);
     _shadowmapSampler->setAddressModeU(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
     _shadowmapSampler->setAddressModeV(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
@@ -425,9 +425,6 @@ DirectLightApplicator::CascadeInfo
       layerIndex++)
   {
     ShadowMapProvider::Area alignedArea = _alignArea(area);
-    float mapSize = float(_shadowMapProvider->frameExtent().x);
-    float pixelSize = radius() * alignedArea.size.x / mapSize;
-    float blurWidth = blurSize() / pixelSize;
 
     ShadowMapInfo info{};
     info.map = &shadowMapProvider()->createShadowMap(
@@ -435,6 +432,11 @@ DirectLightApplicator::CascadeInfo
                                                     buildInfo.drawPlan,
                                                     *buildInfo.currentFramePlan,
                                                     buildInfo.rootViewInfo);
+
+    float mapSize = float(_shadowMapProvider->frameExtent().x);
+    float pixelSize = radius() * alignedArea.size.x / mapSize;
+    float blurWidth = blurSize() / pixelSize;
+
     glm::vec2 uvAreaSize = alignedArea.size / 2.f;
     glm::vec2 uvAreaCorner =
               alignedArea.topleftCorner * glm::vec2(.5f, .5f) + glm::vec2(.5f);
@@ -442,7 +444,7 @@ DirectLightApplicator::CascadeInfo
     info.coordCorrection = glm::vec4( 1.f / uvAreaSize.x,
                                       -uvAreaCorner.x / uvAreaSize.x,
                                       -uvAreaCorner.y / uvAreaSize.y,
-                                      blurWidth / mapSize);
+                                      blurWidth / 2.f / mapSize);
     result.push_back(info);
 
     shift /= 2.f;
