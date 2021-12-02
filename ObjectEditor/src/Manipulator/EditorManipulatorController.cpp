@@ -77,12 +77,12 @@ void EditorManipulatorController::_switchManipulator(ManipulatorType type)
 
     case ROTATION_MANIPULATOR:
       if(!_rotationManipulator.has_value()) resetManipulator();
-      setManipulator(&_rotationManipulator.value());
+      else setManipulator(&_rotationManipulator.value());
       break;
 
     case SCALE_MANIPULATOR:
       if(!_scaleManipulator.has_value()) resetManipulator();
-      setManipulator(&_scaleManipulator.value());
+      else setManipulator(&_scaleManipulator.value());
       break;
   };
 }
