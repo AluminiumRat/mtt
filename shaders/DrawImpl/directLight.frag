@@ -79,16 +79,17 @@ layout(location = 0) out vec4 outColor;
     vec2 finishWeights = fract(finishTexel);
     finishTexel = floor(finishTexel) + vec2(.5f);
 
+    float maxTexelShift = max(length(centerTexelCoords - startTexel),
+                              length(centerTexelCoords - finishTexel));
+    float slopeCorrection = maxTexelShift * slope;
+
     float shadowFactor = 0;
-    float weight = 0;
 
     ivec2 iTexelCoord = iStartTexel;
-    vec2 fTexelCoord = startTexel;
     float xWeight = startWeights.x;
     for(; iTexelCoord.x <= iFinishTexel.x;)
     {
       iTexelCoord.y = iStartTexel.y;
-      fTexelCoord.y = startTexel.y;
       float yWeight = startWeights.y;
       for(; iTexelCoord.y <= iFinishTexel.y;)
       {
@@ -96,24 +97,19 @@ layout(location = 0) out vec4 outColor;
                                         iTexelCoord,
                                         0).x;
         float currentWeight = xWeight * yWeight;
-        float texelDistance = length(fTexelCoord - centerTexelCoords);
-        float slopeCorrection = texelDistance * slope;
         shadowFactor += currentWeight *
                               step( normalizedDistanceToLight - slopeCorrection,
                                     shadowDepth);
-        weight += currentWeight;
 
-        fTexelCoord.y++;
         iTexelCoord.y++;
         yWeight = iTexelCoord.y == iFinishTexel.y ? finishWeights.y : 1.f;
       }
 
       iTexelCoord.x++;
-      fTexelCoord.x++;
       xWeight = iTexelCoord.x == iFinishTexel.x ? finishWeights.x : 1.f;
     }
 
-    return shadowFactor / weight;
+    return shadowFactor / (4 * blurSize.x * blurSize.y);
   }
 #endif
 
