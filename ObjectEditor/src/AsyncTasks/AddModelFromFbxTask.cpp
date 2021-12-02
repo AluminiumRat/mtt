@@ -18,7 +18,7 @@ AddModelFromFbxTask::AddModelFromFbxTask(
                     AbstractAsyncTask::INDEPENDENT,
                     AbstractAsyncTask::EXPLICIT),
   _filename(filename),
-  _materialOptions(_materialOptions),
+  _materialOptions(materialOptions),
   _commonData(commonData)
 {
 }
