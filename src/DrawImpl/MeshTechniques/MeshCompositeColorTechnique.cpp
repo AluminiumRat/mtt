@@ -19,6 +19,8 @@ MeshCompositeColorTechnique::MeshCompositeColorTechnique(
   registerSubtechnique(_transparentTechnique);
   registerSubtechnique(_emissionTechnique);
   registerSubtechnique(_selectionTechnique);
+
+  _updateTechniquesFlags();
 }
 
 void MeshCompositeColorTechnique::_updateTechniquesFlags() noexcept
@@ -27,7 +29,11 @@ void MeshCompositeColorTechnique::_updateTechniquesFlags() noexcept
   _transparentTechniqueEnabled = false;
   _emissionTechniqueEnabled = false;
 
-  if(!_materialData.has_value()) return;
+  if(!_materialData.has_value())
+  {
+    _opaqueTechniqueEnabled = true;
+    return;
+  }
 
   if( _materialData->opaque != 1 ||
       _useAlphaFromAlbedoSampler ||

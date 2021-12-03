@@ -66,6 +66,9 @@ public:
   inline virtual void visit(const MaterialObject& object) override;
   inline virtual void visit(MaterialObject& object) override;
 
+  inline virtual void visit(const MaterialsGroup& object) override;
+  inline virtual void visit(MaterialsGroup& object) override;
+
   inline virtual void visit(const MeshObject& object) override;
   inline virtual void visit(MeshObject& object) override;
 
@@ -119,6 +122,7 @@ using OEVisitor = OEVisitorT<mtt::ObjectVisitor>;
 #include <Objects/LightObject.h>
 #include <Objects/LODObject.h>
 #include <Objects/MaterialObject.h>
+#include <Objects/MaterialsGroup.h>
 #include <Objects/MeshObject.h>
 #include <Objects/MovableObject.h>
 #include <Objects/Object3D.h>
@@ -353,6 +357,18 @@ inline void OEVisitorT<BaseVisitor>::visit(MaterialObject& object)
 {
   BaseVisitor* baseVisitor = this;
   baseVisitor->visit(static_cast<mtt::Object&>(object));
+}
+
+template <typename BaseVisitor>
+inline void OEVisitorT<BaseVisitor>::visit(MaterialsGroup& object)
+{
+  visit(static_cast<mtt::Object&>(object));
+}
+
+template <typename BaseVisitor>
+inline void OEVisitorT<BaseVisitor>::visit(const MaterialsGroup& object)
+{
+  visit(static_cast<const mtt::Object&>(object));
 }
 
 template <typename BaseVisitor>

@@ -73,6 +73,7 @@ set(HEADERS
     "include/Objects/LightObject.h"
     "include/Objects/LODObject.h"
     "include/Objects/MaterialObject.h"
+    "include/Objects/MaterialsGroup.h"
     "include/Objects/MeshObject.h"
     "include/Objects/MovableObject.h"
     "include/Objects/Object3D.h"

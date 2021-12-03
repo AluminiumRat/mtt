@@ -59,6 +59,16 @@ void AddModelFromFbxTask::finalizePart()
                                                 scene->root().geometryGroup()));
   compositeCommand->addSubcommand(std::move(addLodCommand));
 
+  for(std::unique_ptr<MaterialObject>& material : _data.materials)
+  {
+    toSelect.push_back(material.get());
+    std::unique_ptr<mtt::AddObjectCommand> subCommand(
+                                  new mtt::AddObjectCommand(
+                                              std::move(material),
+                                              scene->root().materialsGroup()));
+    compositeCommand->addSubcommand(std::move(subCommand));
+  }
+
   for(std::unique_ptr<SkeletonObject>& skeleton : _data.skeleton)
   {
     toSelect.push_back(skeleton.get());
@@ -68,7 +78,7 @@ void AddModelFromFbxTask::finalizePart()
                                                 scene->root().skeletonGroup()));
     compositeCommand->addSubcommand(std::move(subCommand));
   }
-    
+
   _commonData.undoStack().addAndMake(std::move(compositeCommand));
   _commonData.selectObjects(toSelect);
 }

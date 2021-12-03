@@ -19,6 +19,7 @@ class GeometryObject;
 class LightObject;
 class LODObject;
 class MaterialObject;
+class MaterialsGroup;
 class MeshObject;
 class MovableObject;
 class Object3D;
@@ -84,6 +85,9 @@ public:
 
   virtual void visit(const MaterialObject& object) = 0;
   virtual void visit(MaterialObject& object) = 0;
+
+  virtual void visit(const MaterialsGroup& object) = 0;
+  virtual void visit(MaterialsGroup& object) = 0;
 
   virtual void visit(const MeshObject& object) = 0;
   virtual void visit(MeshObject& object) = 0;

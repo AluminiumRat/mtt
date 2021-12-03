@@ -4,17 +4,11 @@
 
 MeshObject::MeshObject(const mtt::UID& theId) :
   GeometryObject(theId),
-  _boneRefs(nullptr),
-  _material(nullptr)
+  _boneRefs(nullptr)
 {
-  mtt::UID materialId(id().mixedUID(1096043266422623895ull));
-  std::unique_ptr<MaterialObject> material(new MaterialObject(materialId));
-  material->setObjectName(tr("Material"));
-  _material = material.get();
-  addSubobject(std::move(material));
-
   setBoneRefs(std::make_unique<BoneRefBatch>(
                                 std::vector<std::unique_ptr<BoneRefObject>>()));
+  _materialLink.emplace(mtt::UID(), *this);
 }
 
 void MeshObject::setGeometry(mtt::CommonMeshGeometry&& newGeometry) noexcept
@@ -35,4 +29,32 @@ void MeshObject::setBoneRefs(std::unique_ptr<BoneRefBatch> refs)
   _boneRefs = newRefsPtr;
 
   emit boneRefsChanged(*_boneRefs);
+}
+
+void MeshObject::setMaterial(MaterialObject* material)
+{
+  if(material == nullptr) setMaterialId(mtt::UID());
+  else setMaterialId(material->id());
+}
+
+void MeshObject::setMaterialId(const mtt::UID& id)
+{
+  try
+  {
+    _materialLink.emplace(id, *this);
+  }
+  catch(...)
+  {
+    mtt::Abort("MeshObject::setMaterialId: unable to emplace material link");
+  }
+}
+
+void MeshObject::_connectMaterial(MaterialObject& material)
+{
+  emit materialRefChanged(&material);
+}
+
+void MeshObject::_disconnectMaterial(MaterialObject& material) noexcept
+{
+  emit materialRefChanged(nullptr);
 }

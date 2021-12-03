@@ -43,7 +43,6 @@ void OpaqueColorTechnique::createRenderAction(
                                             const BoneMatrices* boneMatricesPtr)
 {
   if(!normalsEnabled()) return;
-  if(!materialDataEnabled()) return;
 
   BaseGeometryTechnique::createRenderAction(buildInfo,
                                             pipeline,

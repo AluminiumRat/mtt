@@ -52,18 +52,26 @@ void FbxDrawableImporter::popTranslation()
 }
 
 void FbxDrawableImporter::processMesh(mtt::CommonMeshGeometry&& vertices,
-                                      const FbxSurfaceMaterial& material,
+                                      const FbxSurfaceMaterial& fbxMaterial,
                                       const Bones& bones,
                                       const FbxMesh& mesh)
 {
+  MaterialObject* material = nullptr;
+  MaterialMap::iterator iMaterial = _materialMap.find(&fbxMaterial);
+  if(iMaterial != _materialMap.end()) material = iMaterial->second;
+  else
+  {
+    std::unique_ptr<MaterialObject> newMaterial(new MaterialObject());
+    _importMaterial(*newMaterial, fbxMaterial);
+    material = newMaterial.get();
+    _result.materials.push_back(std::move(newMaterial));
+  }
+
   std::unique_ptr<MeshObject> newDrawable(new MeshObject);
-  std::string objectName = mesh.GetName();
-  objectName += ":";
-  objectName += material.GetName();
-  newDrawable->setObjectName(objectName.c_str());
+  newDrawable->setObjectName(mesh.GetName());
   newDrawable->setGeometry(std::move(vertices));
 
-  _importMaterial(*newDrawable, material);
+  newDrawable->setMaterial(material);
 
   if(!_skeletonStack.empty())
   {
@@ -75,13 +83,13 @@ void FbxDrawableImporter::processMesh(mtt::CommonMeshGeometry&& vertices,
   _result.drawables.push_back(std::move(newDrawable));
 }
 
-void FbxDrawableImporter::_importMaterial(MeshObject& mesh,
-                                          const FbxSurfaceMaterial& material)
+void FbxDrawableImporter::_importMaterial(MaterialObject& meshMaterial,
+                                          const FbxSurfaceMaterial& fbxMaterial)
 {
-  MaterialObject& meshMaterial = mesh.material();
+  meshMaterial.setObjectName(fbxMaterial.GetName());
 
   MaterialDescription materialDescription =
-                                      getMaterialDescription( material,
+                                      getMaterialDescription( fbxMaterial,
                                                               _materialOptions);
 
   meshMaterial.setAlbedo(materialDescription.materialData.albedo);

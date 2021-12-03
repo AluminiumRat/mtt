@@ -7,6 +7,7 @@
 #include <mtt/Render/Mesh/DepthMeshTechnique.h>
 #include <mtt/Render/Mesh/UidMeshTechnique.h>
 #include <mtt/Render/Pipeline/Buffer.h>
+#include <mtt/Utilities/Abort.h>
 #include <mtt/Utilities/Box.h>
 #include <mtt/Utilities/Log.h>
 #include <mtt/Utilities/Sphere.h>
@@ -18,8 +19,7 @@ MeshRenderObserver::MeshRenderObserver( MeshObject& object,
                                         EditorCommonData& commonData) :
   Object3DRenderObserver(object, commonData),
   _object(object),
-  _mesh(mtt::Application::instance().displayDevice()),
-  _materialObserver(object.material(), _mesh.extraData())
+  _mesh(mtt::Application::instance().displayDevice())
 {
   mtt::LogicalDevice& device = mtt::Application::instance().displayDevice();
 
@@ -67,6 +67,13 @@ MeshRenderObserver::MeshRenderObserver( MeshObject& object,
           &MeshRenderObserver::_updateBones,
           Qt::DirectConnection);
   _updateBones();
+
+  connect(&_object,
+          &MeshObject::materialRefChanged,
+          this,
+          &MeshRenderObserver::_updateMaterialObserver,
+          Qt::DirectConnection);
+  _updateMaterialObserver();
 }
 
 void MeshRenderObserver::_updateMesh() noexcept
@@ -105,11 +112,33 @@ void MeshRenderObserver::_updateBones() noexcept
     catch (std::exception& error)
     {
       mtt::Log() << error.what();
-      mtt::Log() << "MeshRenderObserver::_updateBones: unable to update bone observer";
+      mtt::Abort("MeshRenderObserver::_updateBones: unable to update bone observer");
     }
     catch (...)
     {
-      mtt::Log() << "MeshRenderObserver::_updateBones: unable to update bone observer";
+      mtt::Abort("MeshRenderObserver::_updateBones: unable to update bone observer");
+    }
+  }
+}
+
+void MeshRenderObserver::_updateMaterialObserver() noexcept
+{
+  _materialObserver.reset();
+  MaterialObject* material = _object.material();
+  if(material != nullptr)
+  {
+    try
+    {
+      _materialObserver.emplace(*material, _mesh.extraData());
+    }
+    catch(std::exception& error)
+    {
+      mtt::Log() << error.what();
+      mtt::Abort("MeshRenderObserver::_updateBones: unable to update material observer");
+    }
+    catch(...)
+    {
+      mtt::Abort("MeshRenderObserver::_updateBones: unable to update material observer");
     }
   }
 }

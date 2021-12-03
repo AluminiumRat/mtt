@@ -5,7 +5,10 @@
 RootObject::RootObject(const mtt::UID& theId) :
   Object(theId),
   _skeletonGroup(nullptr),
-  _geometryGroup(nullptr)
+  _geometryGroup(nullptr),
+  _materialsGroup(nullptr),
+  _animationGroup(nullptr),
+  _environment(nullptr)
 {
   mtt::UID skeletonId(id().mixedUID(3437741750129319833ull));
   std::unique_ptr<SkeletonGroup> skeletonGroup(new SkeletonGroup(skeletonId));
@@ -18,6 +21,13 @@ RootObject::RootObject(const mtt::UID& theId) :
   geometryGroup->setObjectName(tr("Geometry"));
   _geometryGroup = geometryGroup.get();
   addSubobject(std::move(geometryGroup));
+
+  mtt::UID materialsId(id().mixedUID(17138545876999066826ull));
+  std::unique_ptr<MaterialsGroup>
+                                materialsGroup(new MaterialsGroup(materialsId));
+  materialsGroup->setObjectName(tr("Materials"));
+  _materialsGroup = materialsGroup.get();
+  addSubobject(std::move(materialsGroup));
 
   mtt::UID animationId(id().mixedUID(6931950026981487474ull));
   std::unique_ptr<AnimationGroup> animationGroup(

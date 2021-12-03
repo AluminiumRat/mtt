@@ -485,6 +485,17 @@ struct PropertiesWidgetBuilder : public OEVisitor
     OEVisitor::visit(object);
     VertexDataWidget* vertexDataWidget = new VertexDataWidget(object);
     layout->addRow(QObject::tr("Vertex data"), vertexDataWidget);
+
+    using ReferenceWidget = mtt::ReferencePropertyWidget< MeshObject,
+                                                          MaterialObject>;
+    ReferenceWidget* referenceWidget = new ReferenceWidget(
+                                            object,
+                                            &MeshObject::material,
+                                            &MeshObject::setMaterial,
+                                            &MeshObject::materialRefChanged,
+                                            editCommonData->undoStack(),
+                                            scene->root().materialsGroup());
+    layout->addRow(QObject::tr("Material"), referenceWidget);
   }
 
   virtual void visit(mtt::Object& object) override

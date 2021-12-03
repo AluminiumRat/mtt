@@ -24,11 +24,12 @@ public:
 private:
   void _updateMesh() noexcept;
   void _updateBones() noexcept;
+  void _updateMaterialObserver() noexcept;
 
 private:
   MeshObject& _object;
   mtt::Mesh _mesh;
   mtt::SimpleDrawableNode _drawableNode;
   std::optional<BonesObserver> _bonesObserver;
-  MaterialObserver _materialObserver;
+  std::optional<MaterialObserver> _materialObserver;
 };

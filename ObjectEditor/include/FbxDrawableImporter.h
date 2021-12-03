@@ -6,6 +6,7 @@
 
 #include <mtt/Fbx/BaseFbxImporter.h>
 
+#include <Objects/MaterialObject.h>
 #include <Objects/MeshObject.h>
 #include <Objects/SkeletonObject.h>
 
@@ -16,6 +17,7 @@ public:
   {
     std::vector<std::unique_ptr<SkeletonObject>> skeleton;
     std::vector<std::unique_ptr<MeshObject>> drawables;
+    std::vector<std::unique_ptr<MaterialObject>> materials;
 
     Result() = default;
     Result(const Result&) = delete;
@@ -38,14 +40,14 @@ protected:
   virtual void pushTranslation(FbxNode& node) override;
   virtual void popTranslation() override;
   virtual void processMesh( mtt::CommonMeshGeometry&& vertices,
-                            const FbxSurfaceMaterial& material,
+                            const FbxSurfaceMaterial& fbxMaterial,
                             const Bones& bones,
                             const FbxMesh& mesh) override;
 
 private:
   void _resolveBoneLinks();
-  void _importMaterial( MeshObject& mesh,
-                        const FbxSurfaceMaterial& material);
+  void _importMaterial( MaterialObject& meshMaterial,
+                        const FbxSurfaceMaterial& fbxMaterial);
 
 private:
   MaterialOptions _materialOptions;
@@ -62,4 +64,7 @@ private:
     Bones bones;
   };
   std::vector<BonesLink> _boneLinks;
+
+  using MaterialMap = std::map<const FbxSurfaceMaterial*, MaterialObject*>;
+  MaterialMap _materialMap;
 };

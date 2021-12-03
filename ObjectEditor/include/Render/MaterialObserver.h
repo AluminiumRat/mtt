@@ -24,7 +24,7 @@ public:
                     mtt::MeshExtraData& extraData);
   MaterialObserver(const MaterialObserver&) = delete;
   MaterialObserver& operator = (const MaterialObserver&) = delete;
-  virtual ~MaterialObserver() noexcept = default;
+  virtual ~MaterialObserver() noexcept;
 
 private:
   using StopperUniquePtr = std::unique_ptr<mtt::AsyncTaskQueue::TaskStopper>;
@@ -36,7 +36,7 @@ private:
                       StopperUniquePtr& stopper) noexcept;
   void _updateAlbedoTexture(const QString& filename) noexcept;
   void _updateOpaqueTexture(const QString& filename) noexcept;
-  void _updateUseAlpha(float value) noexcept;
+  void _updateUseAlpha(bool value) noexcept;
   void _updateSpecularTexture(const QString& filename) noexcept;
   void _updateNormalTexture(const QString& filename) noexcept;
   void _updateEmissionTexture(const QString& filename) noexcept;

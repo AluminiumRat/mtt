@@ -69,6 +69,25 @@ MaterialObserver::MaterialObserver( MaterialObject& material,
   _updateReflectionTexture(material.reflectionTexture());
 }
 
+MaterialObserver::~MaterialObserver() noexcept
+{
+  _albedoTaskStopper.reset();
+  _opaqueTaskStopper.reset();
+  _specularTaskStopper.reset();
+  _normalTaskStopper.reset();
+  _emissionTaskStopper.reset();
+  _reflectionTaskStopper.reset();
+
+  _extraData.removeSurfaceMaterialData();
+  _extraData.removeSampler(mtt::MeshExtraData::albedoSamplerName);
+  _extraData.removeAlphaInAlbedoSamplerIsOpacityVariable();
+  _extraData.removeSampler(mtt::MeshExtraData::opaqueSamplerName);
+  _extraData.removeSampler(mtt::MeshExtraData::specularSamplerName);
+  _extraData.removeSampler(mtt::MeshExtraData::normalSamplerName);
+  _extraData.removeSampler(mtt::MeshExtraData::emissionSamplerName);
+  _extraData.removeSampler(mtt::MeshExtraData::reflectionSamplerName);
+}
+
 void MaterialObserver::_updateMaterialData(
                               const mtt::SurfaceMaterialData& newData) noexcept
 {
@@ -119,7 +138,7 @@ void MaterialObserver::_updateAlbedoTexture(const QString& filename) noexcept
                   _albedoTaskStopper);
 }
 
-void MaterialObserver::_updateUseAlpha(float value) noexcept
+void MaterialObserver::_updateUseAlpha(bool value) noexcept
 {
   try
   {
