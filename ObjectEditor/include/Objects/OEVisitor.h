@@ -362,13 +362,15 @@ inline void OEVisitorT<BaseVisitor>::visit(MaterialObject& object)
 template <typename BaseVisitor>
 inline void OEVisitorT<BaseVisitor>::visit(MaterialsGroup& object)
 {
-  visit(static_cast<mtt::Object&>(object));
+  BaseVisitor* baseVisitor = this;
+  baseVisitor->visit(static_cast<mtt::Object&>(object));
 }
 
 template <typename BaseVisitor>
 inline void OEVisitorT<BaseVisitor>::visit(const MaterialsGroup& object)
 {
-  visit(static_cast<const mtt::Object&>(object));
+  BaseVisitor* baseVisitor = this;
+  baseVisitor->visit(static_cast<const mtt::Object&>(object));
 }
 
 template <typename BaseVisitor>
