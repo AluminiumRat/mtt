@@ -2,8 +2,10 @@
 
 #include <Objects/MovableObject.h>
 
-MovableObject::MovableObject(const mtt::UID& id) :
-  RotatableObject(id),
+MovableObject::MovableObject( const QString& name,
+                              bool canBeRenamed,
+                              const mtt::UID& id) :
+  RotatableObject(name, canBeRenamed, id),
   _position(0)
 {
 }

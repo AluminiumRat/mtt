@@ -1,3 +1,5 @@
+#include <QtCore/QCoreApplication>
+
 #include <glm/gtc/quaternion.hpp>
 
 #include <mtt/Utilities/Log.h>
@@ -24,11 +26,10 @@ FbxDrawableImporter::Result FbxDrawableImporter::import(
 
 void FbxDrawableImporter::pushTranslation(FbxNode& node)
 {
-  std::unique_ptr<SkeletonObject> newSkeleton(new SkeletonObject);
+  std::unique_ptr<SkeletonObject> newSkeleton(
+                                      new SkeletonObject(node.GetName(), true));
   SkeletonObject& skeletonRef = *newSkeleton;
   _skeletonMap[&node] = &skeletonRef;
-
-  newSkeleton->setObjectName(node.GetName());
 
   FbxDouble3 position = node.LclTranslation.Get();
   newSkeleton->setPosition(glm::vec3(position[0], position[1], position[2]));
@@ -61,14 +62,14 @@ void FbxDrawableImporter::processMesh(mtt::CommonMeshGeometry&& vertices,
   if(iMaterial != _materialMap.end()) material = iMaterial->second;
   else
   {
-    std::unique_ptr<MaterialObject> newMaterial(new MaterialObject());
+    std::unique_ptr<MaterialObject> newMaterial(
+                              new MaterialObject(fbxMaterial.GetName(), true));
     _importMaterial(*newMaterial, fbxMaterial);
     material = newMaterial.get();
     _result.materials.push_back(std::move(newMaterial));
   }
 
-  std::unique_ptr<MeshObject> newDrawable(new MeshObject);
-  newDrawable->setObjectName(mesh.GetName());
+  std::unique_ptr<MeshObject> newDrawable(new MeshObject(mesh.GetName(), true));
   newDrawable->setGeometry(std::move(vertices));
 
   newDrawable->setMaterial(material);
@@ -86,8 +87,6 @@ void FbxDrawableImporter::processMesh(mtt::CommonMeshGeometry&& vertices,
 void FbxDrawableImporter::_importMaterial(MaterialObject& meshMaterial,
                                           const FbxSurfaceMaterial& fbxMaterial)
 {
-  meshMaterial.setObjectName(fbxMaterial.GetName());
-
   MaterialDescription materialDescription =
                                       getMaterialDescription( fbxMaterial,
                                                               _materialOptions);
@@ -129,19 +128,21 @@ void FbxDrawableImporter::_resolveBoneLinks()
     std::vector<std::unique_ptr<BoneRefObject>> references;
     for(Bone& bone : link.bones)
     {
-      std::unique_ptr<BoneRefObject> newRef(new BoneRefObject);
-      newRef->setBoneInverseMatrix(bone.toBone);
       SkeletonMap::const_iterator iBone = _skeletonMap.find(bone.node);
       if(iBone == _skeletonMap.end()) throw std::runtime_error("Unable to find the bone node.");
       SkeletonObject* skeleton = iBone->second;
-      newRef->setBone(skeleton);
 
-      newRef->setObjectName(skeleton->objectName());
+      std::unique_ptr<BoneRefObject> newRef(
+                              new BoneRefObject(skeleton->objectName(), true));
+      newRef->setBoneInverseMatrix(bone.toBone);
+      newRef->setBone(skeleton);
 
       references.push_back(std::move(newRef));
     }
 
-    link.mesh->setBoneRefs(
-                        std::make_unique<BoneRefBatch>(std::move(references)));
+    link.mesh->setBoneRefs(std::make_unique<BoneRefBatch>(
+                                        std::move(references),
+                                        QCoreApplication::tr("Bone references"),
+                                        false));
   }
 }

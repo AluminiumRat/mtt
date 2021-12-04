@@ -32,8 +32,8 @@ MainWindow::MainWindow() :
 
   setCentralWidget(&_renderWidget);
 
-  std::unique_ptr<DirectLightObject> directLight(new DirectLightObject);
-  directLight->setObjectName(tr("Direct light"));
+  std::unique_ptr<DirectLightObject> directLight(
+                              new DirectLightObject(tr("Direct light"), true));
   directLight->setPosition(glm::vec3(0, -2, 4));
   directLight->setRotation(glm::quat(glm::vec3(.5f, 0.f, 0.f)));
 

@@ -2,8 +2,10 @@
 
 #include <Objects/GeometryObject.h>
 
-GeometryObject::GeometryObject(const mtt::UID& id) :
-  ScalableObject(id)
+GeometryObject::GeometryObject( const QString& name,
+                                bool canBeRenamed,
+                                const mtt::UID& id) :
+  ScalableObject(name, canBeRenamed, id)
 {
   _skeletonLink.emplace(mtt::UID(), *this);
 }

@@ -21,7 +21,9 @@ class RotatableObject : public Object3D
   DEFINE_EXTENSION_ACCEPT(OEVisitorExtension)
 
 public:
-  explicit RotatableObject(const mtt::UID& id = mtt::UID());
+  RotatableObject(const QString& name,
+                  bool canBeRenamed,
+                  const mtt::UID& id = mtt::UID());
   RotatableObject(const RotatableObject&) = delete;
   RotatableObject& operator = (const RotatableObject&) = delete;
   virtual ~RotatableObject() noexcept = default;

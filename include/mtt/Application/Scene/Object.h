@@ -42,7 +42,21 @@ namespace mtt
   {
     Q_OBJECT
 
-    Q_PROPERTY(UID id READ id)
+    Q_PROPERTY( UID id
+                READ id
+                DESIGNABLE true
+                SCRIPTABLE true
+                STORED true
+                USER false)
+
+  Q_PROPERTY( QString name
+              READ name
+              WRITE tryRename
+              NOTIFY nameChanged
+              DESIGNABLE true
+              SCRIPTABLE true
+              STORED true
+              USER false)
 
   protected:
     friend class ObjectVisitor;
@@ -50,14 +64,18 @@ namespace mtt
     virtual void accept(ObjectVisitor& visitor) const;
 
   public:
-    explicit Object(const UID& id = UID());
+    Object( const QString& name, bool canBeRenamed, const UID& id = UID());
     Object(const Object&) = delete;
     Object& operator = (const Object&) = delete;
     virtual ~Object() noexcept;
   
     inline const UID& id() const noexcept;
 
-    inline QString objectName() const noexcept;
+    inline QString name() const noexcept;
+    inline bool canBeRenamed() const noexcept;
+    /// If canBeRenamed property is true, the name will be changed to newVale
+    /// Otherwise nothing will happen
+    virtual void tryRename(const QString& newVale);
 
     inline Scene* scene() const noexcept;
 
@@ -89,6 +107,7 @@ namespace mtt
     virtual void notifyAboutDisappearance(Object& object) noexcept;
 
   signals:
+    void nameChanged(const QString& newName);
     void subobjectAdded(Object& object);
     void subobjectRemoved(Object& object);
 
@@ -114,6 +133,8 @@ namespace mtt
 
   private:
     UID _id;
+    QString _name;
+    bool _canBeRenamed;
     Scene* _scene;
     Object* _parent;
     using Subobjects = std::vector<Object*>;
@@ -128,9 +149,14 @@ namespace mtt
     return _id;
   }
 
-  inline QString Object::objectName() const noexcept
+  inline QString Object::name() const noexcept
   {
-    return QObject::objectName();
+    return _name;
+  }
+
+  inline bool Object::canBeRenamed() const noexcept
+  {
+    return _canBeRenamed;
   }
 
   inline Scene* Object::scene() const noexcept

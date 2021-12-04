@@ -64,7 +64,9 @@ class BackgroundObject : public RotatableObject
               USER false)
 
 public:
-  explicit BackgroundObject(const mtt::UID& id = mtt::UID());
+  BackgroundObject( const QString& name,
+                    bool canBeRenamed,
+                    const mtt::UID& id = mtt::UID());
   BackgroundObject(const BackgroundObject&) = delete;
   BackgroundObject& operator = (const BackgroundObject&) = delete;
   virtual ~BackgroundObject() noexcept = default;

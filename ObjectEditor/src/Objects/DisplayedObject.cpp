@@ -3,8 +3,10 @@
 #include <Objects/DisplayedObject.h>
 #include <Objects/OEVisitor.h>
 
-DisplayedObject::DisplayedObject(const mtt::UID& id) :
-  Object(id),
+DisplayedObject::DisplayedObject( const QString& name,
+                                  bool canBeRenamed,
+                                  const mtt::UID& id) :
+  Object(name, canBeRenamed, id),
   _visible(true),
   _parentVisible(true),
   _completeVisible(true)

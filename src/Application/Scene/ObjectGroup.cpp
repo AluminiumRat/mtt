@@ -2,8 +2,10 @@
 
 using namespace mtt;
 
-ObjectGroup::ObjectGroup(const UID& id) :
-  Object(id)
+ObjectGroup::ObjectGroup( const QString& name,
+                          bool canBeRenamed,
+                          const UID& id) :
+  Object(name, canBeRenamed, id)
 {
 }
 

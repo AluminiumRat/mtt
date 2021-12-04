@@ -28,7 +28,7 @@ static SkeletonObject* findSkeleton(const QString& name,
                                     mtt::Object& searchArea)
 {
   SkeletonObject* skeleton = qobject_cast<SkeletonObject*>(&searchArea);
-  if(skeleton != nullptr && skeleton->objectName() == name) return skeleton;
+  if(skeleton != nullptr && skeleton->name() == name) return skeleton;
   for(size_t childIndex = 0;
       childIndex < searchArea.subobjectNumber();
       childIndex++)
@@ -59,7 +59,7 @@ void AddAnimationFromFbxTask::finalizePart()
       trackIndex++)
   {
     AnimationTrack& track = _animation->child(trackIndex);
-    SkeletonObject* skeleton = findSkeleton(track.objectName(),
+    SkeletonObject* skeleton = findSkeleton(track.name(),
                                             scene->root().skeletonGroup());
     if(skeleton != nullptr) track.setSkeleton(skeleton);
   }

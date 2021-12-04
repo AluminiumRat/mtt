@@ -17,11 +17,9 @@ std::unique_ptr<AnimationObject> FbxAnimationImporter::import(
 {
   _baseLayer = nullptr;
 
-  _result.reset(new AnimationObject());
-  startImporting(filename);
-
   QFileInfo file(filename);
-  _result->setObjectName(file.baseName());
+  _result.reset(new AnimationObject(file.baseName(), true));
+  startImporting(filename);
 
   return std::move(_result);
 }
@@ -47,8 +45,8 @@ void FbxAnimationImporter::pushTranslation(FbxNode& node)
   std::set<TimeType> timeSet = _getKeypointTimes(node);
   if(!timeSet.empty())
   {
-    std::unique_ptr<AnimationTrack> track(new AnimationTrack);
-    track->setObjectName(node.GetName());
+    std::unique_ptr<AnimationTrack> track(
+                                      new AnimationTrack(node.GetName(), true));
     _fillTrack(*track, node, timeSet);
     _result->addChild(std::move(track));
   }

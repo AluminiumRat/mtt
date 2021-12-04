@@ -2,8 +2,10 @@
 
 #include <Objects/ScalableObject.h>
 
-ScalableObject::ScalableObject(const mtt::UID& id) :
-  MovableObject(id),
+ScalableObject::ScalableObject( const QString& name,
+                                bool canBeRenamed,
+                                const mtt::UID& id) :
+  MovableObject(name, canBeRenamed, id),
   _scale(1.f)
 {
 }

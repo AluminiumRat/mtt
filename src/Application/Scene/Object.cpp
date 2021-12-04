@@ -7,12 +7,24 @@
 
 using namespace mtt;
 
-Object::Object(const UID& id) :
+Object::Object( const QString& name,
+                bool canBeRenamed,
+                const UID& id) :
   _id(id),
+  _name(name),
+  _canBeRenamed(canBeRenamed),
   _scene(nullptr),
   _parent(nullptr)
 {
   if (_id == UID(0)) _id = UID(UID::randomValue());
+}
+
+void Object::tryRename(const QString& newVale)
+{
+  if(!_canBeRenamed) return;
+  if(_name == newVale) return;
+  _name = newVale;
+  emit nameChanged(_name);
 }
 
 Object::~Object() noexcept

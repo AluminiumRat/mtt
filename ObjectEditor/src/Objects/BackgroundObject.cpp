@@ -1,8 +1,10 @@
 #include <Objects/BackgroundObject.h>
 #include <Objects/CubemapObject.h>
 
-BackgroundObject::BackgroundObject(const mtt::UID& theId) :
-  RotatableObject(theId),
+BackgroundObject::BackgroundObject( const QString& name,
+                                    bool canBeRenamed,
+                                    const mtt::UID& theId) :
+  RotatableObject(name, canBeRenamed, theId),
   _lightEnabled(false),
   _luminance(1.f),
   _color(1.f),
@@ -11,9 +13,10 @@ BackgroundObject::BackgroundObject(const mtt::UID& theId) :
   _cubemap(nullptr)
 {
   mtt::UID cubemapId(id().mixedUID(15285932983551776433ull));
-  std::unique_ptr<CubemapObject> cubemap(new CubemapObject(cubemapId));
+  std::unique_ptr<CubemapObject> cubemap(new CubemapObject( tr("Cubemap"),
+                                                            false,
+                                                            cubemapId));
   _cubemap = cubemap.get();
-  _cubemap->setObjectName(tr("Cubemap"));
   addSubobject(std::move(cubemap));
 }
 

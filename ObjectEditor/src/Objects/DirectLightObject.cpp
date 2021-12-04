@@ -1,7 +1,9 @@
 #include <Objects/DirectLightObject.h>
 
-DirectLightObject::DirectLightObject(const mtt::UID theId) :
-  LightObject(theId),
+DirectLightObject::DirectLightObject( const QString& name,
+                                      bool canBeRenamed,
+                                      const mtt::UID theId) :
+  LightObject(name, canBeRenamed, theId),
   _radius(10),
   _shadowsEnabled(false),
   _shadowmapSize(256),

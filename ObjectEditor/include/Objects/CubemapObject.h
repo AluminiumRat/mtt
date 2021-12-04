@@ -36,7 +36,9 @@ public:
   };
 
 public:
-  CubemapObject(const mtt::UID& id = mtt::UID());
+  CubemapObject(const QString& name,
+                bool canBeRenamed,
+                const mtt::UID& id = mtt::UID());
   CubemapObject(const CubemapObject&) = delete;
   CubemapObject& operator = (const CubemapObject&) = delete;
   virtual ~CubemapObject() noexcept = default;

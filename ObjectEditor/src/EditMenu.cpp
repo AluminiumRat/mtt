@@ -197,9 +197,9 @@ void EditMenu::_addBone() noexcept
     EditorScene* scene = _commonData.scene();
     if(scene == nullptr) return;
 
-    std::unique_ptr<SkeletonObject> newBone(new SkeletonObject);
+    std::unique_ptr<SkeletonObject> newBone(
+                                          new SkeletonObject(tr("bone"), true));
     SkeletonObject* bonePtr = newBone.get();
-    newBone->setObjectName(tr("bone"));
 
     mtt::Object* target = nullptr;    
     if (_commonData.selectedObjects().size() == 1)
@@ -235,9 +235,8 @@ void EditMenu::_addLOD() noexcept
     EditorScene* scene = _commonData.scene();
     if(scene == nullptr) return;
 
-    std::unique_ptr<LODObject> newLOD(new LODObject);
+    std::unique_ptr<LODObject> newLOD(new LODObject(tr("LOD"), true));
     LODObject* lodPtr = newLOD.get();
-    newLOD->setObjectName(tr("LOD"));
 
     std::unique_ptr<mtt::AddObjectCommand> command(
                                 new mtt::AddObjectCommand(
@@ -370,9 +369,9 @@ void EditMenu::_addAmbientLight() noexcept
     EditorScene* scene = _commonData.scene();
     if(scene == nullptr) return;
 
-    std::unique_ptr<AmbientLightObject> newLight(new AmbientLightObject);
+    std::unique_ptr<AmbientLightObject> newLight(
+                            new AmbientLightObject(tr("Ambient light"), true));
     AmbientLightObject* lightPtr = newLight.get();
-    newLight->setObjectName(tr("Ambient light"));
 
     std::unique_ptr<mtt::AddObjectCommand> command(
                         new mtt::AddObjectCommand(std::move(newLight),
@@ -401,9 +400,9 @@ void EditMenu::_addDirectLight() noexcept
     EditorScene* scene = _commonData.scene();
     if(scene == nullptr) return;
 
-    std::unique_ptr<DirectLightObject> newLight(new DirectLightObject);
+    std::unique_ptr<DirectLightObject> newLight(
+                              new DirectLightObject(tr("Direct light"), true));
     DirectLightObject* lightPtr = newLight.get();
-    newLight->setObjectName(tr("Direct light"));
 
     std::unique_ptr<mtt::AddObjectCommand> command(
                         new mtt::AddObjectCommand(std::move(newLight),

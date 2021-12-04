@@ -15,6 +15,8 @@ class BoneRefBatch : public mtt::Object
 
 public:
   BoneRefBatch( std::vector<std::unique_ptr<BoneRefObject>>&& refs,
+                const QString& name,
+                bool canBeRenamed,
                 const mtt::UID& id = mtt::UID());
   BoneRefBatch(const BoneRefBatch&) = delete;
   BoneRefBatch& operator = (const BoneRefBatch&) = delete;

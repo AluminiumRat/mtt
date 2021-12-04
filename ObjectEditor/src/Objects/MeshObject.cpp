@@ -2,12 +2,16 @@
 
 #include <Objects/MeshObject.h>
 
-MeshObject::MeshObject(const mtt::UID& theId) :
-  GeometryObject(theId),
+MeshObject::MeshObject( const QString& name,
+                        bool canBeRenamed,
+                        const mtt::UID& theId) :
+  GeometryObject(name, canBeRenamed, theId),
   _boneRefs(nullptr)
 {
   setBoneRefs(std::make_unique<BoneRefBatch>(
-                                std::vector<std::unique_ptr<BoneRefObject>>()));
+                                std::vector<std::unique_ptr<BoneRefObject>>(),
+                                tr("Bone references"),
+                                false));
   _materialLink.emplace(mtt::UID(), *this);
 }
 
@@ -22,7 +26,6 @@ void MeshObject::setBoneRefs(std::unique_ptr<BoneRefBatch> refs)
   if(refs == nullptr) mtt::Abort("MeshObject::setBoneRefs: refs is nullptr");
 
   BoneRefBatch* newRefsPtr = refs.get();
-  refs->setObjectName(tr("Bone references"));
   addSubobject(std::move(refs));
 
   if(_boneRefs != nullptr) removeSubobject(*_boneRefs, true);

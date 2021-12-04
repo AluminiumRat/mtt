@@ -14,7 +14,9 @@ class RootObject : public mtt::Object
   Q_OBJECT
 
 public:
-  explicit RootObject(const mtt::UID& id = mtt::UID());
+  RootObject( const QString& name,
+              bool canBeRenamed,
+              const mtt::UID& id = mtt::UID());
   RootObject(const RootObject&) = delete;
   RootObject& operator = (const RootObject&) = delete;
   virtual ~RootObject() noexcept = default;

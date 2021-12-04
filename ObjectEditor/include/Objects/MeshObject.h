@@ -13,7 +13,9 @@ class MeshObject : public GeometryObject
   DEFINE_EXTENSION_ACCEPT(OEVisitorExtension)
 
 public:
-  explicit MeshObject(const mtt::UID& id = mtt::UID());
+  MeshObject( const QString& name,
+              bool canBeRenamed,
+              const mtt::UID& id = mtt::UID());
   MeshObject(const MeshObject&) = delete;
   MeshObject& operator = (const MeshObject&) = delete;
   virtual ~MeshObject() noexcept = default;

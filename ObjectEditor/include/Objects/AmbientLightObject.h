@@ -19,7 +19,9 @@ class AmbientLightObject : public LightObject
   DEFINE_EXTENSION_ACCEPT(OEVisitorExtension)
 
 public:
-  explicit AmbientLightObject(const mtt::UID = mtt::UID());
+  AmbientLightObject( const QString& name,
+                      bool canBeRenamed,
+                      const mtt::UID = mtt::UID());
   AmbientLightObject(const AmbientLightObject&) = delete;
   AmbientLightObject& operator = (const AmbientLightObject&) = delete;
   virtual ~AmbientLightObject() noexcept = default;

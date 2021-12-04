@@ -21,7 +21,9 @@ class MovableObject : public RotatableObject
   DEFINE_EXTENSION_ACCEPT(OEVisitorExtension)
 
 public:
-  explicit MovableObject(const mtt::UID& id = mtt::UID());
+  MovableObject(const QString& name,
+                bool canBeRenamed,
+                const mtt::UID& id = mtt::UID());
   MovableObject(const MovableObject&) = delete;
   MovableObject& operator = (const MovableObject&) = delete;
   virtual ~MovableObject() noexcept = default;

@@ -21,7 +21,9 @@ class DisplayedObject : public mtt::Object
   DEFINE_EXTENSION_ACCEPT(OEVisitorExtension)
 
 public:
-  explicit DisplayedObject(const mtt::UID& id = mtt::UID());
+  DisplayedObject(const QString& name,
+                  bool canBeRenamed,
+                  const mtt::UID& id = mtt::UID());
   DisplayedObject(const DisplayedObject&) = delete;
   DisplayedObject& operator = (const DisplayedObject&) = delete;
   virtual ~DisplayedObject() noexcept = default;

@@ -13,7 +13,9 @@ class EnvironmentGroup : public mtt::SpecialGroup<DisplayedObject,
   DEFINE_EXTENSION_ACCEPT(OEVisitorExtension)
 
 public:
-  explicit EnvironmentGroup(const mtt::UID& id = mtt::UID());
+  EnvironmentGroup( const QString& name,
+                    bool canBeRenamed,
+                    const mtt::UID& id = mtt::UID());
   EnvironmentGroup(const EnvironmentGroup&) = delete;
   EnvironmentGroup& operator = (const EnvironmentGroup&) = delete;
   virtual ~EnvironmentGroup() noexcept = default;

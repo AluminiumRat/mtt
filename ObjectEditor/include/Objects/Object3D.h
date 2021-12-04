@@ -14,7 +14,9 @@ class Object3D : public DisplayedObject
   DEFINE_EXTENSION_ACCEPT(OEVisitorExtension)
 
 public:
-  explicit Object3D(const mtt::UID& id = mtt::UID());
+  Object3D( const QString& name,
+            bool canBeRenamed,
+            const mtt::UID& id = mtt::UID());
   Object3D(const Object3D&) = delete;
   Object3D& operator = (const Object3D&) = delete;
   virtual ~Object3D() noexcept = default;

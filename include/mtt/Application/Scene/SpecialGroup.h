@@ -10,7 +10,9 @@ namespace mtt
   class SpecialGroup : public BaseClass
   {
   public:
-    inline explicit SpecialGroup(const UID& id = UID());
+    inline SpecialGroup(const QString& name,
+                        bool canBeRenamed,
+                        const UID& id = UID());
     SpecialGroup(const SpecialGroup&) = delete;
     SpecialGroup& operator = (const SpecialGroup&) = delete;
     virtual ~SpecialGroup() noexcept = default;
@@ -42,8 +44,10 @@ namespace mtt
 
   template <typename BaseClass, typename ChildClass>
   inline SpecialGroup<BaseClass,
-                      ChildClass>::SpecialGroup(const UID& id) :
-    BaseClass(id)
+                      ChildClass>::SpecialGroup(const QString& name,
+                                                bool canBeRenamed,
+                                                const UID& id) :
+    BaseClass(name, canBeRenamed, id)
   {
   }
 

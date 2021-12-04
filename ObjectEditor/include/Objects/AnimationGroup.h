@@ -12,7 +12,9 @@ class AnimationGroup : public mtt::SpecialGroup<mtt::Object,
   DEFINE_EXTENSION_ACCEPT(OEVisitorExtension)
 
 public:
-  explicit AnimationGroup(const mtt::UID& id = mtt::UID());
+  explicit AnimationGroup(const QString& name,
+                          bool canBeRenamed,
+                          const mtt::UID& id = mtt::UID());
   AnimationGroup(const AnimationGroup&) = delete;
   AnimationGroup& operator = (const AnimationGroup&) = delete;
   virtual ~AnimationGroup() noexcept = default;

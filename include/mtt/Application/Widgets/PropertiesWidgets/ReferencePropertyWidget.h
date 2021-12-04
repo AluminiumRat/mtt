@@ -93,7 +93,7 @@ namespace mtt
       if(_referenced != nullptr)
       {
         disconnect( _referenced,
-                    &Object::objectNameChanged,
+                    &Object::nameChanged,
                     this,
                     &ReferencePropertyWidget::_updateName);
       }
@@ -103,7 +103,7 @@ namespace mtt
       if (_referenced != nullptr)
       {
         connect(_referenced,
-                &Object::objectNameChanged,
+                &Object::nameChanged,
                 this,
                 &ReferencePropertyWidget::_updateName,
                 Qt::DirectConnection);
@@ -125,7 +125,7 @@ namespace mtt
     try
     {
       if(_referenced == nullptr) setNameLabel(tr("none"));
-      else setNameLabel(_referenced->objectName());
+      else setNameLabel(_referenced->name());
     }
     catch (...)
     {

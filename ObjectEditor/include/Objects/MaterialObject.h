@@ -162,7 +162,9 @@ class MaterialObject : public mtt::Object
   DEFINE_EXTENSION_ACCEPT(OEVisitorExtension)
 
 public:
-  explicit MaterialObject(const mtt::UID& id = mtt::UID());
+  MaterialObject( const QString& name,
+                  bool canBeRenamed,
+                  const mtt::UID& id = mtt::UID());
   MaterialObject(const MaterialObject&) = delete;
   MaterialObject& operator = (const MaterialObject&) = delete;
   virtual ~MaterialObject() noexcept = default;

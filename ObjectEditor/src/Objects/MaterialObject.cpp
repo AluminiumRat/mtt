@@ -1,7 +1,9 @@
 #include <Objects/MaterialObject.h>
 
-MaterialObject::MaterialObject(const mtt::UID& id) :
-  Object(id),
+MaterialObject::MaterialObject( const QString& name,
+                                bool canBeRenamed,
+                                const mtt::UID& id) :
+  Object(name, canBeRenamed, id),
   _emissionColor(1),
   _emissionFactor(0),
   _useAlphaFromAlbedoTexture(false)

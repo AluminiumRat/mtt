@@ -1,6 +1,8 @@
 #include <Objects/SkeletonGroup.h>
 
-SkeletonGroup::SkeletonGroup(const mtt::UID& id) :
-  SpecialGroup(id)
+SkeletonGroup::SkeletonGroup( const QString& name,
+                              bool canBeRenamed,
+                              const mtt::UID& id) :
+  SpecialGroup(name, canBeRenamed, id)
 {
 }

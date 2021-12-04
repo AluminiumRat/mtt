@@ -19,7 +19,9 @@ public:
   using TimeType = AnimationTrack::TimeType;
 
 public:
-  explicit AnimationObject(const mtt::UID& id = mtt::UID());
+  AnimationObject(const QString& name,
+                  bool canBeRenamed,
+                  const mtt::UID& id = mtt::UID());
   AnimationObject(const AnimationObject&) = delete;
   AnimationObject& operator = (const AnimationObject&) = delete;
   virtual ~AnimationObject() noexcept = default;

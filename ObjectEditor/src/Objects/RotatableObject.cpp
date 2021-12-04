@@ -1,7 +1,9 @@
 #include <Objects/RotatableObject.h>
 
-RotatableObject::RotatableObject(const mtt::UID& id) :
-  Object3D(id),
+RotatableObject::RotatableObject( const QString& name,
+                                  bool canBeRenamed,
+                                  const mtt::UID& id) :
+  Object3D(name, canBeRenamed, id),
   _rotation(1, 0, 0, 0)
 {
 }

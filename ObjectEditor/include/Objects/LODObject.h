@@ -35,7 +35,9 @@ class LODObject : public mtt::SpecialGroup< DisplayedObject,
   DEFINE_EXTENSION_ACCEPT(OEVisitorExtension)
 
 public:
-  explicit LODObject(const mtt::UID& id = mtt::UID());
+  LODObject(const QString& name,
+            bool canBeRenamed,
+            const mtt::UID& id = mtt::UID());
   LODObject(const LODObject&) = delete;
   LODObject& operator = (const LODObject&) = delete;
   virtual ~LODObject() noexcept = default;

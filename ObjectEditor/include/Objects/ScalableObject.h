@@ -21,7 +21,9 @@ class ScalableObject : public MovableObject
   DEFINE_EXTENSION_ACCEPT(OEVisitorExtension)
 
 public:
-  explicit ScalableObject(const mtt::UID& id = mtt::UID());
+  ScalableObject( const QString& name,
+                  bool canBeRenamed,
+                  const mtt::UID& id = mtt::UID());
   ScalableObject(const ScalableObject&) = delete;
   ScalableObject& operator = (const ScalableObject&) = delete;
   virtual ~ScalableObject() noexcept = default;

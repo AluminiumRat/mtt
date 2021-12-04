@@ -9,7 +9,9 @@ class SkeletonObject : public ScalableObject
   DEFINE_EXTENSION_ACCEPT(OEVisitorExtension)
 
 public:
-  explicit SkeletonObject(const mtt::UID& id = mtt::UID());
+  SkeletonObject( const QString& name,
+                  bool canBeRenamed,
+                  const mtt::UID& id = mtt::UID());
   SkeletonObject(const SkeletonObject&) = delete;
   SkeletonObject& operator = (const SkeletonObject&) = delete;
   virtual ~SkeletonObject() noexcept = default;

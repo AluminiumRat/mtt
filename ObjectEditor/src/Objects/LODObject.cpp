@@ -1,7 +1,9 @@
 #include <Objects/LODObject.h>
 
-LODObject::LODObject(const mtt::UID& id) :
-  SpecialGroup(id),
+LODObject::LODObject( const QString& name,
+                      bool canBeRenamed,
+                      const mtt::UID& id) :
+  SpecialGroup(name, canBeRenamed, id),
   _minMppx(0),
   _maxMppx(FLT_MAX)
 {

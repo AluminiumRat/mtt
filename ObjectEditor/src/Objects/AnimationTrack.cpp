@@ -4,8 +4,10 @@
 
 #include <Objects/AnimationTrack.h>
 
-AnimationTrack::AnimationTrack(const mtt::UID& id) :
-  Object(id),
+AnimationTrack::AnimationTrack( const QString& name,
+                                bool canBeRenamed,
+                                const mtt::UID& id) :
+  Object(name, canBeRenamed,id),
   _enabled(true),
   _positionAnimation(glm::vec3(0)),
   _rotationAnimation(glm::quat()),

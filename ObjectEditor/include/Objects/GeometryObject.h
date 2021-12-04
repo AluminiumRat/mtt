@@ -14,7 +14,9 @@ class GeometryObject : public ScalableObject
   DEFINE_EXTENSION_ACCEPT(OEVisitorExtension)
 
 public:
-  explicit GeometryObject(const mtt::UID& id = mtt::UID());
+  GeometryObject( const QString& name,
+                  bool canBeRenamed,
+                  const mtt::UID& id = mtt::UID());
   GeometryObject(const GeometryObject&) = delete;
   GeometryObject& operator = (const GeometryObject&) = delete;
   virtual ~GeometryObject() noexcept = default;

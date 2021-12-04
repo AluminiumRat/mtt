@@ -3,8 +3,10 @@
 
 #include <Objects/AnimationObject.h>
 
-AnimationObject::AnimationObject(const mtt::UID& id) :
-  SpecialGroup(id),
+AnimationObject::AnimationObject( const QString& name,
+                                  bool canBeRenamed,
+                                  const mtt::UID& id) :
+  SpecialGroup(name, canBeRenamed, id),
   _startTime(0),
   _finishTime(0)
 {

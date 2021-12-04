@@ -1,6 +1,8 @@
 #include <Objects/GeometryGroup.h>
 
-GeometryGroup::GeometryGroup(const mtt::UID& id) :
-  SpecialGroup(id)
+GeometryGroup::GeometryGroup( const QString& name,
+                              bool canBeRenamed,
+                              const mtt::UID& id) :
+  SpecialGroup(name, canBeRenamed, id)
 {
 }

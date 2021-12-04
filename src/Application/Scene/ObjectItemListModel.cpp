@@ -32,7 +32,7 @@ void ObjectItemListModel::connectToObject(ObjectDescription& description)
   ObjectDescription* descriptionPtr = &description;
 
   description.connections.push_back(connect(description.object,
-                                            &Object::objectNameChanged,
+                                            &Object::nameChanged,
                                             [=]()
                                             {
                                               _updateName(*descriptionPtr);
@@ -152,7 +152,7 @@ QVariant ObjectItemListModel::headerData( int section,
 
 QVariant ObjectItemListModel::data(const Object& object, int role) const
 {
-  if(role == Qt::DisplayRole) return object.objectName();
+  if(role == Qt::DisplayRole) return object.name();
   return QVariant();
 }
 

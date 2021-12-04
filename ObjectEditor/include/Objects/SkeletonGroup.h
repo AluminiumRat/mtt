@@ -12,7 +12,9 @@ class SkeletonGroup : public mtt::SpecialGroup< DisplayedObject,
   DEFINE_EXTENSION_ACCEPT(OEVisitorExtension)
 
 public:
-  explicit SkeletonGroup(const mtt::UID& id = mtt::UID());
+  SkeletonGroup(const QString& name,
+                bool canBeRenamed,
+                const mtt::UID& id = mtt::UID());
   SkeletonGroup(const SkeletonGroup&) = delete;
   SkeletonGroup& operator = (const SkeletonGroup&) = delete;
   virtual ~SkeletonGroup() noexcept = default;

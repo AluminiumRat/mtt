@@ -26,7 +26,9 @@ class BoneRefObject : public mtt::Object
   DEFINE_EXTENSION_ACCEPT(OEVisitorExtension)
 
 public:
-  explicit BoneRefObject(const mtt::UID& id = mtt::UID());
+  BoneRefObject(const QString& name,
+                bool canBeRenamed,
+                const mtt::UID& id = mtt::UID());
   BoneRefObject(const BoneRefObject&) = delete;
   BoneRefObject& operator = (const BoneRefObject&) = delete;
   virtual ~BoneRefObject() noexcept = default;

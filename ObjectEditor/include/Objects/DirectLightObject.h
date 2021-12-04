@@ -59,7 +59,9 @@ class DirectLightObject : public LightObject
   DEFINE_EXTENSION_ACCEPT(OEVisitorExtension)
 
 public:
-  explicit DirectLightObject(const mtt::UID = mtt::UID());
+  DirectLightObject(const QString& name,
+                    bool canBeRenamed,
+                    const mtt::UID = mtt::UID());
   DirectLightObject(const DirectLightObject&) = delete;
   DirectLightObject& operator = (const DirectLightObject&) = delete;
   virtual ~DirectLightObject() noexcept = default;

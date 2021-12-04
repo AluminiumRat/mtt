@@ -1,6 +1,7 @@
 #include <EditorScene.h>
 
-EditorScene::EditorScene()
+EditorScene::EditorScene() :
+  _root(tr("Root"), false)
 {
   registerObject(_root);
 }

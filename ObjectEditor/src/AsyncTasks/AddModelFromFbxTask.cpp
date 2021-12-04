@@ -46,9 +46,8 @@ void AddModelFromFbxTask::finalizePart()
   std::unique_ptr<mtt::CompositeCommand> compositeCommand(
                                                   new mtt::CompositeCommand);
   
-  std::unique_ptr<LODObject> lod(new LODObject);
+  std::unique_ptr<LODObject> lod(new LODObject(fileInfo.fileName(), true));
   toSelect.push_back(lod.get());
-  lod->setObjectName(fileInfo.fileName());
   for(std::unique_ptr<MeshObject>& mesh : _data.drawables)
   {
     lod->addChild(std::move(mesh));

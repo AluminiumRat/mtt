@@ -2,8 +2,10 @@
 
 #include <Objects/BoneRefObject.h>
 
-BoneRefObject::BoneRefObject(const mtt::UID& id) :
-  Object(id),
+BoneRefObject::BoneRefObject( const QString& name,
+                              bool canBeRenamed,
+                              const mtt::UID& id) :
+  Object(name, canBeRenamed, id),
   _boneInverseMatrix(1)
 {
   _link.emplace(mtt::UID(), *this);

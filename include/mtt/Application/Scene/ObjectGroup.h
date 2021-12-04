@@ -11,7 +11,7 @@ namespace mtt
     DEFINE_VISITOR_ACCEPT
 
   public:
-    explicit ObjectGroup(const UID& id = UID());
+    ObjectGroup(const QString& name, bool canBeRenamed, const UID& id = UID());
     ObjectGroup(const ObjectGroup&) = delete;
     ObjectGroup& operator = (const ObjectGroup&) = delete;
     virtual ~ObjectGroup() noexcept = default;

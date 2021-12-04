@@ -1,7 +1,9 @@
 #include <Objects/CubemapObject.h>
 
-CubemapObject::CubemapObject(const mtt::UID& id) :
-  Object(id)
+CubemapObject::CubemapObject( const QString& name,
+                              bool canBeRenamed,
+                              const mtt::UID& id) :
+  Object(name, canBeRenamed, id)
 {
 }
 

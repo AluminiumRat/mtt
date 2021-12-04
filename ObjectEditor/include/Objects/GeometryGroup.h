@@ -12,7 +12,9 @@ class GeometryGroup : public mtt::SpecialGroup< DisplayedObject,
   DEFINE_EXTENSION_ACCEPT(OEVisitorExtension)
 
 public:
-  explicit GeometryGroup(const mtt::UID& id = mtt::UID());
+  GeometryGroup(const QString& name,
+                bool canBeRenamed,
+                const mtt::UID& id = mtt::UID());
   GeometryGroup(const GeometryGroup&) = delete;
   GeometryGroup& operator = (const GeometryGroup&) = delete;
   virtual ~GeometryGroup() noexcept = default;

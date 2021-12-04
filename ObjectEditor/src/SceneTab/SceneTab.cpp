@@ -502,11 +502,11 @@ struct PropertiesWidgetBuilder : public OEVisitor
   {
     mtt::StringPropertyWidget<mtt::Object>* nameWidget =
                   new mtt::StringPropertyWidget<mtt::Object>(
-                                                object,
-                                                &mtt::Object::objectName,
-                                                &mtt::Object::setObjectName,
-                                                &mtt::Object::objectNameChanged,
-                                                editCommonData->undoStack());
+                                                  object,
+                                                  &mtt::Object::name,
+                                                  &mtt::Object::tryRename,
+                                                  &mtt::Object::nameChanged,
+                                                  editCommonData->undoStack());
     layout->addRow(QObject::tr("Name"), nameWidget);
     OEVisitor::visit(object);
   }

@@ -51,7 +51,7 @@ void ObjectItemTreeModel::connectToObject(ObjectDescription& description)
   ObjectDescription* descriptionPtr = &description;
 
   description.connections.push_back(connect(description.object,
-                                            &Object::objectNameChanged,
+                                            &Object::nameChanged,
                                             [=]()
                                             {
                                               _updateName(*descriptionPtr);
@@ -169,7 +169,7 @@ QVariant ObjectItemTreeModel::data(const QModelIndex& index, int role) const
 
 QVariant ObjectItemTreeModel::data(const Object& object, int role) const
 {
-  if(role == Qt::DisplayRole) return object.objectName();
+  if(role == Qt::DisplayRole) return object.name();
   return QVariant();
 }
 

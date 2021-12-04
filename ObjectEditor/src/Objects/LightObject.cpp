@@ -1,7 +1,9 @@
 #include <Objects/LightObject.h>
 
-LightObject::LightObject(const mtt::UID theId) :
-  EnvironmentObject(theId),
+LightObject::LightObject( const QString& name,
+                          bool canBeRenamed,
+                          const mtt::UID theId) :
+  EnvironmentObject(name, canBeRenamed, theId),
   _enabled(true),
   _distance(50),
   _color(1, 1, 1),

@@ -51,7 +51,9 @@ class LightObject : public EnvironmentObject
   DEFINE_EXTENSION_ACCEPT(OEVisitorExtension)
 
 public:
-  explicit LightObject(const mtt::UID = mtt::UID());
+  LightObject(const QString& name,
+              bool canBeRenamed,
+              const mtt::UID = mtt::UID());
   LightObject(const LightObject&) = delete;
   LightObject& operator = (const LightObject&) = delete;
   virtual ~LightObject() noexcept = default;

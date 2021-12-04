@@ -40,7 +40,9 @@ public:
   using ScaleKeypoint = mtt::ValueKeypoint<glm::vec3, TimeType>;
 
 public:
-  explicit AnimationTrack(const mtt::UID& id = mtt::UID());
+  AnimationTrack( const QString& name,
+                  bool canBeRenamed,
+                  const mtt::UID& id = mtt::UID());
   AnimationTrack(const AnimationTrack&) = delete;
   AnimationTrack& operator = (const AnimationTrack&) = delete;
   virtual ~AnimationTrack() noexcept = default;

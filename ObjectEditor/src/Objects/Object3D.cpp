@@ -5,8 +5,10 @@
 #include <Objects/Object3D.h>
 #include <Objects/OEVisitor.h>
 
-Object3D::Object3D(const mtt::UID& id) :
-  DisplayedObject(id),
+Object3D::Object3D( const QString& name,
+                    bool canBeRenamed,
+                    const mtt::UID& id) :
+  DisplayedObject(name, canBeRenamed, id),
   _coordSystemTransform(1),
   _localTransform(1),
   _localToWorldTransform(1)

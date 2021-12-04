@@ -4,8 +4,10 @@
 #include <Objects/OEVisitor.h>
 #include <Objects/SkeletonObject.h>
 
-SkeletonObject::SkeletonObject(const mtt::UID& id) :
-  ScalableObject(id)
+SkeletonObject::SkeletonObject( const QString& name,
+                                bool canBeRenamed,
+                                const mtt::UID& id) :
+  ScalableObject(name, canBeRenamed, id)
 {
 }
 
