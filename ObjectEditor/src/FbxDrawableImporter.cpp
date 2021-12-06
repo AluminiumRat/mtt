@@ -133,7 +133,7 @@ void FbxDrawableImporter::_resolveBoneLinks()
       SkeletonObject* skeleton = iBone->second;
 
       std::unique_ptr<BoneRefObject> newRef(
-                              new BoneRefObject(skeleton->objectName(), true));
+                              new BoneRefObject(skeleton->name(), true));
       newRef->setBoneInverseMatrix(bone.toBone);
       newRef->setBone(skeleton);
 
