@@ -86,8 +86,8 @@ void ObjectItemTreeModel::_onChildAdded(ObjectDescription& groupDescription,
   try
   {
     std::unique_ptr<ObjectDescription> object = _buildDescription(
-                                                              child,
-                                                              &groupDescription);
+                                                            child,
+                                                            &groupDescription);
     QModelIndex groupIndex = buildIndex(groupDescription);
     beginInsertRows(groupIndex,
                     int(groupDescription.childs.size()),

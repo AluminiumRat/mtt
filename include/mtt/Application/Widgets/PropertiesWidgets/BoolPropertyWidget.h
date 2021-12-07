@@ -2,10 +2,7 @@
 
 #include <QtWidgets/QCheckBox>
 
-#include <mtt/Application/EditCommands/SetPropertyCommand.h>
-#include <mtt/Application/EditCommands/UndoStack.h>
-#include <mtt/Utilities/Abort.h>
-#include <mtt/Utilities/ScopedSetter.h>
+#include <mtt/Application/Widgets/PropertiesWidgets/BoolCheckboxConnection.h>
 
 namespace mtt
 {
@@ -28,16 +25,8 @@ namespace mtt
     virtual ~BoolPropertyWidget() noexcept = default;
   
   private:
-    inline void updateProperty() noexcept;
-    inline void updateWidget() noexcept;
-  
-  private:
-    ObjectClass& _object;
-    Getter _getter;
-    Setter _setter;
-
-    UndoStack& _undoStack;
-    bool _skipUpdate;
+    using Connection = BoolCheckboxConnection<ObjectClass>;
+    Connection _connection;
   };
 
   template<typename ObjectClass>
@@ -48,66 +37,7 @@ namespace mtt
                                                         Setter setter,
                                                         Signal signal,
                                                         UndoStack& undoStack) :
-    _object(object),
-    _getter(getter),
-    _setter(setter),
-    _undoStack(undoStack),
-    _skipUpdate(false)
+    _connection(*this, object, getter, setter, signal, undoStack)
   {
-    connect(this,
-            &QCheckBox::clicked,
-            this,
-            &BoolPropertyWidget::updateProperty,
-            Qt::DirectConnection);
-
-    connect(&_object,
-            signal,
-            this,
-            &BoolPropertyWidget::updateWidget,
-            Qt::DirectConnection);
-
-    updateWidget();
-  }
-
-  template<typename ObjectClass>
-  inline void BoolPropertyWidget<ObjectClass>::updateProperty() noexcept
-  {
-    if(_skipUpdate) return;
-    ScopedTrueSetter skipper(_skipUpdate);
-
-    try
-    {
-      bool newValue = isChecked();
-      if ((_object.*_getter)() == newValue) return;
-
-      using Command = SetPropertyCommand< ObjectClass,
-                                          bool,
-                                          Setter>;
-      std::unique_ptr<Command> command(new Command( _object,
-                                                    _setter,
-                                                    (_object.*_getter)(),
-                                                    newValue));
-      _undoStack.addAndMake(std::move(command));
-    }
-    catch(...)
-    {
-      Abort("BoolPropertyWidget::updateProperty: unable to update property.");
-    }
-  }
-
-  template<typename ObjectClass>
-  inline void BoolPropertyWidget<ObjectClass>::updateWidget() noexcept
-  {
-    if (_skipUpdate) return;
-    ScopedTrueSetter skipper(_skipUpdate);
-
-    try
-    {
-      setChecked((_object.*_getter)());
-    }
-    catch (...)
-    {
-      Abort("BoolPropertyWidget::updateWidget: unable to update widget.");
-    }
   }
 }

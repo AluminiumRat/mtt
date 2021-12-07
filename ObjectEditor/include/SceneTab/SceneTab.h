@@ -38,5 +38,5 @@ private:
   std::optional<EditorObjectsItemModel> _itemModel;
   QSortFilterProxyModel _sortModel;
 
-  QVBoxLayout* _propertiesPlace;
+  QVBoxLayout* _widgetsPlace;
 };
