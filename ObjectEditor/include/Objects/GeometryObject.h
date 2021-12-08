@@ -1,7 +1,5 @@
 #pragma once
 
-#include <optional>
-
 #include <mtt/Application/Scene/ObjectLink.h>
 
 #include <Objects/ScalableObject.h>
@@ -40,17 +38,16 @@ private:
                                         GeometryObject,
                                         &GeometryObject::_connectSkeleton,
                                         &GeometryObject::_disconnectSkeleton>;
-  std::optional<SkeletonLink> _skeletonLink;
-  SkeletonObject* _skeleton;
+  SkeletonLink _skeletonLink;
 };
 
 inline const mtt::ObjectRef<SkeletonObject>&
                                   GeometryObject::skeletonRef() const noexcept
 {
-  return *_skeletonLink;
+  return _skeletonLink;
 }
 
 inline SkeletonObject* GeometryObject::skeleton() const noexcept
 {
-  return _skeleton;
+  return _skeletonLink.get();
 }

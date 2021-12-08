@@ -14,9 +14,8 @@ AnimationTrack::AnimationTrack( const QString& name,
   _scaleAnimation(glm::vec3(1)),
   _startTime(0),
   _finishTime(0),
-  _skeleton(nullptr)
+  _skeletonLink(*this)
 {
-  _skeletonLink.emplace(mtt::UID(), *this);
 }
 
 void AnimationTrack::setEnabled(bool newValue)
@@ -73,13 +72,13 @@ void AnimationTrack::setSkeletonId(const mtt::UID& id)
 {
   try
   {
-    _skeletonLink.emplace(id, *this);
+    _skeletonLink.setReferencedId(id);
   }
   catch(...)
   {
     try
     {
-      _skeletonLink.emplace(mtt::UID(), *this);
+      _skeletonLink.setReferencedId(mtt::UID());
     }
     catch(...)
     {
@@ -91,13 +90,11 @@ void AnimationTrack::setSkeletonId(const mtt::UID& id)
 
 void AnimationTrack::_connectSkeleton(SkeletonObject& skeleton)
 {
-  _skeleton = &skeleton;
   emit skeletonRefChanged(&skeleton);
 }
 
 void AnimationTrack::_disconnectSkeleton(SkeletonObject& skeleton) noexcept
 {
-  _skeleton = nullptr;
   emit skeletonRefChanged(nullptr);
 }
 

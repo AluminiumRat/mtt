@@ -1,7 +1,5 @@
 #pragma once
 
-#include <optional>
-
 #include <glm/mat4x4.hpp>
 
 #include <mtt/Application/Scene/ObjectLink.h>
@@ -56,8 +54,7 @@ private:
                                     BoneRefObject,
                                     &BoneRefObject::_connectBone,
                                     &BoneRefObject::_disconnectBone>;
-  std::optional<BoneLink> _link;
-  SkeletonObject* _bone;
+  BoneLink _link;
 
   glm::mat4 _boneInverseMatrix;
 };
@@ -65,12 +62,12 @@ private:
 inline const mtt::ObjectRef<SkeletonObject>&
                                         BoneRefObject::boneRef() const noexcept
 {
-  return *_link;
+  return _link;
 }
 
 inline SkeletonObject* BoneRefObject::bone() const noexcept
 {
-  return _bone;
+  return _link.get();
 }
 
 inline const glm::mat4& BoneRefObject::boneInverseMatrix() const noexcept

@@ -6,14 +6,13 @@ MeshObject::MeshObject( const QString& name,
                         bool canBeRenamed,
                         const mtt::UID& theId) :
   GeometryObject(name, canBeRenamed, theId),
-  _material(nullptr),
+  _materialLink(*this),
   _boneRefs(nullptr)
 {
   setBoneRefs(std::make_unique<BoneRefBatch>(
                                 std::vector<std::unique_ptr<BoneRefObject>>(),
                                 tr("Bone references"),
                                 false));
-  _materialLink.emplace(mtt::UID(), *this);
 }
 
 void MeshObject::setGeometry(mtt::CommonMeshGeometry&& newGeometry) noexcept
@@ -45,22 +44,20 @@ void MeshObject::setMaterialId(const mtt::UID& id)
 {
   try
   {
-    _materialLink.emplace(id, *this);
+    _materialLink.setReferencedId(id);
   }
   catch(...)
   {
-    mtt::Abort("MeshObject::setMaterialId: unable to emplace material link");
+    mtt::Abort("MeshObject::setMaterialId: unable to set material link");
   }
 }
 
 void MeshObject::_connectMaterial(MaterialObject& material)
 {
-  _material = &material;
   emit materialRefChanged(&material);
 }
 
 void MeshObject::_disconnectMaterial(MaterialObject& material) noexcept
 {
-  _material = nullptr;
   emit materialRefChanged(nullptr);
 }

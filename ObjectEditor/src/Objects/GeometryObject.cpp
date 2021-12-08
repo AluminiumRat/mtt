@@ -6,9 +6,8 @@ GeometryObject::GeometryObject( const QString& name,
                                 bool canBeRenamed,
                                 const mtt::UID& id) :
   ScalableObject(name, canBeRenamed, id),
-  _skeleton(nullptr)
+  _skeletonLink(*this)
 {
-  _skeletonLink.emplace(mtt::UID(), *this);
 }
 
 void GeometryObject::setSkeleton(SkeletonObject* skeleton)
@@ -21,13 +20,13 @@ void GeometryObject::setSkeletonId(const mtt::UID& id)
 {
   try
   {
-    _skeletonLink.emplace(id, *this);
+    _skeletonLink.setReferencedId(id);
   }
   catch(...)
   {
     try
     {
-      _skeletonLink.emplace(mtt::UID(), *this);
+      _skeletonLink.setReferencedId(mtt::UID());
     }
     catch(...)
     {
@@ -39,7 +38,6 @@ void GeometryObject::setSkeletonId(const mtt::UID& id)
 
 void GeometryObject::_connectSkeleton(SkeletonObject& skeleton)
 {
-  _skeleton = &skeleton;
   connect(&skeleton,
           &SkeletonObject::transformChanged,
           this,
@@ -51,7 +49,6 @@ void GeometryObject::_connectSkeleton(SkeletonObject& skeleton)
 
 void GeometryObject::_disconnectSkeleton(SkeletonObject& skeleton) noexcept
 {
-  _skeleton = nullptr;
   disconnect( &skeleton,
               &SkeletonObject::transformChanged,
               this,

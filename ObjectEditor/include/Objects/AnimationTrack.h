@@ -1,7 +1,6 @@
 #pragma once
 
 #include <chrono>
-#include <optional>
 #include <memory>
 
 #include <glm/gtc/quaternion.hpp>
@@ -123,8 +122,7 @@ private:
                                         AnimationTrack,
                                         &AnimationTrack::_connectSkeleton,
                                         &AnimationTrack::_disconnectSkeleton>;
-  std::optional<SkeletonLink> _skeletonLink;
-  SkeletonObject* _skeleton;
+  SkeletonLink _skeletonLink;
 };
 
 inline bool AnimationTrack::enabled() const noexcept
@@ -238,10 +236,10 @@ inline AnimationTrack::TimeType AnimationTrack::duration() const noexcept
 inline const mtt::ObjectRef<SkeletonObject>&
                                   AnimationTrack::skeletonRef() const noexcept
 {
-  return *_skeletonLink;
+  return _skeletonLink;
 }
 
 inline SkeletonObject* AnimationTrack::skeleton() const noexcept
 {
-  return _skeleton;
+  return _skeletonLink.get();
 }

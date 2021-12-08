@@ -2,9 +2,9 @@
 
 using namespace mtt;
 
-ObjectRefBase::ObjectRefBase(const UID& referencedId) :
+ObjectRefBase::ObjectRefBase() :
   _referencedPtr(nullptr),
-  _referencedId(referencedId)
+  _referencedId(UID())
 {
 }
 
@@ -24,5 +24,6 @@ void ObjectRefBase::setReferencedPtr(Object* referenced)
   catch(...)
   {
     _referencedPtr = nullptr;
+    throw;
   }
 }

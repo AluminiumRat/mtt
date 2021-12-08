@@ -1,5 +1,6 @@
 #pragma once
 
+#include <mtt/Application/Scene/ObjectLink.h>
 #include <mtt/Utilities/CommonMeshGeometry.h>
 
 #include <Objects/BoneRefBatch.h>
@@ -51,8 +52,7 @@ private:
                                         MeshObject,
                                         &MeshObject::_connectMaterial,
                                         &MeshObject::_disconnectMaterial>;
-  std::optional<MaterialLink> _materialLink;
-  MaterialObject* _material;
+  MaterialLink _materialLink;
 
   BoneRefBatch* _boneRefs;
 };
@@ -75,10 +75,10 @@ inline const BoneRefBatch& MeshObject::boneRefs() const noexcept
 inline const mtt::ObjectRef<MaterialObject>&
                                       MeshObject::materialRef() const noexcept
 {
-  return *_materialLink;
+  return _materialLink;
 }
 
 inline MaterialObject* MeshObject::material() const noexcept
 {
-  return _material;
+  return _materialLink.get();
 }
