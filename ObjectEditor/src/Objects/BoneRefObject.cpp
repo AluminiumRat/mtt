@@ -6,6 +6,7 @@ BoneRefObject::BoneRefObject( const QString& name,
                               bool canBeRenamed,
                               const mtt::UID& id) :
   Object(name, canBeRenamed, id),
+  _bone(nullptr),
   _boneInverseMatrix(1)
 {
   _link.emplace(mtt::UID(), *this);
@@ -39,11 +40,13 @@ void BoneRefObject::setBoneId(const mtt::UID& id)
 
 void BoneRefObject::_connectBone(SkeletonObject& bone)
 {
+  _bone = &bone;
   emit boneRefChanged(&bone);
 }
 
 void BoneRefObject::_disconnectBone(SkeletonObject& bone) noexcept
 {
+  _bone = nullptr;
   emit boneRefChanged(nullptr);
 }
 

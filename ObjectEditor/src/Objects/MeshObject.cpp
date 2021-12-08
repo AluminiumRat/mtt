@@ -6,6 +6,7 @@ MeshObject::MeshObject( const QString& name,
                         bool canBeRenamed,
                         const mtt::UID& theId) :
   GeometryObject(name, canBeRenamed, theId),
+  _material(nullptr),
   _boneRefs(nullptr)
 {
   setBoneRefs(std::make_unique<BoneRefBatch>(
@@ -54,10 +55,12 @@ void MeshObject::setMaterialId(const mtt::UID& id)
 
 void MeshObject::_connectMaterial(MaterialObject& material)
 {
+  _material = &material;
   emit materialRefChanged(&material);
 }
 
 void MeshObject::_disconnectMaterial(MaterialObject& material) noexcept
 {
+  _material = nullptr;
   emit materialRefChanged(nullptr);
 }

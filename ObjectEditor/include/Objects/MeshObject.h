@@ -52,6 +52,7 @@ private:
                                         &MeshObject::_connectMaterial,
                                         &MeshObject::_disconnectMaterial>;
   std::optional<MaterialLink> _materialLink;
+  MaterialObject* _material;
 
   BoneRefBatch* _boneRefs;
 };
@@ -79,5 +80,5 @@ inline const mtt::ObjectRef<MaterialObject>&
 
 inline MaterialObject* MeshObject::material() const noexcept
 {
-  return _materialLink->get();
+  return _material;
 }

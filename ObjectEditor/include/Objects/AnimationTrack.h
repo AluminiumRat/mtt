@@ -124,6 +124,7 @@ private:
                                         &AnimationTrack::_connectSkeleton,
                                         &AnimationTrack::_disconnectSkeleton>;
   std::optional<SkeletonLink> _skeletonLink;
+  SkeletonObject* _skeleton;
 };
 
 inline bool AnimationTrack::enabled() const noexcept
@@ -242,5 +243,5 @@ inline const mtt::ObjectRef<SkeletonObject>&
 
 inline SkeletonObject* AnimationTrack::skeleton() const noexcept
 {
-  return _skeletonLink->get();
+  return _skeleton;
 }

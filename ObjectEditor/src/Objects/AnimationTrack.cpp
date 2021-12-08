@@ -13,7 +13,8 @@ AnimationTrack::AnimationTrack( const QString& name,
   _rotationAnimation(glm::quat()),
   _scaleAnimation(glm::vec3(1)),
   _startTime(0),
-  _finishTime(0)
+  _finishTime(0),
+  _skeleton(nullptr)
 {
   _skeletonLink.emplace(mtt::UID(), *this);
 }
@@ -90,11 +91,13 @@ void AnimationTrack::setSkeletonId(const mtt::UID& id)
 
 void AnimationTrack::_connectSkeleton(SkeletonObject& skeleton)
 {
+  _skeleton = &skeleton;
   emit skeletonRefChanged(&skeleton);
 }
 
 void AnimationTrack::_disconnectSkeleton(SkeletonObject& skeleton) noexcept
 {
+  _skeleton = nullptr;
   emit skeletonRefChanged(nullptr);
 }
 

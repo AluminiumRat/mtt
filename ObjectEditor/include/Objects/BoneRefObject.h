@@ -57,6 +57,7 @@ private:
                                     &BoneRefObject::_connectBone,
                                     &BoneRefObject::_disconnectBone>;
   std::optional<BoneLink> _link;
+  SkeletonObject* _bone;
 
   glm::mat4 _boneInverseMatrix;
 };
@@ -69,7 +70,7 @@ inline const mtt::ObjectRef<SkeletonObject>&
 
 inline SkeletonObject* BoneRefObject::bone() const noexcept
 {
-  return _link->get();
+  return _bone;
 }
 
 inline const glm::mat4& BoneRefObject::boneInverseMatrix() const noexcept

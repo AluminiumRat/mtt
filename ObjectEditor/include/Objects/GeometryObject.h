@@ -41,6 +41,7 @@ private:
                                         &GeometryObject::_connectSkeleton,
                                         &GeometryObject::_disconnectSkeleton>;
   std::optional<SkeletonLink> _skeletonLink;
+  SkeletonObject* _skeleton;
 };
 
 inline const mtt::ObjectRef<SkeletonObject>&
@@ -51,5 +52,5 @@ inline const mtt::ObjectRef<SkeletonObject>&
 
 inline SkeletonObject* GeometryObject::skeleton() const noexcept
 {
-  return _skeletonLink->get();
+  return _skeleton;
 }
