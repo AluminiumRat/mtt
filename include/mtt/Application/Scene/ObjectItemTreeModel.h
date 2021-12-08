@@ -81,6 +81,7 @@ namespace mtt
     virtual void connectToObject(ObjectDescription& description);
 
   private:
+    void _initIfNeeded() const noexcept;
     std::unique_ptr<ObjectDescription> _buildDescription(
                                                     Object& object,
                                                     ObjectDescription* parent);

@@ -68,12 +68,16 @@ namespace mtt
     virtual void connectToObject(ObjectDescription& description);
 
   private:
+    void _initIfNeeded() const noexcept;
+    void _init();
     void _updateName(ObjectDescription& description) noexcept;
     void _addItems(Object& object) noexcept;
     void _removeItems(Object& object) noexcept;
 
   private:
     Object& _rootObject;
+    bool _initialized;
+
     using DescriptionsMap = std::map<UID, ObjectDescription*>;
     DescriptionsMap _descriptionsMap;
 

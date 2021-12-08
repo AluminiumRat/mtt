@@ -5,15 +5,43 @@
 using namespace mtt;
 
 ObjectItemListModel::ObjectItemListModel(Object& rootObject) :
-  _rootObject(rootObject)
+  _rootObject(rootObject),
+  _initialized(false)
 {
-  connect(&rootObject,
+}
+
+void ObjectItemListModel::_initIfNeeded() const noexcept
+{
+  if(!_initialized)
+  {
+    try
+    {
+      ObjectItemListModel* model = const_cast<ObjectItemListModel*>(this);
+      model->_init();
+    }
+    catch (std::exception& error)
+    {
+      Log() << error.what();
+      Abort("ObjectItemListModel::_initIfNeeded(): unable to initialize.");
+    }
+    catch (...)
+    {
+      Abort("ObjectItemListModel::_initIfNeeded(): unable to initialize.");
+    }
+  }
+}
+
+void ObjectItemListModel::_init()
+{
+  _initialized = true;
+
+  connect(&_rootObject,
           &Object::subobjectAdded,
           this,
           &ObjectItemListModel::_addItems,
           Qt::DirectConnection);
 
-  connect(&rootObject,
+  connect(&_rootObject,
           &Object::subobjectRemoved,
           this,
           &ObjectItemListModel::_removeItems,
@@ -160,6 +188,7 @@ QModelIndex ObjectItemListModel::index( int row,
                                         int column,
                                         const QModelIndex& parent) const
 {
+  _initIfNeeded();
   if(!hasIndex(row, column, parent)) return QModelIndex();
   if(column != 0) return QModelIndex();
   if(parent.isValid()) return QModelIndex();
@@ -176,12 +205,14 @@ QModelIndex ObjectItemListModel::parent(const QModelIndex& index) const
 
 int ObjectItemListModel::rowCount(const QModelIndex& parent) const
 {
+  _initIfNeeded();
   if(parent.isValid()) return 0;
   else return int(_descriptions.size());
 }
 
 QModelIndex ObjectItemListModel::getIndex(const Object& object) const noexcept
 {
+  _initIfNeeded();
   DescriptionsMap::const_iterator iDescrition =
                                             _descriptionsMap.find(object.id());
   if(iDescrition == _descriptionsMap.end()) Abort("ObjectItemListModel::getIndex: objects description is not found.");

@@ -17,7 +17,6 @@ ObjectItemTreeModel::ObjectItemTreeModel( Object& rootObject,
   _rootObject(rootObject),
   _undoStack(undoStack)
 {
-  _rootDescription = std::move(_buildDescription(_rootObject, nullptr));
 }
 
 ObjectItemTreeModel::~ObjectItemTreeModel() noexcept
@@ -146,10 +145,34 @@ QModelIndex ObjectItemTreeModel::buildIndex(
   Abort("ObjectItemTreeModel::buildIndex: child description is not found.");
 }
 
+void ObjectItemTreeModel::_initIfNeeded() const noexcept
+{
+  if (_rootDescription == nullptr)
+  {
+    try
+    {
+      ObjectItemTreeModel* model = const_cast<ObjectItemTreeModel*>(this);
+      model->_rootDescription = std::move(
+                                  model->_buildDescription( model->_rootObject,
+                                                            nullptr));
+    }
+    catch (std::exception& error)
+    {
+      Log() << error.what();
+      Abort("ObjectItemTreeModel::_initIfNeeded(): unable to initialize.");
+    }
+    catch (...)
+    {
+      Abort("ObjectItemTreeModel::_initIfNeeded(): unable to initialize.");
+    }
+  }
+}
+
 ObjectItemTreeModel::ObjectDescription&
                         ObjectItemTreeModel::getDescription(
                                         const QModelIndex& index) const noexcept
 {
+  _initIfNeeded();
   if (!index.isValid()) return *_rootDescription;
   if (index.internalPointer() == nullptr) Abort("ObjectItemTreeModel::getDescription: internal pointer is null.");
   return *static_cast<ObjectDescription*>(index.internalPointer());
@@ -224,6 +247,7 @@ int ObjectItemTreeModel::rowCount(const QModelIndex& parent) const
 
 QModelIndex ObjectItemTreeModel::getIndex(const Object& object) const noexcept
 {
+  _initIfNeeded();
   DescriptionsMap::const_iterator iDescrition =
                                             _descriptionsMap.find(object.id());
   if(iDescrition == _descriptionsMap.end()) Abort("ObjectItemTreeModel::getIndex: objects description is not found.");
@@ -300,6 +324,8 @@ bool ObjectItemTreeModel::dropMimeData( const QMimeData* data,
 {
   if (action == Qt::IgnoreAction) return true;
   if (action != Qt::MoveAction) return false;
+
+  _initIfNeeded();
 
   Object& targetGroup = getObject(parent);
 
