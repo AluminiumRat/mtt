@@ -17,7 +17,7 @@ void ScalableObject::setScale(const glm::vec3& newValue) noexcept
 
   updateLocalTransform();
 
-  emit positionChanged(_scale);
+  emit scaleChanged(_scale);
 }
 
 void ScalableObject::updateLocalTransform() noexcept
