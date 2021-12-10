@@ -19,7 +19,7 @@ IconDrawableNode::IconDrawableNode( const QString& imageFilename,
                           std::make_unique<mtt::UidMeshTechnique>(
                                             VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
                                             true,
-                                            false));
+                                            true));
 
   EditorApplication& application = EditorApplication::instance();
   mtt::LogicalDevice& device = application.displayDevice();
