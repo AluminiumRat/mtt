@@ -28,6 +28,7 @@ private:
   void _deleteObject() noexcept;
   void _addBone() noexcept;
   void _addLOD() noexcept;
+  void _addMaterial() noexcept;
   void _addModelFromBlender() noexcept;
   void _addModelFrom3DMax() noexcept;
   void _addModelFromObj() noexcept;

@@ -12,6 +12,7 @@
 #include <Objects/AmbientLightObject.h>
 #include <Objects/DirectLightObject.h>
 #include <Objects/LODObject.h>
+#include <Objects/MaterialObject.h>
 #include <Objects/SkeletonGroup.h>
 #include <Objects/SkeletonObject.h>
 #include <EditMenu.h>
@@ -66,6 +67,12 @@ void EditMenu::setupUI()
           &QAction::triggered,
           this,
           &EditMenu::_addLOD,
+          Qt::DirectConnection);
+
+  connect(_ui.actionAdd_material,
+          &QAction::triggered,
+          this,
+          &EditMenu::_addMaterial,
           Qt::DirectConnection);
 
   connect(_ui.actionAdd_model_from_Blender,
@@ -255,6 +262,38 @@ void EditMenu::_addLOD() noexcept
   {
     QMessageBox::critical(&_window,
                           tr("Unable to add a LOD object"),
+                          tr("Unknown error"));
+  }
+}
+
+void EditMenu::_addMaterial() noexcept
+{
+  try
+  {
+    EditorScene* scene = _commonData.scene();
+    if(scene == nullptr) return;
+
+    std::unique_ptr<MaterialObject> newObject(
+                                      new MaterialObject(tr("Material"), true));
+    MaterialObject* objectPtr = newObject.get();
+
+    std::unique_ptr<mtt::AddObjectCommand> command(
+                                new mtt::AddObjectCommand(
+                                              std::move(newObject),
+                                              scene->root().materialsGroup()));
+    _commonData.undoStack().addAndMake(std::move(command));
+    _commonData.selectObjects({ objectPtr });
+  }
+  catch(std::exception& error)
+  {
+    QMessageBox::critical(&_window,
+                          tr("Unable to add material"),
+                          error.what());
+  }
+  catch(...)
+  {
+    QMessageBox::critical(&_window,
+                          tr("Unable to add material"),
                           tr("Unknown error"));
   }
 }

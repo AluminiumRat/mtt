@@ -37,9 +37,12 @@
     <addaction name="separator"/>
     <addaction name="actionAdd_bone"/>
     <addaction name="actionAdd_LOD"/>
+    <addaction name="actionAdd_material"/>
+    <addaction name="separator"/>
     <addaction name="actionAdd_model_from_Blender"/>
     <addaction name="actionAdd_model_from_3DMax"/>
     <addaction name="actionAdd_model_from_obj"/>
+    <addaction name="separator"/>
     <addaction name="actionAdd_animation_from_fbx"/>
     <addaction name="separator"/>
     <addaction name="actionAdd_ambient_light"/>
@@ -188,6 +191,11 @@
   <action name="actionAdd_model_from_obj">
    <property name="text">
     <string>Add model from obj</string>
+   </property>
+  </action>
+  <action name="actionAdd_material">
+   <property name="text">
+    <string>Add material</string>
    </property>
   </action>
  </widget>
