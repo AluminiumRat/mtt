@@ -14,6 +14,7 @@ MainWindow::MainWindow() :
   _sceneRenderObserver(_commonEditData),
   _sceneTab(_commonEditData),
   _renderWidget(_commonEditData),
+  _fileMenu(*this, *_ui, _commonEditData),
   _editMenu(*this, *_ui, _commonEditData),
   _manipulatorMenu(*this, _renderWidget.manipulatorController(), *_ui),
   _asyncTaskDialog(EditorApplication::instance().asyncTaskQueue)
@@ -41,6 +42,7 @@ MainWindow::MainWindow() :
   scene->root().environment().addChild(std::move(directLight));
   _commonEditData.setScene(std::move(scene));
 
+  _fileMenu.setupUI();
   _editMenu.setupUI();
   _manipulatorMenu.setupUI();
 

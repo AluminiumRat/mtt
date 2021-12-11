@@ -7,20 +7,23 @@ namespace mtt
   class UID
   {
   public:
+    using ValueType = uint64_t;
+
+  public:
     inline UID();
-    inline explicit UID(uint64_t value);
+    inline explicit UID(ValueType value);
     UID(const UID& other) = default;
     UID& operator = (const UID& other) = default;
     ~UID() = default;
 
     inline bool isValid() const;
-    inline uint64_t value() const;
-    inline UID mixedUID(uint64_t mixingNumber) const;
-    inline uint64_t mixedUIDValue(uint64_t mixingNumber) const;
-    static uint64_t randomValue();
+    inline ValueType value() const;
+    inline UID mixedUID(ValueType mixingNumber) const;
+    inline ValueType mixedUIDValue(ValueType mixingNumber) const;
+    static ValueType randomValue();
 
   private:
-    uint64_t _value;
+    ValueType _value;
   };
 
   inline bool operator == (const UID& uidLeft, const UID& uidRight) noexcept
@@ -58,7 +61,7 @@ namespace mtt
   {
   }
 
-  inline UID::UID(uint64_t value) :
+  inline UID::UID(ValueType value) :
     _value(value)
   {
   }
@@ -68,17 +71,17 @@ namespace mtt
     return _value != 0;
   }
 
-  inline uint64_t UID::value() const
+  inline UID::ValueType UID::value() const
   {
     return _value;
   }
 
-  inline UID UID::mixedUID(uint64_t mixingNumber) const
+  inline UID UID::mixedUID(ValueType mixingNumber) const
   {
     return UID(_value ^ mixingNumber);
   }
 
-  inline uint64_t UID::mixedUIDValue(uint64_t mixingNumber) const
+  inline UID::ValueType UID::mixedUIDValue(ValueType mixingNumber) const
   {
     return (_value ^ mixingNumber);
   }

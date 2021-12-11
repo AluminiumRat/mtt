@@ -10,6 +10,7 @@
 #include <SceneTab/SceneTab.h>
 #include <EditMenu.h>
 #include <EditorCommonData.h>
+#include <FileMenu.h>
 #include <ManipulatorMenu.h>
 
 class Ui_MainWindow;
@@ -42,6 +43,7 @@ private:
   SceneTab _sceneTab;
   EditorRenderWidget _renderWidget;
 
+  FileMenu _fileMenu;
   EditMenu _editMenu;
   ManipulatorMenu _manipulatorMenu;
 

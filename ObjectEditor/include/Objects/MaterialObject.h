@@ -99,21 +99,21 @@ class MaterialObject : public mtt::Object
               STORED true
               USER false)
 
-  Q_PROPERTY( QString opaqueTexture
-              READ opaqueTexture
-              WRITE setOpaqueTexture
-              RESET resetOpaqueTexture
-              NOTIFY opaqueTextureChanged
-              DESIGNABLE true
-              SCRIPTABLE true
-              STORED true
-              USER false)
-
   Q_PROPERTY( bool useAlphaFromAlbedoTexture
               READ useAlphaFromAlbedoTexture
               WRITE setUseAlphaFromAlbedoTexture
               RESET resetUseAlphaFromAlbedoTexture
               NOTIFY useAlphaFromAlbedoTextureChanged
+              DESIGNABLE true
+              SCRIPTABLE true
+              STORED true
+              USER false)
+
+  Q_PROPERTY( QString opaqueTexture
+              READ opaqueTexture
+              WRITE setOpaqueTexture
+              RESET resetOpaqueTexture
+              NOTIFY opaqueTextureChanged
               DESIGNABLE true
               SCRIPTABLE true
               STORED true

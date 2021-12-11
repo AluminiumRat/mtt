@@ -43,6 +43,8 @@ set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 set(HEADERS
     "include/AsyncTasks/AddAnimationFromFbxTask.h"
     "include/AsyncTasks/AddModelFromFbxTask.h"
+    "include/AsyncTasks/LoadModelTask.h"
+    "include/AsyncTasks/SaveModelTask.h"
     "include/AsyncTasks/UploadCubetextureTask.h"
     "include/AsyncTasks/UploadTextureTask.h"
 
@@ -132,6 +134,7 @@ set(HEADERS
     "include/EditorUndoStack.h"
     "include/FbxAnimationImporter.h"
     "include/FbxDrawableImporter.h"
+    "include/FileMenu.h"
     "include/MainWindow.h"
     "include/ManipulatorMenu.h"
     )
@@ -139,6 +142,8 @@ set(HEADERS
 set(SOURCES
     "src/AsyncTasks/AddAnimationFromFbxTask.cpp"
     "src/AsyncTasks/AddModelFromFbxTask.cpp"
+    "src/AsyncTasks/LoadModelTask.cpp"
+    "src/AsyncTasks/SaveModelTask.cpp"
     "src/AsyncTasks/UploadCubetextureTask.cpp"
     "src/AsyncTasks/UploadTextureTask.cpp"
 
@@ -225,6 +230,7 @@ set(SOURCES
     "src/EditorUndoStack.cpp"
     "src/FbxAnimationImporter.cpp"
     "src/FbxDrawableImporter.cpp"
+    "src/FileMenu.cpp"
     "src/MainWindow.cpp"
     "src/ManipulatorMenu.cpp"
     "src/ObjectEditor.cpp"

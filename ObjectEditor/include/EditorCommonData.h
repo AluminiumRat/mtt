@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QString>
+
 #include <mtt/Application/CommonEditData.h>
 #include <mtt/Render/RenderScene.h>
 
@@ -28,13 +30,18 @@ public:
   inline mtt::RenderScene& renderScene() noexcept;
   inline const mtt::RenderScene& renderScene() const noexcept;
 
+  inline const QString& modelFilename() const noexcept;
+  void setModelFilename(const QString& newValue) noexcept;
+
 signals:
   void sceneChanged(EditorScene* newScene);
+  void modelFilenameChanged(const QString& newValue);
 
 private:
   AnimationPlayer _animationPlayer;
   EditorUndoStack _undoStack;
   mtt::RenderScene _renderScene;
+  QString _modelFilename;
 };
 
 inline EditorScene* EditorCommonData::scene() const noexcept
@@ -60,4 +67,9 @@ inline mtt::RenderScene& EditorCommonData::renderScene() noexcept
 inline const mtt::RenderScene& EditorCommonData::renderScene() const noexcept
 {
   return _renderScene;
+}
+
+inline const QString& EditorCommonData::modelFilename() const noexcept
+{
+  return _modelFilename;
 }
