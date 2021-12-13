@@ -24,17 +24,6 @@ public:
   static const inline std::string fileHead = "MMDModelFile";
   static constexpr uint32_t fileVersion = 0;
 
-  enum class ObjectType : uint16_t
-  {
-    Object = 0,
-    Material = 1,
-    Skeleton = 2,
-    LOD = 3,
-    Mesh = 4,
-    Animation = 5,
-    AnimationTrack = 6
-  };
-
 public:
   SaveModelTask(const EditorScene& scene,
                 const QString& filename,
@@ -48,14 +37,7 @@ protected:
   virtual void finalizePart() override;
 
 private:
-  struct ObjectIdSaver;
-  struct ObjectDataSaver;
-
-private:
   void _writeHead();
-  static void _saveObject(const mtt::Object& object,
-                          mtt::DataStream& stream,
-                          const QDir& fileDirectory);
   void _writeMaterials();
   void _writeSkeletons();
   void _writeGeometry();
