@@ -7,6 +7,11 @@ struct ObjectBuilder::ObjectTypeParser : public OEVisitor
 {
   ObjectBuilder::ObjectType type = ObjectBuilder::ObjectType::Object;
 
+  virtual void visit(const AmbientLightObject& object) override
+  {
+    type = ObjectBuilder::ObjectType::AmbientLight;
+  }
+
   virtual void visit(const AnimationObject& object) override
   {
     type = ObjectBuilder::ObjectType::Animation;
@@ -15,6 +20,16 @@ struct ObjectBuilder::ObjectTypeParser : public OEVisitor
   virtual void visit(const AnimationTrack& object) override
   {
     type = ObjectBuilder::ObjectType::AnimationTrack;
+  }
+
+  virtual void visit(const BackgroundObject& object) override
+  {
+    type = ObjectBuilder::ObjectType::Background;
+  }
+
+  virtual void visit(const DirectLightObject& object) override
+  {
+    type = ObjectBuilder::ObjectType::DirectLight;
   }
 
   virtual void visit(const LODObject& object) override
@@ -48,6 +63,7 @@ ObjectBuilder::ObjectType ObjectBuilder::getObjectType(
 {
   ObjectTypeParser parser;
   parser.process(object);
+  if(parser.type == ObjectType::Object) mtt::Abort("ObjectBuilder::getObjectType: unsupported object class.");
   return parser.type;
 }
 
@@ -58,6 +74,15 @@ std::unique_ptr<mtt::Object> ObjectBuilder::_buildObject( ObjectType type,
 {
   switch (type)
   {
+    case ObjectType::AmbientLight:
+      return std::make_unique<AmbientLightObject>(name, canBeRenamed, id);
+
+    case ObjectType::Background:
+      return std::make_unique<BackgroundObject>(name, canBeRenamed, id);
+
+    case ObjectType::DirectLight:
+      return std::make_unique<DirectLightObject>(name, canBeRenamed, id);
+
     case ObjectType::Animation:
       return std::make_unique<AnimationObject>(name, canBeRenamed, id);
 

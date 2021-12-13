@@ -21,6 +21,27 @@ void ObjectSaver::saveObject( const mtt::Object& object,
   dataSaver.process(object);
 }
 
+void ObjectSaver::_writeFilename(const QString& filename)
+{
+  _stream << _fileDirectory.relativeFilePath(filename);
+}
+
+void ObjectSaver::_writeCubemapData(const CubemapObject& object)
+{
+  CubemapObject::Textures textures = object.textures();
+  for (const QString& filename : textures)
+  {
+    _writeFilename(filename);
+  }
+}
+
+void ObjectSaver::visit(const AmbientLightObject& object)
+{
+  OEVisitor::visit(object);
+  _stream << object.saturationDistance();
+  _writeCubemapData(object.ambientMap());
+}
+
 void ObjectSaver::visit(const AnimationObject& object)
 {
   OEVisitor::visit(object);
@@ -33,7 +54,7 @@ void ObjectSaver::visit(const AnimationObject& object)
 }
 
 template<typename ValueType>
-void ObjectSaver::writeKeypoint(
+void ObjectSaver::_writeKeypoint(
               mtt::ValueKeypoint<ValueType, AnimationTrack::TimeType> keypoint)
 {
   _stream << (uint32_t)keypoint.time().count();
@@ -51,7 +72,7 @@ void ObjectSaver::visit(const AnimationTrack& object)
         keypointIndex < object.positionKeypointNumber();
         keypointIndex++)
   {
-    writeKeypoint(object.positionKeypoint(keypointIndex));
+    _writeKeypoint(object.positionKeypoint(keypointIndex));
   }
 
   _stream <<(uint16_t)object.rotationKeypointNumber();
@@ -59,7 +80,7 @@ void ObjectSaver::visit(const AnimationTrack& object)
         keypointIndex < object.rotationKeypointNumber();
         keypointIndex++)
   {
-    writeKeypoint(object.rotationKeypoint(keypointIndex));
+    _writeKeypoint(object.rotationKeypoint(keypointIndex));
   }
 
   _stream <<(uint16_t)object.scaleKeypointNumber();
@@ -67,10 +88,31 @@ void ObjectSaver::visit(const AnimationTrack& object)
         keypointIndex < object.scaleKeypointNumber();
         keypointIndex++)
   {
-    writeKeypoint(object.scaleKeypoint(keypointIndex));
+    _writeKeypoint(object.scaleKeypoint(keypointIndex));
   }
   
   _stream << object.skeletonRef().referencedId();
+}
+
+void ObjectSaver::visit(const BackgroundObject& object)
+{
+  OEVisitor::visit(object);
+  _stream << object.lightEnabled();
+  _stream << object.luminance();
+  _stream << object.color();
+  _stream << object.dissolutionStartDistance();
+  _stream << object.dissolutionLength();
+  _writeCubemapData(object.cubemap());
+}
+
+void ObjectSaver::visit(const DirectLightObject& object)
+{
+  OEVisitor::visit(object);
+  _stream << object.radius();
+  _stream << object.shadowsEnabled();
+  _stream << (uint16_t)object.shadowmapSize();
+  _stream << (uint8_t)object.cascadeSize();
+  _stream << object.blurSize();
 }
 
 void ObjectSaver::visit(const DisplayedObject& object)
@@ -83,6 +125,15 @@ void ObjectSaver::visit(const GeometryObject& object)
 {
   OEVisitor::visit(object);
   _stream << object.skeletonRef().referencedId();
+}
+
+void ObjectSaver::visit(const LightObject& object)
+{
+  OEVisitor::visit(object);
+  _stream << object.enabled();
+  _stream << object.distance();
+  _stream << object.color();
+  _stream << object.baseIlluminance();
 }
 
 void ObjectSaver::visit(const LODObject& object)
@@ -99,39 +150,34 @@ void ObjectSaver::visit(const LODObject& object)
   }
 }
 
-void ObjectSaver::writeFilename(const QString& filename)
-{
-  _stream << _fileDirectory.relativeFilePath(filename);
-}
-
 void ObjectSaver::visit(const MaterialObject& object)
 {
   OEVisitor::visit(object);
     
   _stream << object.albedo();
-  writeFilename(object.albedoTexture());
+  _writeFilename(object.albedoTexture());
   _stream << object.useAlphaFromAlbedoTexture();
     
   _stream << object.roughness();
   _stream << object.specularStrength();
-  writeFilename(object.specularTexture());
+  _writeFilename(object.specularTexture());
 
   _stream << object.metallic();
     
   _stream << object.opaqueFactor();
-  writeFilename(object.opaqueTexture());
+  _writeFilename(object.opaqueTexture());
 
   _stream << object.reflectionFactor();
-  writeFilename(object.reflectionTexture());
+  _writeFilename(object.reflectionTexture());
 
   _stream << object.emissionColor();
   _stream << object.emissionFactor();
-  writeFilename(object.emissionTexture());
+  _writeFilename(object.emissionTexture());
 
-  writeFilename(object.normalTexture());
+  _writeFilename(object.normalTexture());
 }
 
-void ObjectSaver::saveGeometry(const mtt::CommonMeshGeometry& geometry)
+void ObjectSaver::_saveGeometry(const mtt::CommonMeshGeometry& geometry)
 {
   _stream << geometry.positions;
   _stream << geometry.normals;
@@ -157,7 +203,7 @@ void ObjectSaver::saveGeometry(const mtt::CommonMeshGeometry& geometry)
   _stream << geometry.lineIndices;
 }
 
-void ObjectSaver::saveBoneRefs(const BoneRefBatch& refs)
+void ObjectSaver::_saveBoneRefs(const BoneRefBatch& refs)
 {
   _stream << (uint16_t) refs.boneRefsNumber();
   for (size_t refIndex = 0; refIndex < refs.boneRefsNumber(); refIndex++)
@@ -174,8 +220,8 @@ void ObjectSaver::visit(const MeshObject& object)
   OEVisitor::visit(object);
 
   const mtt::CommonMeshGeometry& geometry = object.geometry();
-  saveGeometry(geometry);
-  saveBoneRefs(object.boneRefs());
+  _saveGeometry(geometry);
+  _saveBoneRefs(object.boneRefs());
   _stream << object.materialRef().referencedId();
 }
 

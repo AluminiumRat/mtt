@@ -24,8 +24,13 @@ public:
 private:
   void _saveModel() noexcept;
   void _saveModelAs() noexcept;
-  void _save(const QString& file) noexcept;
+  void _saveModelToFile(const QString& file) noexcept;
   void _loadModel() noexcept;
+
+  void _saveEnvironment() noexcept;
+  void _saveEnvironmentAs() noexcept;
+  void _saveEnvironmentToFile(const QString& file) noexcept;
+  void _loadEnvironment() noexcept;
 
 private:
   MainWindow& _window;

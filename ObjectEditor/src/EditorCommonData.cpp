@@ -25,5 +25,12 @@ void EditorCommonData::setModelFilename(const QString& newValue) noexcept
 {
   if(_modelFilename == newValue) return;
   _modelFilename = newValue;
-  emit modelFilenameChanged(_modelFilename);;
+  emit modelFilenameChanged(_modelFilename);
+}
+
+void EditorCommonData::setEnvironmentFilename(const QString& newValue) noexcept
+{
+  if(_environmentFilename == newValue) return;
+  _environmentFilename = newValue;
+  emit environmentFilenameChanged(_environmentFilename);
 }

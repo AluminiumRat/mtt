@@ -17,7 +17,10 @@ public:
     LOD = 3,
     Mesh = 4,
     Animation = 5,
-    AnimationTrack = 6
+    AnimationTrack = 6,
+    Background = 7,
+    AmbientLight = 8,
+    DirectLight = 9
   };
 
   static ObjectType getObjectType(const mtt::Object& object) noexcept;

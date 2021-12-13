@@ -36,9 +36,13 @@ public:
 
   inline BackgroundObject& background() noexcept;
   inline const BackgroundObject& background() const noexcept;
+  void changeBackground(std::unique_ptr<BackgroundObject> newBackground);
 
   inline EnvironmentGroup& environment() noexcept;
   inline const EnvironmentGroup& environment() const noexcept;
+
+signals:
+  void backgroundChanged(BackgroundObject& newBackground);
 
 private:
   SkeletonGroup* _skeletonGroup;

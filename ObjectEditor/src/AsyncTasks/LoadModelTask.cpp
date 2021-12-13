@@ -11,7 +11,7 @@
 LoadModelTask::LoadModelTask( EditorScene& scene,
                               const QString& filename,
                               EditorCommonData& commonData) :
-  AbstractAsyncTask("Load",
+  AbstractAsyncTask(QCoreApplication::tr("Load"),
                     mtt::AbstractAsyncTask::DEPENDENT,
                     mtt::AbstractAsyncTask::EXPLICIT),
   _scene(scene),
@@ -19,7 +19,8 @@ LoadModelTask::LoadModelTask( EditorScene& scene,
   _file(nullptr),
   _fileDirectory(QFileInfo(_filename).dir()),
   _stream(nullptr),
-  _commonData(commonData)
+  _commonData(commonData),
+  _mixUIDValue(mtt::UID::randomValue())
 {
 }
 
@@ -40,9 +41,10 @@ void LoadModelTask::_loadMaterials()
   for (; materialsNumber != 0; materialsNumber--)
   {
     _materials.push_back(
-                    ObjectLoader::loadObject<MaterialObject>( false,
+                    ObjectLoader::loadObject<MaterialObject>( true,
                                                               *_stream,
-                                                              _fileDirectory));
+                                                              _fileDirectory,
+                                                              _mixUIDValue));
   }
 }
 
@@ -52,9 +54,10 @@ void LoadModelTask::_loadSkeletons()
   for (; skeletonsNumber != 0; skeletonsNumber--)
   {
     _skeletons.push_back(
-                    ObjectLoader::loadObject<SkeletonObject>( false,
+                    ObjectLoader::loadObject<SkeletonObject>( true,
                                                               *_stream,
-                                                              _fileDirectory));
+                                                              _fileDirectory,
+                                                              _mixUIDValue));
   }
 }
 
@@ -63,9 +66,10 @@ void LoadModelTask::_loadGeometry()
   uint32_t lodsNumber = _stream->readUint32();
   for (; lodsNumber != 0; lodsNumber--)
   {
-    _lods.push_back(ObjectLoader::loadObject<LODObject>(false,
+    _lods.push_back(ObjectLoader::loadObject<LODObject>(true,
                                                         *_stream,
-                                                        _fileDirectory));
+                                                        _fileDirectory,
+                                                        _mixUIDValue));
   }
 }
 
@@ -75,9 +79,10 @@ void LoadModelTask::_loadAnimations()
   for (; animationsNumber != 0; animationsNumber--)
   {
     _animations.push_back(
-                    ObjectLoader::loadObject<AnimationObject>(false,
+                    ObjectLoader::loadObject<AnimationObject>(true,
                                                               *_stream,
-                                                              _fileDirectory));
+                                                              _fileDirectory,
+                                                              _mixUIDValue));
   }
 }
 

@@ -73,6 +73,11 @@
     <addaction name="separator"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_as"/>
+    <addaction name="separator"/>
+    <addaction name="actionLoad_environment"/>
+    <addaction name="separator"/>
+    <addaction name="actionSave_environment"/>
+    <addaction name="actionSave_environment_as"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -221,6 +226,21 @@
   <action name="actionLoad">
    <property name="text">
     <string>Load</string>
+   </property>
+  </action>
+  <action name="actionLoad_environment">
+   <property name="text">
+    <string>Load environment</string>
+   </property>
+  </action>
+  <action name="actionSave_environment">
+   <property name="text">
+    <string>Save environment</string>
+   </property>
+  </action>
+  <action name="actionSave_environment_as">
+   <property name="text">
+    <string>Save environment as ...</string>
    </property>
   </action>
  </widget>

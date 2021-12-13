@@ -48,6 +48,7 @@ private:
   mtt::DataStream* _stream;
   QDir _fileDirectory;
   EditorCommonData& _commonData;
+  mtt::UID::ValueType _mixUIDValue;
 
   std::vector<std::unique_ptr<AnimationObject>> _animations;
   std::vector<std::unique_ptr<LODObject>> _lods;

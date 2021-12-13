@@ -33,15 +33,20 @@ public:
   inline const QString& modelFilename() const noexcept;
   void setModelFilename(const QString& newValue) noexcept;
 
+  inline const QString& environmentFilename() const noexcept;
+  void setEnvironmentFilename(const QString& newValue) noexcept;
+
 signals:
   void sceneChanged(EditorScene* newScene);
   void modelFilenameChanged(const QString& newValue);
+  void environmentFilenameChanged(const QString& newValue);
 
 private:
   AnimationPlayer _animationPlayer;
   EditorUndoStack _undoStack;
   mtt::RenderScene _renderScene;
   QString _modelFilename;
+  QString _environmentFilename;
 };
 
 inline EditorScene* EditorCommonData::scene() const noexcept
@@ -72,4 +77,9 @@ inline const mtt::RenderScene& EditorCommonData::renderScene() const noexcept
 inline const QString& EditorCommonData::modelFilename() const noexcept
 {
   return _modelFilename;
+}
+
+inline const QString& EditorCommonData::environmentFilename() const noexcept
+{
+  return _environmentFilename;
 }

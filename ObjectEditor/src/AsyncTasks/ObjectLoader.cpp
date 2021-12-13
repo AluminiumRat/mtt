@@ -4,10 +4,38 @@
 #include <AsyncTasks/ObjectLoader.h>
 
 ObjectLoader::ObjectLoader( mtt::DataStream& stream,
-                            const QDir& fileDirectory) :
+                            const QDir& fileDirectory,
+                            mtt::UID::ValueType mixUIDValue) :
   _stream(stream),
-  _fileDirectory(fileDirectory)
+  _fileDirectory(fileDirectory),
+  _mixUIDValue(mixUIDValue)
 {
+}
+
+QString ObjectLoader::_loadFilename()
+{
+  QString relativePath;
+  _stream >> relativePath;
+  if(relativePath.isEmpty()) return QString();
+  QFileInfo fileInfo(_fileDirectory.absoluteFilePath(relativePath));
+  return fileInfo.canonicalFilePath();
+}
+
+void ObjectLoader::_readCubemapData(CubemapObject& object)
+{
+  CubemapObject::Textures textures;
+  for (QString& filename : textures)
+  {
+    filename = _loadFilename();
+  }
+  object.setTextures(textures);
+}
+
+void ObjectLoader::visit(AmbientLightObject& object)
+{
+  OEVisitor::visit(object);
+  object.setSaturationDistance(_stream.readFloat());
+  _readCubemapData(object.ambientMap());
 }
 
 void ObjectLoader::visit(AnimationObject& object)
@@ -16,7 +44,10 @@ void ObjectLoader::visit(AnimationObject& object)
   uint32_t childNumber = _stream.readUint32();
   for (; childNumber != 0; childNumber--)
   {
-    object.addChild(loadObject<AnimationTrack>(false, _stream, _fileDirectory));
+    object.addChild(loadObject<AnimationTrack>( false,
+                                                _stream,
+                                                _fileDirectory,
+                                                _mixUIDValue));
   }
 }
 
@@ -34,6 +65,11 @@ void ObjectLoader::_readKeypoint(
 
   uint8_t interpolation = _stream.readInt8();
   keypoint.setInterpolation(mtt::InterpolationType(interpolation));
+}
+
+mtt::UID ObjectLoader::_readUID()
+{
+  return _stream.readUID().mixedUID(_mixUIDValue);
 }
 
 void ObjectLoader::visit(AnimationTrack& object)
@@ -68,7 +104,28 @@ void ObjectLoader::visit(AnimationTrack& object)
     object.addScaleKeypoint(std::move(keypoint));
   }
 
-  object.setSkeletonId(_stream.readUID());
+  object.setSkeletonId(_readUID());
+}
+
+void ObjectLoader::visit(BackgroundObject& object)
+{
+  OEVisitor::visit(object);
+  object.setLightEnabled(_stream.readBool());
+  object.setLuminance(_stream.readFloat());
+  object.setColor(_stream.readVec3());
+  object.setDissolutionStartDistance(_stream.readFloat());
+  object.setDissolutionLength(_stream.readFloat());
+  _readCubemapData(object.cubemap());
+}
+
+void ObjectLoader::visit(DirectLightObject& object)
+{
+  OEVisitor::visit(object);
+  object.setRadius(_stream.readFloat());
+  object.setShadowsEnabled(_stream.readBool());
+  object.setShadowmapSize(_stream.readUint16());
+  object.setCascadeSize(_stream.readUint8());
+  object.setBlurSize(_stream.readFloat());
 }
 
 void ObjectLoader::visit(DisplayedObject& object)
@@ -80,7 +137,16 @@ void ObjectLoader::visit(DisplayedObject& object)
 void ObjectLoader::visit(GeometryObject& object)
 {
   OEVisitor::visit(object);
-  object.setSkeletonId(_stream.readUID());
+  object.setSkeletonId(_readUID());
+}
+
+void ObjectLoader::visit(LightObject& object)
+{
+  OEVisitor::visit(object);
+  object.setEnabled(_stream.readBool());
+  object.setDistance(_stream.readFloat());
+  object.setColor(_stream.readVec3());
+  object.setBaseIlluminance(_stream.readFloat());
 }
 
 void ObjectLoader::visit(LODObject& object)
@@ -92,17 +158,11 @@ void ObjectLoader::visit(LODObject& object)
   uint32_t childNumber = _stream.readUint32();
   for (; childNumber != 0; childNumber--)
   {
-    object.addChild(loadObject<MeshObject>(false, _stream, _fileDirectory));
+    object.addChild(loadObject<MeshObject>( false,
+                                            _stream,
+                                            _fileDirectory,
+                                            _mixUIDValue));
   }
-}
-
-QString ObjectLoader::_loadFilename()
-{
-  QString relativePath;
-  _stream >> relativePath;
-  if(relativePath.isEmpty()) return QString();
-  QFileInfo fileInfo(_fileDirectory.absoluteFilePath(relativePath));
-  return fileInfo.canonicalFilePath();
 }
 
 void ObjectLoader::visit(MaterialObject& object)
@@ -169,7 +229,7 @@ std::unique_ptr<BoneRefBatch> ObjectLoader::readBoneRefs()
     _stream >> name;
 
     std::unique_ptr<BoneRefObject> refObject(new BoneRefObject(name, true));
-    refObject->setBoneId(_stream.readUID());
+    refObject->setBoneId(_readUID());
     refObject->setBoneInverseMatrix(_stream.readMat4());
     refs.push_back(std::move(refObject));
   }
@@ -188,7 +248,7 @@ void ObjectLoader::visit(MeshObject& object)
   _readGeometry(geometry);
   object.setGeometry(std::move(geometry));
   object.setBoneRefs(readBoneRefs());
-  object.setMaterialId(_stream.readUID());
+  object.setMaterialId(_readUID());
 }
 
 void ObjectLoader::visit(MovableObject& object)
@@ -215,14 +275,18 @@ void ObjectLoader::visit(SkeletonObject& object)
   uint32_t childsNumber = _stream.readUint32();
   for (; childsNumber != 0; childsNumber--)
   {
-    object.addChild(loadObject<SkeletonObject>(false, _stream, _fileDirectory));
+    object.addChild(loadObject<SkeletonObject>( false,
+                                                _stream,
+                                                _fileDirectory,
+                                                _mixUIDValue));
   }
 }
 
 void ObjectLoader::_loadObjectData( mtt::Object& object,
                                     mtt::DataStream& stream,
-                                    const QDir& fileDirectory)
+                                    const QDir& fileDirectory,
+                                    mtt::UID::ValueType mixUIDValue)
 {
-  ObjectLoader loader(stream, fileDirectory);
+  ObjectLoader loader(stream, fileDirectory, mixUIDValue);
   loader.process(object);
 }

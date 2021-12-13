@@ -1,4 +1,7 @@
 #include <memory>
+#include <stdexcept>
+
+#include <mtt/Utilities/Abort.h>
 
 #include <Objects/RootObject.h>
 
@@ -60,4 +63,30 @@ RootObject::RootObject( const QString& name,
                                                     environmentId));
   _environment = environmentGroup.get();
   addSubobject(std::move(environmentGroup));
+}
+
+void RootObject::changeBackground(
+                                std::unique_ptr<BackgroundObject> newBackground)
+{
+  if(newBackground == nullptr) mtt::Abort("RootObject::changeBackground: newBackground is nullpt.");
+
+  std::unique_ptr<mtt::Object> oldBackgraund = removeSubobject( *_background,
+                                                                false);
+  BackgroundObject* newBackgroundPtr = newBackground.get();
+  try
+  {
+    addSubobject(std::move(newBackground));
+  }
+  catch (std::exception& error)
+  {
+    mtt::Log() << error.what();
+    mtt::Abort("RootObject::changeBackground: unable to change background.");
+  }
+  catch (...)
+  {
+    mtt::Abort("RootObject::changeBackground: unable to change background.");
+  }
+
+  _background = newBackgroundPtr;
+  emit backgroundChanged(*_background);
 }

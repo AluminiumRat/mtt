@@ -1,7 +1,9 @@
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMessageBox>
 
+#include <AsyncTasks/LoadEnvironmentTask.h>
 #include <AsyncTasks/LoadModelTask.h>
+#include <AsyncTasks/SaveEnvironmentTask.h>
 #include <AsyncTasks/SaveModelTask.h>
 #include <EditorApplication.h>
 #include <EditorCommonData.h>
@@ -38,12 +40,30 @@ void FileMenu::setupUI()
           this,
           &FileMenu::_loadModel,
           Qt::DirectConnection);
+
+  connect(_ui.actionSave_environment,
+          &QAction::triggered,
+          this,
+          &FileMenu::_saveEnvironment,
+          Qt::DirectConnection);
+
+  connect(_ui.actionSave_environment_as,
+          &QAction::triggered,
+          this,
+          &FileMenu::_saveEnvironmentAs,
+          Qt::DirectConnection);
+
+  connect(_ui.actionLoad_environment,
+          &QAction::triggered,
+          this,
+          &FileMenu::_loadEnvironment,
+          Qt::DirectConnection);
 }
 
 void FileMenu::_saveModel() noexcept
 {
   if(_commonData.modelFilename().isEmpty()) _saveModelAs();
-  else _save(_commonData.modelFilename());
+  else _saveModelToFile(_commonData.modelFilename());
 }
 
 void FileMenu::_saveModelAs() noexcept
@@ -55,7 +75,7 @@ void FileMenu::_saveModelAs() noexcept
                                                     "",
                                                     tr("mmd (*.mmd)"));
     if(fileName.isEmpty()) return;
-    _save(fileName);
+    _saveModelToFile(fileName);
   }
   catch (...)
   {
@@ -63,7 +83,7 @@ void FileMenu::_saveModelAs() noexcept
   }
 }
 
-void FileMenu::_save(const QString& file) noexcept
+void FileMenu::_saveModelToFile(const QString& file) noexcept
 {
   if (_commonData.scene() == nullptr)
   {
@@ -110,5 +130,82 @@ void FileMenu::_loadModel() noexcept
   catch (...)
   {
     QMessageBox::critical(&_window, tr("Error"), tr("Unable to load model"));
+  }
+}
+
+void FileMenu::_saveEnvironment() noexcept
+{
+  if(_commonData.environmentFilename().isEmpty()) _saveEnvironmentAs();
+  else _saveEnvironmentToFile(_commonData.environmentFilename());
+}
+
+void FileMenu::_saveEnvironmentAs() noexcept
+{
+  try
+  {
+    QString fileName = QFileDialog::getSaveFileName(&_window,
+                                                    tr("Save environment"),
+                                                    "",
+                                                    tr("enm (*.enm)"));
+    if(fileName.isEmpty()) return;
+    _saveEnvironmentToFile(fileName);
+  }
+  catch (...)
+  {
+    QMessageBox::critical(&_window, tr("Error"), tr("Unable to save model"));
+  }
+}
+
+void FileMenu::_saveEnvironmentToFile(const QString& file) noexcept
+{
+  if (_commonData.scene() == nullptr)
+  {
+    QMessageBox::critical(&_window, tr("Error"), tr("Scene is empty."));
+    return;
+  }
+
+  try
+  {
+    std::unique_ptr<SaveEnvironmentTask> task;
+    task.reset(new SaveEnvironmentTask( *_commonData.scene(),
+                                        file,
+                                        _commonData));
+    EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
+  }
+  catch (...)
+  {
+    QMessageBox::critical(&_window,
+                          tr("Error"),
+                          tr("Unable to save environment"));
+  }
+}
+
+void FileMenu::_loadEnvironment() noexcept
+{
+  if (_commonData.scene() == nullptr)
+  {
+    QMessageBox::critical(&_window, tr("Error"), tr("Scene is empty."));
+    return;
+  }
+
+  try
+  {
+    QString fileName = QFileDialog::getOpenFileName(&_window,
+                                                    tr("Load environment"),
+                                                    "",
+                                                    tr("enm (*.enm)"));
+    if(fileName.isEmpty()) return;
+
+    std::unique_ptr<LoadEnvironmentTask> task;
+    task.reset(new LoadEnvironmentTask( *_commonData.scene(),
+                                        fileName,
+                                        _commonData));
+    EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
+  }
+  catch (...)
+  {
+    QMessageBox::critical(&_window,
+                          tr("Error"),
+                          tr("Unable to load environment"));
   }
 }
