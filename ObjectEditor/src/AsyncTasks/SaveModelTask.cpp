@@ -3,7 +3,7 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QFile>
 
-#include <AsyncTasks/ObjectDataSaver.h>
+#include <AsyncTasks/ObjectSaver.h>
 #include <AsyncTasks/SaveModelTask.h>
 #include <EditorCommonData.h>
 #include <EditorScene.h>
@@ -56,8 +56,7 @@ void SaveModelTask::_writeMaterials()
       materialIndex < materialsNumber;
       materialIndex++)
   {
-    ObjectDataSaver::saveObject(
-                            _scene.root().materialsGroup().child(materialIndex),
+    ObjectSaver::saveObject(_scene.root().materialsGroup().child(materialIndex),
                             *_stream,
                             _fileDirectory);
   }
@@ -71,8 +70,7 @@ void SaveModelTask::_writeSkeletons()
       skeletonIndex < skeletonsNumber;
       skeletonIndex++)
   {
-    ObjectDataSaver::saveObject(
-                            _scene.root().skeletonGroup().child(skeletonIndex),
+    ObjectSaver::saveObject(_scene.root().skeletonGroup().child(skeletonIndex),
                             *_stream,
                             _fileDirectory);
   }
@@ -86,9 +84,9 @@ void SaveModelTask::_writeGeometry()
       lodIndex < lodsNumber;
       lodIndex++)
   {
-    ObjectDataSaver::saveObject(_scene.root().geometryGroup().child(lodIndex),
-                                *_stream,
-                                _fileDirectory);
+    ObjectSaver::saveObject(_scene.root().geometryGroup().child(lodIndex),
+                            *_stream,
+                            _fileDirectory);
   }
 }
 
@@ -100,7 +98,7 @@ void SaveModelTask::_writeAnimations()
       animationIndex < animationsNumber;
       animationIndex++)
   {
-    ObjectDataSaver::saveObject(
+    ObjectSaver::saveObject(
                           _scene.root().animationGroup().child(animationIndex),
                           *_stream,
                           _fileDirectory);

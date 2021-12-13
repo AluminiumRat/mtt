@@ -1,16 +1,16 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QFileInfo>
 
-#include <AsyncTasks/ObjectDataLoader.h>
+#include <AsyncTasks/ObjectLoader.h>
 
-ObjectDataLoader::ObjectDataLoader( mtt::DataStream& stream,
-                                    const QDir& fileDirectory) :
+ObjectLoader::ObjectLoader( mtt::DataStream& stream,
+                            const QDir& fileDirectory) :
   _stream(stream),
   _fileDirectory(fileDirectory)
 {
 }
 
-void ObjectDataLoader::visit(AnimationObject& object)
+void ObjectLoader::visit(AnimationObject& object)
 {
   OEVisitor::visit(object);
   uint32_t childNumber = _stream.readUint32();
@@ -21,7 +21,7 @@ void ObjectDataLoader::visit(AnimationObject& object)
 }
 
 template<typename ValueType>
-void ObjectDataLoader::_readKeypoint(
+void ObjectLoader::_readKeypoint(
             mtt::ValueKeypoint<ValueType, AnimationTrack::TimeType>& keypoint)
 {
   uint32_t timeCount = _stream.readUint32();
@@ -36,7 +36,7 @@ void ObjectDataLoader::_readKeypoint(
   keypoint.setInterpolation(mtt::InterpolationType(interpolation));
 }
 
-void ObjectDataLoader::visit(AnimationTrack& object)
+void ObjectLoader::visit(AnimationTrack& object)
 {
   OEVisitor::visit(object);
   object.setEnabled(_stream.readBool());
@@ -71,19 +71,19 @@ void ObjectDataLoader::visit(AnimationTrack& object)
   object.setSkeletonId(_stream.readUID());
 }
 
-void ObjectDataLoader::visit(DisplayedObject& object)
+void ObjectLoader::visit(DisplayedObject& object)
 {
   OEVisitor::visit(object);
   object.setVisible(_stream.readBool());
 }
 
-void ObjectDataLoader::visit(GeometryObject& object)
+void ObjectLoader::visit(GeometryObject& object)
 {
   OEVisitor::visit(object);
   object.setSkeletonId(_stream.readUID());
 }
 
-void ObjectDataLoader::visit(LODObject& object)
+void ObjectLoader::visit(LODObject& object)
 {
   OEVisitor::visit(object);
   object.setMinMppx(_stream.readFloat());
@@ -96,7 +96,7 @@ void ObjectDataLoader::visit(LODObject& object)
   }
 }
 
-QString ObjectDataLoader::_loadFilename()
+QString ObjectLoader::_loadFilename()
 {
   QString relativePath;
   _stream >> relativePath;
@@ -105,7 +105,7 @@ QString ObjectDataLoader::_loadFilename()
   return fileInfo.canonicalFilePath();
 }
 
-void ObjectDataLoader::visit(MaterialObject& object)
+void ObjectLoader::visit(MaterialObject& object)
 {
   OEVisitor::visit(object);
 
@@ -132,7 +132,7 @@ void ObjectDataLoader::visit(MaterialObject& object)
   object.setNormalTexture(_loadFilename());
 }
 
-void ObjectDataLoader::_readGeometry(mtt::CommonMeshGeometry& geometry)
+void ObjectLoader::_readGeometry(mtt::CommonMeshGeometry& geometry)
 {
   _stream >> geometry.positions;
   _stream >> geometry.normals;
@@ -158,7 +158,7 @@ void ObjectDataLoader::_readGeometry(mtt::CommonMeshGeometry& geometry)
   _stream >> geometry.lineIndices;
 }
 
-std::unique_ptr<BoneRefBatch> ObjectDataLoader::readBoneRefs()
+std::unique_ptr<BoneRefBatch> ObjectLoader::readBoneRefs()
 {
   std::vector<std::unique_ptr<BoneRefObject>> refs;
 
@@ -180,7 +180,7 @@ std::unique_ptr<BoneRefBatch> ObjectDataLoader::readBoneRefs()
                                       false);
 }
 
-void ObjectDataLoader::visit(MeshObject& object)
+void ObjectLoader::visit(MeshObject& object)
 {
   OEVisitor::visit(object);
 
@@ -191,25 +191,25 @@ void ObjectDataLoader::visit(MeshObject& object)
   object.setMaterialId(_stream.readUID());
 }
 
-void ObjectDataLoader::visit(MovableObject& object)
+void ObjectLoader::visit(MovableObject& object)
 {
   OEVisitor::visit(object);
   object.setPosition(_stream.readVec3());
 }
 
-void ObjectDataLoader::visit(RotatableObject& object)
+void ObjectLoader::visit(RotatableObject& object)
 {
   OEVisitor::visit(object);
   object.setRotation(_stream.readQuat());
 }
 
-void ObjectDataLoader::visit(ScalableObject& object)
+void ObjectLoader::visit(ScalableObject& object)
 {
   OEVisitor::visit(object);
   object.setScale(_stream.readVec3());
 }
 
-void ObjectDataLoader::visit(SkeletonObject& object)
+void ObjectLoader::visit(SkeletonObject& object)
 {
   OEVisitor::visit(object);
   uint32_t childsNumber = _stream.readUint32();
@@ -219,10 +219,10 @@ void ObjectDataLoader::visit(SkeletonObject& object)
   }
 }
 
-void ObjectDataLoader::_loadObjectData( mtt::Object& object,
-                                        mtt::DataStream& stream,
-                                        const QDir& fileDirectory)
+void ObjectLoader::_loadObjectData( mtt::Object& object,
+                                    mtt::DataStream& stream,
+                                    const QDir& fileDirectory)
 {
-  ObjectDataLoader loader(stream, fileDirectory);
+  ObjectLoader loader(stream, fileDirectory);
   loader.process(object);
 }

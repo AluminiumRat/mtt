@@ -8,7 +8,7 @@
 #include <AsyncTasks/ObjectBuilder.h>
 #include <Objects/OEVisitor.h>
 
-class ObjectDataLoader : private OEVisitor
+class ObjectLoader : private OEVisitor
 {
 public:
   template<typename ObjectType>
@@ -17,10 +17,10 @@ public:
                                                         QDir& fileDirectory);
 
 private:
-  ObjectDataLoader(mtt::DataStream& stream, const QDir& fileDirectory);
-  ObjectDataLoader(const ObjectDataLoader&) = delete;
-  ObjectDataLoader& operator = (const ObjectDataLoader&) = delete;
-  virtual ~ObjectDataLoader() noexcept = default;
+  ObjectLoader(mtt::DataStream& stream, const QDir& fileDirectory);
+  ObjectLoader(const ObjectLoader&) = delete;
+  ObjectLoader& operator = (const ObjectLoader&) = delete;
+  virtual ~ObjectLoader() noexcept = default;
 
   virtual void visit(AnimationObject& object) override;
   virtual void visit(AnimationTrack& object) override;
@@ -51,7 +51,7 @@ private:
 };
 
 template<typename ObjectType>
-inline std::unique_ptr<ObjectType> ObjectDataLoader::loadObject(
+inline std::unique_ptr<ObjectType> ObjectLoader::loadObject(
                                                         bool canBeRenamed,
                                                         mtt::DataStream& stream,
                                                         QDir& fileDirectory)

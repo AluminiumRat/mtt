@@ -3,7 +3,7 @@
 #include <QtCore/QFile>
 
 #include <AsyncTasks/LoadModelTask.h>
-#include <AsyncTasks/ObjectDataLoader.h>
+#include <AsyncTasks/ObjectLoader.h>
 #include <AsyncTasks/SaveModelTask.h>
 #include <EditorCommonData.h>
 #include <EditorScene.h>
@@ -40,7 +40,7 @@ void LoadModelTask::_loadMaterials()
   for (; materialsNumber != 0; materialsNumber--)
   {
     _materials.push_back(
-                ObjectDataLoader::loadObject<MaterialObject>( false,
+                    ObjectLoader::loadObject<MaterialObject>( false,
                                                               *_stream,
                                                               _fileDirectory));
   }
@@ -52,7 +52,7 @@ void LoadModelTask::_loadSkeletons()
   for (; skeletonsNumber != 0; skeletonsNumber--)
   {
     _skeletons.push_back(
-                ObjectDataLoader::loadObject<SkeletonObject>( false,
+                    ObjectLoader::loadObject<SkeletonObject>( false,
                                                               *_stream,
                                                               _fileDirectory));
   }
@@ -63,9 +63,9 @@ void LoadModelTask::_loadGeometry()
   uint32_t lodsNumber = _stream->readUint32();
   for (; lodsNumber != 0; lodsNumber--)
   {
-    _lods.push_back(ObjectDataLoader::loadObject<LODObject>(false,
-                                                            *_stream,
-                                                            _fileDirectory));
+    _lods.push_back(ObjectLoader::loadObject<LODObject>(false,
+                                                        *_stream,
+                                                        _fileDirectory));
   }
 }
 
@@ -75,7 +75,7 @@ void LoadModelTask::_loadAnimations()
   for (; animationsNumber != 0; animationsNumber--)
   {
     _animations.push_back(
-                ObjectDataLoader::loadObject<AnimationObject>(false,
+                    ObjectLoader::loadObject<AnimationObject>(false,
                                                               *_stream,
                                                               _fileDirectory));
   }

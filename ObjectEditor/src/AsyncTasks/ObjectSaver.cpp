@@ -1,27 +1,27 @@
 #include <mtt/Application/DataStream.h>
 
 #include <AsyncTasks/ObjectBuilder.h>
-#include <AsyncTasks/ObjectDataSaver.h>
+#include <AsyncTasks/ObjectSaver.h>
 
-ObjectDataSaver::ObjectDataSaver( mtt::DataStream& stream,
-                                  const QDir& fileDirectory) :
+ObjectSaver::ObjectSaver( mtt::DataStream& stream,
+                          const QDir& fileDirectory) :
   _stream(stream),
   _fileDirectory(fileDirectory)
 {
 }
 
-void ObjectDataSaver::saveObject( const mtt::Object& object,
-                                  mtt::DataStream& stream,
-                                  const QDir& fileDirectory)
+void ObjectSaver::saveObject( const mtt::Object& object,
+                              mtt::DataStream& stream,
+                              const QDir& fileDirectory)
 {
   ObjectBuilder::ObjectType type = ObjectBuilder::getObjectType(object);
   stream << type;
 
-  ObjectDataSaver dataSaver(stream, fileDirectory);
+  ObjectSaver dataSaver(stream, fileDirectory);
   dataSaver.process(object);
 }
 
-void ObjectDataSaver::visit(const AnimationObject& object)
+void ObjectSaver::visit(const AnimationObject& object)
 {
   OEVisitor::visit(object);
   uint32_t childNumber = object.childsNumber();
@@ -33,7 +33,7 @@ void ObjectDataSaver::visit(const AnimationObject& object)
 }
 
 template<typename ValueType>
-void ObjectDataSaver::writeKeypoint(
+void ObjectSaver::writeKeypoint(
               mtt::ValueKeypoint<ValueType, AnimationTrack::TimeType> keypoint)
 {
   _stream << (uint32_t)keypoint.time().count();
@@ -41,7 +41,7 @@ void ObjectDataSaver::writeKeypoint(
   _stream << (uint8_t) keypoint.interpolation();
 }
 
-void ObjectDataSaver::visit(const AnimationTrack& object)
+void ObjectSaver::visit(const AnimationTrack& object)
 {
   OEVisitor::visit(object);
   _stream << object.enabled();
@@ -73,19 +73,19 @@ void ObjectDataSaver::visit(const AnimationTrack& object)
   _stream << object.skeletonRef().referencedId();
 }
 
-void ObjectDataSaver::visit(const DisplayedObject& object)
+void ObjectSaver::visit(const DisplayedObject& object)
 {
   OEVisitor::visit(object);
   _stream << object.visible();
 }
 
-void ObjectDataSaver::visit(const GeometryObject& object)
+void ObjectSaver::visit(const GeometryObject& object)
 {
   OEVisitor::visit(object);
   _stream << object.skeletonRef().referencedId();
 }
 
-void ObjectDataSaver::visit(const LODObject& object)
+void ObjectSaver::visit(const LODObject& object)
 {
   OEVisitor::visit(object);
   _stream << object.minMppx();
@@ -99,12 +99,12 @@ void ObjectDataSaver::visit(const LODObject& object)
   }
 }
 
-void ObjectDataSaver::writeFilename(const QString& filename)
+void ObjectSaver::writeFilename(const QString& filename)
 {
   _stream << _fileDirectory.relativeFilePath(filename);
 }
 
-void ObjectDataSaver::visit(const MaterialObject& object)
+void ObjectSaver::visit(const MaterialObject& object)
 {
   OEVisitor::visit(object);
     
@@ -131,7 +131,7 @@ void ObjectDataSaver::visit(const MaterialObject& object)
   writeFilename(object.normalTexture());
 }
 
-void ObjectDataSaver::saveGeometry(const mtt::CommonMeshGeometry& geometry)
+void ObjectSaver::saveGeometry(const mtt::CommonMeshGeometry& geometry)
 {
   _stream << geometry.positions;
   _stream << geometry.normals;
@@ -157,7 +157,7 @@ void ObjectDataSaver::saveGeometry(const mtt::CommonMeshGeometry& geometry)
   _stream << geometry.lineIndices;
 }
 
-void ObjectDataSaver::saveBoneRefs(const BoneRefBatch& refs)
+void ObjectSaver::saveBoneRefs(const BoneRefBatch& refs)
 {
   _stream << (uint16_t) refs.boneRefsNumber();
   for (size_t refIndex = 0; refIndex < refs.boneRefsNumber(); refIndex++)
@@ -169,7 +169,7 @@ void ObjectDataSaver::saveBoneRefs(const BoneRefBatch& refs)
   }
 }
 
-void ObjectDataSaver::visit(const MeshObject& object)
+void ObjectSaver::visit(const MeshObject& object)
 {
   OEVisitor::visit(object);
 
@@ -179,31 +179,31 @@ void ObjectDataSaver::visit(const MeshObject& object)
   _stream << object.materialRef().referencedId();
 }
 
-void ObjectDataSaver::visit(const MovableObject& object)
+void ObjectSaver::visit(const MovableObject& object)
 {
   OEVisitor::visit(object);
   _stream << object.position();
 }
 
-void ObjectDataSaver::visit(const mtt::Object& object)
+void ObjectSaver::visit(const mtt::Object& object)
 {
   _stream << object.id();
   _stream << object.name();
 }
 
-void ObjectDataSaver::visit(const RotatableObject& object)
+void ObjectSaver::visit(const RotatableObject& object)
 {
   OEVisitor::visit(object);
   _stream << object.rotation();
 }
 
-void ObjectDataSaver::visit(const ScalableObject& object)
+void ObjectSaver::visit(const ScalableObject& object)
 {
   OEVisitor::visit(object);
   _stream << object.scale();
 }
 
-void ObjectDataSaver::visit(const SkeletonObject& object)
+void ObjectSaver::visit(const SkeletonObject& object)
 {
   OEVisitor::visit(object);
   uint32_t childNumber = object.childsNumber();

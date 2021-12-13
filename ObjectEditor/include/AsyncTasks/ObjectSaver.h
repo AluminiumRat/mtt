@@ -10,7 +10,7 @@ namespace mtt
   class DataStream;
 }
 
-class ObjectDataSaver : private OEVisitor
+class ObjectSaver : private OEVisitor
 {
 public:
   static void saveObject( const mtt::Object& object,
@@ -21,10 +21,10 @@ private:
   struct ObjectIdSaver;
 
 private:
-  ObjectDataSaver(mtt::DataStream& stream, const QDir& fileDirectory);
-  ObjectDataSaver(const ObjectDataSaver&) = delete;
-  ObjectDataSaver& operator = (const ObjectDataSaver&) = delete;
-  virtual ~ObjectDataSaver() noexcept = default;
+  ObjectSaver(mtt::DataStream& stream, const QDir& fileDirectory);
+  ObjectSaver(const ObjectSaver&) = delete;
+  ObjectSaver& operator = (const ObjectSaver&) = delete;
+  virtual ~ObjectSaver() noexcept = default;
 
   virtual void visit(const AnimationObject& object) override;
   virtual void visit(const AnimationTrack& object) override;
