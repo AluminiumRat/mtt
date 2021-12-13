@@ -34,13 +34,7 @@ protected:
   virtual void finalizePart() override;
 
 private:
-  struct ObjectLoader;
-
-private:
   void _checkHead();
-  template<typename ObjectType>
-  static std::unique_ptr<ObjectType> _loadObject( mtt::DataStream& stream,
-                                                  QDir& fileDirectory);
   void _loadMaterials();
   void _loadSkeletons();
   void _loadGeometry();

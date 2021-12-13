@@ -1,9 +1,9 @@
 # pragma once
 
-#include <Objects/OEVisitor.h>
-
 #include <QtCore/QDir>
 #include <QtCore/QString>
+
+#include <Objects/OEVisitor.h>
 
 namespace mtt
 {
