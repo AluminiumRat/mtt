@@ -33,7 +33,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QDoubleSpinBox" name="zSpin">
+    <widget class="QDoubleSpinBox" name="xSpin">
      <property name="minimum">
       <double>-9999.000000000000000</double>
      </property>
@@ -53,7 +53,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QDoubleSpinBox" name="xSpin">
+    <widget class="QDoubleSpinBox" name="zSpin">
      <property name="minimum">
       <double>-9999.000000000000000</double>
      </property>
