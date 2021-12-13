@@ -4,6 +4,7 @@
 #include <mtt/Application/Scene/Object.h>
 
 #include <Objects/AnimationGroup.h>
+#include <Objects/BackgroundObject.h>
 #include <Objects/EnvironmentGroup.h>
 #include <Objects/MaterialsGroup.h>
 #include <Objects/SkeletonGroup.h>
@@ -33,6 +34,9 @@ public:
   inline AnimationGroup& animationGroup() noexcept;
   inline const AnimationGroup& animationGroup() const noexcept;
 
+  inline BackgroundObject& background() noexcept;
+  inline const BackgroundObject& background() const noexcept;
+
   inline EnvironmentGroup& environment() noexcept;
   inline const EnvironmentGroup& environment() const noexcept;
 
@@ -41,6 +45,7 @@ private:
   GeometryGroup* _geometryGroup;
   MaterialsGroup* _materialsGroup;
   AnimationGroup* _animationGroup;
+  BackgroundObject* _background;
   EnvironmentGroup* _environment;
 };
 
@@ -82,6 +87,16 @@ inline AnimationGroup& RootObject::animationGroup() noexcept
 inline const AnimationGroup& RootObject::animationGroup() const noexcept
 {
   return *_animationGroup;
+}
+
+inline BackgroundObject& RootObject::background() noexcept
+{
+  return *_background;
+}
+
+inline const BackgroundObject& RootObject::background() const noexcept
+{
+  return *_background;
 }
 
 inline EnvironmentGroup& RootObject::environment() noexcept

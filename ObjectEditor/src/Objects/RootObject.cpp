@@ -44,11 +44,20 @@ RootObject::RootObject( const QString& name,
   _animationGroup = animationGroup.get();
   addSubobject(std::move(animationGroup));
 
-  mtt::UID ambientId(id().mixedUID(5000232373494366922ull));
+  mtt::UID backgroundId(id().mixedUID(1096043266422623895ull));
+  std::unique_ptr<BackgroundObject> background(
+                                        new BackgroundObject( tr(" Background"),
+                                                              false,
+                                                              backgroundId));
+  _background = background.get();
+  _background->setColor(glm::vec3(.3f, .5f, .7f));
+  addSubobject(std::move(background));
+
+  mtt::UID environmentId(id().mixedUID(5000232373494366922ull));
   std::unique_ptr<EnvironmentGroup>
-                      environmentGroup(new EnvironmentGroup(tr(" Environment"),
-                                                            false,
-                                                            ambientId));
+              environmentGroup(new EnvironmentGroup(tr(" Environment objects"),
+                                                    false,
+                                                    environmentId));
   _environment = environmentGroup.get();
   addSubobject(std::move(environmentGroup));
 }
