@@ -13,18 +13,6 @@ namespace mtt
 class ObjectDataSaver : private OEVisitor
 {
 public:
-  enum class ObjectType : uint16_t
-  {
-    Object = 0,
-    Material = 1,
-    Skeleton = 2,
-    LOD = 3,
-    Mesh = 4,
-    Animation = 5,
-    AnimationTrack = 6
-  };
-
-public:
   static void saveObject( const mtt::Object& object,
                           mtt::DataStream& stream,
                           const QDir& fileDirectory);

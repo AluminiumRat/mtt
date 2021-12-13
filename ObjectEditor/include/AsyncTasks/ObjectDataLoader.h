@@ -5,17 +5,12 @@
 
 #include <mtt/Application/DataStream.h>
 
+#include <AsyncTasks/ObjectBuilder.h>
 #include <Objects/OEVisitor.h>
 
 class ObjectDataLoader : private OEVisitor
 {
 public:
-  /// This method assumes the id and name have already been loaded from
-  /// the stream
-  static void loadObject( mtt::Object& object,
-                          mtt::DataStream& stream,
-                          const QDir& fileDirectory);
-
   template<typename ObjectType>
   inline static std::unique_ptr<ObjectType> loadObject( bool canBeRenamed,
                                                         mtt::DataStream& stream,
@@ -39,12 +34,16 @@ private:
   virtual void visit(ScalableObject& object) override;
   virtual void visit(SkeletonObject& object) override;
 
-  QString loadFilename();
+  QString _loadFilename();
   std::unique_ptr<BoneRefBatch> readBoneRefs();
-  void readGeometry(mtt::CommonMeshGeometry& geometry);
+  void _readGeometry(mtt::CommonMeshGeometry& geometry);
   template<typename ValueType>
-  void readKeypoint(
+  void _readKeypoint(
             mtt::ValueKeypoint<ValueType, AnimationTrack::TimeType>& keypoint);
+
+  static void _loadObjectData(mtt::Object& object,
+                              mtt::DataStream& stream,
+                              const QDir& fileDirectory);
 
 private:
   mtt::DataStream& _stream;
@@ -57,17 +56,23 @@ inline std::unique_ptr<ObjectType> ObjectDataLoader::loadObject(
                                                         mtt::DataStream& stream,
                                                         QDir& fileDirectory)
 {
-  uint16_t objectType;
-  stream >> objectType;
+  uint16_t objectTypeIndex;
+  stream >> objectTypeIndex;
+  ObjectBuilder::ObjectType objectType =
+                        static_cast<ObjectBuilder::ObjectType>(objectTypeIndex);
 
   mtt::UID id = stream.readUID();
 
   QString name;
   stream >> name;
 
-  std::unique_ptr<ObjectType> object(new ObjectType(name, canBeRenamed, id));
+  std::unique_ptr<ObjectType> object =
+                ObjectBuilder::buildObject<ObjectType>( objectType,
+                                                        name,
+                                                        canBeRenamed,
+                                                        id);
 
-  loadObject(*object, stream, fileDirectory);
+  _loadObjectData(*object, stream, fileDirectory);
 
   return object;
 }

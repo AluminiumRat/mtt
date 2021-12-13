@@ -1,46 +1,7 @@
 #include <mtt/Application/DataStream.h>
 
+#include <AsyncTasks/ObjectBuilder.h>
 #include <AsyncTasks/ObjectDataSaver.h>
-
-struct ObjectDataSaver::ObjectIdSaver : public OEVisitor
-{
-  mtt::DataStream* stream;
-
-  virtual void visit(const AnimationObject& object) override
-  {
-    *stream << ObjectDataSaver::ObjectType::Animation;
-  }
-
-  virtual void visit(const AnimationTrack& object) override
-  {
-    *stream << ObjectDataSaver::ObjectType::AnimationTrack;
-  }
-
-  virtual void visit(const LODObject& object) override
-  {
-    *stream << ObjectDataSaver::ObjectType::LOD;
-  }
-
-  virtual void visit(const MaterialObject& object) override
-  {
-    *stream << ObjectDataSaver::ObjectType::Material;
-  }
-
-  virtual void visit(const MeshObject& object) override
-  {
-    *stream << ObjectDataSaver::ObjectType::Mesh;
-  }
-
-  virtual void visit(const mtt::Object& object) override
-  {
-    *stream << ObjectDataSaver::ObjectType::Object;
-  }
-
-  virtual void visit(const SkeletonObject& object) override
-  {
-    *stream << ObjectDataSaver::ObjectType::Skeleton;
-  }
-};
 
 ObjectDataSaver::ObjectDataSaver( mtt::DataStream& stream,
                                   const QDir& fileDirectory) :
@@ -53,9 +14,8 @@ void ObjectDataSaver::saveObject( const mtt::Object& object,
                                   mtt::DataStream& stream,
                                   const QDir& fileDirectory)
 {
-  ObjectIdSaver idSaver;
-  idSaver.stream = &stream;
-  idSaver.process(object);
+  ObjectBuilder::ObjectType type = ObjectBuilder::getObjectType(object);
+  stream << type;
 
   ObjectDataSaver dataSaver(stream, fileDirectory);
   dataSaver.process(object);

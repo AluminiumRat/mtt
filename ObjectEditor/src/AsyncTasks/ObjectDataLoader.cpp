@@ -10,14 +10,6 @@ ObjectDataLoader::ObjectDataLoader( mtt::DataStream& stream,
 {
 }
 
-void ObjectDataLoader::loadObject(mtt::Object& object,
-                                  mtt::DataStream& stream,
-                                  const QDir& fileDirectory)
-{
-  ObjectDataLoader loader(stream, fileDirectory);
-  loader.process(object);
-}
-
 void ObjectDataLoader::visit(AnimationObject& object)
 {
   OEVisitor::visit(object);
@@ -29,7 +21,7 @@ void ObjectDataLoader::visit(AnimationObject& object)
 }
 
 template<typename ValueType>
-void ObjectDataLoader::readKeypoint(
+void ObjectDataLoader::_readKeypoint(
             mtt::ValueKeypoint<ValueType, AnimationTrack::TimeType>& keypoint)
 {
   uint32_t timeCount = _stream.readUint32();
@@ -54,7 +46,7 @@ void ObjectDataLoader::visit(AnimationTrack& object)
   {
     std::unique_ptr<AnimationTrack::PositionKeypoint> keypoint(
                                       new AnimationTrack::PositionKeypoint());
-    readKeypoint(*keypoint);
+    _readKeypoint(*keypoint);
     object.addPositionKeypoint(std::move(keypoint));
   }
 
@@ -63,7 +55,7 @@ void ObjectDataLoader::visit(AnimationTrack& object)
   {
     std::unique_ptr<AnimationTrack::RotationKeypoint> keypoint(
                                       new AnimationTrack::RotationKeypoint());
-    readKeypoint(*keypoint);
+    _readKeypoint(*keypoint);
     object.addRotationKeypoint(std::move(keypoint));
   }
 
@@ -72,7 +64,7 @@ void ObjectDataLoader::visit(AnimationTrack& object)
   {
     std::unique_ptr<AnimationTrack::ScaleKeypoint> keypoint(
                                         new AnimationTrack::ScaleKeypoint());
-    readKeypoint(*keypoint);
+    _readKeypoint(*keypoint);
     object.addScaleKeypoint(std::move(keypoint));
   }
 
@@ -104,7 +96,7 @@ void ObjectDataLoader::visit(LODObject& object)
   }
 }
 
-QString ObjectDataLoader::loadFilename()
+QString ObjectDataLoader::_loadFilename()
 {
   QString relativePath;
   _stream >> relativePath;
@@ -118,29 +110,29 @@ void ObjectDataLoader::visit(MaterialObject& object)
   OEVisitor::visit(object);
 
   object.setAlbedo(_stream.readVec3());
-  object.setAlbedoTexture(loadFilename());
+  object.setAlbedoTexture(_loadFilename());
   object.setUseAlphaFromAlbedoTexture(_stream.readBool());
   
   object.setRoughness(_stream.readFloat());
   object.setSpecularStrength(_stream.readFloat());
-  object.setSpecularTexture(loadFilename());
+  object.setSpecularTexture(_loadFilename());
 
   object.setMetallic(_stream.readFloat());
   
   object.setOpaqueFactor(_stream.readFloat());
-  object.setOpaqueTexture(loadFilename());
+  object.setOpaqueTexture(_loadFilename());
 
   object.setReflectionFactor(_stream.readFloat());
-  object.setReflectionTexture(loadFilename());
+  object.setReflectionTexture(_loadFilename());
 
   object.setEmissionColor(_stream.readVec3());
   object.setEmissionFactor(_stream.readFloat());
-  object.setEmissionTexture(loadFilename());
+  object.setEmissionTexture(_loadFilename());
 
-  object.setNormalTexture(loadFilename());
+  object.setNormalTexture(_loadFilename());
 }
 
-void ObjectDataLoader::readGeometry(mtt::CommonMeshGeometry& geometry)
+void ObjectDataLoader::_readGeometry(mtt::CommonMeshGeometry& geometry)
 {
   _stream >> geometry.positions;
   _stream >> geometry.normals;
@@ -193,7 +185,7 @@ void ObjectDataLoader::visit(MeshObject& object)
   OEVisitor::visit(object);
 
   mtt::CommonMeshGeometry geometry;
-  readGeometry(geometry);
+  _readGeometry(geometry);
   object.setGeometry(std::move(geometry));
   object.setBoneRefs(readBoneRefs());
   object.setMaterialId(_stream.readUID());
@@ -227,3 +219,10 @@ void ObjectDataLoader::visit(SkeletonObject& object)
   }
 }
 
+void ObjectDataLoader::_loadObjectData( mtt::Object& object,
+                                        mtt::DataStream& stream,
+                                        const QDir& fileDirectory)
+{
+  ObjectDataLoader loader(stream, fileDirectory);
+  loader.process(object);
+}
