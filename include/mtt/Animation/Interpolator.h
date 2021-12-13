@@ -10,8 +10,8 @@ namespace mtt
 {
   enum InterpolationType
   {
-    STEP_INTERPOLATION,
-    LINEAR_INTERPOLATION
+    STEP_INTERPOLATION = 0,
+    LINEAR_INTERPOLATION = 1
   };
 
   template <typename Rep, typename Period>

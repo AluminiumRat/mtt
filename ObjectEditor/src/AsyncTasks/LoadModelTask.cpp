@@ -39,6 +39,9 @@ struct LoadModelTask::ObjectLoader : public OEVisitor
     ValueType value;
     *stream >> value;
     keypoint.setValue(value);
+
+    uint8_t interpolation = stream->readInt8();
+    keypoint.setInterpolation(mtt::InterpolationType(interpolation));
   }
 
   virtual void visit(AnimationTrack& object) override

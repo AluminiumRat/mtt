@@ -74,6 +74,7 @@ struct SaveModelTask::ObjectDataSaver : public OEVisitor
   {
     *stream << (uint32_t)keypoint.time().count();
     *stream << keypoint.value();
+    *stream << (uint8_t) keypoint.interpolation();
   }
 
   virtual void visit(const AnimationTrack& object) override
