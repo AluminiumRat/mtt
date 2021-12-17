@@ -3,8 +3,8 @@
 #include <mtt/Application/Widgets/PropertiesWidgets/FloatPropertyProgressiveSlider.h>
 #include <mtt/Application/Widgets/PropertiesWidgets/FloatPropertySpin.h>
 
+#include <SceneTab/FilenamePropertyWidget.h>
 #include <SceneTab/MaterialWidget.h>
-#include <SceneTab/TexturePropertyWidget.h>
 
 #include <GeneratedFiles/ui_MaterialWidget.h>
 
@@ -31,13 +31,14 @@ MaterialWidget::MaterialWidget( MaterialObject& object,
                                                 undoStack);
   _ui->albedoColorLayout->addWidget(albedoColorWidget, 3);
 
-  using TextureWidget = TexturePropertyWidget<MaterialObject>;
+  using TextureWidget = FilenamePropertyWidget<MaterialObject>;
   TextureWidget* albedoTextureWidget =
-                      new TextureWidget(object,
-                                        &MaterialObject::albedoTexture,
-                                        &MaterialObject::setAlbedoTexture,
-                                        &MaterialObject::albedoTextureChanged,
-                                        undoStack);
+                new TextureWidget(object,
+                                  &MaterialObject::albedoTexture,
+                                  &MaterialObject::setAlbedoTexture,
+                                  &MaterialObject::albedoTextureChanged,
+                                  tr("picture files(*.png *.jpg *.jpeg *.bmp)"),
+                                  undoStack);
   _ui->albedoTextureLayout->addWidget(albedoTextureWidget, 3);
 
   using FloatSlider = mtt::FloatPropertyLinearSlider<MaterialObject>;
@@ -50,11 +51,12 @@ MaterialWidget::MaterialWidget( MaterialObject& object,
   _ui->opaqueFactorLayout->addWidget(opaqueWidget, 3);
 
   TextureWidget* opaqueTextureWidget =
-                        new TextureWidget(object,
-                                          &MaterialObject::opaqueTexture,
-                                          &MaterialObject::setOpaqueTexture,
-                                          &MaterialObject::opaqueTextureChanged,
-                                          undoStack);
+                new TextureWidget(object,
+                                  &MaterialObject::opaqueTexture,
+                                  &MaterialObject::setOpaqueTexture,
+                                  &MaterialObject::opaqueTextureChanged,
+                                  tr("picture files(*.png *.jpg *.jpeg *.bmp)"),
+                                  undoStack);
   _ui->opaqueTextureLayout->addWidget(opaqueTextureWidget, 3);
 
   using FloatSlider = mtt::FloatPropertyLinearSlider<MaterialObject>;
@@ -75,11 +77,12 @@ MaterialWidget::MaterialWidget( MaterialObject& object,
   _ui->strengthLayout->addWidget(specularStrengthWidget, 3);
 
   TextureWidget* specularTextureWidget =
-                      new TextureWidget(object,
-                                        &MaterialObject::specularTexture,
-                                        &MaterialObject::setSpecularTexture,
-                                        &MaterialObject::specularTextureChanged,
-                                        undoStack);
+                new TextureWidget(object,
+                                  &MaterialObject::specularTexture,
+                                  &MaterialObject::setSpecularTexture,
+                                  &MaterialObject::specularTextureChanged,
+                                  tr("picture files(*.png *.jpg *.jpeg *.bmp)"),
+                                  undoStack);
   _ui->specularTextureLayout->addWidget(specularTextureWidget, 3);
 
   FloatSlider* metallicWidget = new FloatSlider(
@@ -91,11 +94,12 @@ MaterialWidget::MaterialWidget( MaterialObject& object,
   _ui->metallicLayout->addWidget(metallicWidget, 3);
 
   TextureWidget* normalTextureWidget =
-                        new TextureWidget(object,
-                                          &MaterialObject::normalTexture,
-                                          &MaterialObject::setNormalTexture,
-                                          &MaterialObject::normalTextureChanged,
-                                          undoStack);
+                new TextureWidget(object,
+                                  &MaterialObject::normalTexture,
+                                  &MaterialObject::setNormalTexture,
+                                  &MaterialObject::normalTextureChanged,
+                                  tr("picture files(*.png *.jpg *.jpeg *.bmp)"),
+                                  undoStack);
   _ui->normalTextureLayout->addWidget(normalTextureWidget, 3);
 
   using ProgressiveSlider =
@@ -127,11 +131,12 @@ MaterialWidget::MaterialWidget( MaterialObject& object,
   _ui->emissionColorLayout->addWidget(emissionColorWidget, 3);
 
   TextureWidget* emissionTextureWidget =
-                      new TextureWidget(object,
-                                        &MaterialObject::emissionTexture,
-                                        &MaterialObject::setEmissionTexture,
-                                        &MaterialObject::emissionTextureChanged,
-                                        undoStack);
+                new TextureWidget(object,
+                                  &MaterialObject::emissionTexture,
+                                  &MaterialObject::setEmissionTexture,
+                                  &MaterialObject::emissionTextureChanged,
+                                  tr("picture files(*.png *.jpg *.jpeg *.bmp)"),
+                                  undoStack);
   _ui->emissionTextureLayout->addWidget(emissionTextureWidget, 3);
 
   FloatSlider* reflectionFactorWidget = new FloatSlider(
@@ -143,11 +148,12 @@ MaterialWidget::MaterialWidget( MaterialObject& object,
   _ui->reflectionFactorLayout->addWidget(reflectionFactorWidget, 3);
 
   TextureWidget* reflectionTextureWidget =
-                  new TextureWidget(object,
-                                    &MaterialObject::reflectionTexture,
-                                    &MaterialObject::setReflectionTexture,
-                                    &MaterialObject::reflectionTextureChanged,
-                                    undoStack);
+                new TextureWidget(object,
+                                  &MaterialObject::reflectionTexture,
+                                  &MaterialObject::setReflectionTexture,
+                                  &MaterialObject::reflectionTextureChanged,
+                                  tr("picture files(*.png *.jpg *.jpeg *.bmp)"),
+                                  undoStack);
   _ui->reflectionTextureLayout->addWidget(reflectionTextureWidget, 3);
 
   adjustSize();

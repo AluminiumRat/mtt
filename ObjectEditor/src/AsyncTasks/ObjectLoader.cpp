@@ -134,6 +134,12 @@ void ObjectLoader::visit(DisplayedObject& object)
   object.setVisible(_stream.readBool());
 }
 
+void ObjectLoader::visit(EnvironmentModel& object)
+{
+  OEVisitor::visit(object);
+  object.setFilename(_loadFilename());
+}
+
 void ObjectLoader::visit(GeometryObject& object)
 {
   OEVisitor::visit(object);

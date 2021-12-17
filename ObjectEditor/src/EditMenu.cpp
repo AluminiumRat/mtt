@@ -11,6 +11,7 @@
 #include <AsyncTasks/AddModelFromFbxTask.h>
 #include <Objects/AmbientLightObject.h>
 #include <Objects/DirectLightObject.h>
+#include <Objects/EnvironmentModel.h>
 #include <Objects/LODObject.h>
 #include <Objects/MaterialObject.h>
 #include <Objects/SkeletonGroup.h>
@@ -109,6 +110,12 @@ void EditMenu::setupUI()
           &QAction::triggered,
           this,
           &EditMenu::_addDirectLight,
+          Qt::DirectConnection);
+
+  connect(_ui.actionAdd_environment_model,
+          &QAction::triggered,
+          this,
+          &EditMenu::_addEnvironmentModel,
           Qt::DirectConnection);
 }
 
@@ -318,6 +325,12 @@ void EditMenu::_addModelFromBlender() noexcept
                                   _commonData));
     EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
   }
+  catch(std::exception& error)
+  {
+    QMessageBox::critical(&_window,
+                          tr("Unable to import fbx"),
+                          error.what());
+  }
   catch (...)
   {
     QMessageBox::critical(&_window, tr("Error"), tr("Unable to import fbx"));
@@ -460,5 +473,41 @@ void EditMenu::_addDirectLight() noexcept
     QMessageBox::critical(&_window,
                           tr("Unable to add a light"),
                           tr("Unknown error"));
+  }
+}
+
+void EditMenu::_addEnvironmentModel() noexcept
+{
+  try
+  {
+    EditorScene* scene = _commonData.scene();
+    if (scene == nullptr) return;
+
+    QString fileName = QFileDialog::getOpenFileName(&_window,
+                                                    tr("Import model"),
+                                                    "",
+                                                    tr("mmd (*.mmd)"));
+    if(fileName.isEmpty()) return;
+
+    std::unique_ptr<EnvironmentModel> newModel(
+                                      new EnvironmentModel(tr("Model"), true));
+    newModel->setFilename(fileName);
+    EnvironmentModel* modelPtr = newModel.get();
+
+    std::unique_ptr<mtt::AddObjectCommand> command(
+                        new mtt::AddObjectCommand(std::move(newModel),
+                                                  scene->root().environment()));
+    _commonData.undoStack().addAndMake(std::move(command));
+    _commonData.selectObjects({modelPtr});
+  }
+  catch(std::exception& error)
+  {
+    QMessageBox::critical(&_window,
+                          tr("Unable to add model"),
+                          error.what());
+  }
+  catch (...)
+  {
+    QMessageBox::critical(&_window, tr("Error"), tr("Unable to add model"));
   }
 }

@@ -15,6 +15,7 @@
 #include <SceneTab/AnimationTrackWidget.h>
 #include <SceneTab/BackgroundWidget.h>
 #include <SceneTab/DirectLightWidget.h>
+#include <SceneTab/EnvironmentModelWidget.h>
 #include <SceneTab/GeometryObjectWidget.h>
 #include <SceneTab/LodObjectWidget.h>
 #include <SceneTab/MaterialWidget.h>
@@ -25,7 +26,6 @@
 #include <SceneTab/ScalableObjectWidget.h>
 #include <SceneTab/SceneTab.h>
 #include <SceneTab/CubemapWidget.h>
-#include <SceneTab/TexturePropertyWidget.h>
 #include <SceneTab/VertexDataWidget.h>
 #include <SceneTab/VisiblePropertyWidget.h>
 #include <EditorCommonData.h>
@@ -164,6 +164,14 @@ struct PropertiesWidgetBuilder : public OEVisitor
 
     widgetsLayout->addWidget(
                 new VisiblePropertyWidget(object, editCommonData->undoStack()));
+  }
+
+  virtual void visit(EnvironmentModel& object) override
+  {
+    OEVisitor::visit(object);
+
+    widgetsLayout->addWidget(
+              new EnvironmentModelWidget(object, editCommonData->undoStack()));
   }
 
   virtual void visit(GeometryObject& object) override

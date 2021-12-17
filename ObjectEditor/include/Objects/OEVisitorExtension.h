@@ -13,8 +13,9 @@ class CubemapObject;
 class DirectLightObject;
 class DisplayedObject;
 class EnvironmentGroup;
-class GeometryGroup;
+class EnvironmentModel;
 class EnvironmentObject;
+class GeometryGroup;
 class GeometryObject;
 class LightObject;
 class LODObject;
@@ -67,6 +68,9 @@ public:
 
   virtual void visit(const EnvironmentGroup& object) = 0;
   virtual void visit(EnvironmentGroup& object) = 0;
+
+  virtual void visit(const EnvironmentModel& object) = 0;
+  virtual void visit(EnvironmentModel& object) = 0;
 
   virtual void visit(const EnvironmentObject& object) = 0;
   virtual void visit(EnvironmentObject& object) = 0;

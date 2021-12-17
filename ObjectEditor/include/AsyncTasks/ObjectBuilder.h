@@ -20,7 +20,8 @@ public:
     AnimationTrack = 6,
     Background = 7,
     AmbientLight = 8,
-    DirectLight = 9
+    DirectLight = 9,
+    EnvironmentModel = 10
   };
 
   static ObjectType getObjectType(const mtt::Object& object) noexcept;

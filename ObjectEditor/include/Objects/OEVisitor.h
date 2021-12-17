@@ -48,6 +48,9 @@ public:
   inline virtual void visit(const EnvironmentGroup& object) override;
   inline virtual void visit(EnvironmentGroup& object) override;
 
+  inline virtual void visit(const EnvironmentModel& object) override;
+  inline virtual void visit(EnvironmentModel& object) override;
+
   inline virtual void visit(const EnvironmentObject& object) override;
   inline virtual void visit(EnvironmentObject& object) override;
 
@@ -116,6 +119,7 @@ using OEVisitor = OEVisitorT<mtt::ObjectVisitor>;
 #include <Objects/DirectLightObject.h>
 #include <Objects/DisplayedObject.h>
 #include <Objects/EnvironmentGroup.h>
+#include <Objects/EnvironmentModel.h>
 #include <Objects/EnvironmentObject.h>
 #include <Objects/GeometryGroup.h>
 #include <Objects/GeometryObject.h>
@@ -283,6 +287,18 @@ template <typename BaseVisitor>
 inline void OEVisitorT<BaseVisitor>::visit(EnvironmentGroup& object)
 {
   visit(static_cast<DisplayedObject&>(object));
+}
+
+template <typename BaseVisitor>
+inline void OEVisitorT<BaseVisitor>::visit(const EnvironmentModel& object)
+{
+  visit(static_cast<const EnvironmentObject&>(object));
+}
+
+template <typename BaseVisitor>
+inline void OEVisitorT<BaseVisitor>::visit(EnvironmentModel& object)
+{
+  visit(static_cast<EnvironmentObject&>(object));
 }
 
 template <typename BaseVisitor>

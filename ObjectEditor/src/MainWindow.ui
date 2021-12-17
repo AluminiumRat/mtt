@@ -47,6 +47,8 @@
     <addaction name="separator"/>
     <addaction name="actionAdd_ambient_light"/>
     <addaction name="actionAdd_direct_light"/>
+    <addaction name="separator"/>
+    <addaction name="actionAdd_environment_model"/>
    </widget>
    <widget class="QMenu" name="menuManipulator">
     <property name="title">
@@ -241,6 +243,11 @@
   <action name="actionSave_environment_as">
    <property name="text">
     <string>Save environment as ...</string>
+   </property>
+  </action>
+  <action name="actionAdd_environment_model">
+   <property name="text">
+    <string>Add model to environment</string>
    </property>
   </action>
  </widget>

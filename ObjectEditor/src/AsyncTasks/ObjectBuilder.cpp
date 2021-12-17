@@ -32,6 +32,11 @@ struct ObjectBuilder::ObjectTypeParser : public OEVisitor
     type = ObjectBuilder::ObjectType::DirectLight;
   }
 
+  virtual void visit(const EnvironmentObject& object) override
+  {
+    type = ObjectBuilder::ObjectType::EnvironmentModel;
+  }
+
   virtual void visit(const LODObject& object) override
   {
     type = ObjectBuilder::ObjectType::LOD;
@@ -77,17 +82,20 @@ std::unique_ptr<mtt::Object> ObjectBuilder::_buildObject( ObjectType type,
     case ObjectType::AmbientLight:
       return std::make_unique<AmbientLightObject>(name, canBeRenamed, id);
 
+    case ObjectType::Animation:
+      return std::make_unique<AnimationObject>(name, canBeRenamed, id);
+
+    case ObjectType::AnimationTrack:
+      return std::make_unique<AnimationTrack>(name, canBeRenamed, id);
+
     case ObjectType::Background:
       return std::make_unique<BackgroundObject>(name, canBeRenamed, id);
 
     case ObjectType::DirectLight:
       return std::make_unique<DirectLightObject>(name, canBeRenamed, id);
 
-    case ObjectType::Animation:
-      return std::make_unique<AnimationObject>(name, canBeRenamed, id);
-
-    case ObjectType::AnimationTrack:
-      return std::make_unique<AnimationTrack>(name, canBeRenamed, id);
+    case ObjectType::EnvironmentModel:
+      return std::make_unique<EnvironmentModel>(name, canBeRenamed, id);
 
     case ObjectType::LOD:
       return std::make_unique<LODObject>(name, canBeRenamed, id);

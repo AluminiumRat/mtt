@@ -32,6 +32,7 @@ private:
   virtual void visit(const BackgroundObject& object) override;
   virtual void visit(const DirectLightObject& object) override;
   virtual void visit(const DisplayedObject& object) override;
+  virtual void visit(const EnvironmentModel& object) override;
   virtual void visit(const GeometryObject& object) override;
   virtual void visit(const LightObject& object) override;
   virtual void visit(const LODObject& object) override;

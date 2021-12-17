@@ -10,7 +10,7 @@
 #include <mtt/Utilities/Abort.h>
 
 template <typename ObjectClass>
-class TexturePropertyWidget : public mtt::ReferenceWidget
+class FilenamePropertyWidget : public mtt::ReferenceWidget
 {
 public:
   using Getter = const QString& (ObjectClass::*)() const noexcept;
@@ -18,14 +18,15 @@ public:
 
 public:
   template<typename Signal>
-  inline TexturePropertyWidget( ObjectClass& object,
+  inline FilenamePropertyWidget(ObjectClass& object,
                                 Getter getter,
                                 Setter setter,
                                 Signal signal,
+                                const QString& fileFilter,
                                 mtt::UndoStack& undoStack);
-  TexturePropertyWidget(const TexturePropertyWidget&) = delete;
-  TexturePropertyWidget& operator = (const TexturePropertyWidget&) = delete;
-  virtual ~TexturePropertyWidget() noexcept = default;
+  FilenamePropertyWidget(const FilenamePropertyWidget&) = delete;
+  FilenamePropertyWidget& operator = (const FilenamePropertyWidget&) = delete;
+  virtual ~FilenamePropertyWidget() noexcept = default;
 
 protected:
   inline virtual void selectReference() noexcept override;
@@ -40,32 +41,36 @@ private:
   Getter _getter;
   Setter _setter;
 
+  QString _fileFilter;
+
   mtt::UndoStack& _undoStack;
 };
 
 template<typename ObjectClass>
 template<typename Signal>
-inline TexturePropertyWidget<ObjectClass>::
-                            TexturePropertyWidget(ObjectClass& object,
+inline FilenamePropertyWidget<ObjectClass>::
+                          FilenamePropertyWidget( ObjectClass& object,
                                                   Getter getter,
                                                   Setter setter,
                                                   Signal signal,
+                                                  const QString& fileFilter,
                                                   mtt::UndoStack& undoStack) :
   _object(object),
   _getter(getter),
   _setter(setter),
+  _fileFilter(fileFilter),
   _undoStack(undoStack)
 {
   connect(&_object,
           signal,
           this,
-          &TexturePropertyWidget::_updateWidget,
+          &FilenamePropertyWidget::_updateWidget,
           Qt::DirectConnection);
   _updateWidget();
 }
 
 template<typename ObjectClass>
-inline void TexturePropertyWidget<ObjectClass>::_updateWidget() noexcept
+inline void FilenamePropertyWidget<ObjectClass>::_updateWidget() noexcept
 {
   try
   {
@@ -84,25 +89,24 @@ inline void TexturePropertyWidget<ObjectClass>::_updateWidget() noexcept
 }
 
 template<typename ObjectClass>
-inline void TexturePropertyWidget<ObjectClass>::selectReference() noexcept
+inline void FilenamePropertyWidget<ObjectClass>::selectReference() noexcept
 {
-  QString fileName = QFileDialog::getOpenFileName(
-                                this,
-                                tr("Texture"),
-                                "",
-                                tr("picture files(*.png *.jpg *.jpeg *.bmp)"));
+  QString fileName = QFileDialog::getOpenFileName(this,
+                                                  tr("Select file"),
+                                                  "",
+                                                  _fileFilter);
   if(fileName.isEmpty()) return;
   _setFilename(fileName);
 }
 
 template< typename ObjectClass>
-inline void TexturePropertyWidget<ObjectClass>::resetReference() noexcept
+inline void FilenamePropertyWidget<ObjectClass>::resetReference() noexcept
 {
   _setFilename(QString());
 }
 
 template< typename ObjectClass>
-inline void TexturePropertyWidget<ObjectClass>::
+inline void FilenamePropertyWidget<ObjectClass>::
                                 _setFilename(const QString& fileName) noexcept
 {
   if((_object.*_getter)() == fileName) return;
@@ -118,6 +122,6 @@ inline void TexturePropertyWidget<ObjectClass>::
   }
   catch(...)
   {
-    mtt::Abort("TexturePropertyWidget::_setFilename: unable to update filename.");
+    mtt::Abort("FilenamePropertyWidget::_setFilename: unable to update filename.");
   }
 }

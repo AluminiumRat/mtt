@@ -121,6 +121,12 @@ void ObjectSaver::visit(const DisplayedObject& object)
   _stream << object.visible();
 }
 
+void ObjectSaver::visit(const EnvironmentModel& object)
+{
+  OEVisitor::visit(object);
+  _writeFilename(object.filename());
+}
+
 void ObjectSaver::visit(const GeometryObject& object)
 {
   OEVisitor::visit(object);

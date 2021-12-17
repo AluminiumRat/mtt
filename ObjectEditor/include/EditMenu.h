@@ -35,6 +35,7 @@ private:
   void _addAnimationFromFbx() noexcept;
   void _addAmbientLight() noexcept;
   void _addDirectLight() noexcept;
+  void _addEnvironmentModel() noexcept;
 
 private:
   MainWindow& _window;
