@@ -6,6 +6,8 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
+#include <mtt/Utilities/Box.h>
+
 namespace mtt
 {
   struct CommonMeshGeometry
@@ -39,5 +41,7 @@ namespace mtt
     CommonMeshGeometry(CommonMeshGeometry&&) = default;
     CommonMeshGeometry& operator = (CommonMeshGeometry&&) = default;
     ~CommonMeshGeometry() = default;
+
+    Box calculateBoundingBox() const noexcept;
   };
 }

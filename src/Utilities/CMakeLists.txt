@@ -35,6 +35,7 @@ set(HEADERS
     )
 
 set(SOURCES
+    "CommonMeshGeometry.cpp"
     "Log.cpp"
     "StringRegistry.cpp"
     "Surface.cpp"

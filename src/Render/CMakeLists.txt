@@ -68,6 +68,7 @@ set(HEADERS
     "../../include/mtt/Render/Mesh/DepthMeshTechnique.h"
     "../../include/mtt/Render/Mesh/Mesh.h"
     "../../include/mtt/Render/Mesh/MeshExtraData.h"
+    "../../include/mtt/Render/Mesh/MeshTechniquesFactory.h"
     "../../include/mtt/Render/Mesh/MeshVariable.h"
     "../../include/mtt/Render/Mesh/MonotopologyMeshTechnique.h"
     "../../include/mtt/Render/Mesh/TechniquesCollection.h"

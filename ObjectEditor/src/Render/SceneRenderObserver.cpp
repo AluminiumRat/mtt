@@ -6,6 +6,7 @@
 #include <Render/AmbientLightRenderObserver.h>
 #include <Render/BackgroundObserver.h>
 #include <Render/DirectLightRenderObserver.h>
+#include <Render/EnvironmentModelRenderObserver.h>
 #include <Render/LODRenderObserver.h>
 #include <Render/SceneRenderObserver.h>
 #include <Render/SkeletonRenderObserver.h>
@@ -100,6 +101,11 @@ void SceneRenderObserver::_addObject(mtt::Object& object) noexcept
     virtual void visit(DirectLightObject& object) override
     {
       result.reset(new DirectLightRenderObserver(object, *commonData));
+    }
+
+    virtual void visit(EnvironmentModel& object) override
+    {
+      result.reset(new EnvironmentModelRenderObserver(object, *commonData));
     }
 
     virtual void visit(SkeletonObject& object) override

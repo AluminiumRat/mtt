@@ -37,6 +37,11 @@ set(HEADERS
     "../../include/mtt/Application/AsyncTasks/AbstractAsyncTask.h"
     "../../include/mtt/Application/AsyncTasks/AsyncTaskQueue.h"
 
+    "../../include/mtt/Application/DrawModel/DrawModel.h"
+    "../../include/mtt/Application/DrawModel/DrawModelLoader.h"
+    "../../include/mtt/Application/DrawModel/DrawModelMeshNode.h"
+    "../../include/mtt/Application/DrawModel/DrawModelTransformTable.h"
+
     "../../include/mtt/Application/EditCommands/AbstractEditCommand.h"
     "../../include/mtt/Application/EditCommands/AddObjectCommand.h"
     "../../include/mtt/Application/EditCommands/CompositeCommand.h"
@@ -123,6 +128,10 @@ set(UI_FILES
 set(SOURCES
     "AsyncTasks/AbstractAsyncTask.cpp"
     "AsyncTasks/AsyncTaskQueue.cpp"
+
+    "DrawModel/DrawModel.cpp"
+    "DrawModel/DrawModelLoader.cpp"
+    "DrawModel/DrawModelMeshNode.cpp"
 
     "EditCommands/AddObjectCommand.cpp"
     "EditCommands/CompositeCommand.cpp"
