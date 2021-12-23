@@ -69,7 +69,7 @@ namespace mtt
     void _loadGeometry();
     void _loadMesh(bool visible, float minMppx, float maxMppx);
     void _loadGeometry(mtt::CommonMeshGeometry& geometry);
-    void _loadBoneRefs();
+    DrawModelMeshNode::BoneRefs _loadBoneRefs();
     void _adjustMaterial(DrawModelMeshNode& meshNode, UID materialId);
     std::unique_ptr<Sampler> loadTexture(const QString& fileName);
 

@@ -216,7 +216,7 @@ void DrawModelLoader::_loadMesh(bool visible, float minMppx, float maxMppx)
 
   mtt::CommonMeshGeometry geometry;
   _loadGeometry(geometry);
-  _loadBoneRefs();
+  DrawModelMeshNode::BoneRefs boneRefs = _loadBoneRefs();
 
   UID materialId = _stream->readUID();
 
@@ -241,6 +241,8 @@ void DrawModelLoader::_loadMesh(bool visible, float minMppx, float maxMppx)
     meshRef.setLocalBoundSphere(
                         geometry.calculateBoundingBox().buildBoundingSphere());
     meshRef.mesh().setGeometry(std::move(geometry));
+
+    meshRef.setBoneRefs(boneRefs);
 
     _adjustMaterial(meshRef, materialId);
     _techniquesFactory.setupTechniques(meshRef.mesh());
@@ -273,8 +275,10 @@ void DrawModelLoader::_loadGeometry(mtt::CommonMeshGeometry& geometry)
   *_stream >> geometry.lineIndices;
 }
 
-void DrawModelLoader::_loadBoneRefs()
+DrawModelMeshNode::BoneRefs DrawModelLoader::_loadBoneRefs()
 {
+  DrawModelMeshNode::BoneRefs result;
+
   uint16_t boneRefsNumber = _stream->readUint16();
   for (; boneRefsNumber != 0; boneRefsNumber--)
   {
@@ -282,8 +286,22 @@ void DrawModelLoader::_loadBoneRefs()
     *_stream >> name;
 
     UID boneId = _stream->readUID();
-    glm::mat4 boneInverseMatrix = _stream->readMat4();
+    BoneSet::iterator iBone = _boneSet.find(boneId);
+    if(iBone == _boneSet.end())
+    {
+      QString errorString =
+                      QString("Unable to find bone % for skin mesh.").arg(name);
+      throw std::runtime_error(errorString.toLocal8Bit().data());
+    }
+
+    DrawModelMeshNode::BoneRefData boneRef;
+    boneRef.joint = iBone->second.joint;
+    boneRef.inverseBoneMatrix = _stream->readMat4();
+
+    result.push_back(boneRef);
   }
+
+  return result;
 }
 
 void DrawModelLoader::_adjustMaterial(DrawModelMeshNode& meshNode,
