@@ -35,10 +35,9 @@ void ShadowmapMeshTechnique::adjustPipeline(GraphicsPipeline& pipeline,
 }
 
 void ShadowmapMeshTechnique::createRenderAction(
-                                            DrawPlanBuildInfo& buildInfo,
-                                            GraphicsPipeline& pipeline,
-                                            MatricesUniform& matricesUniform,
-                                            const BoneMatrices* boneMatricesPtr)
+                                              DrawPlanBuildInfo& buildInfo,
+                                              GraphicsPipeline& pipeline,
+                                              MatricesUniform& matricesUniform)
 {
   NearFarInfo nearFar;
   nearFar.nearDistance = buildInfo.currentViewInfo.nearCameraDistance;
@@ -48,7 +47,6 @@ void ShadowmapMeshTechnique::createRenderAction(
   createActionTemplate( buildInfo,
                         pipeline,
                         matricesUniform,
-                        boneMatricesPtr,
                         _nearFarUniform,
                         nearFar);
 }

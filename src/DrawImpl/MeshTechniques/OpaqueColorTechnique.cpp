@@ -39,13 +39,11 @@ void OpaqueColorTechnique::adjustPipeline(GraphicsPipeline& pipeline,
 void OpaqueColorTechnique::createRenderAction(
                                             DrawPlanBuildInfo& buildInfo,
                                             GraphicsPipeline& pipeline,
-                                            MatricesUniform& matricesUniform,
-                                            const BoneMatrices* boneMatricesPtr)
+                                            MatricesUniform& matricesUniform)
 {
   if(!normalsEnabled()) return;
 
   BaseGeometryTechnique::createRenderAction(buildInfo,
                                             pipeline,
-                                            matricesUniform,
-                                            boneMatricesPtr);
+                                            matricesUniform);
 }

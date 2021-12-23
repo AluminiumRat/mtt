@@ -61,13 +61,6 @@ namespace mtt
     using BoneNumberVariableType = MeshIntVariable;
     inline static const char boneNumberVariableDefine[] = "BONE_NUMBER";
 
-    inline static const char boneMatricesVariableName[] =
-                                                        "boneMatricesVariable";
-    using BoneMatricesVariableType =
-                                  MeshVariable<const std::vector<glm::mat4>*>;
-    inline static const char boneMatricesUniformBinding[] =
-                                                          "boneMatricesBinding";
-
   public:
     MeshExtraData(LogicalDevice& device);
     MeshExtraData(const MeshExtraData&) = delete;
@@ -136,9 +129,6 @@ namespace mtt
 
     void setBoneInverseMatricesData(const std::vector<glm::mat4>& matrices);
     void removeBoneInverseMatricesData() noexcept;
-
-    void setBoneMatricesData(const std::vector<glm::mat4>* matrices);
-    void removeBoneMatricesData() noexcept;
 
     void setAlphaInAlbedoSamplerIsOpacity(bool value);
     void removeAlphaInAlbedoSamplerIsOpacityVariable() noexcept;

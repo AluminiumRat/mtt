@@ -89,10 +89,9 @@ void TransparentColorTechnique::adjustPipeline( GraphicsPipeline& pipeline,
 }
 
 void TransparentColorTechnique::createRenderAction(
-                                            DrawPlanBuildInfo& buildInfo,
-                                            GraphicsPipeline& pipeline,
-                                            MatricesUniform& matricesUniform,
-                                            const BoneMatrices* boneMatricesPtr)
+                                              DrawPlanBuildInfo& buildInfo,
+                                              GraphicsPipeline& pipeline,
+                                              MatricesUniform& matricesUniform)
 {
   if(!normalsEnabled()) return;
   if(!materialDataEnabled()) return;
@@ -100,7 +99,6 @@ void TransparentColorTechnique::createRenderAction(
   createActionTemplate( buildInfo,
                         pipeline,
                         matricesUniform,
-                        boneMatricesPtr,
                         *_frontBufferAttachment,
                         PeelingGPass::frontAttachmentIndex,
                         *_backBufferAttachment,

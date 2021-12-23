@@ -361,19 +361,6 @@ void MeshExtraData::removeBoneInverseMatricesData() noexcept
   removeVariable(boneNumberVariableName);
 }
 
-void MeshExtraData::setBoneMatricesData(
-                                        const std::vector<glm::mat4>* matrices)
-{
-  removeBoneMatricesData();
-  addVariable(std::make_unique<BoneMatricesVariableType>(matrices),
-              boneMatricesVariableName);
-}
-
-void MeshExtraData::removeBoneMatricesData() noexcept
-{
-  removeVariable(boneMatricesVariableName);
-}
-
 void MeshExtraData::setAlphaInAlbedoSamplerIsOpacity(bool value)
 {
   removeAlphaInAlbedoSamplerIsOpacityVariable();

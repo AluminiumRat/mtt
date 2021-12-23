@@ -35,12 +35,10 @@ void EmissionTechnique::adjustPipeline( GraphicsPipeline& pipeline,
 
 void EmissionTechnique::createRenderAction( DrawPlanBuildInfo& buildInfo,
                                             GraphicsPipeline& pipeline,
-                                            MatricesUniform& matricesUniform,
-                                            const BoneMatrices* boneMatricesPtr)
+                                            MatricesUniform& matricesUniform)
 {
   if(!materialDataEnabled()) return;
   BaseGeometryTechnique::createRenderAction(buildInfo,
                                             pipeline,
-                                            matricesUniform,
-                                            boneMatricesPtr);
+                                            matricesUniform);
 }

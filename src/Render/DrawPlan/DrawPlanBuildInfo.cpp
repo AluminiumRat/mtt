@@ -10,7 +10,8 @@ DrawPlanBuildInfo::DrawPlanBuildInfo(DrawPlan& theDrawPlan) :
   frameType(baseFrameTypes::colorFrameType),
   builder(nullptr),
   frame(nullptr),
-  selected(false)
+  selected(false),
+  boneMatrices(nullptr)
 {
 }
 

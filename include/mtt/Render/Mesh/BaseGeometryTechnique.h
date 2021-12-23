@@ -108,15 +108,13 @@ namespace mtt
 
     virtual void createRenderAction(DrawPlanBuildInfo& buildInfo,
                                     GraphicsPipeline& pipeline,
-                                    MatricesUniform& matricesUniform,
-                                    const BoneMatrices* boneMatricesPtr);
+                                    MatricesUniform& matricesUniform);
 
     template <typename... ResourcesArguments>
     inline void createActionTemplate(
                                     DrawPlanBuildInfo& buildInfo,
                                     GraphicsPipeline& pipeline,
                                     MatricesUniform& matricesUniform,
-                                    const BoneMatrices* boneMatricesPtr,
                                     ResourcesArguments&... resourcesArguments);
 
   private:
@@ -157,7 +155,6 @@ namespace mtt
 
     int _boneNumber;
     std::optional<BoneMatricesUniform> _boneMatricesUniform;
-    const BoneMatrices* _boneMatricesPtr;
 
     Buffer* _boneInverseMatricesUniformBuffer;
   };
@@ -293,9 +290,23 @@ namespace mtt
                                       DrawPlanBuildInfo& buildInfo,
                                       GraphicsPipeline& pipeline,
                                       MatricesUniform& matricesUniform,
-                                      const BoneMatrices* boneMatricesPtr,
                                       ResourcesArguments&... resourcesArguments)
   {
+    const BoneMatrices* boneMatrices = buildInfo.boneMatrices;
+    if (skeletonEnabled())
+    {
+      if (boneMatrices == nullptr)
+      {
+        Log() << "BaseGeometryTechnique::addToDrawPlan: boneMatrices is null.";
+        return;
+      }
+      if (_boneNumber != boneMatrices->size())
+      {
+        Log() << "BaseGeometryTechnique::addToDrawPlan: wrong number of bone matrices.";
+        return;
+      }
+    }
+
     uint32_t vertexCount = vertexCountToDraw();
 
     float priority;
@@ -326,7 +337,7 @@ namespace mtt
                                           matricesUniform,
                                           buildInfo.drawMatrices,
                                           *boneMatricesUniform(),
-                                          *boneMatricesPtr,
+                                          *boneMatrices,
                                           resourcesArguments...);
     }
     else

@@ -21,6 +21,8 @@ MeshRenderObserver::MeshRenderObserver( MeshObject& object,
   _object(object),
   _mesh(mtt::Application::instance().displayDevice())
 {
+  _mesh.registedModificator(_boneMatricesSetter);
+
   mtt::LogicalDevice& device = mtt::Application::instance().displayDevice();
 
   std::unique_ptr<mtt::MeshCompositeColorTechnique> colorTechnique;
@@ -107,7 +109,10 @@ void MeshRenderObserver::_updateBones() noexcept
   {
     try
     {
-      _bonesObserver.emplace(_object, _object.boneRefs(), _mesh.extraData());
+      _bonesObserver.emplace( _object,
+                              _object.boneRefs(),
+                              _mesh.extraData(),
+                              _boneMatricesSetter);
     }
     catch (std::exception& error)
     {
@@ -134,11 +139,11 @@ void MeshRenderObserver::_updateMaterialObserver() noexcept
     catch(std::exception& error)
     {
       mtt::Log() << error.what();
-      mtt::Abort("MeshRenderObserver::_updateBones: unable to update material observer");
+      mtt::Abort("MeshRenderObserver::_updateMaterialObserver: unable to update material observer");
     }
     catch(...)
     {
-      mtt::Abort("MeshRenderObserver::_updateBones: unable to update material observer");
+      mtt::Abort("MeshRenderObserver::_updateMaterialObserver: unable to update material observer");
     }
   }
 }

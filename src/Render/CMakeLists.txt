@@ -41,6 +41,7 @@ set(HEADERS
 
     "../../include/mtt/Render/Drawable/AntiscaleDrawableModificator.h"
     "../../include/mtt/Render/Drawable/AutoscaleDrawableModificator.h"
+    "../../include/mtt/Render/Drawable/BoneMatricesSetter.h"
     "../../include/mtt/Render/Drawable/Drawable.h"
     "../../include/mtt/Render/Drawable/DrawableList.h"
     "../../include/mtt/Render/Drawable/LODDrawableFilter.h"
@@ -151,6 +152,7 @@ set(SOURCES
 
     "Drawable/AntiscaleDrawableModificator.cpp"
     "Drawable/AutoscaleDrawableModificator.cpp"
+    "Drawable/BoneMatricesSetter.cpp"
     "Drawable/Drawable.cpp"
     "Drawable/DrawableList.cpp"
     "Drawable/LODDrawableFilter.cpp"

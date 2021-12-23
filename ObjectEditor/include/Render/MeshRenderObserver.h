@@ -2,6 +2,7 @@
 
 #include <optional>
 
+#include <mtt/Render/Drawable/BoneMatricesSetter.h>
 #include <mtt/Render/Mesh/Mesh.h>
 #include <mtt/Render/SceneGraph/SimpleDrawableNode.h>
 
@@ -28,6 +29,7 @@ private:
 
 private:
   MeshObject& _object;
+  mtt::BoneMatricesSetter _boneMatricesSetter;
   mtt::Mesh _mesh;
   mtt::SimpleDrawableNode _drawableNode;
   std::optional<BonesObserver> _bonesObserver;

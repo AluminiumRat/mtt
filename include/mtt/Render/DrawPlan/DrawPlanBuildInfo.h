@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include <vulkan/vulkan.h>
 
 #include <glm/mat4x4.hpp>
@@ -96,6 +98,8 @@ namespace mtt
                                   /// used.
 
     UID objectUid;
+
+    const std::vector<glm::mat4>* boneMatrices;
 
     explicit DrawPlanBuildInfo(DrawPlan& theDrawPlan);
     DrawPlanBuildInfo(const DrawPlanBuildInfo&) = delete;

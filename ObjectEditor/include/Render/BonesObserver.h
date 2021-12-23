@@ -8,6 +8,7 @@
 
 namespace mtt
 {
+  class BoneMatricesSetter;
   class MeshExtraData;
 }
 
@@ -22,7 +23,8 @@ class BonesObserver : public QObject
 public:
   BonesObserver(MeshObject& object,
                 BoneRefBatch& boneBatch,
-                mtt::MeshExtraData& extraData);
+                mtt::MeshExtraData& extraData,
+                mtt::BoneMatricesSetter& matricesSetter);
   BonesObserver(const BonesObserver&) = delete;
   BonesObserver& operator = (const BonesObserver&) = delete;
   virtual ~BonesObserver() noexcept;
@@ -41,6 +43,7 @@ private:
   MeshObject& _object;
   BoneRefBatch& _boneBatch;
   mtt::MeshExtraData& _extraData;
+  mtt::BoneMatricesSetter& _matricesSetter;
 
   struct BoneRecord
   {
@@ -50,7 +53,6 @@ private:
     QMetaObject::Connection transformConnection;
   };
   std::vector<BoneRecord> _bones;
-  
-  std::vector<glm::mat4> _boneMatrices;
+
   std::vector<glm::mat4> _inverseBoneMatrices;
 };

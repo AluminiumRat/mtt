@@ -15,11 +15,9 @@ namespace mtt
   protected:
     virtual void adjustPipeline(GraphicsPipeline& pipeline,
                                 AbstractRenderPass& renderPass) override;
-    virtual void createRenderAction(
-                                  DrawPlanBuildInfo& buildInfo,
-                                  GraphicsPipeline& pipeline,
-                                  MatricesUniform& matricesUniform,
-                                  const BoneMatrices* boneMatricesPtr) override;
+    virtual void createRenderAction(DrawPlanBuildInfo& buildInfo,
+                                    GraphicsPipeline& pipeline,
+                                    MatricesUniform& matricesUniform) override;
   private:
     struct NearFarInfo
     {

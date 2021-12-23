@@ -45,8 +45,7 @@ void UidMeshTechnique::adjustPipeline(GraphicsPipeline& pipeline,
 
 void UidMeshTechnique::createRenderAction(DrawPlanBuildInfo& buildInfo,
                                           GraphicsPipeline& pipeline,
-                                          MatricesUniform& matricesUniform,
-                                          const BoneMatrices* boneMatricesPtr)
+                                          MatricesUniform& matricesUniform)
 {
   const uint64_t denom = 0x100000000ULL;
   glm::uvec2 uidValue(buildInfo.objectUid.value() % denom,
@@ -55,7 +54,6 @@ void UidMeshTechnique::createRenderAction(DrawPlanBuildInfo& buildInfo,
   createActionTemplate( buildInfo,
                         pipeline,
                         matricesUniform,
-                        boneMatricesPtr,
                         *_uidUniform,
                         uidValue);
 }

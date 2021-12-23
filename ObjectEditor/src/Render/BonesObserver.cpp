@@ -4,21 +4,25 @@
 
 #include <mtt/Utilities/Log.h>
 
+#include <mtt/Render/Drawable/BoneMatricesSetter.h>
+
 #include <Objects/BoneRefBatch.h>
 #include <Objects/MeshObject.h>
 #include <Render/BonesObserver.h>
 
 BonesObserver::BonesObserver( MeshObject& object,
                               BoneRefBatch& boneBatch,
-                              mtt::MeshExtraData& extraData) :
+                              mtt::MeshExtraData& extraData,
+                              mtt::BoneMatricesSetter& matricesSetter) :
   _object(object),
   _boneBatch(boneBatch),
-  _extraData(extraData)
+  _extraData(extraData),
+  _matricesSetter(matricesSetter)
 {
   size_t bonesNumber(_boneBatch.boneRefsNumber());
   if(bonesNumber != 0)
   {
-    _boneMatrices.resize(bonesNumber);
+    _matricesSetter.matrices.resize(bonesNumber);
     _inverseBoneMatrices.resize(bonesNumber);
     _bones.resize(bonesNumber);
 
@@ -43,8 +47,7 @@ BonesObserver::BonesObserver( MeshObject& object,
                                 });
       _setInverseMatrix(boneRef.boneInverseMatrix(), boneIndex, false);
     }
-    
-    _extraData.setBoneMatricesData(&_boneMatrices);
+
     _extraData.setBoneInverseMatricesData(_inverseBoneMatrices);
 
     connect(&_object,
@@ -69,7 +72,6 @@ BonesObserver::~BonesObserver()
       if(record.transformConnection) disconnect(record.transformConnection);
     }
 
-    _extraData.removeBoneMatricesData();
     _extraData.removeBoneInverseMatricesData();
   }
 }
@@ -111,7 +113,8 @@ void BonesObserver::_setBoneMatrix( SkeletonObject* boneObject,
 {
   const glm::mat4& meshTransform = _object.localToWorldTransform();
   const glm::mat4& boneTransform = boneObject->localToWorldTransform();
-  _boneMatrices[boneIndex] = glm::inverse(meshTransform) * boneTransform;
+  _matricesSetter.matrices[boneIndex] =
+                                    glm::inverse(meshTransform) * boneTransform;
 }
 
 void BonesObserver::_setInverseMatrix(const glm::mat4& newValue,

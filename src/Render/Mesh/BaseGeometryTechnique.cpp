@@ -31,7 +31,6 @@ BaseGeometryTechnique::BaseGeometryTechnique( int availableFeatures,
   _emissiveSampler(nullptr),
   _reflectionSampler(nullptr),
   _boneNumber(0),
-  _boneMatricesPtr(nullptr),
   _boneInverseMatricesUniformBuffer(nullptr)
 {
 }
@@ -315,13 +314,6 @@ void BaseGeometryTechnique::registerVariable( AbstractMeshVariable& variable,
       _boneNumber = numberVariable.value();
       invalidatePipeline();
     }
-    if(name == MeshExtraData::boneMatricesVariableName)
-    {
-      MeshExtraData::BoneMatricesVariableType& matricesVariable =
-                static_cast<MeshExtraData::BoneMatricesVariableType&>(variable);
-      _boneMatricesPtr = matricesVariable.value();
-      invalidatePipeline();
-    }
   }
 }
 
@@ -334,11 +326,6 @@ void BaseGeometryTechnique::unregisterVariable(
     if(name == MeshExtraData::boneNumberVariableName)
     {
       _boneNumber = 0;
-      invalidatePipeline();
-    }
-    if(name == MeshExtraData::boneMatricesVariableName)
-    {
-      _boneMatricesPtr = nullptr;
       invalidatePipeline();
     }
   }
@@ -490,7 +477,7 @@ void BaseGeometryTechnique::adjustPipeline( GraphicsPipeline& pipeline,
                             VK_SHADER_STAGE_VERTEX_BIT);
 
     _boneMatricesUniform.emplace();
-    _pipeline->addResource( MeshExtraData::boneMatricesUniformBinding,
+    _pipeline->addResource( "boneMatricesBinding",
                             _boneMatricesUniform.value(),
                             VK_SHADER_STAGE_VERTEX_BIT);
   }
@@ -532,28 +519,19 @@ void BaseGeometryTechnique::addToDrawPlan(DrawPlanBuildInfo& buildInfo)
     _rebuildPipeline(*renderPass);
   }
 
-  if (skeletonEnabled() && _boneMatricesPtr == nullptr)
-  {
-    Log() << "BaseGeometryTechnique::addToDrawPlan: boneMatrices is null.";
-    return;
-  }
-
   createRenderAction( buildInfo,
                       _pipeline.value(),
-                      _matricesUniform.value(),
-                      _boneMatricesPtr);
+                      _matricesUniform.value());
 }
 
 void BaseGeometryTechnique::createRenderAction(
-                                            DrawPlanBuildInfo& buildInfo,
-                                            GraphicsPipeline& pipeline,
-                                            MatricesUniform& matricesUniform,
-                                            const BoneMatrices* boneMatricesPtr)
+                                              DrawPlanBuildInfo& buildInfo,
+                                              GraphicsPipeline& pipeline,
+                                              MatricesUniform& matricesUniform)
 {
   createActionTemplate( buildInfo,
                         pipeline,
-                        matricesUniform,
-                        boneMatricesPtr);
+                        matricesUniform);
 }
 
 float BaseGeometryTechnique::getCustomPriority(
