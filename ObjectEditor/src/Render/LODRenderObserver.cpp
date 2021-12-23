@@ -10,12 +10,12 @@ LODRenderObserver::LODRenderObserver( LODObject& object,
   AbstractObjectRenderObserver(object, commonData),
   _object(object)
 {
-  _culledDrawable.registedModificator(visibleFilter());
-  _culledDrawable.registedModificator(_lodFilter);
+  _culledDrawable.registerModificator(visibleFilter());
+  _culledDrawable.registerModificator(_lodFilter);
   registerCulledDrawable(_culledDrawable);
 
-  _unculledDrawable.registedModificator(visibleFilter());
-  _unculledDrawable.registedModificator(_lodFilter);
+  _unculledDrawable.registerModificator(visibleFilter());
+  _unculledDrawable.registerModificator(_lodFilter);
   registerUnculledDrawable(_unculledDrawable);
 
   connect(&object,

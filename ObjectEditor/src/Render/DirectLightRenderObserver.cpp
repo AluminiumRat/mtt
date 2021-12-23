@@ -27,9 +27,9 @@ DirectLightRenderObserver::DirectLightRenderObserver(
 {
   registerUnculledDrawable(_iconNode);
   positionJoint().addChild(_iconNode);
-  _iconNode.registedModificator(visibleFilter());
-  _iconNode.registedModificator(uidSetter());
-  _iconNode.registedModificator(selectionModificator());
+  _iconNode.registerModificator(visibleFilter());
+  _iconNode.registerModificator(uidSetter());
+  _iconNode.registerModificator(selectionModificator());
 
   _cylinderMesh.setTechnique(
                 mtt::colorFrameType,
@@ -52,9 +52,9 @@ DirectLightRenderObserver::DirectLightRenderObserver(
   _cylinderNode.setDrawable(&_cylinderMesh, mtt::Sphere());
   registerCulledDrawable(_cylinderNode);
   positionRotateJoint().addChild(_cylinderNode);
-  _cylinderNode.registedModificator(visibleFilter());
-  _cylinderNode.registedModificator(uidSetter());
-  _cylinderNode.registedModificator(selectionModificator());
+  _cylinderNode.registerModificator(visibleFilter());
+  _cylinderNode.registerModificator(uidSetter());
+  _cylinderNode.registerModificator(selectionModificator());
 
   setApplicator(_lightDrawable);
 

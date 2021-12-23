@@ -6,7 +6,7 @@
 
 using namespace mtt;
 
-void Drawable::registedModificator(Modificator& modificator)
+void Drawable::registerModificator(Modificator& modificator)
 {
   if(std::find( _modificators.begin(),
                 _modificators.end(),
@@ -14,7 +14,7 @@ void Drawable::registedModificator(Modificator& modificator)
   _modificators.push_back(&modificator);
 }
 
-void Drawable::unregistedModificator(Modificator& modificator) noexcept
+void Drawable::unregisterModificator(Modificator& modificator) noexcept
 {
   Modificators::iterator iModificator = std::find(_modificators.begin(),
                                                   _modificators.end(),

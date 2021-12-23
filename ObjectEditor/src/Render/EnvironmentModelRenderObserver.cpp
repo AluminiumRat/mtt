@@ -48,9 +48,9 @@ void EnvironmentModelRenderObserver::_updateModel() noexcept
                                 EditorApplication::instance().textureLibrary,
                                 EditorApplication::instance().displayDevice());
       std::unique_ptr<mtt::DrawModel> newModel = loader.load();
-      newModel->registedModificator(visibleFilter());
-      newModel->registedModificator(uidSetter());
-      newModel->registedModificator(selectionModificator());
+      newModel->registerModificator(visibleFilter());
+      newModel->registerModificator(uidSetter());
+      newModel->registerModificator(selectionModificator());
       _drawModel = std::move(newModel);
       registerCulledDrawable(*_drawModel);
       fullTransformJoint().addChild(*_drawModel);

@@ -36,8 +36,8 @@ namespace mtt
 
     inline virtual void addToDrawPlan(DrawPlanBuildInfo& buildInfo);
 
-    void registedModificator(Modificator& modificator);
-    void unregistedModificator(Modificator& modificator) noexcept;
+    void registerModificator(Modificator& modificator);
+    void unregisterModificator(Modificator& modificator) noexcept;
 
   protected:
     virtual void buildDrawActions(DrawPlanBuildInfo& buildInfo) = 0;

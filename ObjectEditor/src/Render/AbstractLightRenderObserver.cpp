@@ -12,7 +12,7 @@ AbstractLightRenderObserver::AbstractLightRenderObserver(
   _lightObject(object),
   _lightApplicator(nullptr)
 {
-  _applicatorNode.registedModificator(_enableFilter);
+  _applicatorNode.registerModificator(_enableFilter);
   positionRotateJoint().addChild(_applicatorNode);
   registerCulledDrawable(_applicatorNode);
 
