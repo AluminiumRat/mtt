@@ -9,11 +9,6 @@ AnimationTrack::AnimationTrack( const QString& name,
                                 const mtt::UID& id) :
   Object(name, canBeRenamed,id),
   _enabled(true),
-  _positionAnimation(glm::vec3(0)),
-  _rotationAnimation(glm::quat()),
-  _scaleAnimation(glm::vec3(1)),
-  _startTime(0),
-  _finishTime(0),
   _skeletonLink(*this)
 {
 }
@@ -33,33 +28,9 @@ void AnimationTrack::update(TimeType time)
   SkeletonObject* skeletonObject = skeleton();
   if(skeletonObject == nullptr) return;
 
-  skeletonObject->setPosition(_positionAnimation.value(time));
-  skeletonObject->setRotation(_rotationAnimation.value(time));
-  skeletonObject->setScale(_scaleAnimation.value(time));
-}
-
-void AnimationTrack::_updateTiming() noexcept
-{
-  TimeType newStartTime = std::min(_positionAnimation.startTime(),
-                                    _rotationAnimation.startTime());
-  newStartTime = std::min(newStartTime, _scaleAnimation.startTime());
-
-  TimeType newFinishTime = std::max(_positionAnimation.finishTime(),
-                                    _rotationAnimation.finishTime());
-  newFinishTime = std::max(newFinishTime, _scaleAnimation.finishTime());
-
-  if(newStartTime == _startTime && newFinishTime == _finishTime) return;
-
-  TimeType oldStartTime = _startTime;
-  TimeType oldFinishTime = _finishTime;
-
-  _startTime = newStartTime;
-  _finishTime = newFinishTime;
-
-  if (oldStartTime != _startTime) emit startTimeChanged(_startTime);
-  if (oldFinishTime != _finishTime) emit finishTimeChanged(_finishTime);
-  emit durationChanged(duration());
-  emit timingChanged();
+  skeletonObject->setPosition(positionAnimation().value(time));
+  skeletonObject->setRotation(rotationAnimation().value(time));
+  skeletonObject->setScale(scaleAnimation().value(time));
 }
 
 void AnimationTrack::setSkeleton(SkeletonObject* skeleton)
@@ -129,4 +100,24 @@ std::unique_ptr<mtt::AbstractEditCommand>
   resultCommand->addSubcommand(std::move(positionCommand));
   resultCommand->addSubcommand(std::move(rotationCommand));
   return std::move(resultCommand);
+}
+
+void AnimationTrack::onStartTimeChanged() noexcept
+{
+  emit startTimeChanged(startTime());
+}
+
+void AnimationTrack::onFinishTimeChanged() noexcept
+{
+  emit finishTimeChanged(finishTime());
+}
+
+void AnimationTrack::onTimingChanged() noexcept
+{
+  emit timingChanged();
+}
+
+void AnimationTrack::onDurationChanged() noexcept
+{
+  emit durationChanged(duration());
 }

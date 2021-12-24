@@ -1,8 +1,12 @@
 #pragma once
 
+#include <QtCore/QString>
+
+#include <limits>
 #include <memory>
 #include <vector>
 
+#include <mtt/Application/DrawModel/DrawModelAnimation.h>
 #include <mtt/Application/DrawModel/DrawModelTransformTable.h>
 #include <mtt/Application/DrawModel/DrawModelMeshNode.h>
 #include <mtt/Render/SceneGraph/CombinedDrawableNode.h>
@@ -39,6 +43,23 @@ namespace mtt
     std::unique_ptr<DrawModelMeshNode> removeMeshNode(
                                         const DrawModelMeshNode& node) noexcept;
 
+    inline size_t animationsNumber() const noexcept;
+    inline const QString& animationName(size_t animationIndex) const noexcept;
+    inline DrawModelAnimation& animation(size_t animationIndex) noexcept;
+    inline const DrawModelAnimation& animation(
+                                          size_t animationIndex) const noexcept;
+    inline DrawModelAnimation* findAnimation(const QString& name) noexcept;
+    inline const DrawModelAnimation* findAnimation(
+                                            const QString& name) const noexcept;
+    void addAnimation(std::unique_ptr<DrawModelAnimation> animation,
+                      const QString& animationName);
+    /// Returns removed animation
+    std::unique_ptr<DrawModelAnimation> removeAnimation(
+                                  const DrawModelAnimation& animation) noexcept;
+
+    void updateFromAnimation( DrawModelAnimation& animation,
+                              Application::TimeType time);
+
   private:
     struct JointRecord
     {
@@ -56,10 +77,29 @@ namespace mtt
 
     using Meshes = std::vector<std::unique_ptr<DrawModelMeshNode>>;
 
+    struct AnimationRecord
+    {
+      std::unique_ptr<DrawModelAnimation> animation;
+      QString name;
+
+      AnimationRecord() = default;
+      AnimationRecord(const AnimationRecord&) = delete;
+      AnimationRecord(AnimationRecord&&) = default;
+      AnimationRecord& operator = (const AnimationRecord&) = delete;
+      AnimationRecord& operator = (AnimationRecord&&) = default;
+      ~AnimationRecord() noexcept = default;
+    };
+    using Animations = std::vector<AnimationRecord>;
+
+  private:
+    inline size_t _findAnimationIndex(
+                                  const QString& animationName) const noexcept;
+
   private:
     DrawModelTransformTable _transformTable;
     Joints _joints;
     Meshes _meshes;
+    Animations _animations;
   };
 
   inline DrawModelTransformTable& DrawModel::transformTable() noexcept
@@ -102,5 +142,54 @@ namespace mtt
                                                     size_t index) const noexcept
   {
     return *_meshes[index];
+  }
+
+  inline size_t DrawModel::animationsNumber() const noexcept
+  {
+    return _animations.size();
+  }
+  
+  inline const QString& DrawModel::animationName(
+                                          size_t animationIndex) const noexcept
+  {
+    return _animations[animationIndex].name;
+  }
+
+  inline DrawModelAnimation& DrawModel::animation(
+                                                size_t animationIndex) noexcept
+  {
+    return *_animations[animationIndex].animation;
+  }
+
+  inline const DrawModelAnimation& DrawModel::animation(
+                                          size_t animationIndex) const noexcept
+  {
+    return *_animations[animationIndex].animation;
+  }
+
+  inline DrawModelAnimation* DrawModel::findAnimation(
+                                                  const QString& name) noexcept
+  {
+    size_t index = _findAnimationIndex(name);
+    if(index == std::numeric_limits<size_t>::max()) return nullptr;
+    return &animation(index);
+  }
+
+  inline const DrawModelAnimation* DrawModel::findAnimation(
+                                            const QString& name) const noexcept
+  {
+    size_t index = _findAnimationIndex(name);
+    if (index == std::numeric_limits<size_t>::max()) return nullptr;
+    return &animation(index);
+  }
+
+  inline size_t DrawModel::_findAnimationIndex(
+                                    const QString& animationName) const noexcept
+  {
+    for (size_t index = 0; index < _animations.size(); index++)
+    {
+      if(_animations[index].name == animationName) return index;
+    }
+    return std::numeric_limits<size_t>::max();
   }
 }

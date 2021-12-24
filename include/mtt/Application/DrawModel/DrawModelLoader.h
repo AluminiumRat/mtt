@@ -9,6 +9,8 @@
 #include <QtCore/QString>
 
 #include <mtt/Application/DrawModel/DrawModel.h>
+#include <mtt/Application/DrawModel/DrawModelAnimation.h>
+#include <mtt/Application/DrawModel/DrawModelAnimationTrack.h>
 #include <mtt/Application/DrawModel/DrawModelMeshNode.h>
 #include <mtt/Render/Pipeline/Sampler.h>
 #include <mtt/Utilities/SurfaceMaterialData.h>
@@ -58,11 +60,19 @@ namespace mtt
       DrawModelTransformTable::Index boneIndex;
     };
 
+    struct ObjectHeader
+    {
+      uint16_t objectTypeIndex;
+      UID id;
+      QString name;
+    };
+
   private:
     void _checkHead();
     QString _loadTextureFilename();
     MaterialData _loadMaterialData();
     void _loadMaterials();
+    ObjectHeader _loadObjectHeader();
     Joint& _loadJoint();
     void _loadBones();
     glm::mat4 _loadTransform();
@@ -72,6 +82,11 @@ namespace mtt
     DrawModelMeshNode::BoneRefs _loadBoneRefs();
     void _adjustMaterial(DrawModelMeshNode& meshNode, UID materialId);
     std::unique_ptr<Sampler> loadTexture(const QString& fileName);
+    void _loadAnimations();
+    std::unique_ptr<DrawModelAnimationTrack> loadAnimationTrack();
+    template<typename ValueType>
+    void _readKeypoint( mtt::ValueKeypoint<ValueType,
+                        Application::TimeType>& keypoint);
 
   private:
     QString _filename;

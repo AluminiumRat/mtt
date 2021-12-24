@@ -38,6 +38,8 @@ set(HEADERS
     "../../include/mtt/Application/AsyncTasks/AsyncTaskQueue.h"
 
     "../../include/mtt/Application/DrawModel/DrawModel.h"
+    "../../include/mtt/Application/DrawModel/DrawModelAnimation.h"
+    "../../include/mtt/Application/DrawModel/DrawModelAnimationTrack.h"
     "../../include/mtt/Application/DrawModel/DrawModelLoader.h"
     "../../include/mtt/Application/DrawModel/DrawModelMeshNode.h"
     "../../include/mtt/Application/DrawModel/DrawModelTransformTable.h"
@@ -130,6 +132,8 @@ set(SOURCES
     "AsyncTasks/AsyncTaskQueue.cpp"
 
     "DrawModel/DrawModel.cpp"
+    "DrawModel/DrawModelAnimation.cpp"
+    "DrawModel/DrawModelAnimationTrack.cpp"
     "DrawModel/DrawModelLoader.cpp"
     "DrawModel/DrawModelMeshNode.cpp"
 

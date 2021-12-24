@@ -44,7 +44,7 @@ void ObjectLoader::visit(AnimationObject& object)
   uint32_t childNumber = _stream.readUint32();
   for (; childNumber != 0; childNumber--)
   {
-    object.addChild(loadObject<AnimationTrack>( false,
+    object.addChild(loadObject<AnimationTrack>( true,
                                                 _stream,
                                                 _fileDirectory,
                                                 _mixUIDValue));

@@ -49,6 +49,7 @@ std::unique_ptr<DrawModel> DrawModelLoader::load()
 
   _loadBones();
   _loadGeometry();
+  _loadAnimations();
 
   return model;
 }
@@ -106,16 +107,16 @@ void DrawModelLoader::_loadMaterials()
   uint32_t materialsNumber = _stream->readUint32();
   for (; materialsNumber != 0; materialsNumber--)
   {
-    uint16_t objectTypeIndex;
-    *_stream >> objectTypeIndex;
-
-    UID id = _stream->readUID();
-
-    QString name;
-    *_stream >> name;
-
-    _materialSet[id] = _loadMaterialData();
+    ObjectHeader header = _loadObjectHeader();
+    _materialSet[header.id] = _loadMaterialData();
   }
+}
+
+DrawModelLoader::ObjectHeader DrawModelLoader::_loadObjectHeader()
+{
+  ObjectHeader header;
+  *_stream >> header.objectTypeIndex >> header.id >> header.name;
+  return header;
 }
 
 void DrawModelLoader::_loadBones()
@@ -129,20 +130,13 @@ void DrawModelLoader::_loadBones()
 
 Joint& DrawModelLoader::_loadJoint()
 {
-  uint16_t objectTypeIndex;
-  *_stream >> objectTypeIndex;
+  ObjectHeader header = _loadObjectHeader();
 
-  UID id = _stream->readUID();
-
-  QString name;
-  *_stream >> name;
-
-  DrawModelTransformTable::Index boneIndex =
-                                        _model->transformTable().addBone(name);
+  DrawModelTransformTable::Index boneIndex = _model->transformTable().addBone();
 
   std::unique_ptr<Joint> joint(new Joint);
   Joint& jointRef = *joint;
-  _boneSet[id] = JointData{ joint.get(), boneIndex };
+  _boneSet[header.id] = JointData{ joint.get(), boneIndex };
   _model->addJoint(std::move(joint), boneIndex);
 
   _stream->readBool(); //visible
@@ -177,13 +171,7 @@ void DrawModelLoader::_loadGeometry()
   uint32_t lodsNumber = _stream->readUint32();
   for (; lodsNumber != 0; lodsNumber--)
   {
-    uint16_t objectTypeIndex;
-    *_stream >> objectTypeIndex;
-
-    UID id = _stream->readUID();
-
-    QString name;
-    *_stream >> name;
+    ObjectHeader header = _loadObjectHeader();
 
     bool visible = _stream->readBool();
     float minMppx = _stream->readFloat();
@@ -199,13 +187,7 @@ void DrawModelLoader::_loadGeometry()
 
 void DrawModelLoader::_loadMesh(bool visible, float minMppx, float maxMppx)
 {
-  uint16_t objectTypeIndex;
-  *_stream >> objectTypeIndex;
-
-  UID id = _stream->readUID();
-
-  QString name;
-  *_stream >> name;
+  ObjectHeader header = _loadObjectHeader();
 
   bool localVisible = _stream->readBool();
   visible = visible && localVisible;
@@ -357,4 +339,86 @@ std::unique_ptr<Sampler> DrawModelLoader::loadTexture(const QString& fileName)
                                   _textureLibrary.load(fileName, _device, true);
   sampler->setAttachedTexture(texture);
   return sampler;
+}
+
+void DrawModelLoader::_loadAnimations()
+{
+  uint32_t animationsNumber = _stream->readUint32();
+  for (; animationsNumber != 0; animationsNumber--)
+  {
+    ObjectHeader header = _loadObjectHeader();
+
+    std::unique_ptr<DrawModelAnimation> animation(new DrawModelAnimation());
+
+    uint32_t tracksNumber = _stream->readUint32();
+    for (; tracksNumber != 0; tracksNumber--)
+    {
+      std::unique_ptr<DrawModelAnimationTrack> track = loadAnimationTrack();
+      if(track != nullptr) animation->addTrack(std::move(track));
+    }
+
+    _model->addAnimation(std::move(animation), header.name);
+  }
+}
+
+template<typename ValueType>
+void DrawModelLoader::_readKeypoint(
+                mtt::ValueKeypoint<ValueType, Application::TimeType>& keypoint)
+{
+  uint32_t timeCount = _stream->readUint32();
+  Application::TimeType time(timeCount);
+  keypoint.setTime(time);
+
+  ValueType value;
+  *_stream >> value;
+  keypoint.setValue(value);
+
+  uint8_t interpolation = _stream->readInt8();
+  keypoint.setInterpolation(mtt::InterpolationType(interpolation));
+}
+
+std::unique_ptr<DrawModelAnimationTrack> DrawModelLoader::loadAnimationTrack()
+{
+  ObjectHeader header = _loadObjectHeader();
+
+  bool trackEnabled = _stream->readBool();
+  std::unique_ptr<DrawModelAnimationTrack> track;
+  if(trackEnabled) track.reset(new DrawModelAnimationTrack);
+
+  uint16_t keypointsNumber = _stream->readUint16();
+  for (; keypointsNumber != 0; keypointsNumber--)
+  {
+    std::unique_ptr<DrawModelAnimationTrack::PositionKeypoint> keypoint(
+                              new DrawModelAnimationTrack::PositionKeypoint());
+    _readKeypoint(*keypoint);
+    if (trackEnabled) track->addPositionKeypoint(std::move(keypoint));
+  }
+
+  keypointsNumber = _stream->readUint16();
+  for (; keypointsNumber != 0; keypointsNumber--)
+  {
+    std::unique_ptr<DrawModelAnimationTrack::RotationKeypoint> keypoint(
+                              new DrawModelAnimationTrack::RotationKeypoint());
+    _readKeypoint(*keypoint);
+    if (trackEnabled) track->addRotationKeypoint(std::move(keypoint));
+  }
+
+  keypointsNumber = _stream->readUint16();
+  for (; keypointsNumber != 0; keypointsNumber--)
+  {
+    std::unique_ptr<DrawModelAnimationTrack::ScaleKeypoint> keypoint(
+                                        new DrawModelAnimationTrack::ScaleKeypoint());
+    _readKeypoint(*keypoint);
+    if (trackEnabled) track->addScaleKeypoint(std::move(keypoint));
+  }
+
+  UID boneId = _stream->readUID();
+  if(trackEnabled)
+  {
+    BoneSet::iterator iBone = _boneSet.find(boneId);
+    if(iBone != _boneSet.end()) track->setBoneIndex(iBone->second.boneIndex);
+    else track->setBoneIndex(DrawModelTransformTable::notIndex);
+  }
+
+  return track;
 }

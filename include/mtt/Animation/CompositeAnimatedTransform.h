@@ -16,7 +16,7 @@ namespace mtt
   public:
     using Position = AbstractAnimatedValue<glm::vec3, TimeType>;
     using Rotation = AbstractAnimatedValue<glm::quat, TimeType>;
-    using Scale = AbstractAnimatedValue<float, TimeType>;
+    using Scale = AbstractAnimatedValue<glm::vec3, TimeType>;
 
   public:
     CompositeAnimatedTransform() = default;
@@ -27,9 +27,9 @@ namespace mtt
 
     inline virtual glm::mat4 value(TimeType time) const override;
 
-    std::unique_ptr<Position> position;
-    std::unique_ptr<Rotation> rotation;
-    std::unique_ptr<Scale> scale;
+    Position* position;
+    Rotation* rotation;
+    Scale* scale;
   };
 
   template <typename TimeType>
@@ -37,15 +37,16 @@ namespace mtt
                                                             TimeType time) const
   {
     glm::vec3 positionValue = position != nullptr ? position->value(time) :
-                                                    glm::vec3(0);
+                                                    glm::vec3(0.f);
 
-    glm::quat rotationValue = rotation != nullptr ? rotation->value(time) :
-                                                    glm::quat();
+    glm::quat rotationValue = rotation != nullptr ?
+                                                  rotation->value(time) :
+                                                  glm::quat(1.f, 0.f, 0.f, 0.f);
   
-    float scaleValue = scale ? scale->value(time) : 1.f;
+    glm::vec3 scaleValue = scale ? scale->value(time) : glm::vec3(1.f);
   
     return  glm::translate(positionValue) *
             glm::mat4_cast(rotationValue) *
-            glm::scale(glm::vec3(scaleValue));
+            glm::scale(scaleValue);
   }
 };
