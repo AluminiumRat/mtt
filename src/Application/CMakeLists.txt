@@ -41,8 +41,10 @@ set(HEADERS
     "../../include/mtt/Application/DrawModel/DrawModelAnimation.h"
     "../../include/mtt/Application/DrawModel/DrawModelAnimationTrack.h"
     "../../include/mtt/Application/DrawModel/DrawModelLoader.h"
-    "../../include/mtt/Application/DrawModel/DrawModelMeshNode.h"
-    "../../include/mtt/Application/DrawModel/DrawModelTransformTable.h"
+    "../../include/mtt/Application/DrawModel/MeshControlNode.h"
+    "../../include/mtt/Application/DrawModel/SkinControlNode.h"
+    "../../include/mtt/Application/DrawModel/SlaveDrawModel.h"
+    "../../include/mtt/Application/DrawModel/TransformTable.h"
 
     "../../include/mtt/Application/EditCommands/AbstractEditCommand.h"
     "../../include/mtt/Application/EditCommands/AddObjectCommand.h"
@@ -135,7 +137,9 @@ set(SOURCES
     "DrawModel/DrawModelAnimation.cpp"
     "DrawModel/DrawModelAnimationTrack.cpp"
     "DrawModel/DrawModelLoader.cpp"
-    "DrawModel/DrawModelMeshNode.cpp"
+    "DrawModel/MeshControlNode.cpp"
+    "DrawModel/SkinControlNode.cpp"
+    "DrawModel/SlaveDrawModel.cpp"
 
     "EditCommands/AddObjectCommand.cpp"
     "EditCommands/CompositeCommand.cpp"

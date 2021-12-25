@@ -4,7 +4,7 @@
 #include <vector>
 
 #include <mtt/Application/DrawModel/DrawModelAnimationTrack.h>
-#include <mtt/Application/DrawModel/DrawModelTransformTable.h>
+#include <mtt/Application/DrawModel/TransformTable.h>
 #include <mtt/Application/Application.h>
 
 namespace mtt
@@ -30,7 +30,7 @@ namespace mtt
     std::unique_ptr<DrawModelAnimationTrack> removeTrack(
                                       DrawModelAnimationTrack& track) noexcept;
 
-    inline void updateTransform(DrawModelTransformTable& target,
+    inline void updateTransform(TransformTable& target,
                                 Application::TimeType time) const;
 
   private:
@@ -78,7 +78,7 @@ namespace mtt
   }
 
   inline void DrawModelAnimation::updateTransform(
-                                              DrawModelTransformTable& target,
+                                              TransformTable& target,
                                               Application::TimeType time) const
   {
     for ( size_t trackIndex = 0;

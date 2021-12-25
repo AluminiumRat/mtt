@@ -11,7 +11,7 @@
 #include <mtt/Application/DrawModel/DrawModel.h>
 #include <mtt/Application/DrawModel/DrawModelAnimation.h>
 #include <mtt/Application/DrawModel/DrawModelAnimationTrack.h>
-#include <mtt/Application/DrawModel/DrawModelMeshNode.h>
+#include <mtt/Application/DrawModel/MeshControlNode.h>
 #include <mtt/Render/Pipeline/Sampler.h>
 #include <mtt/Utilities/SurfaceMaterialData.h>
 #include <mtt/Utilities/UID.h>
@@ -57,7 +57,7 @@ namespace mtt
     struct JointData
     {
       Joint* joint;
-      DrawModelTransformTable::Index boneIndex;
+      TransformTable::Index boneIndex;
     };
 
     struct ObjectHeader
@@ -79,8 +79,8 @@ namespace mtt
     void _loadGeometry();
     void _loadMesh(bool visible, float minMppx, float maxMppx);
     void _loadGeometry(mtt::CommonMeshGeometry& geometry);
-    DrawModelMeshNode::BoneRefs _loadBoneRefs();
-    void _adjustMaterial(DrawModelMeshNode& meshNode, UID materialId);
+    SkinControlNode::BoneRefs _loadBoneRefs();
+    void _adjustMaterial(MeshControlNode& meshNode, UID materialId);
     std::unique_ptr<Sampler> loadTexture(const QString& fileName);
     void _loadAnimations();
     std::unique_ptr<DrawModelAnimationTrack> loadAnimationTrack();

@@ -7,8 +7,8 @@
 #include <vector>
 
 #include <mtt/Application/DrawModel/DrawModelAnimation.h>
-#include <mtt/Application/DrawModel/DrawModelTransformTable.h>
-#include <mtt/Application/DrawModel/DrawModelMeshNode.h>
+#include <mtt/Application/DrawModel/MeshControlNode.h>
+#include <mtt/Application/DrawModel/TransformTable.h>
 #include <mtt/Render/SceneGraph/CombinedDrawableNode.h>
 #include <mtt/Render/SceneGraph/Joint.h>
 
@@ -22,26 +22,27 @@ namespace mtt
     DrawModel& operator = (const DrawModel&) = delete;
     virtual ~DrawModel() noexcept = default;
 
-    inline DrawModelTransformTable& transformTable() noexcept;
-    inline const DrawModelTransformTable& transformTable() const noexcept;
+    inline TransformTable& transformTable() noexcept;
+    inline const TransformTable& transformTable() const noexcept;
 
     inline size_t jointsNumber() const noexcept;
     inline Joint& getJoint(size_t index) noexcept;
     inline const Joint& getJoint(size_t index) const noexcept;
+    inline TransformTable::Index boneIndex(size_t jointIndex) const noexcept;
     /// bone index is index of transform from transform table, can be
-    /// DrawModelTransformTable::notIndex
+    /// TransformTable::notIndex
     void addJoint(std::unique_ptr<Joint> joint,
-                  DrawModelTransformTable::Index boneIndex);
+                  TransformTable::Index boneIndex);
     /// Returns removed joint
     std::unique_ptr<Joint> removeJoint(const Joint& joint) noexcept;
 
     inline size_t meshNodeNumber() const noexcept;
-    inline DrawModelMeshNode& getMeshNode(size_t index) noexcept;
-    inline const DrawModelMeshNode& getMeshNode(size_t index) const noexcept;
-    void addMeshNode(std::unique_ptr<DrawModelMeshNode> node);
+    inline MeshControlNode& getMeshNode(size_t index) noexcept;
+    inline const MeshControlNode& getMeshNode(size_t index) const noexcept;
+    void addMeshNode(std::unique_ptr<MeshControlNode> node);
     /// Returns removed node
-    std::unique_ptr<DrawModelMeshNode> removeMeshNode(
-                                        const DrawModelMeshNode& node) noexcept;
+    std::unique_ptr<MeshControlNode> removeMeshNode(
+                                          const MeshControlNode& node) noexcept;
 
     inline size_t animationsNumber() const noexcept;
     inline const QString& animationName(size_t animationIndex) const noexcept;
@@ -57,14 +58,14 @@ namespace mtt
     std::unique_ptr<DrawModelAnimation> removeAnimation(
                                   const DrawModelAnimation& animation) noexcept;
 
-    void updateFromAnimation( DrawModelAnimation& animation,
+    void updateFromAnimation( const DrawModelAnimation& animation,
                               Application::TimeType time);
 
   private:
     struct JointRecord
     {
       std::unique_ptr<Joint> node;
-      DrawModelTransformTable::Index boneIndex = 0;
+      TransformTable::Index boneIndex = 0;
 
       JointRecord() = default;
       JointRecord(const JointRecord&) = delete;
@@ -75,7 +76,7 @@ namespace mtt
     };
     using Joints = std::vector<JointRecord>;
 
-    using Meshes = std::vector<std::unique_ptr<DrawModelMeshNode>>;
+    using Meshes = std::vector<std::unique_ptr<MeshControlNode>>;
 
     struct AnimationRecord
     {
@@ -96,19 +97,18 @@ namespace mtt
                                   const QString& animationName) const noexcept;
 
   private:
-    DrawModelTransformTable _transformTable;
+    TransformTable _transformTable;
     Joints _joints;
     Meshes _meshes;
     Animations _animations;
   };
 
-  inline DrawModelTransformTable& DrawModel::transformTable() noexcept
+  inline TransformTable& DrawModel::transformTable() noexcept
   {
     return _transformTable;
   }
 
-  inline const DrawModelTransformTable&
-                                      DrawModel::transformTable() const noexcept
+  inline const TransformTable& DrawModel::transformTable() const noexcept
   {
     return _transformTable;
   }
@@ -128,17 +128,23 @@ namespace mtt
     return *_joints[index].node;
   }
 
+  inline TransformTable::Index DrawModel::boneIndex(
+                                              size_t jointIndex) const noexcept
+  {
+    return _joints[jointIndex].boneIndex;
+  }
+
   inline size_t DrawModel::meshNodeNumber() const noexcept
   {
     return _meshes.size();
   }
 
-  inline DrawModelMeshNode& DrawModel::getMeshNode(size_t index) noexcept
+  inline MeshControlNode& DrawModel::getMeshNode(size_t index) noexcept
   {
     return *_meshes[index];
   }
 
-  inline const DrawModelMeshNode& DrawModel::getMeshNode(
+  inline const MeshControlNode& DrawModel::getMeshNode(
                                                     size_t index) const noexcept
   {
     return *_meshes[index];

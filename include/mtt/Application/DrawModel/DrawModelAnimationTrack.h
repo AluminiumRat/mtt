@@ -1,7 +1,7 @@
 #pragma once
 
 #include <mtt/Animation/KeypointsAnimatedTransform.h>
-#include <mtt/Application/DrawModel/DrawModelTransformTable.h>
+#include <mtt/Application/DrawModel/TransformTable.h>
 #include <mtt/Application/Application.h>
 
 namespace mtt
@@ -20,10 +20,10 @@ namespace mtt
                                       const DrawModelAnimationTrack&) = delete;
     virtual ~DrawModelAnimationTrack() noexcept = default;
 
-    inline DrawModelTransformTable::Index boneIndex() const noexcept;
-    inline void setBoneIndex(DrawModelTransformTable::Index newValue) noexcept;
+    inline TransformTable::Index boneIndex() const noexcept;
+    inline void setBoneIndex(TransformTable::Index newValue) noexcept;
 
-    inline void updateTransform(DrawModelTransformTable& target,
+    inline void updateTransform(TransformTable& target,
                                 Application::TimeType time) const;
 
   protected:
@@ -35,26 +35,26 @@ namespace mtt
 
   private:
     DrawModelAnimation* _animation;
-    DrawModelTransformTable::Index _boneIndex;
+    TransformTable::Index _boneIndex;
   };
 
-  inline DrawModelTransformTable::Index
-                      DrawModelAnimationTrack::boneIndex() const noexcept
+  inline TransformTable::Index
+                            DrawModelAnimationTrack::boneIndex() const noexcept
   {
     return _boneIndex;
   }
 
   inline void DrawModelAnimationTrack::setBoneIndex(
-                              DrawModelTransformTable::Index newValue) noexcept
+                                        TransformTable::Index newValue) noexcept
   {
     _boneIndex = newValue;
   }
 
   inline void DrawModelAnimationTrack::updateTransform(
-                                              DrawModelTransformTable& target,
+                                              TransformTable& target,
                                               Application::TimeType time) const
   {
-    if(_boneIndex == DrawModelTransformTable::notIndex) return;
+    if(_boneIndex == TransformTable::notIndex) return;
     target.setTransform(_boneIndex, value(time));
   }
 

@@ -5,7 +5,7 @@ using namespace mtt;
 
 DrawModelAnimationTrack::DrawModelAnimationTrack() :
   _animation(nullptr),
-  _boneIndex(DrawModelTransformTable::notIndex)
+  _boneIndex(TransformTable::notIndex)
 {
 }
 

@@ -10,7 +10,7 @@ DrawModel::DrawModel()
 }
 
 void DrawModel::addJoint( std::unique_ptr<Joint> joint,
-                          DrawModelTransformTable::Index boneIndex)
+                          TransformTable::Index boneIndex)
 {
   if(joint == nullptr) Abort("DrawModel::addJoint: joint is null");
   JointRecord newRecord;
@@ -34,11 +34,11 @@ std::unique_ptr<Joint> DrawModel::removeJoint(const Joint& joint) noexcept
   return tmp;
 }
 
-void DrawModel::addMeshNode(std::unique_ptr<DrawModelMeshNode> node)
+void DrawModel::addMeshNode(std::unique_ptr<MeshControlNode> node)
 {
   if(node == nullptr) Abort("DrawModel::addMeshNode: node is null");
 
-  DrawModelMeshNode& meshRef = *node;
+  MeshControlNode& meshRef = *node;
   _meshes.push_back(std::move(node));
 
   try
@@ -52,19 +52,19 @@ void DrawModel::addMeshNode(std::unique_ptr<DrawModelMeshNode> node)
   }
 }
 
-std::unique_ptr<DrawModelMeshNode> DrawModel::removeMeshNode(
-                                        const DrawModelMeshNode& node) noexcept
+std::unique_ptr<MeshControlNode> DrawModel::removeMeshNode(
+                                    const MeshControlNode& node) noexcept
 {
   Meshes::iterator iMesh = std::find_if(
-                  _meshes.begin(),
-                  _meshes.end(),
-                  [&](const std::unique_ptr<DrawModelMeshNode>& record) -> bool
-                  {
-                    return record.get() == &node;
-                  });
+                    _meshes.begin(),
+                    _meshes.end(),
+                    [&](const std::unique_ptr<MeshControlNode>& record) -> bool
+                    {
+                      return record.get() == &node;
+                    });
   if(iMesh == _meshes.end()) return nullptr;
 
-  std::unique_ptr<DrawModelMeshNode> tmp = std::move(*iMesh);
+  std::unique_ptr<MeshControlNode> tmp = std::move(*iMesh);
   _meshes.erase(iMesh);
   return tmp;
 }
@@ -97,22 +97,21 @@ std::unique_ptr<DrawModelAnimation> DrawModel::removeAnimation(
   return tmp;
 }
 
-void DrawModel::updateFromAnimation(DrawModelAnimation& animation,
+void DrawModel::updateFromAnimation(const DrawModelAnimation& animation,
                                     Application::TimeType time)
 {
   animation.updateTransform(_transformTable, time);
-  
+
   for (JointRecord& jointRecord : _joints)
   {
-    DrawModelTransformTable::Index boneIndex = jointRecord.boneIndex;
-    if(boneIndex != DrawModelTransformTable::notIndex)
+    TransformTable::Index boneIndex = jointRecord.boneIndex;
+    if(boneIndex != TransformTable::notIndex)
     {
-      jointRecord.node->setJointMatrix(
-                                      _transformTable.getTransform(boneIndex));
+      jointRecord.node->setJointMatrix(_transformTable.getTransform(boneIndex));
     }
   }
 
-  for (std::unique_ptr<DrawModelMeshNode>& mesh : _meshes)
+  for (std::unique_ptr<MeshControlNode>& mesh : _meshes)
   {
     mesh->updateSkinFromBones();
   }

@@ -132,7 +132,7 @@ Joint& DrawModelLoader::_loadJoint()
 {
   ObjectHeader header = _loadObjectHeader();
 
-  DrawModelTransformTable::Index boneIndex = _model->transformTable().addBone();
+  TransformTable::Index boneIndex = _model->transformTable().addBone();
 
   std::unique_ptr<Joint> joint(new Joint);
   Joint& jointRef = *joint;
@@ -198,7 +198,7 @@ void DrawModelLoader::_loadMesh(bool visible, float minMppx, float maxMppx)
 
   mtt::CommonMeshGeometry geometry;
   _loadGeometry(geometry);
-  DrawModelMeshNode::BoneRefs boneRefs = _loadBoneRefs();
+  SkinControlNode::BoneRefs boneRefs = _loadBoneRefs();
 
   UID materialId = _stream->readUID();
 
@@ -206,15 +206,15 @@ void DrawModelLoader::_loadMesh(bool visible, float minMppx, float maxMppx)
   {
     std::unique_ptr<Joint> joint(new Joint);
     Joint& jointRef = *joint;
-    _model->addJoint(std::move(joint), DrawModelTransformTable::notIndex);
+    _model->addJoint(std::move(joint), TransformTable::notIndex);
     
     jointRef.setJointMatrix(transform);
 
     BoneSet::iterator iBone = _boneSet.find(boneId);
     if (iBone != _boneSet.end()) iBone->second.joint->addChild(jointRef);
 
-    std::unique_ptr<DrawModelMeshNode> meshNode(new DrawModelMeshNode(_device));
-    DrawModelMeshNode& meshRef = *meshNode;
+    std::unique_ptr<MeshControlNode> meshNode(new MeshControlNode(_device));
+    MeshControlNode& meshRef = *meshNode;
     _model->addMeshNode(std::move(meshNode));
 
     jointRef.addChild(meshRef);
@@ -257,9 +257,9 @@ void DrawModelLoader::_loadGeometry(mtt::CommonMeshGeometry& geometry)
   *_stream >> geometry.lineIndices;
 }
 
-DrawModelMeshNode::BoneRefs DrawModelLoader::_loadBoneRefs()
+SkinControlNode::BoneRefs DrawModelLoader::_loadBoneRefs()
 {
-  DrawModelMeshNode::BoneRefs result;
+  SkinControlNode::BoneRefs result;
 
   uint16_t boneRefsNumber = _stream->readUint16();
   for (; boneRefsNumber != 0; boneRefsNumber--)
@@ -276,7 +276,7 @@ DrawModelMeshNode::BoneRefs DrawModelLoader::_loadBoneRefs()
       throw std::runtime_error(errorString.toLocal8Bit().data());
     }
 
-    DrawModelMeshNode::BoneRefData boneRef;
+    SkinControlNode::BoneRefData boneRef;
     boneRef.joint = iBone->second.joint;
     boneRef.inverseBoneMatrix = _stream->readMat4();
 
@@ -286,7 +286,7 @@ DrawModelMeshNode::BoneRefs DrawModelLoader::_loadBoneRefs()
   return result;
 }
 
-void DrawModelLoader::_adjustMaterial(DrawModelMeshNode& meshNode,
+void DrawModelLoader::_adjustMaterial(MeshControlNode& meshNode,
                                       UID materialId)
 {
   MaterialSet::const_iterator iMaterial = _materialSet.find(materialId);
@@ -417,7 +417,7 @@ std::unique_ptr<DrawModelAnimationTrack> DrawModelLoader::loadAnimationTrack()
   {
     BoneSet::iterator iBone = _boneSet.find(boneId);
     if(iBone != _boneSet.end()) track->setBoneIndex(iBone->second.boneIndex);
-    else track->setBoneIndex(DrawModelTransformTable::notIndex);
+    else track->setBoneIndex(TransformTable::notIndex);
   }
 
   return track;
