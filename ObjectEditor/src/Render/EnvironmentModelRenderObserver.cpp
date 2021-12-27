@@ -1,7 +1,5 @@
 #include <stdexcept>
 
-#include <mtt/Application/DrawModel/DrawModelLoader.h>
-#include <mtt/DrawImpl/MeshTechniques/ModelTechniquesFactory.h>
 #include <mtt/Utilities/Log.h>
 
 #include <Objects/EnvironmentModel.h>
@@ -36,18 +34,12 @@ void EnvironmentModelRenderObserver::_updateModel() noexcept
   {
     try
     {
-      mtt::ModelTechniquesFactory techniqueFactory(
-                                          true,
-                                          true,
-                                          true,
-                                          true,
-                                          VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
-      mtt::DrawModelLoader loader(
-                                filename,
-                                techniqueFactory,
-                                EditorApplication::instance().textureLibrary,
-                                EditorApplication::instance().displayDevice());
-      std::unique_ptr<mtt::DrawModel> newModel = loader.load();
+      mtt::LogicalDevice& device =
+                                  EditorApplication::instance().displayDevice();
+      mtt::MMDModelLibrary& library =
+                                  EditorApplication::instance().mmdModelLibrary;
+      std::unique_ptr<mtt::SlaveDrawModel> newModel =
+                                                library.load(filename, device);
       newModel->registerModificator(visibleFilter());
       newModel->registerModificator(uidSetter());
       newModel->registerModificator(selectionModificator());

@@ -66,6 +66,8 @@ set(HEADERS
 
     "../../include/mtt/Application/ResourceManager/CubeTextureDescription.h"
     "../../include/mtt/Application/ResourceManager/CubeTextureLibrary.h"
+    "../../include/mtt/Application/ResourceManager/MMDModelDescription.h"
+    "../../include/mtt/Application/ResourceManager/MMDModelLibrary.h"
     "../../include/mtt/Application/ResourceManager/ResourceLibrary.h"
     "../../include/mtt/Application/ResourceManager/Texture2DDescription.h"
     "../../include/mtt/Application/ResourceManager/Texture2DLibrary.h"
@@ -157,6 +159,7 @@ set(SOURCES
     "Manipulator/UniformScale3DManipulator.cpp"
 
     "ResourceManager/CubeTextureLibrary.cpp"
+    "ResourceManager/MMDModelLibrary.cpp"
     "ResourceManager/Texture2DLibrary.cpp"
 
     "Scene/Object.cpp"

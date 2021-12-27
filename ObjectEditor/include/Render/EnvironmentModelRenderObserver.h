@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <mtt/Application/DrawModel/DrawModel.h>
+#include <mtt/Application/DrawModel/SlaveDrawModel.h>
 
 #include <Render/Object3DRenderObserver.h>
 
@@ -26,5 +26,5 @@ private:
 
 private:
   EnvironmentModel& _object;
-  std::unique_ptr<mtt::DrawModel> _drawModel;
+  std::unique_ptr<mtt::SlaveDrawModel> _drawModel;
 };

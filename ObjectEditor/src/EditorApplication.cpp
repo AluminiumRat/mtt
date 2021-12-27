@@ -1,3 +1,7 @@
+#include <memory>
+
+#include <mtt/DrawImpl/MeshTechniques/ModelTechniquesFactory.h>
+
 #include <EditorApplication.h>
 
 #ifdef NDEBUG
@@ -22,7 +26,14 @@ EditorApplication::EditorApplication(int& argc, char** argv) :
               { 0, 0, 0 },
               VK_API_VERSION_1_2,
               deviceFeatures(),
-              enableValidation)
+              enableValidation),
+  mmdModelLibrary(std::make_unique<mtt::ModelTechniquesFactory>(
+                                          true,
+                                          true,
+                                          true,
+                                          true,
+                                          VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST),
+                  textureLibrary)
 {
   _instance = this;
 }
