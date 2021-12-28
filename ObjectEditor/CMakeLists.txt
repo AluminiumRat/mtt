@@ -43,6 +43,7 @@ set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 set(HEADERS
     "include/AsyncTasks/AddAnimationFromFbxTask.h"
     "include/AsyncTasks/AddModelFromFbxTask.h"
+    "include/AsyncTasks/LoadEnvironmentModelTask.h"
     "include/AsyncTasks/LoadEnvironmentTask.h"
     "include/AsyncTasks/LoadModelTask.h"
     "include/AsyncTasks/ObjectBuilder.h"
@@ -150,6 +151,7 @@ set(HEADERS
 set(SOURCES
     "src/AsyncTasks/AddAnimationFromFbxTask.cpp"
     "src/AsyncTasks/AddModelFromFbxTask.cpp"
+    "src/AsyncTasks/LoadEnvironmentModelTask.cpp"
     "src/AsyncTasks/LoadEnvironmentTask.cpp"
     "src/AsyncTasks/LoadModelTask.cpp"
     "src/AsyncTasks/ObjectBuilder.cpp"

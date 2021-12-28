@@ -28,7 +28,7 @@ protected:
   virtual void finalizePart() override;
 
 private:
-  const QString& _filename;
+  QString _filename;
   mtt::MeshExtraData& _dstData;
   std::string _samplerName;
   std::unique_ptr<mtt::Sampler> _sampler;

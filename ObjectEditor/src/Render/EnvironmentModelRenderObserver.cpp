@@ -2,6 +2,7 @@
 
 #include <mtt/Utilities/Log.h>
 
+#include <AsyncTasks/LoadEnvironmentModelTask.h>
 #include <Objects/EnvironmentModel.h>
 #include <Render/EnvironmentModelRenderObserver.h>
 #include <EditorApplication.h>
@@ -34,31 +35,38 @@ void EnvironmentModelRenderObserver::_updateModel() noexcept
   {
     try
     {
-      mtt::LogicalDevice& device =
-                                  EditorApplication::instance().displayDevice();
-      mtt::MMDModelLibrary& library =
-                                  EditorApplication::instance().mmdModelLibrary;
-      std::unique_ptr<mtt::SlaveDrawModel> newModel =
-                                                library.load(filename, device);
-      newModel->registerModificator(visibleFilter());
-      newModel->registerModificator(uidSetter());
-      newModel->registerModificator(selectionModificator());
-      _drawModel = std::move(newModel);
-      registerCulledDrawable(*_drawModel);
-      fullTransformJoint().addChild(*_drawModel);
+      auto callback = [&](std::unique_ptr<mtt::SlaveDrawModel> model)
+      {
+        try
+        {
+          model->registerModificator(visibleFilter());
+          model->registerModificator(uidSetter());
+          model->registerModificator(selectionModificator());
+          _drawModel = std::move(model);
+          registerCulledDrawable(*_drawModel);
+          fullTransformJoint().addChild(*_drawModel);
+        }
+        catch (...)
+        {
+          unregisterCulledDrawable(*_drawModel);
+          fullTransformJoint().removeChild(*_drawModel);
+          _drawModel.reset();
+          throw;
+        }
+      };
+
+      std::unique_ptr<LoadEnvironmentModelTask> task(
+                              new LoadEnvironmentModelTask(filename, callback));
+      mtt::AsyncTaskQueue& queue =
+                                  EditorApplication::instance().asyncTaskQueue;
+      _uploadStopper = queue.addTaskWithStopper(std::move(task));
     }
     catch(std::exception& error)
     {
-      unregisterCulledDrawable(*_drawModel);
-      fullTransformJoint().removeChild(*_drawModel);
-      _drawModel.reset();
       mtt::Log() << "Unable to load model: " << error.what();
     }
     catch (...)
     {
-      unregisterCulledDrawable(*_drawModel);
-      fullTransformJoint().removeChild(*_drawModel);
-      _drawModel.reset();
       mtt::Log() << "Unable to load model: unknown error";
     }
   }

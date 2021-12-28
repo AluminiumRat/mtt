@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include <mtt/Application/AsyncTasks/AsyncTaskQueue.h>
 #include <mtt/Application/DrawModel/SlaveDrawModel.h>
 
 #include <Render/Object3DRenderObserver.h>
@@ -27,4 +28,6 @@ private:
 private:
   EnvironmentModel& _object;
   std::unique_ptr<mtt::SlaveDrawModel> _drawModel;
+
+  std::unique_ptr<mtt::AsyncTaskQueue::TaskStopper> _uploadStopper;
 };
