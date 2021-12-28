@@ -12,6 +12,7 @@
 namespace mtt
 {
   class LogicalDevice;
+  class MeshExtraData;
   class MeshTechniquesFactory;
   class Texture2DLibrary;
 
@@ -38,7 +39,10 @@ namespace mtt
                               const FbxMesh& mesh) override;
 
   private:
-    std::unique_ptr<Sampler> loadTexture(const QString& fileName);
+    Joint& _getOrCreateJoint(FbxNode& node);
+    void _updateMaterial( MeshExtraData& extraData,
+                          const FbxSurfaceMaterial& fbxMaterial);
+    std::unique_ptr<Sampler> _loadTexture(const QString& fileName);
 
   private:
     QString _filename;
@@ -49,6 +53,9 @@ namespace mtt
 
     MasterDrawModel* _model;
 
-    std::vector<Joint*> _jointsStack;
+    using JointsStack = std::vector<Joint*>;
+    JointsStack _jointsStack;
+    using JointsMap = std::map<FbxNode*, Joint*>;
+    JointsMap _jointsMap;
   };
 }
