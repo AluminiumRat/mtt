@@ -25,20 +25,20 @@ namespace mtt
   class Texture2DLibrary;
   class Joint;
 
-  class DrawModelLoader
+  class MMDModelLoader
   {
   public:
     static const inline std::string fileHead = "MMDModelFile";
     static constexpr uint32_t lastFileVersion = 0;
 
   public:
-    DrawModelLoader(const QString& filename,
+    MMDModelLoader( const QString& filename,
                     MeshTechniquesFactory& techniqueFactory,
                     Texture2DLibrary& textureLibrary,
                     LogicalDevice& device);
-    DrawModelLoader(const DrawModelLoader&) = delete;
-    DrawModelLoader& operator = (const DrawModelLoader&) = delete;
-    virtual ~DrawModelLoader() noexcept = default;
+    MMDModelLoader(const MMDModelLoader&) = delete;
+    MMDModelLoader& operator = (const MMDModelLoader&) = delete;
+    virtual ~MMDModelLoader() noexcept = default;
 
     std::unique_ptr<MasterDrawModel> load();
 

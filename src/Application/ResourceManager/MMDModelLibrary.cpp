@@ -1,4 +1,4 @@
-#include <mtt/Application/DrawModel/DrawModelLoader.h>
+#include <mtt/Application/DrawModel/MMDModelLoader.h>
 #include <mtt/Application/ResourceManager/MMDModelLibrary.h>
 #include <mtt/Utilities/Abort.h>
 
@@ -26,9 +26,9 @@ std::unique_ptr<SlaveDrawModel> MMDModelLibrary::load(const QString& filename,
 std::shared_ptr<MasterDrawModel> MMDModelLibrary::buildResource(
                                         const MMDModelDescription& description)
 {
-  DrawModelLoader loader( description.name,
-                          *_techniqueFactory,
-                          _textureLibrary,
-                          *description.device);
+  MMDModelLoader loader(description.name,
+                        *_techniqueFactory,
+                        _textureLibrary,
+                        *description.device);
   return loader.load();
 }

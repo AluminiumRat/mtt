@@ -7,7 +7,7 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QFile>
 
-#include <mtt/Application/DrawModel/DrawModelLoader.h>
+#include <mtt/Application/DrawModel/MMDModelLoader.h>
 #include <mtt/Application/ResourceManager/Texture2DLibrary.h>
 #include <mtt/Application/DataStream.h>
 #include <mtt/Render/Mesh/MeshTechniquesFactory.h>
@@ -15,10 +15,10 @@
 
 using namespace mtt;
 
-DrawModelLoader::DrawModelLoader( const QString& filename,
-                                  MeshTechniquesFactory& techniqueFactory,
-                                  Texture2DLibrary& textureLibrary,
-                                  LogicalDevice& device) :
+MMDModelLoader::MMDModelLoader( const QString& filename,
+                                MeshTechniquesFactory& techniqueFactory,
+                                Texture2DLibrary& textureLibrary,
+                                LogicalDevice& device) :
   _filename(filename),
   _techniquesFactory(techniqueFactory),
   _textureLibrary(textureLibrary),
@@ -30,7 +30,7 @@ DrawModelLoader::DrawModelLoader( const QString& filename,
 {
 }
 
-std::unique_ptr<MasterDrawModel> DrawModelLoader::load()
+std::unique_ptr<MasterDrawModel> MMDModelLoader::load()
 {
   if (!_fileDirectory.exists()) throw std::runtime_error("The file directory does not exist");
 
@@ -54,7 +54,7 @@ std::unique_ptr<MasterDrawModel> DrawModelLoader::load()
   return model;
 }
 
-void DrawModelLoader::_checkHead()
+void MMDModelLoader::_checkHead()
 {
   std::string head;
   head.resize(fileHead.size());
@@ -65,7 +65,7 @@ void DrawModelLoader::_checkHead()
   if (fileVersion > lastFileVersion) throw std::runtime_error("Unsupported version of mmd file");
 }
 
-QString DrawModelLoader::_loadTextureFilename()
+QString MMDModelLoader::_loadTextureFilename()
 {
   QString relativePath;
   *_stream >> relativePath;
@@ -74,7 +74,7 @@ QString DrawModelLoader::_loadTextureFilename()
   return fileInfo.canonicalFilePath();
 }
 
-DrawModelLoader::MaterialData DrawModelLoader::_loadMaterialData()
+MMDModelLoader::MaterialData MMDModelLoader::_loadMaterialData()
 {
   MaterialData material;
   material.albedo = _stream->readVec3();
@@ -102,7 +102,7 @@ DrawModelLoader::MaterialData DrawModelLoader::_loadMaterialData()
   return material;
 }
 
-void DrawModelLoader::_loadMaterials()
+void MMDModelLoader::_loadMaterials()
 {
   uint32_t materialsNumber = _stream->readUint32();
   for (; materialsNumber != 0; materialsNumber--)
@@ -112,14 +112,14 @@ void DrawModelLoader::_loadMaterials()
   }
 }
 
-DrawModelLoader::ObjectHeader DrawModelLoader::_loadObjectHeader()
+MMDModelLoader::ObjectHeader MMDModelLoader::_loadObjectHeader()
 {
   ObjectHeader header;
   *_stream >> header.objectTypeIndex >> header.id >> header.name;
   return header;
 }
 
-void DrawModelLoader::_loadBones()
+void MMDModelLoader::_loadBones()
 {
   uint32_t boneNumber = _stream->readUint32();
   for (; boneNumber != 0; boneNumber--)
@@ -128,7 +128,7 @@ void DrawModelLoader::_loadBones()
   }
 }
 
-Joint& DrawModelLoader::_loadJoint()
+Joint& MMDModelLoader::_loadJoint()
 {
   ObjectHeader header = _loadObjectHeader();
 
@@ -154,7 +154,7 @@ Joint& DrawModelLoader::_loadJoint()
   return jointRef;
 }
 
-glm::mat4 DrawModelLoader::_loadTransform()
+glm::mat4 MMDModelLoader::_loadTransform()
 {
   glm::quat rotation = _stream->readQuat();
   glm::vec3 position = _stream->readVec3();
@@ -166,7 +166,7 @@ glm::mat4 DrawModelLoader::_loadTransform()
   return transform;
 }
 
-void DrawModelLoader::_loadGeometry()
+void MMDModelLoader::_loadGeometry()
 {
   uint32_t lodsNumber = _stream->readUint32();
   for (; lodsNumber != 0; lodsNumber--)
@@ -185,7 +185,7 @@ void DrawModelLoader::_loadGeometry()
   }
 }
 
-void DrawModelLoader::_loadMesh(bool visible, float minMppx, float maxMppx)
+void MMDModelLoader::_loadMesh(bool visible, float minMppx, float maxMppx)
 {
   ObjectHeader header = _loadObjectHeader();
 
@@ -231,7 +231,7 @@ void DrawModelLoader::_loadMesh(bool visible, float minMppx, float maxMppx)
   }
 }
 
-void DrawModelLoader::_loadGeometry(mtt::CommonMeshGeometry& geometry)
+void MMDModelLoader::_loadGeometry(mtt::CommonMeshGeometry& geometry)
 {
   *_stream >> geometry.positions;
   *_stream >> geometry.normals;
@@ -257,7 +257,7 @@ void DrawModelLoader::_loadGeometry(mtt::CommonMeshGeometry& geometry)
   *_stream >> geometry.lineIndices;
 }
 
-SkinControlNode::BoneRefs DrawModelLoader::_loadBoneRefs()
+SkinControlNode::BoneRefs MMDModelLoader::_loadBoneRefs()
 {
   SkinControlNode::BoneRefs result;
 
@@ -286,7 +286,7 @@ SkinControlNode::BoneRefs DrawModelLoader::_loadBoneRefs()
   return result;
 }
 
-void DrawModelLoader::_adjustMaterial(MeshControlNode& meshNode,
+void MMDModelLoader::_adjustMaterial(MeshControlNode& meshNode,
                                       UID materialId)
 {
   MaterialSet::const_iterator iMaterial = _materialSet.find(materialId);
@@ -331,7 +331,7 @@ void DrawModelLoader::_adjustMaterial(MeshControlNode& meshNode,
   }
 }
 
-std::unique_ptr<Sampler> DrawModelLoader::loadTexture(const QString& fileName)
+std::unique_ptr<Sampler> MMDModelLoader::loadTexture(const QString& fileName)
 {
   std::unique_ptr<Sampler> sampler(new Sampler( PipelineResource::STATIC,
                                                 _device));
@@ -341,7 +341,7 @@ std::unique_ptr<Sampler> DrawModelLoader::loadTexture(const QString& fileName)
   return sampler;
 }
 
-void DrawModelLoader::_loadAnimations()
+void MMDModelLoader::_loadAnimations()
 {
   uint32_t animationsNumber = _stream->readUint32();
   for (; animationsNumber != 0; animationsNumber--)
@@ -362,7 +362,7 @@ void DrawModelLoader::_loadAnimations()
 }
 
 template<typename ValueType>
-void DrawModelLoader::_readKeypoint(
+void MMDModelLoader::_readKeypoint(
                 mtt::ValueKeypoint<ValueType, Application::TimeType>& keypoint)
 {
   uint32_t timeCount = _stream->readUint32();
@@ -377,7 +377,7 @@ void DrawModelLoader::_readKeypoint(
   keypoint.setInterpolation(mtt::InterpolationType(interpolation));
 }
 
-std::unique_ptr<DrawModelAnimationTrack> DrawModelLoader::loadAnimationTrack()
+std::unique_ptr<DrawModelAnimationTrack> MMDModelLoader::loadAnimationTrack()
 {
   ObjectHeader header = _loadObjectHeader();
 
