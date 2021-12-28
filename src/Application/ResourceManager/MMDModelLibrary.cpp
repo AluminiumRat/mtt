@@ -19,11 +19,11 @@ std::unique_ptr<SlaveDrawModel> MMDModelLibrary::load(const QString& filename,
   MMDModelDescription description;
   description.name = filename;
   description.device = &device;
-  std::shared_ptr<DrawModel> masterModel = getOrCreate(description);
+  std::shared_ptr<MasterDrawModel> masterModel = getOrCreate(description);
   return std::unique_ptr<SlaveDrawModel>(new SlaveDrawModel(masterModel));
 }
 
-std::shared_ptr<DrawModel> MMDModelLibrary::buildResource(
+std::shared_ptr<MasterDrawModel> MMDModelLibrary::buildResource(
                                         const MMDModelDescription& description)
 {
   DrawModelLoader loader( description.name,

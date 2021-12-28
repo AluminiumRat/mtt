@@ -8,9 +8,9 @@
 #include <QtCore/QDir>
 #include <QtCore/QString>
 
-#include <mtt/Application/DrawModel/DrawModel.h>
 #include <mtt/Application/DrawModel/DrawModelAnimation.h>
 #include <mtt/Application/DrawModel/DrawModelAnimationTrack.h>
+#include <mtt/Application/DrawModel/MasterDrawModel.h>
 #include <mtt/Application/DrawModel/MeshControlNode.h>
 #include <mtt/Render/Pipeline/Sampler.h>
 #include <mtt/Utilities/SurfaceMaterialData.h>
@@ -40,7 +40,7 @@ namespace mtt
     DrawModelLoader& operator = (const DrawModelLoader&) = delete;
     virtual ~DrawModelLoader() noexcept = default;
 
-    std::unique_ptr<DrawModel> load();
+    std::unique_ptr<MasterDrawModel> load();
 
   private:
     struct MaterialData : public SurfaceMaterialData
@@ -98,7 +98,7 @@ namespace mtt
 
     LogicalDevice& _device;
 
-    DrawModel* _model;
+    MasterDrawModel* _model;
 
     using MaterialSet = std::map<UID, MaterialData>;
     MaterialSet _materialSet;

@@ -2,7 +2,7 @@
 
 using namespace mtt;
 
-SlaveDrawModel::SlaveDrawModel(std::shared_ptr<DrawModel> masterModel) :
+SlaveDrawModel::SlaveDrawModel(std::shared_ptr<MasterDrawModel> masterModel) :
   _masterModel(masterModel),
   _transformTable(masterModel->transformTable())
 {

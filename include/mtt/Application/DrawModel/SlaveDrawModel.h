@@ -3,7 +3,7 @@
 #include <map>
 #include <memory>
 
-#include <mtt/Application/DrawModel/DrawModel.h>
+#include <mtt/Application/DrawModel/MasterDrawModel.h>
 #include <mtt/Application/DrawModel/TransformTable.h>
 #include <mtt/Application/DrawModel/SkinControlNode.h>
 #include <mtt/Render/SceneGraph/CombinedDrawableNode.h>
@@ -14,10 +14,13 @@ namespace mtt
   class SlaveDrawModel : public CombinedDrawableNode
   {
   public:
-    SlaveDrawModel(std::shared_ptr<DrawModel> masterModel);
+    SlaveDrawModel(std::shared_ptr<MasterDrawModel> masterModel);
     SlaveDrawModel(const SlaveDrawModel&) = delete;
     SlaveDrawModel& operator = (const SlaveDrawModel&) = delete;
     virtual ~SlaveDrawModel() noexcept = default;
+
+    inline Joint* findJoint(const QString& name) noexcept;
+    inline const Joint* findJoint(const QString& name) const noexcept;
 
     inline size_t animationsNumber() const noexcept;
     inline const QString& animationName(size_t animationIndex) const noexcept;
@@ -54,12 +57,27 @@ namespace mtt
     void _connectNodes(const NodeMap& nodeMap);
 
   private:
-    std::shared_ptr<DrawModel> _masterModel;
+    std::shared_ptr<MasterDrawModel> _masterModel;
 
     TransformTable _transformTable;
     Joints _joints;
     Meshes _meshes;
   };
+
+  inline Joint* SlaveDrawModel::findJoint(const QString& name) noexcept
+  {
+    std::optional<size_t> jointIndex = _masterModel->findJoint(name);
+    if(!jointIndex.has_value()) return nullptr;
+    return _joints[jointIndex.value()].node.get();
+  }
+
+  inline const Joint* SlaveDrawModel::findJoint(
+                                            const QString& name) const noexcept
+  {
+    std::optional<size_t> jointIndex = _masterModel->findJoint(name);
+    if (!jointIndex.has_value()) return nullptr;
+    return _joints[jointIndex.value()].node.get();
+  }
 
   inline size_t SlaveDrawModel::animationsNumber() const noexcept
   {

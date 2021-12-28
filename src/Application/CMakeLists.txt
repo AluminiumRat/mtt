@@ -37,10 +37,10 @@ set(HEADERS
     "../../include/mtt/Application/AsyncTasks/AbstractAsyncTask.h"
     "../../include/mtt/Application/AsyncTasks/AsyncTaskQueue.h"
 
-    "../../include/mtt/Application/DrawModel/DrawModel.h"
     "../../include/mtt/Application/DrawModel/DrawModelAnimation.h"
     "../../include/mtt/Application/DrawModel/DrawModelAnimationTrack.h"
     "../../include/mtt/Application/DrawModel/DrawModelLoader.h"
+    "../../include/mtt/Application/DrawModel/MasterDrawModel.h"
     "../../include/mtt/Application/DrawModel/MeshControlNode.h"
     "../../include/mtt/Application/DrawModel/SkinControlNode.h"
     "../../include/mtt/Application/DrawModel/SlaveDrawModel.h"
@@ -135,10 +135,10 @@ set(SOURCES
     "AsyncTasks/AbstractAsyncTask.cpp"
     "AsyncTasks/AsyncTaskQueue.cpp"
 
-    "DrawModel/DrawModel.cpp"
     "DrawModel/DrawModelAnimation.cpp"
     "DrawModel/DrawModelAnimationTrack.cpp"
     "DrawModel/DrawModelLoader.cpp"
+    "DrawModel/MasterDrawModel.cpp"
     "DrawModel/MeshControlNode.cpp"
     "DrawModel/SkinControlNode.cpp"
     "DrawModel/SlaveDrawModel.cpp"

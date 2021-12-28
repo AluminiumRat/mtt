@@ -30,7 +30,7 @@ DrawModelLoader::DrawModelLoader( const QString& filename,
 {
 }
 
-std::unique_ptr<DrawModel> DrawModelLoader::load()
+std::unique_ptr<MasterDrawModel> DrawModelLoader::load()
 {
   if (!_fileDirectory.exists()) throw std::runtime_error("The file directory does not exist");
 
@@ -44,7 +44,7 @@ std::unique_ptr<DrawModel> DrawModelLoader::load()
   _checkHead();
   _loadMaterials();
 
-  std::unique_ptr<DrawModel> model(new DrawModel);
+  std::unique_ptr<MasterDrawModel> model(new MasterDrawModel);
   _model = model.get();
 
   _loadBones();
@@ -137,7 +137,7 @@ Joint& DrawModelLoader::_loadJoint()
   std::unique_ptr<Joint> joint(new Joint);
   Joint& jointRef = *joint;
   _boneSet[header.id] = JointData{ joint.get(), boneIndex };
-  _model->addJoint(std::move(joint), boneIndex);
+  _model->addJoint(std::move(joint), boneIndex, header.name);
 
   _stream->readBool(); //visible
   glm::mat4 transform = _loadTransform();
@@ -206,7 +206,7 @@ void DrawModelLoader::_loadMesh(bool visible, float minMppx, float maxMppx)
   {
     std::unique_ptr<Joint> joint(new Joint);
     Joint& jointRef = *joint;
-    _model->addJoint(std::move(joint), TransformTable::notIndex);
+    _model->addJoint(std::move(joint), TransformTable::notIndex, header.name);
     
     jointRef.setJointMatrix(transform);
 

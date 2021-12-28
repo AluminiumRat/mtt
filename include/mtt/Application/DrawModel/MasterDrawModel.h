@@ -4,6 +4,7 @@
 
 #include <limits>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include <mtt/Application/DrawModel/DrawModelAnimation.h>
@@ -14,13 +15,13 @@
 
 namespace mtt
 {
-  class DrawModel : public CombinedDrawableNode
+  class MasterDrawModel : public CombinedDrawableNode
   {
   public:
-    DrawModel();
-    DrawModel(const DrawModel&) = delete;
-    DrawModel& operator = (const DrawModel&) = delete;
-    virtual ~DrawModel() noexcept = default;
+    MasterDrawModel();
+    MasterDrawModel(const MasterDrawModel&) = delete;
+    MasterDrawModel& operator = (const MasterDrawModel&) = delete;
+    virtual ~MasterDrawModel() noexcept = default;
 
     inline TransformTable& transformTable() noexcept;
     inline const TransformTable& transformTable() const noexcept;
@@ -28,11 +29,18 @@ namespace mtt
     inline size_t jointsNumber() const noexcept;
     inline Joint& getJoint(size_t index) noexcept;
     inline const Joint& getJoint(size_t index) const noexcept;
+    /// bone index is index of transform from transform table, can be
+    /// TransformTable::notIndex
     inline TransformTable::Index boneIndex(size_t jointIndex) const noexcept;
+    inline QString jointName(size_t jointIndex) const noexcept;
+    /// Returns the index of the first joint with this name, or nullopt if
+    /// no joint is found
+    std::optional<size_t> findJoint(const QString& name) const noexcept;
     /// bone index is index of transform from transform table, can be
     /// TransformTable::notIndex
     void addJoint(std::unique_ptr<Joint> joint,
-                  TransformTable::Index boneIndex);
+                  TransformTable::Index boneIndex,
+                  const QString& name);
     /// Returns removed joint
     std::unique_ptr<Joint> removeJoint(const Joint& joint) noexcept;
 
@@ -66,6 +74,7 @@ namespace mtt
     {
       std::unique_ptr<Joint> node;
       TransformTable::Index boneIndex = 0;
+      QString name;
 
       JointRecord() = default;
       JointRecord(const JointRecord&) = delete;
@@ -103,77 +112,82 @@ namespace mtt
     Animations _animations;
   };
 
-  inline TransformTable& DrawModel::transformTable() noexcept
+  inline TransformTable& MasterDrawModel::transformTable() noexcept
   {
     return _transformTable;
   }
 
-  inline const TransformTable& DrawModel::transformTable() const noexcept
+  inline const TransformTable& MasterDrawModel::transformTable() const noexcept
   {
     return _transformTable;
   }
 
-  inline size_t DrawModel::jointsNumber() const noexcept
+  inline size_t MasterDrawModel::jointsNumber() const noexcept
   {
     return _joints.size();
   }
 
-  inline Joint& DrawModel::getJoint(size_t index) noexcept
+  inline Joint& MasterDrawModel::getJoint(size_t index) noexcept
   {
     return *_joints[index].node;
   }
 
-  inline const Joint& DrawModel::getJoint(size_t index) const noexcept
+  inline const Joint& MasterDrawModel::getJoint(size_t index) const noexcept
   {
     return *_joints[index].node;
   }
 
-  inline TransformTable::Index DrawModel::boneIndex(
+  inline TransformTable::Index MasterDrawModel::boneIndex(
                                               size_t jointIndex) const noexcept
   {
     return _joints[jointIndex].boneIndex;
   }
 
-  inline size_t DrawModel::meshNodeNumber() const noexcept
+  inline QString MasterDrawModel::jointName(size_t jointIndex) const noexcept
+  {
+    return _joints[jointIndex].name;
+  }
+
+  inline size_t MasterDrawModel::meshNodeNumber() const noexcept
   {
     return _meshes.size();
   }
 
-  inline MeshControlNode& DrawModel::getMeshNode(size_t index) noexcept
+  inline MeshControlNode& MasterDrawModel::getMeshNode(size_t index) noexcept
   {
     return *_meshes[index];
   }
 
-  inline const MeshControlNode& DrawModel::getMeshNode(
+  inline const MeshControlNode& MasterDrawModel::getMeshNode(
                                                     size_t index) const noexcept
   {
     return *_meshes[index];
   }
 
-  inline size_t DrawModel::animationsNumber() const noexcept
+  inline size_t MasterDrawModel::animationsNumber() const noexcept
   {
     return _animations.size();
   }
   
-  inline const QString& DrawModel::animationName(
+  inline const QString& MasterDrawModel::animationName(
                                           size_t animationIndex) const noexcept
   {
     return _animations[animationIndex].name;
   }
 
-  inline DrawModelAnimation& DrawModel::animation(
+  inline DrawModelAnimation& MasterDrawModel::animation(
                                                 size_t animationIndex) noexcept
   {
     return *_animations[animationIndex].animation;
   }
 
-  inline const DrawModelAnimation& DrawModel::animation(
+  inline const DrawModelAnimation& MasterDrawModel::animation(
                                           size_t animationIndex) const noexcept
   {
     return *_animations[animationIndex].animation;
   }
 
-  inline DrawModelAnimation* DrawModel::findAnimation(
+  inline DrawModelAnimation* MasterDrawModel::findAnimation(
                                                   const QString& name) noexcept
   {
     size_t index = _findAnimationIndex(name);
@@ -181,7 +195,7 @@ namespace mtt
     return &animation(index);
   }
 
-  inline const DrawModelAnimation* DrawModel::findAnimation(
+  inline const DrawModelAnimation* MasterDrawModel::findAnimation(
                                             const QString& name) const noexcept
   {
     size_t index = _findAnimationIndex(name);
@@ -189,7 +203,7 @@ namespace mtt
     return &animation(index);
   }
 
-  inline size_t DrawModel::_findAnimationIndex(
+  inline size_t MasterDrawModel::_findAnimationIndex(
                                     const QString& animationName) const noexcept
   {
     for (size_t index = 0; index < _animations.size(); index++)

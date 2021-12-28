@@ -4,7 +4,7 @@
 
 #include <QtCore/QString>
 
-#include <mtt/Application/DrawModel/DrawModel.h>
+#include <mtt/Application/DrawModel/MasterDrawModel.h>
 #include <mtt/Application/DrawModel/SlaveDrawModel.h>
 #include <mtt/Application/ResourceManager/ResourceLibrary.h>
 #include <mtt/Application/ResourceManager/MMDModelDescription.h>
@@ -13,7 +13,7 @@
 
 namespace mtt
 {
-  class MMDModelLibrary : public ResourceLibrary< DrawModel,
+  class MMDModelLibrary : public ResourceLibrary< MasterDrawModel,
                                                   MMDModelDescription>
   {
   public:
@@ -28,7 +28,7 @@ namespace mtt
                                           LogicalDevice& device);
  
   protected:
-    virtual std::shared_ptr<DrawModel> buildResource(
+    virtual std::shared_ptr<MasterDrawModel> buildResource(
                               const MMDModelDescription& description) override;
 
   private:
