@@ -2,6 +2,7 @@
 
 #include <mtt/Application/AsyncTasks/AsyncTaskQueue.h>
 #include <mtt/Application/ResourceManager/CubeTextureLibrary.h>
+#include <mtt/Application/ResourceManager/FbxModelLibrary.h>
 #include <mtt/Application/ResourceManager/MMDModelLibrary.h>
 #include <mtt/Application/ResourceManager/Texture2DLibrary.h>
 #include <mtt/Application/Application.h>
@@ -23,6 +24,7 @@ public:
   mtt::Texture2DLibrary textureLibrary;
   mtt::CubeTextureLibrary cubeTextureLibrary;
   mtt::MMDModelLibrary mmdModelLibrary;
+  mtt::FbxModelLibrary fbxModelLibrary;
 
 private:
   static EditorApplication* _instance;

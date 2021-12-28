@@ -483,10 +483,11 @@ void EditMenu::_addEnvironmentModel() noexcept
     EditorScene* scene = _commonData.scene();
     if (scene == nullptr) return;
 
-    QString fileName = QFileDialog::getOpenFileName(&_window,
-                                                    tr("Import model"),
-                                                    "",
-                                                    tr("mmd (*.mmd)"));
+    QString fileName = QFileDialog::getOpenFileName(
+                                                &_window,
+                                                tr("Import model"),
+                                                "",
+                                                tr("Models (*.mmd *.fbx)"));
     if(fileName.isEmpty()) return;
 
     std::unique_ptr<EnvironmentModel> newModel(

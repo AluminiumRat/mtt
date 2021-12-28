@@ -1,3 +1,6 @@
+#include <stdexcept>
+
+#include <QtCore/QFileInfo>
 #include <QtCore/QObject>
 
 #include <mtt/Utilities/Abort.h>
@@ -19,9 +22,25 @@ LoadEnvironmentModelTask::LoadEnvironmentModelTask( const QString& filename,
 void LoadEnvironmentModelTask::asyncPart()
 {
   mtt::LogicalDevice& device = EditorApplication::instance().displayDevice();
-  mtt::MMDModelLibrary& library =
+
+  QFileInfo fileInfo(_filename);
+  QString extension = fileInfo.suffix();
+
+  if(extension == "mmd")
+  {
+    mtt::MMDModelLibrary& library =
                                 EditorApplication::instance().mmdModelLibrary;
-  _model = library.load(_filename, device);
+    _model = library.load(_filename, device);
+  }
+  else if (extension == "fbx")
+  {
+    mtt::FbxModelLibrary& library =
+                                  EditorApplication::instance().fbxModelLibrary;
+    _model = library.load(_filename,
+                          mtt::BaseFbxImporter::blenderMaterialOptions,
+                          device);
+  }
+  else throw std::runtime_error("Model file type is not supported");
 }
 
 void LoadEnvironmentModelTask::finalizePart()

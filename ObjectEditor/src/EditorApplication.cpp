@@ -33,6 +33,13 @@ EditorApplication::EditorApplication(int& argc, char** argv) :
                                           true,
                                           true,
                                           VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST),
+                  textureLibrary),
+  fbxModelLibrary(std::make_unique<mtt::ModelTechniquesFactory>(
+                                          true,
+                                          true,
+                                          true,
+                                          true,
+                                          VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST),
                   textureLibrary)
 {
   _instance = this;

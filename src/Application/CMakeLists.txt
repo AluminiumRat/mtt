@@ -22,11 +22,14 @@ find_package(Vulkan REQUIRED)
 set(CMAKE_MODULE_PATH &{CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake)
 find_package(Shaderc REQUIRED)
 
+find_package(FbxSDK REQUIRED)
+
 include_directories("../../include"
                     ${GLM_PATH}
                     ${Vulkan_INCLUDE_DIRS}
                     ${Shaderc_INCLUDE_DIRS}
                     ${VKMEMALLOC_PATH}
+                    ${FbxSDK_INCLUDE_DIRS}
                     )
 
 add_definitions(${Qt5Core_DEFINITIONS}
@@ -38,6 +41,7 @@ set(HEADERS
     "../../include/mtt/Application/AsyncTasks/AsyncTaskQueue.h"
 
     "../../include/mtt/Application/DrawModel/DrawModelAnimation.h"
+    "../../include/mtt/Application/DrawModel/FbxModelLoader.h"
     "../../include/mtt/Application/DrawModel/DrawModelAnimationTrack.h"
     "../../include/mtt/Application/DrawModel/MasterDrawModel.h"
     "../../include/mtt/Application/DrawModel/MeshControlNode.h"
@@ -66,6 +70,8 @@ set(HEADERS
 
     "../../include/mtt/Application/ResourceManager/CubeTextureDescription.h"
     "../../include/mtt/Application/ResourceManager/CubeTextureLibrary.h"
+    "../../include/mtt/Application/ResourceManager/FbxModelDescription.h"
+    "../../include/mtt/Application/ResourceManager/FbxModelLibrary.h"
     "../../include/mtt/Application/ResourceManager/MMDModelDescription.h"
     "../../include/mtt/Application/ResourceManager/MMDModelLibrary.h"
     "../../include/mtt/Application/ResourceManager/ResourceLibrary.h"
@@ -137,6 +143,7 @@ set(SOURCES
 
     "DrawModel/DrawModelAnimation.cpp"
     "DrawModel/DrawModelAnimationTrack.cpp"
+    "DrawModel/FbxModelLoader.cpp"
     "DrawModel/MasterDrawModel.cpp"
     "DrawModel/MeshControlNode.cpp"
     "DrawModel/MMDModelLoader.cpp"
@@ -159,6 +166,7 @@ set(SOURCES
     "Manipulator/UniformScale3DManipulator.cpp"
 
     "ResourceManager/CubeTextureLibrary.cpp"
+    "ResourceManager/FbxModelLibrary.cpp"
     "ResourceManager/MMDModelLibrary.cpp"
     "ResourceManager/Texture2DLibrary.cpp"
 
