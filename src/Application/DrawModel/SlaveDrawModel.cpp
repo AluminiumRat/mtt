@@ -1,4 +1,5 @@
 #include <mtt/Application/DrawModel/SlaveDrawModel.h>
+#include <mtt/Utilities/Abort.h>
 
 using namespace mtt;
 
@@ -6,6 +7,9 @@ SlaveDrawModel::SlaveDrawModel(std::shared_ptr<MasterDrawModel> masterModel) :
   _masterModel(masterModel),
   _transformTable(masterModel->transformTable())
 {
+  if(_masterModel == nullptr) Abort("SlaveDrawModel::SlaveDrawModel: master model is null.");
+  masterModel->lock();
+
   NodeMap nodeMap;
   _copyJoints(nodeMap);
   _copyMeshes(nodeMap);

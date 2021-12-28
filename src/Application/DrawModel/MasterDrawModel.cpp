@@ -1,11 +1,11 @@
 #include <algorithm>
 
 #include <mtt/Application/DrawModel/MasterDrawModel.h>
-#include <mtt/Utilities/Abort.h>
 
 using namespace mtt;
 
-MasterDrawModel::MasterDrawModel()
+MasterDrawModel::MasterDrawModel() :
+  _locked(false)
 {
 }
 
@@ -23,6 +23,7 @@ void MasterDrawModel::addJoint( std::unique_ptr<Joint> joint,
                                 TransformTable::Index boneIndex,
                                 const QString& name)
 {
+  if(_locked) mtt::Abort("MasterDrawModel::addJoint: model is locked");
   if(joint == nullptr) Abort("MasterDrawModel::addJoint: joint is null");
   JointRecord newRecord;
   newRecord.node = std::move(joint);
@@ -33,6 +34,7 @@ void MasterDrawModel::addJoint( std::unique_ptr<Joint> joint,
 
 std::unique_ptr<Joint> MasterDrawModel::removeJoint(const Joint& joint) noexcept
 {
+  if (_locked) mtt::Abort("MasterDrawModel::removeJoint: model is locked");
   Joints::iterator iJoint = std::find_if( _joints.begin(),
                                           _joints.end(),
                                           [&](const JointRecord& record) -> bool
@@ -48,6 +50,7 @@ std::unique_ptr<Joint> MasterDrawModel::removeJoint(const Joint& joint) noexcept
 
 void MasterDrawModel::addMeshNode(std::unique_ptr<MeshControlNode> node)
 {
+  if (_locked) mtt::Abort("MasterDrawModel::addMeshNode: model is locked");
   if(node == nullptr) Abort("MasterDrawModel::addMeshNode: node is null");
 
   MeshControlNode& meshRef = *node;
@@ -67,6 +70,7 @@ void MasterDrawModel::addMeshNode(std::unique_ptr<MeshControlNode> node)
 std::unique_ptr<MeshControlNode> MasterDrawModel::removeMeshNode(
                                           const MeshControlNode& node) noexcept
 {
+  if (_locked) mtt::Abort("MasterDrawModel::removeMeshNode: model is locked");
   Meshes::iterator iMesh = std::find_if(
                     _meshes.begin(),
                     _meshes.end(),
@@ -85,6 +89,7 @@ void MasterDrawModel::addAnimation(
                                   std::unique_ptr<DrawModelAnimation> animation,
                                   const QString& animationName)
 {
+  if (_locked) mtt::Abort("MasterDrawModel::addAnimation: model is locked");
   if (animation == nullptr) Abort("MasterDrawModel::addAnimation: animation is null");
 
   AnimationRecord newRecord;
@@ -96,6 +101,7 @@ void MasterDrawModel::addAnimation(
 std::unique_ptr<DrawModelAnimation> MasterDrawModel::removeAnimation(
                                   const DrawModelAnimation& animation) noexcept
 {
+  if (_locked) mtt::Abort("MasterDrawModel::removeAnimation: model is locked");
   Animations::iterator iAnimation =
                     std::find_if( _animations.begin(),
                                   _animations.end(),
@@ -113,6 +119,7 @@ std::unique_ptr<DrawModelAnimation> MasterDrawModel::removeAnimation(
 void MasterDrawModel::updateFromAnimation(const DrawModelAnimation& animation,
                                           Application::TimeType time)
 {
+  if (_locked) mtt::Abort("MasterDrawModel::updateFromAnimation: model is locked");
   animation.updateTransform(_transformTable, time);
 
   for (JointRecord& jointRecord : _joints)
@@ -128,4 +135,9 @@ void MasterDrawModel::updateFromAnimation(const DrawModelAnimation& animation,
   {
     mesh->updateSkinFromBones();
   }
+}
+
+void MasterDrawModel::lock() noexcept
+{
+  _locked = true;
 }

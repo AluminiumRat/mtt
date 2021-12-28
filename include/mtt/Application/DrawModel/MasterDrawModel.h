@@ -12,6 +12,7 @@
 #include <mtt/Application/DrawModel/TransformTable.h>
 #include <mtt/Render/SceneGraph/CombinedDrawableNode.h>
 #include <mtt/Render/SceneGraph/Joint.h>
+#include <mtt/Utilities/Abort.h>
 
 namespace mtt
 {
@@ -69,6 +70,12 @@ namespace mtt
     void updateFromAnimation( const DrawModelAnimation& animation,
                               Application::TimeType time);
 
+    /// This is the protection of slave models. If you try to change the locked
+    /// master model, the mtt::Abort will be called.
+    /// The slave model locks the master model in the constructor.
+    inline bool locked() const noexcept;
+    void lock() noexcept;
+
   private:
     struct JointRecord
     {
@@ -110,6 +117,7 @@ namespace mtt
     Joints _joints;
     Meshes _meshes;
     Animations _animations;
+    bool _locked;
   };
 
   inline TransformTable& MasterDrawModel::transformTable() noexcept
@@ -178,6 +186,7 @@ namespace mtt
   inline DrawModelAnimation& MasterDrawModel::animation(
                                                 size_t animationIndex) noexcept
   {
+    if (_locked) mtt::Abort("MasterDrawModel::animation: model is locked");
     return *_animations[animationIndex].animation;
   }
 
@@ -190,6 +199,7 @@ namespace mtt
   inline DrawModelAnimation* MasterDrawModel::findAnimation(
                                                   const QString& name) noexcept
   {
+    if (_locked) mtt::Abort("MasterDrawModel::findAnimation: model is locked");
     size_t index = _findAnimationIndex(name);
     if(index == std::numeric_limits<size_t>::max()) return nullptr;
     return &animation(index);
@@ -211,5 +221,10 @@ namespace mtt
       if(_animations[index].name == animationName) return index;
     }
     return std::numeric_limits<size_t>::max();
+  }
+
+  inline bool MasterDrawModel::locked() const noexcept
+  {
+    return _locked;
   }
 }
