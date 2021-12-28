@@ -164,7 +164,7 @@ void ObjectLoader::visit(LODObject& object)
   uint32_t childNumber = _stream.readUint32();
   for (; childNumber != 0; childNumber--)
   {
-    object.addChild(loadObject<MeshObject>( false,
+    object.addChild(loadObject<MeshObject>( true,
                                             _stream,
                                             _fileDirectory,
                                             _mixUIDValue));
@@ -281,7 +281,7 @@ void ObjectLoader::visit(SkeletonObject& object)
   uint32_t childsNumber = _stream.readUint32();
   for (; childsNumber != 0; childsNumber--)
   {
-    object.addChild(loadObject<SkeletonObject>( false,
+    object.addChild(loadObject<SkeletonObject>( true,
                                                 _stream,
                                                 _fileDirectory,
                                                 _mixUIDValue));
