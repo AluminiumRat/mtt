@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <set>
 #include <vector>
 
 #include <QtCore/QDir>
@@ -69,6 +70,12 @@ namespace mtt
                                             const FbxSurfaceMaterial& material,
                                             const MaterialOptions& options);
     QString textureFullFilePath(const FbxProperty& theProperty);
+
+    static std::set<FbxTime> getKeypointTimes(FbxNode& node,
+                                              FbxAnimLayer& layer);
+
+    static void fillKeypointTimes(std::set<FbxTime>& timeSet,
+                                  FbxAnimCurve& curve);
 
   private:
     void _importNode(FbxNode& node);

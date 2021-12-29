@@ -592,3 +592,44 @@ BaseFbxImporter::MaterialDescription
 
   return description;
 }
+
+std::set<FbxTime> BaseFbxImporter::getKeypointTimes(FbxNode& node,
+                                                    FbxAnimLayer& layer)
+{
+  std::set<FbxTime> timeSet;
+  FbxAnimCurve* curve = node.LclTranslation.GetCurve(
+                                                  &layer,
+                                                  FBXSDK_CURVENODE_COMPONENT_X);
+  if(curve != nullptr) fillKeypointTimes(timeSet, *curve);
+
+  curve = node.LclTranslation.GetCurve(&layer,
+                                       FBXSDK_CURVENODE_COMPONENT_Y);
+  if(curve != nullptr) fillKeypointTimes(timeSet, *curve);
+
+  curve = node.LclTranslation.GetCurve(&layer,
+                                       FBXSDK_CURVENODE_COMPONENT_Z);
+  if(curve != nullptr) fillKeypointTimes(timeSet, *curve);
+
+  curve = node.LclRotation.GetCurve(&layer,
+                                    FBXSDK_CURVENODE_COMPONENT_X);
+  if (curve != nullptr) fillKeypointTimes(timeSet, *curve);
+
+  curve = node.LclRotation.GetCurve(&layer,
+                                    FBXSDK_CURVENODE_COMPONENT_Y);
+  if (curve != nullptr) fillKeypointTimes(timeSet, *curve);
+
+  curve = node.LclRotation.GetCurve(&layer,
+                                    FBXSDK_CURVENODE_COMPONENT_Z);
+  if (curve != nullptr) fillKeypointTimes(timeSet, *curve);
+
+  return timeSet;
+}
+
+void BaseFbxImporter::fillKeypointTimes(std::set<FbxTime>& timeSet,
+                                        FbxAnimCurve& curve)
+{
+  for(int keyIndex = 0; keyIndex < curve.KeyGetCount(); keyIndex++)
+  {
+    timeSet.insert(curve.KeyGetTime(keyIndex));
+  }
+}

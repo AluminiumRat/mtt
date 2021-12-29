@@ -3,6 +3,7 @@
 
 #include <mtt/Application/DrawModel/FbxModelLoader.h>
 #include <mtt/Application/ResourceManager/Texture2DLibrary.h>
+#include <mtt/Application/Application.h>
 #include <mtt/Render/Mesh/MeshTechniquesFactory.h>
 #include <mtt/Render/Pipeline/Texture2D.h>
 
@@ -18,7 +19,10 @@ FbxModelLoader::FbxModelLoader(
   _materialOptions(materialOptions),
   _techniquesFactory(techniqueFactory),
   _textureLibrary(textureLibrary),
-  _device(device)
+  _device(device),
+  _animationLayer(nullptr),
+  _model(nullptr),
+  _animation(nullptr)
 {
 }
 
@@ -26,8 +30,10 @@ std::unique_ptr<MasterDrawModel> FbxModelLoader::load()
 {
   _jointsStack.clear();
   _jointsMap.clear();
+  _animationLayer = nullptr;
   std::unique_ptr<MasterDrawModel> model(new MasterDrawModel());
   _model = model.get();
+  _animation = nullptr;
 
   startImporting(_filename.toUtf8().data());
 
@@ -41,17 +47,39 @@ std::unique_ptr<MasterDrawModel> FbxModelLoader::load()
   return model;
 }
 
-void FbxModelLoader::pushTranslation(FbxNode& node)
+void FbxModelLoader::processScene(FbxScene& scene)
 {
-  Joint& joint = _getOrCreateJoint(node);
-  if(!_jointsStack.empty()) _jointsStack.back()->addChild(joint);
-  _jointsStack.push_back(&joint);
+  FbxAnimStack* animStack = scene.GetCurrentAnimationStack();
+  if (animStack == nullptr) return;
+
+  int numAnimLayers = animStack->GetMemberCount(
+                                FbxCriteria::ObjectType(FbxAnimLayer::ClassId));
+  if(numAnimLayers < 1) return;
+  _animationLayer = static_cast<FbxAnimLayer*>(
+          animStack->GetMember( FbxCriteria::ObjectType(FbxAnimLayer::ClassId),
+                                0));
+  if(_animationLayer == nullptr) return;
+
+  std::unique_ptr<DrawModelAnimation> animation(new DrawModelAnimation);
+  _animation = animation.get();
+  _model->addAnimation(std::move(animation), "Animation");
+
+  BaseFbxImporter::processScene(scene);
 }
 
-Joint& FbxModelLoader::_getOrCreateJoint(FbxNode& node)
+void FbxModelLoader::pushTranslation(FbxNode& node)
+{
+  JointRecord jointRec = _getOrCreateJoint(node);
+  if(!_jointsStack.empty()) _jointsStack.back()->addChild(*jointRec.joint);
+  _jointsStack.push_back(jointRec.joint);
+  loadAnimationTrack(node, jointRec.boneIndex);
+  BaseFbxImporter::pushTranslation(node);
+}
+
+FbxModelLoader::JointRecord FbxModelLoader::_getOrCreateJoint(FbxNode& node)
 {
   JointsMap::iterator iJoint = _jointsMap.find(&node);
-  if(iJoint != _jointsMap.end()) return *iJoint->second;
+  if(iJoint != _jointsMap.end()) return iJoint->second;
 
   TransformTable::Index boneIndex = _model->transformTable().addBone();
 
@@ -71,20 +99,76 @@ Joint& FbxModelLoader::_getOrCreateJoint(FbxNode& node)
                         glm::mat4_cast(rotation) *
                         glm::scale(glm::mat4(1), scaling);
   newJoint->setJointMatrix(transform);
+  _model->transformTable().setTransform(boneIndex, transform);
 
   Joint& jointRef = *newJoint;
   _model->addJoint( std::move(newJoint),
                     boneIndex,
                     node.GetName());
 
-  _jointsMap[&node] = &jointRef;
+  JointRecord newRecord;
+  newRecord.joint = &jointRef;
+  newRecord.boneIndex = boneIndex;
 
-  return jointRef;
+  _jointsMap[&node] = newRecord;
+
+  return newRecord;
+}
+
+void FbxModelLoader::loadAnimationTrack(FbxNode& node,
+                                        TransformTable::Index boneIndex)
+{
+  if(_animation == nullptr) return;
+  if(_animationLayer == nullptr) return;
+
+  std::set<FbxTime> timeSet = getKeypointTimes(node, *_animationLayer);
+  if(timeSet.empty()) return;
+
+  std::unique_ptr<DrawModelAnimationTrack> track(new DrawModelAnimationTrack());
+  track->setBoneIndex(boneIndex);
+
+  for (const FbxTime& fbxTime : timeSet)
+  {
+    using MediumTime = std::chrono::duration<FbxLongLong, std::ratio<1, 1000>>;
+    MediumTime medium = MediumTime(fbxTime.GetMilliSeconds());
+
+    using TimeType = Application::TimeType;
+    TimeType time = std::chrono::duration_cast<TimeType>(medium);
+
+    FbxDouble3 fbxPosition = node.LclTranslation.EvaluateValue(fbxTime);
+    glm::vec3 position(fbxPosition[0], fbxPosition[1], fbxPosition[2]);
+    track->addPositionKeypoint(
+                std::make_unique<DrawModelAnimationTrack::PositionKeypoint>(
+                                                    position,
+                                                    time,
+                                                    mtt::LINEAR_INTERPOLATION));
+
+    FbxDouble3 fbxRotation = node.LclRotation.EvaluateValue(fbxTime);
+    glm::quat rotation(glm::vec3( glm::radians(fbxRotation[0]),
+                                  glm::radians(fbxRotation[1]),
+                                  glm::radians(fbxRotation[2])));
+    track->addRotationKeypoint(
+                std::make_unique<DrawModelAnimationTrack::RotationKeypoint>(
+                                                    rotation,
+                                                    time,
+                                                    mtt::LINEAR_INTERPOLATION));
+
+    FbxDouble3 fbxScale = node.LclScaling.EvaluateValue(fbxTime);
+    glm::vec3 scale(fbxScale[0], fbxScale[1], fbxScale[2]);
+    track->addScaleKeypoint(
+                std::make_unique<DrawModelAnimationTrack::ScaleKeypoint>(
+                                                    scale,
+                                                    time,
+                                                    mtt::LINEAR_INTERPOLATION));
+  }
+
+  _animation->addTrack(std::move(track));
 }
 
 void FbxModelLoader::popTranslation()
 {
   _jointsStack.pop_back();
+  BaseFbxImporter::popTranslation();
 }
 
 void FbxModelLoader::processMesh( mtt::CommonMeshGeometry&& vertices,
@@ -108,7 +192,7 @@ void FbxModelLoader::processMesh( mtt::CommonMeshGeometry&& vertices,
     for (const Bone& bone : bones)
     {
       SkinControlNode::BoneRefData reference;
-      reference.joint = &_getOrCreateJoint(*bone.node);
+      reference.joint = _getOrCreateJoint(*bone.node).joint;
       reference.inverseBoneMatrix = bone.toBone;
       boneRefs.push_back(reference);
     }

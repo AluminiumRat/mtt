@@ -66,7 +66,8 @@ namespace mtt
 
   inline Joint* SlaveDrawModel::findJoint(const QString& name) noexcept
   {
-    std::optional<size_t> jointIndex = _masterModel->findJoint(name);
+    const MasterDrawModel& masterModel = *_masterModel;
+    std::optional<size_t> jointIndex = masterModel.findJoint(name);
     if(!jointIndex.has_value()) return nullptr;
     return _joints[jointIndex.value()].node.get();
   }
@@ -74,31 +75,36 @@ namespace mtt
   inline const Joint* SlaveDrawModel::findJoint(
                                             const QString& name) const noexcept
   {
-    std::optional<size_t> jointIndex = _masterModel->findJoint(name);
+    const MasterDrawModel& masterModel = *_masterModel;
+    std::optional<size_t> jointIndex = masterModel.findJoint(name);
     if (!jointIndex.has_value()) return nullptr;
     return _joints[jointIndex.value()].node.get();
   }
 
   inline size_t SlaveDrawModel::animationsNumber() const noexcept
   {
-    return _masterModel->animationsNumber();
+    const MasterDrawModel& masterModel = *_masterModel;
+    return masterModel.animationsNumber();
   }
   
   inline const QString& SlaveDrawModel::animationName(
                                           size_t animationIndex) const noexcept
   {
-    return _masterModel->animationName(animationIndex);
+    const MasterDrawModel& masterModel = *_masterModel;
+    return masterModel.animationName(animationIndex);
   }
   
   inline const DrawModelAnimation& SlaveDrawModel::animation(
                                           size_t animationIndex) const noexcept
   {
-    return _masterModel->animation(animationIndex);
+    const MasterDrawModel& masterModel = *_masterModel;
+    return masterModel.animation(animationIndex);
   }
   
   inline const DrawModelAnimation* SlaveDrawModel::findAnimation(
                                             const QString& name) const noexcept
   {
-    return _masterModel->findAnimation(name);
+    const MasterDrawModel& masterModel = *_masterModel;
+    return masterModel.findAnimation(name);
   }
 }

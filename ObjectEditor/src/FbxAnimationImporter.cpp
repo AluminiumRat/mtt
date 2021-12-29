@@ -42,7 +42,7 @@ void FbxAnimationImporter::pushTranslation(FbxNode& node)
 {
   if(_baseLayer == nullptr) mtt::Abort("FbxAnimationImporter::pushTranslation: base layer is null.");
 
-  std::set<TimeType> timeSet = _getKeypointTimes(node);
+  std::set<FbxTime> timeSet = getKeypointTimes(node, *_baseLayer);
   if(!timeSet.empty())
   {
     std::unique_ptr<AnimationTrack> track(
@@ -54,63 +54,17 @@ void FbxAnimationImporter::pushTranslation(FbxNode& node)
   BaseFbxImporter::pushTranslation(node);
 }
 
-std::set<FbxAnimationImporter::TimeType>
-                        FbxAnimationImporter::_getKeypointTimes(FbxNode& node)
-{
-  std::set<TimeType> timeSet;
-  FbxAnimCurve* curve = node.LclTranslation.GetCurve(
-                                                  _baseLayer,
-                                                  FBXSDK_CURVENODE_COMPONENT_X);
-  if(curve != nullptr) _fillKeypointTimes(timeSet, *curve);
-
-  curve = node.LclTranslation.GetCurve(_baseLayer,
-                                       FBXSDK_CURVENODE_COMPONENT_Y);
-  if(curve != nullptr) _fillKeypointTimes(timeSet, *curve);
-
-  curve = node.LclTranslation.GetCurve(_baseLayer,
-                                       FBXSDK_CURVENODE_COMPONENT_Z);
-  if(curve != nullptr) _fillKeypointTimes(timeSet, *curve);
-
-  curve = node.LclRotation.GetCurve(_baseLayer,
-                                    FBXSDK_CURVENODE_COMPONENT_X);
-  if (curve != nullptr) _fillKeypointTimes(timeSet, *curve);
-
-  curve = node.LclRotation.GetCurve(_baseLayer,
-                                    FBXSDK_CURVENODE_COMPONENT_Y);
-  if (curve != nullptr) _fillKeypointTimes(timeSet, *curve);
-
-  curve = node.LclRotation.GetCurve(_baseLayer,
-                                    FBXSDK_CURVENODE_COMPONENT_Z);
-  if (curve != nullptr) _fillKeypointTimes(timeSet, *curve);
-
-  return timeSet;
-}
-
-void FbxAnimationImporter::_fillKeypointTimes(std::set<TimeType>& timeSet,
-                                              FbxAnimCurve& curve)
-{
-  using MediumTime = std::chrono::duration<FbxLongLong, std::ratio<1, 1000>>;
-
-  for(int keyIndex = 0; keyIndex < curve.KeyGetCount(); keyIndex++)
-  {
-    FbxTime fbxTime = curve.KeyGetTime(keyIndex);
-    MediumTime medium(fbxTime.GetMilliSeconds());
-    TimeType time = std::chrono::duration_cast<TimeType>(medium);
-    timeSet.insert(time);
-  }
-}
-
 void FbxAnimationImporter::_fillTrack(AnimationTrack& track,
                                       FbxNode& source,
-                                      const std::set<TimeType>& times)
+                                      const std::set<FbxTime>& times)
 {
-  using MediumTime = std::chrono::duration<FbxLongLong, std::ratio<1, 1000>>;
+  using TimeType = AnimationTrack::TimeType;
 
-  for(const TimeType& time : times)
+  for(const FbxTime& fbxTime : times)
   {
-    MediumTime medium = std::chrono::duration_cast<MediumTime>(time);
-    FbxTime fbxTime;
-    fbxTime.SetMilliSeconds(medium.count());
+    using MediumTime = std::chrono::duration<FbxLongLong, std::ratio<1, 1000>>;
+    MediumTime medium = MediumTime(fbxTime.GetMilliSeconds());
+    TimeType time = std::chrono::duration_cast<TimeType>(medium);
 
     FbxDouble3 fbxPosition = source.LclTranslation.EvaluateValue(fbxTime);
     glm::vec3 position(fbxPosition[0], fbxPosition[1], fbxPosition[2]);
@@ -133,7 +87,7 @@ void FbxAnimationImporter::_fillTrack(AnimationTrack& track,
     FbxDouble3 fbxScale = source.LclScaling.EvaluateValue(fbxTime);
     glm::vec3 scale(fbxScale[0], fbxScale[1], fbxScale[2]);
     track.addScaleKeypoint(
-                std::make_unique<AnimationTrack::PositionKeypoint>(
+                std::make_unique<AnimationTrack::ScaleKeypoint>(
                                                     scale,
                                                     time,
                                                     mtt::LINEAR_INTERPOLATION));
