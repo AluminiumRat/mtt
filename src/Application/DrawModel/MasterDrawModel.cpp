@@ -32,7 +32,7 @@ void MasterDrawModel::addJoint( std::unique_ptr<Joint> joint,
   _joints.push_back(std::move(newRecord));
 }
 
-std::unique_ptr<Joint> MasterDrawModel::removeJoint(const Joint& joint) noexcept
+std::unique_ptr<Joint> MasterDrawModel::removeJoint(Joint& joint) noexcept
 {
   if (_locked) mtt::Abort("MasterDrawModel::removeJoint: model is locked");
   Joints::iterator iJoint = std::find_if( _joints.begin(),
@@ -68,7 +68,7 @@ void MasterDrawModel::addMeshNode(std::unique_ptr<MeshControlNode> node)
 }
 
 std::unique_ptr<MeshControlNode> MasterDrawModel::removeMeshNode(
-                                          const MeshControlNode& node) noexcept
+                                                MeshControlNode& node) noexcept
 {
   if (_locked) mtt::Abort("MasterDrawModel::removeMeshNode: model is locked");
   Meshes::iterator iMesh = std::find_if(
@@ -82,6 +82,7 @@ std::unique_ptr<MeshControlNode> MasterDrawModel::removeMeshNode(
 
   std::unique_ptr<MeshControlNode> tmp = std::move(*iMesh);
   _meshes.erase(iMesh);
+  removeNode(node);
   return tmp;
 }
 
@@ -99,7 +100,7 @@ void MasterDrawModel::addAnimation(
 }
 
 std::unique_ptr<DrawModelAnimation> MasterDrawModel::removeAnimation(
-                                  const DrawModelAnimation& animation) noexcept
+                                        DrawModelAnimation& animation) noexcept
 {
   if (_locked) mtt::Abort("MasterDrawModel::removeAnimation: model is locked");
   Animations::iterator iAnimation =

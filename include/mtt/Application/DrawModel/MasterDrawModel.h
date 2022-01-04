@@ -43,7 +43,7 @@ namespace mtt
                   TransformTable::Index boneIndex,
                   const QString& name);
     /// Returns removed joint
-    std::unique_ptr<Joint> removeJoint(const Joint& joint) noexcept;
+    std::unique_ptr<Joint> removeJoint(Joint& joint) noexcept;
 
     inline size_t meshNodeNumber() const noexcept;
     inline MeshControlNode& getMeshNode(size_t index) noexcept;
@@ -51,7 +51,7 @@ namespace mtt
     void addMeshNode(std::unique_ptr<MeshControlNode> node);
     /// Returns removed node
     std::unique_ptr<MeshControlNode> removeMeshNode(
-                                          const MeshControlNode& node) noexcept;
+                                                MeshControlNode& node) noexcept;
 
     inline size_t animationsNumber() const noexcept;
     inline const QString& animationName(size_t animationIndex) const noexcept;
@@ -65,7 +65,7 @@ namespace mtt
                       const QString& animationName);
     /// Returns removed animation
     std::unique_ptr<DrawModelAnimation> removeAnimation(
-                                  const DrawModelAnimation& animation) noexcept;
+                                        DrawModelAnimation& animation) noexcept;
 
     void updateFromAnimation( const DrawModelAnimation& animation,
                               Application::TimeType time);

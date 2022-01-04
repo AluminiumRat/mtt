@@ -13,6 +13,6 @@ void AbstractField::addNode(DrawableNode& node)
 
 void AbstractField::removeNode(DrawableNode& node) noexcept
 {
-  if (node.field() != this) Abort("AbstractField::addNode: the node is not registered in this field.");
+  if (node.field() != this) return;
   node.setField(nullptr);
 }
