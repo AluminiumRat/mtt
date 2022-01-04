@@ -2,7 +2,7 @@
 
 project (ObjectEditor)
 
-set(CMAKE_MODULE_PATH &{CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}../../cmake)
+set(CMAKE_MODULE_PATH &{CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}../../../cmake)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -27,7 +27,7 @@ find_path(GLM_PATH
 find_package(FbxSDK REQUIRED)
 
 include_directories("include/"
-                    "../include/"
+                    "../../include/"
                     ${GLM_PATH}
                     ${Vulkan_INCLUDE_DIRS}
                     ${Shaderc_INCLUDE_DIRS}
