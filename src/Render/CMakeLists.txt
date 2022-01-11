@@ -102,6 +102,7 @@ set(HEADERS
 
     "../../include/mtt/Render/SceneGraph/AbstractField.h"
     "../../include/mtt/Render/SceneGraph/AbstractNode.h"
+    "../../include/mtt/Render/SceneGraph/BoundObserver.h"
     "../../include/mtt/Render/SceneGraph/CameraNode.h"
     "../../include/mtt/Render/SceneGraph/CombinedDrawableNode.h"
     "../../include/mtt/Render/SceneGraph/DrawableNode.h"
@@ -110,7 +111,6 @@ set(HEADERS
     "../../include/mtt/Render/SceneGraph/Joint.h"
     "../../include/mtt/Render/SceneGraph/SimpleDrawableNode.h"
     "../../include/mtt/Render/SceneGraph/UnsortedField.h"
-    "../../include/mtt/Render/SceneGraph/VisitedField.h"
 
     "../../include/mtt/Render/SceneRenderer/AbstractColorFrameBuilder.h"
     "../../include/mtt/Render/SceneRenderer/AbstractFrame.h"
@@ -199,7 +199,6 @@ set(SOURCES
     "RenderPass/GeneralRenderPass.cpp"
     "RenderPass/UIDRenderPass.cpp"
 
-    "SceneGraph/AbstractField.cpp"
     "SceneGraph/CameraNode.cpp"
     "SceneGraph/CombinedDrawableNode.cpp"
     "SceneGraph/DrawableNode.cpp"

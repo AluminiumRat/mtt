@@ -1,13 +1,39 @@
+#include <algorithm>
+
 #include <mtt/Render/DrawPlan/DrawPlanBuildInfo.h>
-#include <mtt/Render/SceneGraph/AbstractField.h>
+#include <mtt/Render/SceneGraph/BoundObserver.h>
 #include <mtt/Render/SceneGraph/DrawableNode.h>
 
 using namespace mtt;
 
 DrawableNode::DrawableNode() noexcept:
-  _field(nullptr),
   _normalTransformMatrix(1)
 {
+}
+
+DrawableNode::~DrawableNode() noexcept
+{
+  for (BoundObserver* observer : _boundObservers)
+  {
+    observer->onNodeRemoved(*this);
+  }
+}
+
+void DrawableNode::addBoundObserver(BoundObserver& observer)
+{
+  if(std::find( _boundObservers.begin(),
+                _boundObservers.end(),
+                &observer) != _boundObservers.end()) Abort("DrawableNode::addBoundObserver: observer is already registered.");
+  _boundObservers.push_back(&observer);
+}
+
+void DrawableNode::removeBoundObserver(BoundObserver& observer) noexcept
+{
+  BoundObservers::iterator iObserver = std::find( _boundObservers.begin(),
+                                                  _boundObservers.end(),
+                                                  &observer);
+  if(iObserver == _boundObservers.end()) return;
+  _boundObservers.erase(iObserver);
 }
 
 void DrawableNode::setTransformMatrix(const glm::mat4& newValue) noexcept
@@ -31,7 +57,10 @@ void DrawableNode::updateTransformedBoundSphere() noexcept
   {
     _transformedBoundSphere.translate(transformMatrix());
   }
-  if(_field != nullptr) _field->onNodeBoundChanged(*this, oldValue);
+  for (BoundObserver* observer : _boundObservers)
+  {
+    observer->onNodeBoundChanged(*this, oldValue);
+  }
 }
 
 void DrawableNode::addToDrawPlan(DrawPlanBuildInfo& buildInfo)

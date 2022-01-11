@@ -3,7 +3,7 @@
 #include <memory>
 
 #include <mtt/Render/Drawable/DrawableList.h>
-#include <mtt/Render/SceneGraph/VisitedField.h>
+#include <mtt/Render/SceneGraph/AbstractField.h>
 
 namespace mtt
 {
@@ -11,13 +11,13 @@ namespace mtt
   {
   public:
     /// If field is nullptr UnsortedField will be used
-    explicit RenderScene(std::unique_ptr<VisitedField> field) noexcept;
+    explicit RenderScene(std::unique_ptr<AbstractField> field = nullptr);
     RenderScene(const RenderScene&) = delete;
     RenderScene& operator = (const RenderScene&) = delete;
     virtual ~RenderScene() noexcept = default;
 
-    inline VisitedField& culledData() noexcept;
-    inline const VisitedField& culledData() const noexcept;
+    inline AbstractField& culledData() noexcept;
+    inline const AbstractField& culledData() const noexcept;
 
     inline DrawableList& unculledData() noexcept;
     inline const DrawableList& unculledData() const noexcept;
@@ -26,17 +26,17 @@ namespace mtt
     inline const DrawableList& hudData() const noexcept;
 
   private:
-    std::unique_ptr<VisitedField> _culledData;
+    std::unique_ptr<AbstractField> _culledData;
     DrawableList _unculledData;
     DrawableList _hudData;
   };
 
-  inline VisitedField& RenderScene::culledData() noexcept
+  inline AbstractField& RenderScene::culledData() noexcept
   {
     return *_culledData;
   }
 
-  inline const VisitedField& RenderScene::culledData() const noexcept
+  inline const AbstractField& RenderScene::culledData() const noexcept
   {
     return *_culledData;
   }

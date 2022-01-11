@@ -3,7 +3,7 @@
 
 using namespace mtt;
 
-RenderScene::RenderScene(std::unique_ptr<VisitedField> field) noexcept :
+RenderScene::RenderScene(std::unique_ptr<AbstractField> field) :
   _culledData(std::move(field))
 {
   if(_culledData == nullptr) _culledData.reset(new UnsortedField());

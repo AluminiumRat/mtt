@@ -1,10 +1,10 @@
 #pragma once
 
-#include <mtt/Render/SceneGraph/VisitedField.h>
+#include <mtt/Render/SceneGraph/AbstractField.h>
 
 namespace mtt
 {
-  class UnsortedField : public VisitedField
+  class UnsortedField : public AbstractField
   {
   public:
     UnsortedField() = default;
@@ -16,9 +16,6 @@ namespace mtt
     virtual void removeNode(DrawableNode& node) noexcept override;
 
   protected:
-    virtual void onNodeBoundChanged(DrawableNode& node,
-                                    const Sphere& oldBound) noexcept override;
-
     virtual void enumerateAreas(Visitor& visitor,
                                 const ViewFrustum& frustum) const override;
   private:

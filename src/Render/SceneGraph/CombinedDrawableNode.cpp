@@ -3,12 +3,20 @@
 
 using namespace mtt;
 
+CombinedDrawableNode::~CombinedDrawableNode() noexcept
+{
+  for (DrawableNode* node : _drawables)
+  {
+    node->removeBoundObserver(*this);
+  }
+}
+
 void CombinedDrawableNode::addNode(DrawableNode& node)
 {
   _drawables.push_back(&node);
   try
   {
-    AbstractField::addNode(node);
+    node.addBoundObserver(*this);
   }
   catch(...)
   {
@@ -30,7 +38,7 @@ void CombinedDrawableNode::removeNode(DrawableNode& node) noexcept
       break;
     }
   }
-  AbstractField::removeNode(node);
+  node.removeBoundObserver(*this);
   _updateBound();
 }
 
@@ -38,6 +46,11 @@ void CombinedDrawableNode::onNodeBoundChanged(DrawableNode& node,
                                               const Sphere& oldBound) noexcept
 {
   _updateBound();
+}
+
+void CombinedDrawableNode::onNodeRemoved(DrawableNode& node) noexcept
+{
+  removeNode(node);
 }
 
 void CombinedDrawableNode::_updateBound() noexcept

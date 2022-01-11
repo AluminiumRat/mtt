@@ -30,7 +30,7 @@ void ShadowMapProvider::setFrameExtent(glm::uvec2 frameExtent)
   _frameExtent = frameExtent;
 }
 
-void ShadowMapProvider::setTargetField(VisitedField* newField) noexcept
+void ShadowMapProvider::setTargetField(AbstractField* newField) noexcept
 {
   _targetField = newField;
 }

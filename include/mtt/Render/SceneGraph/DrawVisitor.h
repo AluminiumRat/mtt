@@ -1,11 +1,11 @@
 #pragma once
 
 #include <mtt/Render/DrawPlan/DrawPlanBuildInfo.h>
-#include <mtt/Render/SceneGraph/VisitedField.h>
+#include <mtt/Render/SceneGraph/AbstractField.h>
 
 namespace mtt
 {
-  class DrawVisitor : public VisitedField::Visitor
+  class DrawVisitor : public AbstractField::Visitor
   {
   public:
     explicit DrawVisitor(DrawPlanBuildInfo& buildInfo);
@@ -14,7 +14,7 @@ namespace mtt
     virtual ~DrawVisitor() = default;
 
     virtual void startPass() override;
-    virtual void visit(const VisitedField::Area& area) override;
+    virtual void visit(const AbstractField::Area& area) override;
     virtual void finishPass() override;
 
   private:

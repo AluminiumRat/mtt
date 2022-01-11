@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include <glm/mat4x4.hpp>
 
 #include <mtt/Render/Drawable/Drawable.h>
@@ -9,7 +11,7 @@
 
 namespace mtt
 {
-  class AbstractField;
+  class BoundObserver;
   struct DrawPlanBuildInfo;
 
   class DrawableNode :  public AbstractNode,
@@ -19,12 +21,13 @@ namespace mtt
     DrawableNode() noexcept;
     DrawableNode(const DrawableNode&) = delete;
     DrawableNode& operator = (const DrawableNode&) = delete;
-    virtual ~DrawableNode() = default;
-
-    inline AbstractField* field() const noexcept;
+    virtual ~DrawableNode() noexcept;
 
     inline const Sphere& localBoundSphere() const noexcept;
     inline const Sphere& transformedBoundSphere() const noexcept;
+
+    void addBoundObserver(BoundObserver& observer);
+    void removeBoundObserver(BoundObserver& observer) noexcept;
 
     virtual void setTransformMatrix(
                                   const glm::mat4& newValue) noexcept override;
@@ -37,22 +40,15 @@ namespace mtt
   private:
     void updateTransformedBoundSphere() noexcept;
 
-    friend class AbstractField;
-    inline void setField(AbstractField* newField) noexcept;
-
   private:
     Sphere _localBoundSphere;
     Sphere _transformedBoundSphere;
 
     glm::mat3 _normalTransformMatrix;
 
-    AbstractField* _field;
+    using BoundObservers = std::vector<BoundObserver*>;
+    BoundObservers _boundObservers;
   };
-
-  inline AbstractField* DrawableNode::field() const noexcept
-  {
-    return _field;
-  }
 
   inline const Sphere& DrawableNode::localBoundSphere() const noexcept
   {
@@ -62,11 +58,5 @@ namespace mtt
   inline const Sphere& DrawableNode::transformedBoundSphere() const noexcept
   {
     return _transformedBoundSphere;
-  }
-
-  inline void DrawableNode::setField(AbstractField* newField) noexcept
-  {
-    if(_field != nullptr && newField != nullptr) Abort("DrawableNode::setField: the node is already registered in field.");
-    _field = newField;
   }
 }

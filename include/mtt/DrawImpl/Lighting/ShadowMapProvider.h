@@ -11,7 +11,7 @@
 namespace mtt
 {
   class LogicalDevice;
-  class VisitedField;
+  class AbstractField;
 
   class ShadowMapProvider
   {
@@ -42,8 +42,8 @@ namespace mtt
     inline CameraNode& camera() noexcept;
     inline const CameraNode& camera() const noexcept;
 
-    inline VisitedField* targetField() const noexcept;
-    void setTargetField(VisitedField* newField) noexcept;
+    inline AbstractField* targetField() const noexcept;
+    void setTargetField(AbstractField* newField) noexcept;
 
     ImageView& createShadowMap( const Area& mapPart,
                                 DrawPlan& drawPlan,
@@ -77,7 +77,7 @@ namespace mtt
     size_t _currentPoolIndex;
 
     CameraNode _camera;
-    VisitedField* _targetField;
+    AbstractField* _targetField;
   };
 
   inline glm::uvec2 ShadowMapProvider::frameExtent() const noexcept
@@ -95,7 +95,7 @@ namespace mtt
     return _camera;
   }
 
-  inline VisitedField* ShadowMapProvider::targetField() const noexcept
+  inline AbstractField* ShadowMapProvider::targetField() const noexcept
   {
     return _targetField;
   }

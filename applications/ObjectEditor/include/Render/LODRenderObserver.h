@@ -35,10 +35,10 @@ private:
 private:
   LODObject& _object;
 
+  using Subobservers = std::vector<std::unique_ptr<MeshRenderObserver>>;
+  Subobservers _subobservers;
+
   mtt::LODDrawableFilter _lodFilter;
   mtt::CombinedDrawableNode _culledDrawable;
   mtt::DrawableList _unculledDrawable;
-
-  using Subobservers = std::vector<std::unique_ptr<MeshRenderObserver>>;
-  Subobservers _subobservers;
 };

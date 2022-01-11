@@ -19,7 +19,7 @@ void DrawVisitor::finishPass()
 {
 }
 
-void DrawVisitor::visit(const VisitedField::Area& area)
+void DrawVisitor::visit(const AbstractField::Area& area)
 {
   for(DrawableNode* node : area.nodes)
   {
