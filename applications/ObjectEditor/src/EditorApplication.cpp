@@ -22,7 +22,7 @@ EditorApplication* EditorApplication::_instance = nullptr;
 EditorApplication::EditorApplication(int& argc, char** argv) :
   Application(argc,
               argv,
-              "Renderer object editor",
+              "Mtt object editor",
               { 0, 0, 0 },
               VK_API_VERSION_1_2,
               deviceFeatures(),
