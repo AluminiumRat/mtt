@@ -37,14 +37,14 @@ namespace mtt
     inline AbstractColorFrameBuilder* frameBuilder() const noexcept;
     inline void setFrameBuilder(AbstractColorFrameBuilder* newBuilder);
 
+    virtual void setSource(RenderScene* scene, CameraNode* camera);
+    virtual void setCamera(CameraNode* camera);
+
   signals:
     void cameraChanged(CameraNode* newCamera);
     void sceneChanged(RenderScene* newScene);
 
   protected:
-    virtual void setSource(RenderScene* scene, CameraNode* camera);
-    virtual void setCamera(CameraNode* camera);
-
     virtual std::unique_ptr<RenderSceneAction> buildRenderAction(
                                               RenderScene& scene,
                                               CameraNode& camera,
