@@ -28,30 +28,30 @@ namespace mtt
     inline MeshExtraData* meshExtraData() const noexcept;
 
     virtual void registerVertexBuffer(Buffer& buffer,
-                                      const std::string& name) = 0;
+                                      const std::string& name);
     virtual void unregisterVertexBuffer(Buffer& buffer,
-                                        const std::string& name)  noexcept = 0;
+                                        const std::string& name)  noexcept;
 
     virtual void registerIndicesBuffer( VkPrimitiveTopology topology,
                                         Buffer& buffer,
                                         VkIndexType indexType,
-                                        size_t indicesNumber) = 0;
-    virtual void unregisterIndicesBuffer(VkPrimitiveTopology topology) = 0;
+                                        size_t indicesNumber);
+    virtual void unregisterIndicesBuffer(VkPrimitiveTopology topology);
 
     virtual void registerUniformBuffer( Buffer& buffer,
-                                        const std::string& name) = 0;
+                                        const std::string& name);
     virtual void unregisterUniformBuffer( Buffer& buffer,
-                                          const std::string& name)  noexcept = 0;
+                                          const std::string& name)  noexcept;
 
     virtual void registerSampler( Sampler& sampler,
-                                  const std::string& name) = 0;
+                                  const std::string& name);
     virtual void unregisterSampler( Sampler& sampler,
-                                    const std::string& name)  noexcept = 0;
+                                    const std::string& name)  noexcept;
 
     virtual void registerVariable(AbstractMeshVariable& variable,
-                                  const std::string& name) = 0;
+                                  const std::string& name);
     virtual void unregisterVariable(AbstractMeshVariable& variable,
-                                    const std::string& name) noexcept = 0;
+                                    const std::string& name) noexcept;
 
     virtual void addToDrawPlan(DrawPlanBuildInfo& buildInfo) = 0;
 
