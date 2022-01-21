@@ -1,6 +1,6 @@
 #include <memory>
 
-#include <mtt/DrawImpl/MeshTechniques/ModelTechniquesFactory.h>
+#include <mtt/DLPipeline/MeshTechniques/ModelTechniquesFactory.h>
 
 #include <EditorApplication.h>
 
@@ -27,14 +27,14 @@ EditorApplication::EditorApplication(int& argc, char** argv) :
               VK_API_VERSION_1_2,
               deviceFeatures(),
               enableValidation),
-  mmdModelLibrary(std::make_unique<mtt::ModelTechniquesFactory>(
+  mmdModelLibrary(std::make_unique<mtt::DLPipeline::ModelTechniquesFactory>(
                                           true,
                                           true,
                                           true,
                                           true,
                                           VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST),
                   textureLibrary),
-  fbxModelLibrary(std::make_unique<mtt::ModelTechniquesFactory>(
+  fbxModelLibrary(std::make_unique<mtt::DLPipeline::ModelTechniquesFactory>(
                                           true,
                                           true,
                                           true,

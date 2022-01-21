@@ -53,7 +53,7 @@ void AbstractLightRenderObserver::updateBounding()
 }
 
 void AbstractLightRenderObserver::setApplicator(
-                                      mtt::AbstractLightApplicator& applicator)
+                          mtt::DLPipeline::AbstractLightApplicator& applicator)
 {
   _lightApplicator = &applicator;
   _applicatorNode.setDrawable(&applicator, mtt::Sphere());

@@ -2,8 +2,8 @@
 
 #include <memory>
 
-#include <mtt/DrawImpl/Lighting/DirectLightApplicator.h>
-#include <mtt/DrawImpl/Lighting/ShadowMapProvider.h>
+#include <mtt/DLPipeline/Lighting/DirectLightApplicator.h>
+#include <mtt/DLPipeline/Lighting/ShadowMapProvider.h>
 #include <mtt/Render/Mesh/Mesh.h>
 #include <mtt/Render/SceneGraph/SimpleDrawableNode.h>
 
@@ -42,9 +42,9 @@ private:
 private:
   DirectLightObject& _lightObject;
 
-  std::unique_ptr<mtt::ShadowMapProvider> _shadowMapProvider;
+  std::unique_ptr<mtt::DLPipeline::ShadowMapProvider> _shadowMapProvider;
 
-  mtt::DirectLightApplicator _lightDrawable;
+  mtt::DLPipeline::DirectLightApplicator _lightDrawable;
 
   mtt::Mesh _cylinderMesh;
   mtt::SimpleDrawableNode _cylinderNode;

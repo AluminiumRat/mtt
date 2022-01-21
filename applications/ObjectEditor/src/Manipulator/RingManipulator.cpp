@@ -1,7 +1,7 @@
 #include <mtt/Application/EditCommands/SetPropertyCommand.h>
 #include <mtt/Application/EditCommands/UndoStack.h>
-#include <mtt/DrawImpl/MeshTechniques/InstrumentalTechnique.h>
-#include <mtt/DrawImpl/constants.h>
+#include <mtt/DLPipeline/MeshTechniques/InstrumentalTechnique.h>
+#include <mtt/DLPipeline/constants.h>
 #include <mtt/Render/Drawable/AntiscaleDrawableModificator.h>
 #include <mtt/Utilities/Abort.h>
 
@@ -88,8 +88,8 @@ RingManipulator::RingManipulator( RotatableObject& object,
   addSector(positions, currentAngle, 0);
 
   setGeometry(positions);
-  setTechnique( mtt::colorFrameType,
-                std::make_unique<mtt::InstrumentalTechnique>(
+  setTechnique( mtt::DLPipeline::colorFrameType,
+                std::make_unique<mtt::DLPipeline::InstrumentalTechnique>(
                                           false,
                                           false,
                                           VK_COMPARE_OP_ALWAYS,

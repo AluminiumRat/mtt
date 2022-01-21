@@ -1,7 +1,7 @@
 #include <mtt/Application/EditCommands/SetPropertyCommand.h>
 #include <mtt/Application/EditCommands/UndoStack.h>
-#include <mtt/DrawImpl/MeshTechniques/InstrumentalTechnique.h>
-#include <mtt/DrawImpl/constants.h>
+#include <mtt/DLPipeline/MeshTechniques/InstrumentalTechnique.h>
+#include <mtt/DLPipeline/constants.h>
 #include <mtt/Utilities/Abort.h>
 
 #include <Objects/MovableObject.h>
@@ -39,8 +39,8 @@ PlaneManipulator::PlaneManipulator( MovableObject& object,
 
   setGeometry(positions);
 
-  setTechnique( mtt::colorFrameType,
-                std::make_unique<mtt::InstrumentalTechnique>(
+  setTechnique( mtt::DLPipeline::colorFrameType,
+                std::make_unique<mtt::DLPipeline::InstrumentalTechnique>(
                                           false,
                                           false,
                                           VK_COMPARE_OP_ALWAYS,

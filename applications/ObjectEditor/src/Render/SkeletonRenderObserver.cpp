@@ -1,6 +1,6 @@
 #include <mtt/Application/Application.h>
-#include <mtt/DrawImpl/MeshTechniques/InstrumentalCompositeTechnique.h>
-#include <mtt/DrawImpl/constants.h>
+#include <mtt/DLPipeline/MeshTechniques/InstrumentalCompositeTechnique.h>
+#include <mtt/DLPipeline/constants.h>
 #include <mtt/Render/Mesh/UidMeshTechnique.h>
 #include <mtt/Render/Pipeline/Buffer.h>
 
@@ -15,12 +15,12 @@ SkeletonRenderObserver::SkeletonRenderObserver( SkeletonObject& object,
   mtt::LogicalDevice& device = mtt::Application::instance().displayDevice();
 
   _crossMesh.setTechnique(
-              mtt::colorFrameType,
-              std::make_unique<mtt::InstrumentalCompositeTechnique>(
+              mtt::DLPipeline::colorFrameType,
+              std::make_unique<mtt::DLPipeline::InstrumentalCompositeTechnique>(
                                                 VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
                                                 false,
                                                 false));
-  _crossMesh.setTechnique(mtt::uidFrameType,
+  _crossMesh.setTechnique(mtt::DLPipeline::uidFrameType,
                           std::make_unique<mtt::UidMeshTechnique>(
                                                 VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
                                                 false,

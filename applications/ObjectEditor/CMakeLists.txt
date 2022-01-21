@@ -292,7 +292,7 @@ target_link_libraries(ObjectEditor
                       Qt5::Core
                       Qt5::Widgets
                       Application
-                      DrawImpl
+                      DLPipeline
                       Fbx
                       Render
                       Utilities)

@@ -1,7 +1,7 @@
 #include <vector>
 
-#include <mtt/DrawImpl/MeshTechniques/InstrumentalCompositeTechnique.h>
-#include <mtt/DrawImpl/constants.h>
+#include <mtt/DLPipeline/MeshTechniques/InstrumentalCompositeTechnique.h>
+#include <mtt/DLPipeline/constants.h>
 #include <mtt/Render/Mesh/UidMeshTechnique.h>
 #include <mtt/Render/Pipeline/Buffer.h>
 
@@ -32,12 +32,12 @@ AmbientLightRenderObserver::AmbientLightRenderObserver(
   _iconNode.registerModificator(selectionModificator());
 
   _sphereMesh.setTechnique(
-                mtt::colorFrameType,
-                std::make_unique<mtt::InstrumentalCompositeTechnique>(
+        mtt::DLPipeline::colorFrameType,
+        std::make_unique<mtt::DLPipeline::InstrumentalCompositeTechnique>(
                                                 VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
                                                 true,
                                                 true));
-  _sphereMesh.setTechnique( mtt::uidFrameType,
+  _sphereMesh.setTechnique( mtt::DLPipeline::uidFrameType,
                             std::make_unique<mtt::UidMeshTechnique>(
                                                 VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
                                                 true,

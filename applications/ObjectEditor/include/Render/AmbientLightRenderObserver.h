@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mtt/DrawImpl/Lighting/AmbientLightApplicator.h>
+#include <mtt/DLPipeline/Lighting/AmbientLightApplicator.h>
 #include <mtt/Render/Mesh/Mesh.h>
 #include <mtt/Render/SceneGraph/SimpleDrawableNode.h>
 
@@ -33,7 +33,7 @@ private:
 private:
   AmbientLightObject& _lightObject;
 
-  mtt::AmbientLightApplicator _lightDrawable;
+  mtt::DLPipeline::AmbientLightApplicator _lightDrawable;
   CubemapObserver _cubemapObserver;
 
   mtt::Mesh _sphereMesh;

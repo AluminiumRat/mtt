@@ -1,5 +1,5 @@
-#include <mtt/DrawImpl/MeshTechniques/InstrumentalCompositeTechnique.h>
-#include <mtt/DrawImpl/constants.h>
+#include <mtt/DLPipeline/MeshTechniques/InstrumentalCompositeTechnique.h>
+#include <mtt/DLPipeline/constants.h>
 #include <mtt/Render/Mesh/UidMeshTechnique.h>
 
 #include <Render/IconDrawableNode.h>
@@ -10,12 +10,12 @@ IconDrawableNode::IconDrawableNode( const QString& imageFilename,
   _iconMesh(EditorApplication::instance().displayDevice())
 {
   _iconMesh.setTechnique(
-              mtt::colorFrameType,
-              std::make_unique<mtt::InstrumentalCompositeTechnique>(
+              mtt::DLPipeline::colorFrameType,
+              std::make_unique<mtt::DLPipeline::InstrumentalCompositeTechnique>(
                                             VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
                                             true,
                                             false));
-  _iconMesh.setTechnique( mtt::uidFrameType,
+  _iconMesh.setTechnique( mtt::DLPipeline::uidFrameType,
                           std::make_unique<mtt::UidMeshTechnique>(
                                             VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
                                             true,
