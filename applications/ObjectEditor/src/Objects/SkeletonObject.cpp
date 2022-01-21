@@ -1,5 +1,5 @@
-#include <mtt/Application/Scene/object_cast.h>
-#include <mtt/Utilities/static_cast_unique_ptr.h>
+#include <mtt/application/Scene/object_cast.h>
+#include <mtt/utilities/static_cast_unique_ptr.h>
 
 #include <Objects/OEVisitor.h>
 #include <Objects/SkeletonObject.h>

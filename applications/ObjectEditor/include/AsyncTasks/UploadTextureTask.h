@@ -5,8 +5,8 @@
 
 #include <QtCore/QString>
 
-#include <mtt/Application/AsyncTasks/AbstractAsyncTask.h>
-#include <mtt/Render/Pipeline/Sampler.h>
+#include <mtt/application/AsyncTasks/AbstractAsyncTask.h>
+#include <mtt/render/Pipeline/Sampler.h>
 
 namespace mtt
 {

@@ -1,6 +1,6 @@
-#include <mtt/Application/Widgets/PropertiesWidgets/ColorPropertyWidget.h>
-#include <mtt/Application/Widgets/PropertiesWidgets/RotationPropertyWidget.h>
-#include <mtt/Application/Widgets/PropertiesWidgets/Vec3PropertyWidget.h>
+#include <mtt/application/Widgets/PropertiesWidgets/ColorPropertyWidget.h>
+#include <mtt/application/Widgets/PropertiesWidgets/RotationPropertyWidget.h>
+#include <mtt/application/Widgets/PropertiesWidgets/Vec3PropertyWidget.h>
 
 #include <SceneTab/MovableObjectWidget.h>
 

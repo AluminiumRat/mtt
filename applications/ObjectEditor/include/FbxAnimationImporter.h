@@ -3,7 +3,7 @@
 #include <memory>
 #include <set>
 
-#include <mtt/Fbx/BaseFbxImporter.h>
+#include <mtt/fbx/BaseFbxImporter.h>
 
 #include <Objects/AnimationObject.h>
 #include <Objects/AnimationTrack.h>

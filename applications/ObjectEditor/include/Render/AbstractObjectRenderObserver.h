@@ -4,11 +4,11 @@
 
 #include <QtCore/QObject>
 
-#include <mtt/Render/Drawable/Drawable.h>
-#include <mtt/Render/Drawable/SelectionDrawableModificator.h>
-#include <mtt/Render/Drawable/UidDrawableModificator.h>
-#include <mtt/Render/Drawable/VisibleDrawableFilter.h>
-#include <mtt/Render/SceneGraph/DrawableNode.h>
+#include <mtt/render/Drawable/Drawable.h>
+#include <mtt/render/Drawable/SelectionDrawableModificator.h>
+#include <mtt/render/Drawable/UidDrawableModificator.h>
+#include <mtt/render/Drawable/VisibleDrawableFilter.h>
+#include <mtt/render/SceneGraph/DrawableNode.h>
 
 namespace mtt
 {

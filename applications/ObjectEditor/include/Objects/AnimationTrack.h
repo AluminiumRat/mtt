@@ -2,11 +2,11 @@
 
 #include <memory>
 
-#include <mtt/Animation/KeypointsAnimatedTransform.h>
-#include <mtt/Application/EditCommands/AbstractEditCommand.h>
-#include <mtt/Application/Scene/ObjectLink.h>
-#include <mtt/Application/Scene/Object.h>
-#include <mtt/Application/Application.h>
+#include <mtt/animation/KeypointsAnimatedTransform.h>
+#include <mtt/application/EditCommands/AbstractEditCommand.h>
+#include <mtt/application/Scene/ObjectLink.h>
+#include <mtt/application/Scene/Object.h>
+#include <mtt/application/Application.h>
 
 #include <Objects/OEVisitorExtension.h>
 #include <Objects/SkeletonObject.h>

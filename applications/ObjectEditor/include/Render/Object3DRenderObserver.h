@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mtt/Render/SceneGraph/Joint.h>
+#include <mtt/render/SceneGraph/Joint.h>
 
 #include <Objects/Object3D.h>
 #include <Render/AbstractObjectRenderObserver.h>

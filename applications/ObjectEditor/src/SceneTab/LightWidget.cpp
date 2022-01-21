@@ -1,4 +1,4 @@
-#include <mtt/Application/Widgets/PropertiesWidgets/ColorPropertyWidget.h>
+#include <mtt/application/Widgets/PropertiesWidgets/ColorPropertyWidget.h>
 
 #include <SceneTab/LightWidget.h>
 

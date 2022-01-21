@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-#include <mtt/Fbx/BaseFbxImporter.h>
+#include <mtt/fbx/BaseFbxImporter.h>
 
 #include <Objects/MaterialObject.h>
 #include <Objects/MeshObject.h>

@@ -5,8 +5,8 @@
 
 #include <QtWidgets/QWidget>
 
-#include <mtt/Application/Widgets/PropertiesWidgets/BoolCheckboxConnection.h>
-#include <mtt/Application/Widgets/PropertiesWidgets/FloatSpinConnection.h>
+#include <mtt/application/Widgets/PropertiesWidgets/BoolCheckboxConnection.h>
+#include <mtt/application/Widgets/PropertiesWidgets/FloatSpinConnection.h>
 
 #include <Objects/BackgroundObject.h>
 

@@ -1,4 +1,4 @@
-#include <mtt/Application/EditCommands/AddObjectCommand.h>
+#include <mtt/application/EditCommands/AddObjectCommand.h>
 
 #include <AsyncTasks/AddAnimationFromFbxTask.h>
 #include <EditorCommonData.h>

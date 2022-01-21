@@ -1,4 +1,4 @@
-#include <mtt/Utilities/Abort.h>
+#include <mtt/utilities/Abort.h>
 
 #include <AsyncTasks/ObjectBuilder.h>
 #include <Objects/OEVisitor.h>

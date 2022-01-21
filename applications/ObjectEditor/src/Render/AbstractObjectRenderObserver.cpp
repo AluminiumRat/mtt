@@ -1,6 +1,6 @@
 #include <algorithm>
 
-#include <mtt/Utilities/Log.h>
+#include <mtt/utilities/Log.h>
 
 #include <Objects/DisplayedObject.h>
 #include <Render/AbstractObjectRenderObserver.h>

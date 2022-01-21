@@ -3,9 +3,9 @@
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMessageBox>
 
-#include <mtt/Application/EditCommands/AddObjectCommand.h>
-#include <mtt/Application/EditCommands/CompositeCommand.h>
-#include <mtt/Application/EditCommands/RemoveObjectCommand.h>
+#include <mtt/application/EditCommands/AddObjectCommand.h>
+#include <mtt/application/EditCommands/CompositeCommand.h>
+#include <mtt/application/EditCommands/RemoveObjectCommand.h>
 
 #include <AsyncTasks/AddAnimationFromFbxTask.h>
 #include <AsyncTasks/AddModelFromFbxTask.h>

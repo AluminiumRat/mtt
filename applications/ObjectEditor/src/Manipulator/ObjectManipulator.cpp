@@ -1,4 +1,4 @@
-#include <mtt/Render/Drawable/AntiscaleDrawableModificator.h>
+#include <mtt/render/Drawable/AntiscaleDrawableModificator.h>
 
 #include <Objects/Object3D.h>
 #include <Manipulator/ObjectManipulator.h>

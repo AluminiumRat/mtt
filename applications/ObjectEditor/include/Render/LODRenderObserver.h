@@ -3,9 +3,9 @@
 #include <memory>
 #include <vector>
 
-#include <mtt/Render/Drawable/LODDrawableFilter.h>
-#include <mtt/Render/Drawable/DrawableList.h>
-#include <mtt/Render/SceneGraph/CombinedDrawableNode.h>
+#include <mtt/render/Drawable/LODDrawableFilter.h>
+#include <mtt/render/Drawable/DrawableList.h>
+#include <mtt/render/SceneGraph/CombinedDrawableNode.h>
 
 #include <Render/AbstractObjectRenderObserver.h>
 #include <Render/MeshRenderObserver.h>

@@ -5,7 +5,7 @@
 
 #include <QtWidgets/QWidget>
 
-#include <mtt/Application/Widgets/PropertiesWidgets/FloatSpinConnection.h>
+#include <mtt/application/Widgets/PropertiesWidgets/FloatSpinConnection.h>
 
 #include <Objects/AmbientLightObject.h>
 

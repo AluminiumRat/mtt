@@ -1,7 +1,7 @@
 #pragma once
 
-#include <mtt/Application/Scene/ObjectLink.h>
-#include <mtt/Utilities/CommonMeshGeometry.h>
+#include <mtt/application/Scene/ObjectLink.h>
+#include <mtt/utilities/CommonMeshGeometry.h>
 
 #include <Objects/BoneRefBatch.h>
 #include <Objects/GeometryObject.h>

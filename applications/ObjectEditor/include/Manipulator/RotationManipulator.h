@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mtt/Render/SceneGraph/Joint.h>
+#include <mtt/render/SceneGraph/Joint.h>
 
 #include <Manipulator/ObjectManipulator.h>
 #include <Manipulator/RingManipulator.h>

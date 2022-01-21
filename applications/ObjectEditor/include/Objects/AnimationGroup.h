@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mtt/Application/Scene/SpecialGroup.h>
+#include <mtt/application/Scene/SpecialGroup.h>
 
 #include <Objects/AnimationObject.h>
 

@@ -1,6 +1,6 @@
 #include <stdexcept>
 
-#include <mtt/Utilities/Log.h>
+#include <mtt/utilities/Log.h>
 
 #include <Objects/LightObject.h>
 #include <Render/AbstractLightRenderObserver.h>
@@ -53,7 +53,7 @@ void AbstractLightRenderObserver::updateBounding()
 }
 
 void AbstractLightRenderObserver::setApplicator(
-                          mtt::DLPipeline::AbstractLightApplicator& applicator)
+                          mtt::dlPipeline::AbstractLightApplicator& applicator)
 {
   _lightApplicator = &applicator;
   _applicatorNode.setDrawable(&applicator, mtt::Sphere());

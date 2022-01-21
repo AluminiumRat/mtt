@@ -2,12 +2,12 @@
 
 #include <QtWidgets/QVBoxLayout>
 
-#include <mtt/Application/EditCommands/UndoStack.h>
-#include <mtt/Application/Widgets/PropertiesWidgets/NamePropertyWidget.h>
-#include <mtt/Application/Widgets/PropertiesWidgets/ReferencePropertyWidget.h>
-#include <mtt/Application/Widgets/ObjectsTreeView.h>
-#include <mtt/Application/CommonEditData.h>
-#include <mtt/Utilities/Abort.h>
+#include <mtt/application/EditCommands/UndoStack.h>
+#include <mtt/application/Widgets/PropertiesWidgets/NamePropertyWidget.h>
+#include <mtt/application/Widgets/PropertiesWidgets/ReferencePropertyWidget.h>
+#include <mtt/application/Widgets/ObjectsTreeView.h>
+#include <mtt/application/CommonEditData.h>
+#include <mtt/utilities/Abort.h>
 
 #include <Objects/OEVisitor.h>
 #include <SceneTab/AmbientLightWidget.h>

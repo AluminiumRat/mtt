@@ -3,7 +3,7 @@
 #include <QtCore/QDir>
 #include <QtCore/QString>
 
-#include <mtt/Application/DataStream.h>
+#include <mtt/application/DataStream.h>
 
 #include <AsyncTasks/ObjectBuilder.h>
 #include <Objects/OEVisitor.h>

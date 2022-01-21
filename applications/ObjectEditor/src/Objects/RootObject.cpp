@@ -1,7 +1,7 @@
 #include <memory>
 #include <stdexcept>
 
-#include <mtt/Utilities/Abort.h>
+#include <mtt/utilities/Abort.h>
 
 #include <Objects/RootObject.h>
 

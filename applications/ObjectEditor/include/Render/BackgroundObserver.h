@@ -3,10 +3,10 @@
 #include <memory>
 #include <optional>
 
-#include <mtt/DLPipeline/Lighting/AmbientLightApplicator.h>
-#include <mtt/DLPipeline/BackgroundDrawable.h>
-#include <mtt/Render/Pipeline/CubeTexture.h>
-#include <mtt/Render/SceneGraph/SimpleDrawableNode.h>
+#include <mtt/dlPipeline/Lighting/AmbientLightApplicator.h>
+#include <mtt/dlPipeline/BackgroundDrawable.h>
+#include <mtt/render/Pipeline/CubeTexture.h>
+#include <mtt/render/SceneGraph/SimpleDrawableNode.h>
 
 #include <Render/Object3DRenderObserver.h>
 #include <Render/CubemapObserver.h>
@@ -38,10 +38,10 @@ private:
 
   std::shared_ptr<mtt::CubeTexture> _luminanceTexture;
 
-  mtt::DLPipeline::BackgroundDrawable _backgroundDrawable;
+  mtt::dlPipeline::BackgroundDrawable _backgroundDrawable;
   mtt::SimpleDrawableNode _backgroundDrawableNode;
 
-  std::optional<mtt::DLPipeline::AmbientLightApplicator> _lightDrawable;
+  std::optional<mtt::dlPipeline::AmbientLightApplicator> _lightDrawable;
   mtt::SimpleDrawableNode _lightDrawableNode;
 
   CubemapObserver _cubemapObserver;

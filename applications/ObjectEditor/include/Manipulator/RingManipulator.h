@@ -3,8 +3,8 @@
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
 
-#include <mtt/Application/EditCommands/UndoStack.h>
-#include <mtt/Application/Manipulator/RingRotation3DManipulator.h>
+#include <mtt/application/EditCommands/UndoStack.h>
+#include <mtt/application/Manipulator/RingRotation3DManipulator.h>
 
 namespace mtt
 {

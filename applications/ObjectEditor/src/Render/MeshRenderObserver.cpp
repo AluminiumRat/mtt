@@ -1,16 +1,16 @@
 #include <stdexcept>
 
-#include <mtt/Application/Application.h>
-#include <mtt/DLPipeline/MeshTechniques/MeshCompositeColorTechnique.h>
-#include <mtt/DLPipeline/MeshTechniques/ShadowmapMeshTechnique.h>
-#include <mtt/DLPipeline/constants.h>
-#include <mtt/Render/Mesh/DepthMeshTechnique.h>
-#include <mtt/Render/Mesh/UidMeshTechnique.h>
-#include <mtt/Render/Pipeline/Buffer.h>
-#include <mtt/Utilities/Abort.h>
-#include <mtt/Utilities/Box.h>
-#include <mtt/Utilities/Log.h>
-#include <mtt/Utilities/Sphere.h>
+#include <mtt/application/Application.h>
+#include <mtt/dlPipeline/MeshTechniques/MeshCompositeColorTechnique.h>
+#include <mtt/dlPipeline/MeshTechniques/ShadowmapMeshTechnique.h>
+#include <mtt/dlPipeline/constants.h>
+#include <mtt/render/Mesh/DepthMeshTechnique.h>
+#include <mtt/render/Mesh/UidMeshTechnique.h>
+#include <mtt/render/Pipeline/Buffer.h>
+#include <mtt/utilities/Abort.h>
+#include <mtt/utilities/Box.h>
+#include <mtt/utilities/Log.h>
+#include <mtt/utilities/Sphere.h>
 
 #include <Objects/MeshObject.h>
 #include <Render/MeshRenderObserver.h>
@@ -25,10 +25,10 @@ MeshRenderObserver::MeshRenderObserver( MeshObject& object,
 
   mtt::LogicalDevice& device = mtt::Application::instance().displayDevice();
 
-  std::unique_ptr<mtt::DLPipeline::MeshCompositeColorTechnique> colorTechnique;
-  colorTechnique.reset(new mtt::DLPipeline::MeshCompositeColorTechnique(
+  std::unique_ptr<mtt::dlPipeline::MeshCompositeColorTechnique> colorTechnique;
+  colorTechnique.reset(new mtt::dlPipeline::MeshCompositeColorTechnique(
                                           VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST));
-  _mesh.setTechnique( mtt::DLPipeline::colorFrameType,
+  _mesh.setTechnique( mtt::dlPipeline::colorFrameType,
                       std::move(colorTechnique));
 
   std::unique_ptr<mtt::UidMeshTechnique> uidTechnique(
@@ -36,19 +36,19 @@ MeshRenderObserver::MeshRenderObserver( MeshObject& object,
                                           VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
                                           true,
                                           true));
-  _mesh.setTechnique( mtt::DLPipeline::uidFrameType,
+  _mesh.setTechnique( mtt::dlPipeline::uidFrameType,
                       std::move(uidTechnique));
 
   std::unique_ptr<mtt::DepthMeshTechnique> depthTechnique;
   depthTechnique.reset(new mtt::DepthMeshTechnique(
                                           VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST));
-  _mesh.setTechnique( mtt::DLPipeline::depthmapFrameType,
+  _mesh.setTechnique( mtt::dlPipeline::depthmapFrameType,
                       std::move(depthTechnique));
 
-  std::unique_ptr<mtt::DLPipeline::ShadowmapMeshTechnique> shadowmapTechnique;
-  shadowmapTechnique.reset(new mtt::DLPipeline::ShadowmapMeshTechnique(
+  std::unique_ptr<mtt::dlPipeline::ShadowmapMeshTechnique> shadowmapTechnique;
+  shadowmapTechnique.reset(new mtt::dlPipeline::ShadowmapMeshTechnique(
                                           VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST));
-  _mesh.setTechnique( mtt::DLPipeline::shadowmapFrameType,
+  _mesh.setTechnique( mtt::dlPipeline::shadowmapFrameType,
                       std::move(shadowmapTechnique));
 
   _drawableNode.setDrawable(&_mesh, mtt::Sphere());

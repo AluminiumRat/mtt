@@ -1,6 +1,6 @@
 #include <stdexcept>
 
-#include <mtt/Utilities/Log.h>
+#include <mtt/utilities/Log.h>
 
 #include <Objects/OEVisitor.h>
 #include <Render/AmbientLightRenderObserver.h>

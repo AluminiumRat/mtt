@@ -1,7 +1,7 @@
 #pragma once
 
-#include <mtt/Application/Scene/ObjectGroup.h>
-#include <mtt/Application/Scene/Object.h>
+#include <mtt/application/Scene/ObjectGroup.h>
+#include <mtt/application/Scene/Object.h>
 
 #include <Objects/AnimationGroup.h>
 #include <Objects/BackgroundObject.h>

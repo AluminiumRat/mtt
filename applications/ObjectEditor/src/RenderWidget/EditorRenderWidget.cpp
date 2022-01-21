@@ -1,6 +1,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <mtt/Application/Application.h>
+#include <mtt/application/Application.h>
 
 #include <Render/EditorRenderAction.h>
 #include <RenderWidget/EditorRenderWidget.h>

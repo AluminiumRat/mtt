@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mtt/Application/EditCommands/UndoStack.h>
+#include <mtt/application/EditCommands/UndoStack.h>
 
 class AnimationPlayer;
 

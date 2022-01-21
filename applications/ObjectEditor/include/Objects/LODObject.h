@@ -2,7 +2,7 @@
 
 #include <float.h>
 
-#include <mtt/Application/Scene/SpecialGroup.h>
+#include <mtt/application/Scene/SpecialGroup.h>
 
 #include <Objects/DisplayedObject.h>
 #include <Objects/MeshObject.h>

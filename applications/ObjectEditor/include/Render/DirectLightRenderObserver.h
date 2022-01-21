@@ -2,10 +2,10 @@
 
 #include <memory>
 
-#include <mtt/DLPipeline/Lighting/DirectLightApplicator.h>
-#include <mtt/DLPipeline/Lighting/ShadowMapProvider.h>
-#include <mtt/Render/Mesh/Mesh.h>
-#include <mtt/Render/SceneGraph/SimpleDrawableNode.h>
+#include <mtt/dlPipeline/Lighting/DirectLightApplicator.h>
+#include <mtt/dlPipeline/Lighting/ShadowMapProvider.h>
+#include <mtt/render/Mesh/Mesh.h>
+#include <mtt/render/SceneGraph/SimpleDrawableNode.h>
 
 #include <Render/AbstractLightRenderObserver.h>
 #include <Render/IconDrawableNode.h>
@@ -42,9 +42,9 @@ private:
 private:
   DirectLightObject& _lightObject;
 
-  std::unique_ptr<mtt::DLPipeline::ShadowMapProvider> _shadowMapProvider;
+  std::unique_ptr<mtt::dlPipeline::ShadowMapProvider> _shadowMapProvider;
 
-  mtt::DLPipeline::DirectLightApplicator _lightDrawable;
+  mtt::dlPipeline::DirectLightApplicator _lightDrawable;
 
   mtt::Mesh _cylinderMesh;
   mtt::SimpleDrawableNode _cylinderNode;

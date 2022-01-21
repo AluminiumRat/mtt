@@ -5,7 +5,7 @@
 
 #include <QtWidgets/QWidget>
 
-#include <mtt/Application/Widgets/PropertiesWidgets/BoolCheckboxConnection.h>
+#include <mtt/application/Widgets/PropertiesWidgets/BoolCheckboxConnection.h>
 
 #include <Objects/AnimationTrack.h>
 

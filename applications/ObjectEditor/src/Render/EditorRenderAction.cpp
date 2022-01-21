@@ -1,6 +1,6 @@
 #include <QtWidgets/QWidget>
 
-#include <mtt/Render/SceneGraph/CameraNode.h>
+#include <mtt/render/SceneGraph/CameraNode.h>
 
 #include <Render/EditorRenderAction.h>
 

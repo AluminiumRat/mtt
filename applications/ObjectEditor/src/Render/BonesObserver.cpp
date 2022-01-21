@@ -1,10 +1,10 @@
 #include <stdexcept>
 
-#include <mtt/Render/Mesh/MeshExtraData.h>
+#include <mtt/render/Mesh/MeshExtraData.h>
 
-#include <mtt/Utilities/Log.h>
+#include <mtt/utilities/Log.h>
 
-#include <mtt/Render/Drawable/BoneMatricesSetter.h>
+#include <mtt/render/Drawable/BoneMatricesSetter.h>
 
 #include <Objects/BoneRefBatch.h>
 #include <Objects/MeshObject.h>

@@ -4,9 +4,9 @@
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMessageBox>
 
-#include <mtt/Application/EditCommands/SetPropertyCommand.h>
-#include <mtt/Application/EditCommands/UndoStack.h>
-#include <mtt/Utilities/Log.h>
+#include <mtt/application/EditCommands/SetPropertyCommand.h>
+#include <mtt/application/EditCommands/UndoStack.h>
+#include <mtt/utilities/Log.h>
 
 #include <Objects/CubemapObject.h>
 #include <SceneTab/CubemapWidget.h>

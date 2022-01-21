@@ -2,7 +2,7 @@
 
 #include <QtWidgets/QMessageBox>
 
-#include <mtt/Utilities/ScopedSetter.h>
+#include <mtt/utilities/ScopedSetter.h>
 
 #include <ManipulatorMenu.h>
 #include <MainWindow.h>

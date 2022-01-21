@@ -3,7 +3,7 @@
 #include <memory>
 #include <vector>
 
-#include <mtt/Application/Scene/Object.h>
+#include <mtt/application/Scene/Object.h>
 
 #include <Objects/BoneRefObject.h>
 

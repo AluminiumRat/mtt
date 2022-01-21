@@ -1,5 +1,5 @@
-#include <mtt/Application/EditCommands/CompositeCommand.h>
-#include <mtt/Utilities/Log.h>
+#include <mtt/application/EditCommands/CompositeCommand.h>
+#include <mtt/utilities/Log.h>
 
 #include <Objects/AnimationObject.h>
 

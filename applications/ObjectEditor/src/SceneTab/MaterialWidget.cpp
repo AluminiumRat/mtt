@@ -1,7 +1,7 @@
-#include <mtt/Application/Widgets/PropertiesWidgets/ColorPropertyWidget.h>
-#include <mtt/Application/Widgets/PropertiesWidgets/FloatPropertyLinearSlider.h>
-#include <mtt/Application/Widgets/PropertiesWidgets/FloatPropertyProgressiveSlider.h>
-#include <mtt/Application/Widgets/PropertiesWidgets/FloatPropertySpin.h>
+#include <mtt/application/Widgets/PropertiesWidgets/ColorPropertyWidget.h>
+#include <mtt/application/Widgets/PropertiesWidgets/FloatPropertyLinearSlider.h>
+#include <mtt/application/Widgets/PropertiesWidgets/FloatPropertyProgressiveSlider.h>
+#include <mtt/application/Widgets/PropertiesWidgets/FloatPropertySpin.h>
 
 #include <SceneTab/FilenamePropertyWidget.h>
 #include <SceneTab/MaterialWidget.h>

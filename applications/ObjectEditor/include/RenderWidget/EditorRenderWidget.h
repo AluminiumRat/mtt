@@ -1,10 +1,10 @@
 #pragma once
 
-#include <mtt/Application/Widgets/RenderWidget/OrbitalCameraController.h>
-#include <mtt/Application/Widgets/RenderWidget/RenderWidget.h>
-#include <mtt/Application/Widgets/RenderWidget/ClickSelectHandler.h>
-#include <mtt/DLPipeline/ColorFrameBuilder.h>
-#include <mtt/Render/SceneGraph/CameraNode.h>
+#include <mtt/application/Widgets/RenderWidget/OrbitalCameraController.h>
+#include <mtt/application/Widgets/RenderWidget/RenderWidget.h>
+#include <mtt/application/Widgets/RenderWidget/ClickSelectHandler.h>
+#include <mtt/dlPipeline/ColorFrameBuilder.h>
+#include <mtt/render/SceneGraph/CameraNode.h>
 
 #include <Manipulator/EditorManipulatorController.h>
 
@@ -34,7 +34,7 @@ protected:
                                 mtt::SceneToSurfaceRenderer& renderer) override;
 
 private:
-  mtt::DLPipeline::ColorFrameBuilder _colorFrameBuilder;
+  mtt::dlPipeline::ColorFrameBuilder _colorFrameBuilder;
 
   mtt::ClickSelectHandler::FrameBuiled _uidFrameBuilder;
   mtt::SceneToImageRenderer _uidRenderer;

@@ -1,4 +1,4 @@
-#include <mtt/Application/Scene/object_cast.h>
+#include <mtt/application/Scene/object_cast.h>
 
 #include <Objects/DisplayedObject.h>
 #include <Objects/OEVisitor.h>

@@ -5,9 +5,9 @@
 
 #include <QtWidgets/QWidget>
 
-#include <mtt/Application/Widgets/PropertiesWidgets/BoolCheckboxConnection.h>
-#include <mtt/Application/Widgets/PropertiesWidgets/FloatSpinConnection.h>
-#include <mtt/Application/Widgets/PropertiesWidgets/IntSpinConnection.h>
+#include <mtt/application/Widgets/PropertiesWidgets/BoolCheckboxConnection.h>
+#include <mtt/application/Widgets/PropertiesWidgets/FloatSpinConnection.h>
+#include <mtt/application/Widgets/PropertiesWidgets/IntSpinConnection.h>
 
 #include <Objects/DirectLightObject.h>
 

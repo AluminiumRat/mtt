@@ -2,10 +2,10 @@
 
 #include <QtCore/QString>
 
-#include <mtt/Render/Drawable/AutoscaleDrawableModificator.h>
-#include <mtt/Render/Drawable/RotateToCameraModificator.h>
-#include <mtt/Render/Mesh/Mesh.h>
-#include <mtt/Render/SceneGraph/SimpleDrawableNode.h>
+#include <mtt/render/Drawable/AutoscaleDrawableModificator.h>
+#include <mtt/render/Drawable/RotateToCameraModificator.h>
+#include <mtt/render/Mesh/Mesh.h>
+#include <mtt/render/SceneGraph/SimpleDrawableNode.h>
 
 class IconDrawableNode : public mtt::SimpleDrawableNode
 {

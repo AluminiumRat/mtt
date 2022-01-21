@@ -4,7 +4,7 @@
 #include <memory>
 #include <stdexcept>
 
-#include <mtt/Application/Scene/Object.h>
+#include <mtt/application/Scene/Object.h>
 
 class ObjectBuilder
 {

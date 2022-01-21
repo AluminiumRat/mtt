@@ -6,8 +6,8 @@
 #include <QtCore/QDir>
 #include <QtCore/QString>
 
-#include <mtt/Application/AsyncTasks/AbstractAsyncTask.h>
-#include <mtt/Application/DataStream.h>
+#include <mtt/application/AsyncTasks/AbstractAsyncTask.h>
+#include <mtt/application/DataStream.h>
 
 #include <Objects/AnimationObject.h>
 #include <Objects/LODObject.h>

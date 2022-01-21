@@ -1,9 +1,9 @@
 #include <vector>
 
-#include <mtt/DLPipeline/MeshTechniques/InstrumentalCompositeTechnique.h>
-#include <mtt/DLPipeline/constants.h>
-#include <mtt/Render/Mesh/UidMeshTechnique.h>
-#include <mtt/Render/Pipeline/Buffer.h>
+#include <mtt/dlPipeline/MeshTechniques/InstrumentalCompositeTechnique.h>
+#include <mtt/dlPipeline/constants.h>
+#include <mtt/render/Mesh/UidMeshTechnique.h>
+#include <mtt/render/Pipeline/Buffer.h>
 
 #include <Objects/DirectLightObject.h>
 #include <Render/DirectLightRenderObserver.h>
@@ -32,12 +32,12 @@ DirectLightRenderObserver::DirectLightRenderObserver(
   _iconNode.registerModificator(selectionModificator());
 
   _cylinderMesh.setTechnique(
-      mtt::DLPipeline::colorFrameType,
-      std::make_unique<mtt::DLPipeline::InstrumentalCompositeTechnique>(
+      mtt::dlPipeline::colorFrameType,
+      std::make_unique<mtt::dlPipeline::InstrumentalCompositeTechnique>(
                                                 VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
                                                 true,
                                                 true));
-  _cylinderMesh.setTechnique( mtt::DLPipeline::uidFrameType,
+  _cylinderMesh.setTechnique( mtt::dlPipeline::uidFrameType,
                               std::make_unique<mtt::UidMeshTechnique>(
                                                 VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
                                                 true,
@@ -217,7 +217,7 @@ void DirectLightRenderObserver::_updateShadowsEnabled() noexcept
   if(_lightObject.shadowsEnabled() && _shadowMapProvider == nullptr)
   {
     mtt::LogicalDevice& device = EditorApplication::instance().displayDevice();
-    _shadowMapProvider.reset(new mtt::DLPipeline::ShadowMapProvider(
+    _shadowMapProvider.reset(new mtt::dlPipeline::ShadowMapProvider(
                                                           2,
                                                           glm::uvec2(256, 256),
                                                           device));

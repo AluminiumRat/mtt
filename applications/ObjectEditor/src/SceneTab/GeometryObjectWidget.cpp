@@ -1,4 +1,4 @@
-#include <mtt/Application/Widgets/PropertiesWidgets/ReferencePropertyWidget.h>
+#include <mtt/application/Widgets/PropertiesWidgets/ReferencePropertyWidget.h>
 
 #include <SceneTab/GeometryObjectWidget.h>
 

@@ -6,8 +6,8 @@
 
 #include <QtCore/QString>
 
-#include <mtt/Application/AsyncTasks/AbstractAsyncTask.h>
-#include <mtt/Render/Pipeline/CubeTexture.h>
+#include <mtt/application/AsyncTasks/AbstractAsyncTask.h>
+#include <mtt/render/Pipeline/CubeTexture.h>
 
 namespace mtt
 {

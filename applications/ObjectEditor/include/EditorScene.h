@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mtt/Application/Scene/Scene.h>
+#include <mtt/application/Scene/Scene.h>
 
 #include <Objects/RootObject.h>
 

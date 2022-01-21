@@ -4,10 +4,10 @@
 #include <QtCore/QString>
 #include <QtWidgets/QFileDialog>
 
-#include <mtt/Application/EditCommands/SetPropertyCommand.h>
-#include <mtt/Application/EditCommands/UndoStack.h>
-#include <mtt/Application/Widgets/PropertiesWidgets/ReferenceWidget.h>
-#include <mtt/Utilities/Abort.h>
+#include <mtt/application/EditCommands/SetPropertyCommand.h>
+#include <mtt/application/EditCommands/UndoStack.h>
+#include <mtt/application/Widgets/PropertiesWidgets/ReferenceWidget.h>
+#include <mtt/utilities/Abort.h>
 
 template <typename ObjectClass>
 class FilenamePropertyWidget : public mtt::ReferenceWidget

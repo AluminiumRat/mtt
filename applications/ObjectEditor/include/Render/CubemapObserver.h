@@ -5,8 +5,8 @@
 
 #include <QtCore/QObject>
 
-#include <mtt/Application/AsyncTasks/AsyncTaskQueue.h>
-#include <mtt/Render/Pipeline/CubeTexture.h>
+#include <mtt/application/AsyncTasks/AsyncTaskQueue.h>
+#include <mtt/render/Pipeline/CubeTexture.h>
 
 namespace mtt
 {

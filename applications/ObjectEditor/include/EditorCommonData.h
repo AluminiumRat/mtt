@@ -2,8 +2,8 @@
 
 #include <QString>
 
-#include <mtt/Application/CommonEditData.h>
-#include <mtt/Render/RenderScene.h>
+#include <mtt/application/CommonEditData.h>
+#include <mtt/render/RenderScene.h>
 
 #include <AnimationPlayer.h>
 #include <EditorScene.h>

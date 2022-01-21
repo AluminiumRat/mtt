@@ -1,7 +1,7 @@
 #include <stdexcept>
 
-#include <mtt/Render/Pipeline/CubeTexture.h>
-#include <mtt/Utilities/Log.h>
+#include <mtt/render/Pipeline/CubeTexture.h>
+#include <mtt/utilities/Log.h>
 
 #include <AsyncTasks/UploadCubetextureTask.h>
 #include <Objects/CubemapObject.h>

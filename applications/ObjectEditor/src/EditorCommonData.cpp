@@ -1,4 +1,4 @@
-#include <mtt/Utilities/static_cast_unique_ptr.h>
+#include <mtt/utilities/static_cast_unique_ptr.h>
 
 #include <EditorCommonData.h>
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <mtt/Application/Scene/Object.h>
-#include <mtt/Utilities/SurfaceMaterialData.h>
+#include <mtt/application/Scene/Object.h>
+#include <mtt/utilities/SurfaceMaterialData.h>
 
 #include <Objects/OEVisitorExtension.h>
 

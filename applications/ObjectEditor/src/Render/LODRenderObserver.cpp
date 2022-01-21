@@ -3,7 +3,7 @@
 #include <Objects/LODObject.h>
 #include <Render/LODRenderObserver.h>
 
-#include <mtt/Utilities/Log.h>
+#include <mtt/utilities/Log.h>
 
 LODRenderObserver::LODRenderObserver( LODObject& object,
                                       EditorCommonData& commonData) :

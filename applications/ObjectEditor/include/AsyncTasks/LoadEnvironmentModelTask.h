@@ -5,8 +5,8 @@
 
 #include <QtCore/QString>
 
-#include <mtt/Application/AsyncTasks/AbstractAsyncTask.h>
-#include <mtt/Application/DrawModel/SlaveDrawModel.h>
+#include <mtt/application/AsyncTasks/AbstractAsyncTask.h>
+#include <mtt/application/DrawModel/SlaveDrawModel.h>
 
 class LoadEnvironmentModelTask : public mtt::AbstractAsyncTask
 {

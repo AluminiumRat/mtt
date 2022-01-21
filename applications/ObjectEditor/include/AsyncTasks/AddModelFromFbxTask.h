@@ -2,7 +2,7 @@
 
 #include <QtCore/QString>
 
-#include <mtt/Application/AsyncTasks/AbstractAsyncTask.h>
+#include <mtt/application/AsyncTasks/AbstractAsyncTask.h>
 
 #include <FbxDrawableImporter.h>
 

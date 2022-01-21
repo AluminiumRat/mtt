@@ -2,7 +2,7 @@
 
 #include <QtCore/QObject>
 
-#include <mtt/Render/Pipeline/CubeTexture.h>
+#include <mtt/render/Pipeline/CubeTexture.h>
 
 #include <AsyncTasks/UploadCubetextureTask.h>
 #include <EditorApplication.h>

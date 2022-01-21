@@ -2,7 +2,7 @@
 
 #include <QtWidgets/QStyledItemDelegate.h>
 
-#include <mtt/Application/Widgets/ObjectsTreeView.h>
+#include <mtt/application/Widgets/ObjectsTreeView.h>
 
 class SceneTreeView : public mtt::ObjectsTreeView
 {

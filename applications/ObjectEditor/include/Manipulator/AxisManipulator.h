@@ -2,8 +2,8 @@
 
 #include <glm/mat4x4.hpp>
 
-#include <mtt/Application/EditCommands/UndoStack.h>
-#include <mtt/Application/Manipulator/AxisMove3DManipulator.h>
+#include <mtt/application/EditCommands/UndoStack.h>
+#include <mtt/application/Manipulator/AxisMove3DManipulator.h>
 
 namespace mtt
 {

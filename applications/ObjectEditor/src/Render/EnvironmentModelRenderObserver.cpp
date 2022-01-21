@@ -1,6 +1,6 @@
 #include <stdexcept>
 
-#include <mtt/Utilities/Log.h>
+#include <mtt/utilities/Log.h>
 
 #include <AsyncTasks/LoadEnvironmentModelTask.h>
 #include <Objects/EnvironmentModel.h>

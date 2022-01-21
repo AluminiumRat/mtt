@@ -2,8 +2,8 @@
 
 #include <memory>
 
-#include <mtt/Application/AsyncTasks/AsyncTaskQueue.h>
-#include <mtt/Application/DrawModel/SlaveDrawModel.h>
+#include <mtt/application/AsyncTasks/AsyncTaskQueue.h>
+#include <mtt/application/DrawModel/SlaveDrawModel.h>
 
 #include <Render/Object3DRenderObserver.h>
 

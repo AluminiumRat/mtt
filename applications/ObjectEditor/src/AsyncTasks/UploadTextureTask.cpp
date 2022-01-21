@@ -1,6 +1,6 @@
 #include <QtCore/QObject>
 
-#include <mtt/Render/Mesh/MeshExtraData.h>
+#include <mtt/render/Mesh/MeshExtraData.h>
 
 #include <AsyncTasks/UploadTextureTask.h>
 #include <EditorApplication.h>

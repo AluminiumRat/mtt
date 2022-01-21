@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mtt/Application/Scene/ObjectLink.h>
+#include <mtt/application/Scene/ObjectLink.h>
 
 #include <Objects/ScalableObject.h>
 #include <Objects/SkeletonObject.h>

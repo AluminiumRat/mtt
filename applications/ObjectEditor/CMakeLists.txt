@@ -291,8 +291,8 @@ target_link_libraries(ObjectEditor
                       ${FbxSDK_LIBRARIES}
                       Qt5::Core
                       Qt5::Widgets
-                      Application
-                      DLPipeline
-                      Fbx
-                      Render
-                      Utilities)
+                      application
+                      dlPipeline
+                      fbx
+                      render
+                      utilities)

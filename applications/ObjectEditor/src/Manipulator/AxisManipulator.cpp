@@ -1,10 +1,10 @@
 #include <glm/gtc/constants.hpp>
 
-#include <mtt/Application/EditCommands/SetPropertyCommand.h>
-#include <mtt/Application/EditCommands/UndoStack.h>
-#include <mtt/DLPipeline/MeshTechniques/InstrumentalTechnique.h>
-#include <mtt/DLPipeline/constants.h>
-#include <mtt/Utilities/Abort.h>
+#include <mtt/application/EditCommands/SetPropertyCommand.h>
+#include <mtt/application/EditCommands/UndoStack.h>
+#include <mtt/dlPipeline/MeshTechniques/InstrumentalTechnique.h>
+#include <mtt/dlPipeline/constants.h>
+#include <mtt/utilities/Abort.h>
 
 #include <Objects/MovableObject.h>
 #include <Manipulator/AxisManipulator.h>
@@ -59,8 +59,8 @@ AxisManipulator::AxisManipulator( MovableObject& object,
 
   setGeometry(positions);
 
-  setTechnique( mtt::DLPipeline::colorFrameType,
-                std::make_unique<mtt::DLPipeline::InstrumentalTechnique>(
+  setTechnique( mtt::dlPipeline::colorFrameType,
+                std::make_unique<mtt::dlPipeline::InstrumentalTechnique>(
                                           false,
                                           false,
                                           VK_COMPARE_OP_ALWAYS,

@@ -2,7 +2,7 @@
 
 #include <glm/gtc/quaternion.hpp>
 
-#include <mtt/Utilities/Log.h>
+#include <mtt/utilities/Log.h>
 
 #include <FbxDrawableImporter.h>
 
