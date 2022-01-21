@@ -292,7 +292,8 @@ namespace mtt
                                       MatricesUniform& matricesUniform,
                                       ResourcesArguments&... resourcesArguments)
   {
-    const BoneMatrices* boneMatrices = buildInfo.boneMatrices;
+    const BoneMatrices* boneMatrices = static_cast<const BoneMatrices*>(
+          buildInfo.extraData.data(DrawPlanBuildExtraData::boneMatricesIndex));
     if (skeletonEnabled())
     {
       if (boneMatrices == nullptr)

@@ -8,11 +8,20 @@ void BoneMatricesSetter::draw(DrawPlanBuildInfo& buildInfo,
                               size_t modifiactorsLeft,
                               Drawable& drawable) const
 {
-  const std::vector<glm::mat4>* tmp = buildInfo.boneMatrices;
-  if(matrices.empty()) buildInfo.boneMatrices = nullptr;
-  else buildInfo.boneMatrices = &matrices;
-
+  const void* oldMatrices = buildInfo.extraData.data(
+                                    DrawPlanBuildExtraData::boneMatricesIndex);
+  if(matrices.empty())
+  {
+    buildInfo.extraData.setData(nullptr,
+                                DrawPlanBuildExtraData::boneMatricesIndex);
+  }
+  else
+  {
+    buildInfo.extraData.setData(&matrices,
+                                DrawPlanBuildExtraData::boneMatricesIndex);
+  }
   drawNext(buildInfo, next, modifiactorsLeft, drawable);
 
-  buildInfo.boneMatrices = tmp;
+  buildInfo.extraData.setData(oldMatrices,
+                              DrawPlanBuildExtraData::boneMatricesIndex);
 }

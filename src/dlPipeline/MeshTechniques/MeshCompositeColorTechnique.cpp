@@ -119,6 +119,13 @@ void MeshCompositeColorTechnique::addToDrawPlan(DrawPlanBuildInfo& buildInfo)
   {
     _transparentTechnique.addToDrawPlan(buildInfo);
   }
+
   if(_emissionTechniqueEnabled) _emissionTechnique.addToDrawPlan(buildInfo);
-  if(buildInfo.selected) _selectionTechnique.addToDrawPlan(buildInfo);
+
+  const bool* selectedPtr = static_cast<const bool*>(
+          buildInfo.extraData.data(DrawPlanBuildExtraData::selectedFlagIndex));
+  if (selectedPtr != nullptr && *selectedPtr == true)
+  {
+    _selectionTechnique.addToDrawPlan(buildInfo);
+  }
 }

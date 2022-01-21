@@ -47,9 +47,15 @@ void UidMeshTechnique::createRenderAction(DrawPlanBuildInfo& buildInfo,
                                           GraphicsPipeline& pipeline,
                                           MatricesUniform& matricesUniform)
 {
-  const uint64_t denom = 0x100000000ULL;
-  glm::uvec2 uidValue(buildInfo.objectUid.value() % denom,
-                      buildInfo.objectUid.value() / denom);
+  glm::uvec2 uidValue(0);
+
+  const UID* uidPtr = static_cast<const UID*>(
+              buildInfo.extraData.data(DrawPlanBuildExtraData::objectUIDIndex));
+  if (uidPtr != nullptr)
+  {
+    const uint64_t denom = 0x100000000ULL;
+    uidValue = glm::uvec2(uidPtr->value() % denom, uidPtr->value() / denom);
+  }
 
   createActionTemplate( buildInfo,
                         pipeline,

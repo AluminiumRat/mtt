@@ -21,5 +21,11 @@ InstrumentalCompositeTechnique::InstrumentalCompositeTechnique(
 void InstrumentalCompositeTechnique::addToDrawPlan(DrawPlanBuildInfo& buildInfo)
 {
   _colorTechnique.addToDrawPlan(buildInfo);
-  if (buildInfo.selected) _selectionTechnique.addToDrawPlan(buildInfo);
+
+  const bool* selectedPtr = static_cast<const bool*>(
+          buildInfo.extraData.data(DrawPlanBuildExtraData::selectedFlagIndex));
+  if (selectedPtr != nullptr && *selectedPtr == true)
+  {
+    _selectionTechnique.addToDrawPlan(buildInfo);
+  }
 }

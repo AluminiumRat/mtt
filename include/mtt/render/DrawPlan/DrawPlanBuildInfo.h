@@ -7,6 +7,7 @@
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
 
+#include <mtt/render/DrawPlan/DrawPlanBuildExtraData.h>
 #include <mtt/render/RenderPass/AbstractRenderPass.h>
 #include <mtt/render/SceneRenderer/AbstractFrame.h>
 #include <mtt/render/SceneRenderer/AbstractFrameBuilder.h>
@@ -93,13 +94,7 @@ namespace mtt
 
     ViewFrustum viewFrustum;      /// Frustum for current frame in view space
 
-    bool selected;                /// If selected is true then a special
-                                  /// "selected" render technique for must be
-                                  /// used.
-
-    UID objectUid;
-
-    const std::vector<glm::mat4>* boneMatrices;
+    DrawPlanBuildExtraData extraData;
 
     explicit DrawPlanBuildInfo(DrawPlan& theDrawPlan);
     DrawPlanBuildInfo(const DrawPlanBuildInfo&) = delete;

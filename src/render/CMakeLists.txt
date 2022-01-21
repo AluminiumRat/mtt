@@ -58,6 +58,7 @@ set(HEADERS
     "../../include/mtt/render/DrawPlan/DrawContext.h"
     "../../include/mtt/render/DrawPlan/DrawMeshAction.h"
     "../../include/mtt/render/DrawPlan/DrawPlan.h"
+    "../../include/mtt/render/DrawPlan/DrawPlanBuildExtraData.h"
     "../../include/mtt/render/DrawPlan/DrawPlanBuildInfo.h"
     "../../include/mtt/render/DrawPlan/MultipleResourceSetter.h"
     "../../include/mtt/render/DrawPlan/ResourceSetter.h"
@@ -165,6 +166,7 @@ set(SOURCES
     "DrawPlan/ActionMemoryPool.cpp"
     "DrawPlan/DrawBin.cpp"
     "DrawPlan/DrawPlan.cpp"
+    "DrawPlan/DrawPlanBuildExtraData.cpp"
     "DrawPlan/DrawPlanBuildInfo.cpp"
 
     "Mesh/AbstractMeshTechnique.cpp"

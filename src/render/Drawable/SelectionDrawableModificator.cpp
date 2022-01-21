@@ -18,8 +18,11 @@ void SelectionDrawableModificator::draw(DrawPlanBuildInfo& buildInfo,
                                         size_t modifiactorsLeft,
                                         Drawable& drawable) const
 {
-  bool oldSelected = buildInfo.selected;
-  buildInfo.selected = _selected;
+  const void* oldSelected = buildInfo.extraData.data(
+                                    DrawPlanBuildExtraData::selectedFlagIndex);
+  buildInfo.extraData.setData(&_selected,
+                              DrawPlanBuildExtraData::selectedFlagIndex);
   drawNext(buildInfo, next, modifiactorsLeft, drawable);
-  buildInfo.selected = oldSelected;
+  buildInfo.extraData.setData(oldSelected,
+                              DrawPlanBuildExtraData::selectedFlagIndex);
 }

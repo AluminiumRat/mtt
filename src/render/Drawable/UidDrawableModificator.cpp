@@ -13,8 +13,11 @@ void UidDrawableModificator::draw(DrawPlanBuildInfo& buildInfo,
                                   size_t modifiactorsLeft,
                                   Drawable& drawable) const
 {
-  UID oldUid = buildInfo.objectUid;
-  buildInfo.objectUid = _uid;
+  const void* oldUID =
+              buildInfo.extraData.data(DrawPlanBuildExtraData::objectUIDIndex);
+  buildInfo.extraData.setData(&_uid,
+                              DrawPlanBuildExtraData::objectUIDIndex);
   drawNext(buildInfo, next, modifiactorsLeft, drawable);
-  buildInfo.objectUid = oldUid;
+  buildInfo.extraData.setData(oldUID,
+                              DrawPlanBuildExtraData::objectUIDIndex);
 }
