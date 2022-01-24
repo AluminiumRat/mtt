@@ -1,11 +1,11 @@
 #include <mtt/render/Mesh/AbstractMeshTechnique.h>
-#include <mtt/render/Mesh/MeshExtraData.h>
+#include <mtt/render/Mesh/Mesh.h>
 
 using namespace mtt;
 
 AbstractMeshTechnique::AbstractMeshTechnique() :
-  _verticesNumber(0),
-  _meshExtraData(nullptr)
+  _mesh(nullptr),
+  _verticesNumber(0)
 {
 }
 
@@ -13,17 +13,16 @@ AbstractMeshTechnique::~AbstractMeshTechnique() noexcept
 {
 }
 
+void AbstractMeshTechnique::setMesh(Mesh* newMesh)
+{
+  if(_mesh != nullptr) _mesh->releaseTechnique(*this);
+  if (newMesh != nullptr) newMesh->bindTechnique(*this);
+  _mesh = newMesh;
+}
+
 void AbstractMeshTechnique::setVerticesNumber(uint32_t newValue)
 {
   _verticesNumber = newValue;
-}
-
-void AbstractMeshTechnique::setMeshExtraData(MeshExtraData* newData)
-{
-  if(_meshExtraData != nullptr) _meshExtraData->unRegisterTechnique(*this);
-  _meshExtraData = nullptr;
-  if (newData != nullptr) newData->registerTechnique(*this);
-  _meshExtraData = newData;
 }
 
 void AbstractMeshTechnique::registerVertexBuffer( Buffer& buffer,
@@ -45,7 +44,7 @@ void AbstractMeshTechnique::registerIndicesBuffer(VkPrimitiveTopology topology,
 }
 
 void AbstractMeshTechnique::unregisterIndicesBuffer(
-                                                  VkPrimitiveTopology topology)
+                                        VkPrimitiveTopology topology) noexcept
 {
 }
 

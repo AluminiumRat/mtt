@@ -1,12 +1,14 @@
 #include <algorithm>
 
 #include <mtt/render/Mesh/AbstractMeshTechnique.h>
+#include <mtt/render/Mesh/Mesh.h>
 #include <mtt/render/Mesh/MeshExtraData.h>
 #include <mtt/utilities/Abort.h>
 
 using namespace mtt;
 
-MeshExtraData::MeshExtraData(LogicalDevice& device) :
+MeshExtraData::MeshExtraData(Mesh& mesh, LogicalDevice& device) :
+  _mesh(mesh),
   _device(device)
 {
 }
@@ -32,10 +34,10 @@ void MeshExtraData::addUniformBuffer( std::unique_ptr<Buffer> buffer,
 
   try
   {
-    for(AbstractMeshTechnique* technique : _techniques)
-    {
-      technique->registerUniformBuffer(*buffer, name);
-    }
+    _mesh.passTechniques( [&](AbstractMeshTechnique& technique)
+                          {
+                            technique.registerUniformBuffer(*buffer, name);
+                          });
   }
   catch(...)
   {
@@ -60,10 +62,12 @@ std::unique_ptr<Buffer> MeshExtraData::removeUniformBuffer(size_t index) noexcep
 {
   BufferRecord& record = _uniforms[index];
 
-  for(AbstractMeshTechnique* technique : _techniques)
-  {
-    technique->unregisterUniformBuffer(*record.buffer, record.name);
-  }
+  _mesh.passTechniques( [&](AbstractMeshTechnique& technique)
+                        {
+                          technique.unregisterUniformBuffer(*record.buffer,
+                                                            record.name);
+                        });
+
   std::unique_ptr<Buffer> buffer(_uniforms[index].buffer);
   _uniforms.erase(_uniforms.begin() + index);
   return buffer;
@@ -134,10 +138,10 @@ void MeshExtraData::addSampler( std::unique_ptr<Sampler> sampler,
 
   try
   {
-    for(AbstractMeshTechnique* technique : _techniques)
-    {
-      technique->registerSampler(*sampler, name);
-    }
+    _mesh.passTechniques( [&](AbstractMeshTechnique& technique)
+                          {
+                            technique.registerSampler(*sampler, name);
+                          });
   }
   catch(...)
   {
@@ -162,10 +166,11 @@ std::unique_ptr<Sampler> MeshExtraData::removeSampler(size_t index) noexcept
 {
   SamplerRecord& record = _samplers[index];
 
-  for(AbstractMeshTechnique* technique : _techniques)
-  {
-    technique->unregisterSampler(*record.sampler, record.name);
-  }
+  _mesh.passTechniques( [&](AbstractMeshTechnique& technique)
+                        {
+                          technique.unregisterSampler(*record.sampler,
+                                                      record.name);
+                        });
 
   std::unique_ptr<Sampler> sampler(_samplers[index].sampler);
   _samplers.erase(_samplers.begin() + index);
@@ -266,10 +271,10 @@ void MeshExtraData::addVariable(std::unique_ptr<AbstractMeshVariable> variable,
 
   try
   {
-    for (AbstractMeshTechnique* technique : _techniques)
-    {
-      technique->registerVariable(*variable, name);
-    }
+    _mesh.passTechniques( [&](AbstractMeshTechnique& technique)
+                          {
+                            technique.registerVariable(*variable, name);
+                          });
   }
   catch (...)
   {
@@ -295,10 +300,11 @@ std::unique_ptr<AbstractMeshVariable>
 {
   VariableRecord& record = _variables[index];
 
-  for (AbstractMeshTechnique* technique : _techniques)
-  {
-    technique->unregisterVariable(*record.variable, record.name);
-  }
+  _mesh.passTechniques( [&](AbstractMeshTechnique& technique)
+                        {
+                          technique.unregisterVariable( *record.variable,
+                                                        record.name);
+                        });
 
   std::unique_ptr<AbstractMeshVariable> variable(record.variable);
   _variables.erase(_variables.begin() + index);
@@ -373,13 +379,8 @@ void MeshExtraData::removeAlphaInAlbedoSamplerIsOpacityVariable() noexcept
   removeVariable(alphaInAlbedoSamplerIsOpacityVariableName);
 }
 
-void MeshExtraData::registerTechnique(AbstractMeshTechnique& technique)
+void MeshExtraData::onTechniqueAdded(AbstractMeshTechnique& technique)
 {
-  Techniques::iterator iTechnique = std::find(_techniques.begin(),
-                                              _techniques.end(),
-                                              &technique);
-  if(iTechnique != _techniques.end()) Abort("MeshExtraData::registerTechnique: technique is already registered.");
-
   try
   {
     for(BufferRecord& record : _uniforms)
@@ -396,8 +397,6 @@ void MeshExtraData::registerTechnique(AbstractMeshTechnique& technique)
     {
       technique.registerVariable(*record.variable, record.name);
     }
-
-    _techniques.push_back(&technique);
   }
   catch(std::exception& error)
   {
@@ -410,14 +409,9 @@ void MeshExtraData::registerTechnique(AbstractMeshTechnique& technique)
   }
 }
 
-void MeshExtraData::unRegisterTechnique(
+void MeshExtraData::onTechniqueRemoved(
                                       AbstractMeshTechnique& technique) noexcept
 {
-  Techniques::iterator iTechnique = std::find(_techniques.begin(),
-                                              _techniques.end(),
-                                              &technique);
-  if(iTechnique == _techniques.end()) Abort("MeshExtraData::unRegisterTechnique: technique is not registered.");
-
   for (BufferRecord& uniform : _uniforms)
   {
     technique.unregisterUniformBuffer(*uniform.buffer, uniform.name);
@@ -432,6 +426,4 @@ void MeshExtraData::unRegisterTechnique(
   {
     technique.unregisterVariable(*record.variable, record.name);
   }
-
-  _techniques.erase(iTechnique);
 }

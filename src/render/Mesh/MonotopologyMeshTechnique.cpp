@@ -25,7 +25,7 @@ void MonotopologyMeshTechnique::registerIndicesBuffer(
 }
 
 void MonotopologyMeshTechnique::unregisterIndicesBuffer(
-                                                  VkPrimitiveTopology topology)
+                                          VkPrimitiveTopology topology) noexcept
 {
   if(topology != _topology) return;
   if(_indicesBuffer == nullptr) return;

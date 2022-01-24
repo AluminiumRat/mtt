@@ -126,6 +126,13 @@ namespace mtt
     inline AbstractMeshTechnique* technique(FrameType frameType) noexcept;
     inline const AbstractMeshTechnique* technique(
                                             FrameType frameType) const noexcept;
+    /// Delegate should have signature void(const AbstractMeshTechnique&)
+    template<typename Delegate>
+    inline void passTechniques(Delegate delegate) const;
+    /// Delegate should have signature void(AbstractMeshTechnique&) or
+    /// void(const AbstractMeshTechnique&)
+    template<typename Delegate>
+    inline void passTechniques(Delegate delegate);
     void setTechnique(FrameType frameType,
                       std::unique_ptr<AbstractMeshTechnique> newTechnique);
     /// Returns the removed technique
@@ -135,8 +142,9 @@ namespace mtt
   protected:
     virtual void buildDrawActions(DrawPlanBuildInfo& buildInfo) override;
 
-  private:
-    void _releaseTechnique(AbstractMeshTechnique& technique) noexcept;
+    friend class AbstractMeshTechnique;
+    void bindTechnique(AbstractMeshTechnique& technique);
+    void releaseTechnique(AbstractMeshTechnique& technique) noexcept;
 
   private:
     LogicalDevice& _device;
@@ -293,5 +301,17 @@ namespace mtt
                                             FrameType frameType) const noexcept
   {
     return _techniquesList.get(frameType);
+  }
+
+  template<typename Delegate>
+  inline void Mesh::passTechniques(Delegate delegate) const
+  {
+    _techniquesList.pass(delegate);
+  }
+
+  template<typename Delegate>
+  inline void Mesh::passTechniques(Delegate delegate)
+  {
+    _techniquesList.pass(delegate);
   }
 }

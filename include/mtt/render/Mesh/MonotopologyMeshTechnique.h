@@ -17,7 +17,8 @@ namespace mtt
                                         Buffer& buffer,
                                         VkIndexType indexType,
                                         size_t indicesNumber) override;
-    virtual void unregisterIndicesBuffer(VkPrimitiveTopology topology) override;
+    virtual void unregisterIndicesBuffer(
+                                VkPrimitiveTopology topology) noexcept override;
 
     inline VkPrimitiveTopology topology() const noexcept;
     inline Buffer* indicesBuffer() const noexcept;

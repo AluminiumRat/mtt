@@ -15,7 +15,6 @@ namespace mtt
     virtual ~CompositeMeshTechnique() noexcept = default;
 
     virtual void setVerticesNumber(uint32_t newValue) override;
-    virtual void setMeshExtraData(MeshExtraData* newData) override;
     virtual void registerVertexBuffer(Buffer& buffer,
                                       const std::string& name) override;
     virtual void unregisterVertexBuffer(
@@ -26,7 +25,8 @@ namespace mtt
                                         Buffer& buffer,
                                         VkIndexType indexType,
                                         size_t indicesNumber) override;
-    virtual void unregisterIndicesBuffer(VkPrimitiveTopology topology) override;
+    virtual void unregisterIndicesBuffer(
+                                VkPrimitiveTopology topology) noexcept override;
 
     virtual void registerUniformBuffer( Buffer& buffer,
                                         const std::string& name) override;
@@ -45,8 +45,10 @@ namespace mtt
                                     const std::string& name) noexcept override;
 
   protected:
-    /// call from constructor
     void registerSubtechnique(AbstractMeshTechnique& technique);
+    void unregisterSubtechnique(AbstractMeshTechnique& technique);
+
+    virtual void setMesh(Mesh* newMesh) override;
 
   private:
     using Subtechniques = std::vector<AbstractMeshTechnique*>;

@@ -16,6 +16,7 @@ namespace mtt
 {
   class AbstractMeshTechnique;
   class LogicalDevice;
+  class Mesh;
 
   class MeshExtraData
   {
@@ -62,10 +63,12 @@ namespace mtt
     inline static const char boneNumberVariableDefine[] = "BONE_NUMBER";
 
   public:
-    MeshExtraData(LogicalDevice& device);
+    MeshExtraData(Mesh& mesh, LogicalDevice& device);
     MeshExtraData(const MeshExtraData&) = delete;
     MeshExtraData& operator = (const MeshExtraData&) = delete;
     virtual ~MeshExtraData() noexcept;
+
+    inline Mesh& mesh() const noexcept;
 
     inline LogicalDevice& device() const noexcept;
 
@@ -134,11 +137,13 @@ namespace mtt
     void removeAlphaInAlbedoSamplerIsOpacityVariable() noexcept;
 
   protected:
-    friend class AbstractMeshTechnique;
-    virtual void registerTechnique(AbstractMeshTechnique& technique);
-    virtual void unRegisterTechnique(AbstractMeshTechnique& technique) noexcept;
+    friend class Mesh;
+    virtual void onTechniqueAdded(AbstractMeshTechnique& technique);
+    virtual void onTechniqueRemoved(AbstractMeshTechnique& technique) noexcept;
 
   private:
+    Mesh& _mesh;
+
     LogicalDevice& _device;
 
     struct BufferRecord
@@ -164,10 +169,12 @@ namespace mtt
     };
     using Variables = std::vector<VariableRecord>;
     Variables _variables;
-
-    using Techniques = std::vector<AbstractMeshTechnique*>;
-    Techniques _techniques;
   };
+
+  inline Mesh& MeshExtraData::mesh() const noexcept
+  {
+    return _mesh;
+  }
 
   inline LogicalDevice& MeshExtraData::device() const noexcept
   {

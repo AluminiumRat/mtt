@@ -9,8 +9,9 @@
 namespace mtt
 {
   class Buffer;
+  class CompositeMeshTechnique;
   struct DrawPlanBuildInfo;
-  class MeshExtraData;
+  class Mesh;
   class Sampler;
 
   class AbstractMeshTechnique
@@ -21,11 +22,10 @@ namespace mtt
     AbstractMeshTechnique& operator = (const AbstractMeshTechnique&) = delete;
     virtual ~AbstractMeshTechnique() noexcept;
 
+    inline Mesh* mesh() const noexcept;
+
     virtual void setVerticesNumber(uint32_t newValue);
     inline uint32_t verticesNumber() const noexcept;
-
-    virtual void setMeshExtraData(MeshExtraData* newData);
-    inline MeshExtraData* meshExtraData() const noexcept;
 
     virtual void registerVertexBuffer(Buffer& buffer,
                                       const std::string& name);
@@ -36,7 +36,7 @@ namespace mtt
                                         Buffer& buffer,
                                         VkIndexType indexType,
                                         size_t indicesNumber);
-    virtual void unregisterIndicesBuffer(VkPrimitiveTopology topology);
+    virtual void unregisterIndicesBuffer(VkPrimitiveTopology topology) noexcept;
 
     virtual void registerUniformBuffer( Buffer& buffer,
                                         const std::string& name);
@@ -55,18 +55,23 @@ namespace mtt
 
     virtual void addToDrawPlan(DrawPlanBuildInfo& buildInfo) = 0;
 
+  protected:
+    friend class CompositeMeshTechnique;
+    friend class Mesh;
+    virtual void setMesh(Mesh* newMesh);
+
   private:
+    Mesh* _mesh;
     uint32_t _verticesNumber;
-    MeshExtraData* _meshExtraData;
   };
+
+  inline Mesh* AbstractMeshTechnique::mesh() const noexcept
+  {
+    return _mesh;
+  }
 
   inline uint32_t AbstractMeshTechnique::verticesNumber() const noexcept
   {
     return _verticesNumber;
-  }
-
-  inline MeshExtraData* AbstractMeshTechnique::meshExtraData() const noexcept
-  {
-    return _meshExtraData;
   }
 }

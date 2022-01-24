@@ -9,7 +9,7 @@ using namespace mtt;
 Mesh::Mesh(LogicalDevice& device) noexcept:
   _device(device),
   _verticesNumber(0),
-  _extraData(device)
+  _extraData(*this, device)
 {
 }
 
@@ -268,57 +268,66 @@ void Mesh::setGeometry(const CommonMeshGeometry& meshData)
   else removeIndices(VK_PRIMITIVE_TOPOLOGY_LINE_LIST);
 }
 
-void Mesh::_releaseTechnique(AbstractMeshTechnique& technique) noexcept
+void Mesh::bindTechnique(AbstractMeshTechnique& technique)
 {
   try
   {
-    technique.setMeshExtraData(nullptr);
-    for(BufferRecord& bufferRecord : _vertexBuffers)
+    technique.setVerticesNumber(_verticesNumber);
+    for (BufferRecord& bufferRecord : _vertexBuffers)
     {
-      technique.unregisterVertexBuffer(*bufferRecord.buffer, bufferRecord.name);
+      technique.registerVertexBuffer( *bufferRecord.buffer,
+                                      bufferRecord.name);
     }
-  
-    for(size_t topology = 0; topology < topologiesNumber; topology++)
+
+    for (size_t topology = 0; topology < topologiesNumber; topology++)
     {
-      if(_indicesTable[topology].buffer != nullptr)
+      if (_indicesTable[topology].buffer != nullptr)
       {
-        technique.unregisterIndicesBuffer(VkPrimitiveTopology(topology));
+        technique.registerIndicesBuffer(VkPrimitiveTopology(topology),
+                                        *_indicesTable[topology].buffer,
+                                        _indicesTable[topology].indexType,
+                                        _indicesTable[topology].indicesNumber);
       }
     }
+
+    _extraData.onTechniqueAdded(technique);
   }
-  catch(...)
+  catch (std::exception& error)
   {
-    Abort("Mesh::_releaseTechnique: Unable to release technique");
+    Log() << error.what();
+    Abort("Mesh::bindTechnique: unable to bind technique.");
+  }
+  catch (...)
+  {
+    Abort("Mesh::bindTechnique: unable to bind technique.");
+  }
+}
+
+void Mesh::releaseTechnique(AbstractMeshTechnique& technique) noexcept
+{
+  _extraData.onTechniqueRemoved(technique);
+  for(BufferRecord& bufferRecord : _vertexBuffers)
+  {
+    technique.unregisterVertexBuffer(*bufferRecord.buffer, bufferRecord.name);
+  }
+  
+  for(size_t topology = 0; topology < topologiesNumber; topology++)
+  {
+    if(_indicesTable[topology].buffer != nullptr)
+    {
+      technique.unregisterIndicesBuffer(VkPrimitiveTopology(topology));
+    }
   }
 }
 
 void Mesh::setTechnique(FrameType frameType,
                         std::unique_ptr<AbstractMeshTechnique> newTechnique)
 {
-  AbstractMeshTechnique* oldTechnique = _techniquesList.get(frameType);
-  if(oldTechnique != nullptr) _releaseTechnique(*oldTechnique);
-
   try
   {
-    newTechnique->setVerticesNumber(_verticesNumber);
-    newTechnique->setMeshExtraData(&_extraData);
-    for(BufferRecord& bufferRecord : _vertexBuffers)
-    {
-      newTechnique->registerVertexBuffer( *bufferRecord.buffer,
-                                          bufferRecord.name);
-    }
-  
-    for(size_t topology = 0; topology < topologiesNumber; topology++)
-    {
-      if (_indicesTable[topology].buffer != nullptr)
-      {
-        newTechnique->registerIndicesBuffer(
-                                        VkPrimitiveTopology(topology),
-                                        *_indicesTable[topology].buffer,
-                                        _indicesTable[topology].indexType,
-                                        _indicesTable[topology].indicesNumber);
-      }
-    }
+    AbstractMeshTechnique* oldTechnique = _techniquesList.get(frameType);
+    if (oldTechnique != nullptr) oldTechnique->setMesh(nullptr);
+    newTechnique->setMesh(this);
   }
   catch(...)
   {
@@ -333,7 +342,7 @@ std::unique_ptr<AbstractMeshTechnique> Mesh::removeTechnique(
 {
   std::unique_ptr<AbstractMeshTechnique> removedTechnique =
                                             _techniquesList.remove(frameType);
-  if(removedTechnique != nullptr) _releaseTechnique(*removedTechnique);
+  if(removedTechnique != nullptr) removedTechnique->setMesh(nullptr);
   return removedTechnique;
 }
 
