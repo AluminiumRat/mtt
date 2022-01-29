@@ -2,6 +2,7 @@
 
 #include <vector>
 
+#include <mtt/render/Drawable/DrawableList.h>
 #include <mtt/render/SceneGraph/BoundObserver.h>
 #include <mtt/render/SceneGraph/DrawableNode.h>
 
@@ -19,12 +20,16 @@ namespace mtt
     virtual void addNode(DrawableNode& node);
     virtual void removeNode(DrawableNode& node) noexcept;
 
+    virtual void registerAreaModificators(AreaModificatorSet& set) override;
+    virtual void unregisterAreaModificators(
+                                    AreaModificatorSet& set) noexcept override;
+
   protected:
     virtual void buildDrawActions(DrawPlanBuildInfo& buildInfo) override;
 
-    virtual void onNodeBoundChanged(DrawableNode& node,
+    virtual void onNodeBoundChanged(BoundedNode& node,
                                     const Sphere& oldBound) noexcept override;
-    virtual void onNodeRemoved(DrawableNode& node) noexcept override;
+    virtual void onNodeRemoved(BoundedNode& node) noexcept override;
 
     /// Translate childs bounding sphere to local bounding sphere.
     /// You must reimpliment this method if your node changes spatial properties
@@ -35,7 +40,6 @@ namespace mtt
     void _updateBound() noexcept;
 
   private:
-    using Drawables = std::vector<DrawableNode*>;
-    Drawables _drawables;
+    DrawableList _drawables;
   };
 }

@@ -16,9 +16,10 @@
 
 namespace mtt
 {
+  class AbstractFramePlan;
+  class AreaModificatorSet;
   class CameraNode;
   class DrawPlan;
-  class AbstractFramePlan;
 
   struct DrawMatrices
   {
@@ -93,6 +94,8 @@ namespace mtt
     ViewInfo currentViewInfo;     /// View info for current frame
 
     ViewFrustum viewFrustum;      /// Frustum for current frame in view space
+
+    const AreaModificatorSet* areaModificators;
 
     DrawPlanBuildExtraData extraData;
 

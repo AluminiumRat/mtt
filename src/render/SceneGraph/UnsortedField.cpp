@@ -2,14 +2,14 @@
 
 using namespace mtt;
 
-void UnsortedField::addNode(DrawableNode& node)
+void UnsortedField::addDrawable(DrawableNode& node)
 {
-  _area.addNode(node);
+  _area.addDrawable(node);
 }
 
-void UnsortedField::removeNode(DrawableNode& node) noexcept
+void UnsortedField::removeDrawable(DrawableNode& node) noexcept
 {
-  _area.removeNode(node);
+  _area.removeDrawable(node);
 }
 
 void UnsortedField::enumerateAreas( Visitor& visitor,

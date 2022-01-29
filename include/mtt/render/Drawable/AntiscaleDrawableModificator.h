@@ -2,7 +2,7 @@
 
 #include <glm/mat4x4.hpp>
 
-#include <mtt/render/Drawable/Drawable.h>
+#include <mtt/render/Drawable/DrawableModificator.h>
 
 namespace mtt
 {
@@ -13,7 +13,7 @@ namespace mtt
   /// matrix on the fly.
   /// Warning!!! The bounding sphere of drawable node is not valid. Do not use
   /// culling with this modificator.
-  class AntiscaleDrawableModificator : public Drawable::Modificator
+  class AntiscaleDrawableModificator : public DrawableModificator
   {
   public:
     AntiscaleDrawableModificator();
@@ -23,7 +23,7 @@ namespace mtt
     virtual ~AntiscaleDrawableModificator() noexcept = default;
 
     virtual void draw(DrawPlanBuildInfo& buildInfo,
-                      Modificator** next,
+                      DrawableModificator** next,
                       size_t modifiactorsLeft,
                       Drawable& drawable) const override;
 

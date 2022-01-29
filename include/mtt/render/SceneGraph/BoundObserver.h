@@ -6,9 +6,8 @@
 
 namespace mtt
 {
-  class DrawableNode;
+  class BoundedNode;
   struct Sphere;
-  class ViewFrustum;
 
   class BoundObserver
   {
@@ -19,9 +18,9 @@ namespace mtt
     virtual ~BoundObserver() noexcept = default;
 
   protected:
-    friend class DrawableNode;
-    virtual void onNodeBoundChanged(DrawableNode& node,
+    friend class BoundedNode;
+    virtual void onNodeBoundChanged(BoundedNode& node,
                                     const Sphere& oldBound) noexcept = 0;
-    virtual void onNodeRemoved(DrawableNode& node) noexcept = 0;
+    virtual void onNodeRemoved(BoundedNode& node) noexcept = 0;
   };
 }

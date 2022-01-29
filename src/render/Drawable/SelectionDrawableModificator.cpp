@@ -14,7 +14,7 @@ void SelectionDrawableModificator::setSelected(bool newValue) noexcept
 }
 
 void SelectionDrawableModificator::draw(DrawPlanBuildInfo& buildInfo,
-                                        Modificator** next,
+                                        DrawableModificator** next,
                                         size_t modifiactorsLeft,
                                         Drawable& drawable) const
 {

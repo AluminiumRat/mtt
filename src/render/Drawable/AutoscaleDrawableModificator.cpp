@@ -12,7 +12,7 @@ AutoscaleDrawableModificator::AutoscaleDrawableModificator() :
 }
 
 void AutoscaleDrawableModificator::draw(DrawPlanBuildInfo& buildInfo,
-                                        Modificator** next,
+                                        DrawableModificator** next,
                                         size_t modifiactorsLeft,
                                         Drawable& drawable) const
 {

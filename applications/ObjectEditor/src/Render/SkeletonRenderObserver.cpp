@@ -46,11 +46,11 @@ SkeletonRenderObserver::SkeletonRenderObserver( SkeletonObject& object,
   _crossMesh.extraData().setSurfaceMaterialData(materialData);
 
   _drawableNode.setDrawable(&_crossMesh, mtt::Sphere());
-  _drawableNode.registerModificator(_autoscale);
+  _drawableNode.addModificator(_autoscale);
 
   registerUnculledDrawable(_drawableNode);
   positionRotateJoint().addChild(_drawableNode);
-  _drawableNode.registerModificator(visibleFilter());
-  _drawableNode.registerModificator(uidSetter());
-  _drawableNode.registerModificator(selectionModificator());
+  _drawableNode.addModificator(visibleFilter());
+  _drawableNode.addModificator(uidSetter());
+  _drawableNode.addModificator(selectionModificator());
 }

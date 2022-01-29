@@ -57,11 +57,11 @@ BackgroundObserver::BackgroundObserver( BackgroundObject& object,
 
   positionRotateJoint().addChild(_backgroundDrawableNode);
   _backgroundDrawableNode.setDrawable(&_backgroundDrawable, mtt::Sphere());
-  _backgroundDrawableNode.registerModificator(visibleFilter());
+  _backgroundDrawableNode.addModificator(visibleFilter());
   registerUnculledDrawable(_backgroundDrawableNode);
 
   positionRotateJoint().addChild(_lightDrawableNode);
-  _lightDrawableNode.registerModificator(visibleFilter());
+  _lightDrawableNode.addModificator(visibleFilter());
   registerUnculledDrawable(_lightDrawableNode);
 }
 

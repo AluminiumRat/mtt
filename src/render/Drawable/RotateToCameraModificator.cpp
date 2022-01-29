@@ -6,10 +6,10 @@
 
 using namespace mtt;
 
-void RotateToCameraModificator::draw(DrawPlanBuildInfo& buildInfo,
-                                        Modificator** next,
-                                        size_t modifiactorsLeft,
-                                        Drawable& drawable) const
+void RotateToCameraModificator::draw( DrawPlanBuildInfo& buildInfo,
+                                      DrawableModificator** next,
+                                      size_t modifiactorsLeft,
+                                      Drawable& drawable) const
 {
   DrawMatrices oldMatrices = buildInfo.drawMatrices;
 

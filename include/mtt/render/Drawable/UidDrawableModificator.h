@@ -1,11 +1,11 @@
 #pragma once
 
-#include <mtt/render/Drawable/Drawable.h>
+#include <mtt/render/Drawable/DrawableModificator.h>
 #include <mtt/utilities/UID.h>
 
 namespace mtt
 {
-  class UidDrawableModificator : public Drawable::Modificator
+  class UidDrawableModificator : public DrawableModificator
   {
   public:
     UidDrawableModificator() = default;
@@ -18,7 +18,7 @@ namespace mtt
     virtual void setUid(UID newValue) noexcept;
 
     virtual void draw(DrawPlanBuildInfo& buildInfo,
-                      Modificator** next,
+                      DrawableModificator** next,
                       size_t modifiactorsLeft,
                       Drawable& drawable) const override;
 

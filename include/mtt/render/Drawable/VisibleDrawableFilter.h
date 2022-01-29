@@ -1,10 +1,10 @@
 #pragma once
 
-#include <mtt/render/Drawable/Drawable.h>
+#include <mtt/render/Drawable/DrawableModificator.h>
 
 namespace mtt
 {
-  class VisibleDrawableFilter : public Drawable::Modificator
+  class VisibleDrawableFilter : public DrawableModificator
   {
   public:
     VisibleDrawableFilter();
@@ -16,7 +16,7 @@ namespace mtt
     virtual void setVisible(bool newValue) noexcept;
 
     virtual void draw(DrawPlanBuildInfo& buildInfo,
-                      Modificator** next,
+                      DrawableModificator** next,
                       size_t modifiactorsLeft,
                       Drawable& drawable) const override;
 

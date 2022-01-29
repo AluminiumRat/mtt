@@ -4,7 +4,7 @@
 using namespace mtt;
 
 void BoneMatricesSetter::draw(DrawPlanBuildInfo& buildInfo,
-                              Modificator** next,
+                              DrawableModificator** next,
                               size_t modifiactorsLeft,
                               Drawable& drawable) const
 {

@@ -21,7 +21,7 @@ MeshRenderObserver::MeshRenderObserver( MeshObject& object,
   _object(object),
   _mesh(mtt::Application::instance().displayDevice())
 {
-  _mesh.registerModificator(_boneMatricesSetter);
+  _mesh.addModificator(_boneMatricesSetter);
 
   mtt::LogicalDevice& device = mtt::Application::instance().displayDevice();
 
@@ -54,9 +54,9 @@ MeshRenderObserver::MeshRenderObserver( MeshObject& object,
   _drawableNode.setDrawable(&_mesh, mtt::Sphere());
   registerCulledDrawable(_drawableNode);
   fullTransformJoint().addChild(_drawableNode);
-  _drawableNode.registerModificator(visibleFilter());
-  _drawableNode.registerModificator(uidSetter());
-  _drawableNode.registerModificator(selectionModificator());
+  _drawableNode.addModificator(visibleFilter());
+  _drawableNode.addModificator(uidSetter());
+  _drawableNode.addModificator(selectionModificator());
 
   connect(&_object,
           &MeshObject::boneRefsChanged,

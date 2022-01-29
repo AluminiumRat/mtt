@@ -27,9 +27,9 @@ AmbientLightRenderObserver::AmbientLightRenderObserver(
 {
   registerUnculledDrawable(_iconNode);
   positionJoint().addChild(_iconNode);
-  _iconNode.registerModificator(visibleFilter());
-  _iconNode.registerModificator(uidSetter());
-  _iconNode.registerModificator(selectionModificator());
+  _iconNode.addModificator(visibleFilter());
+  _iconNode.addModificator(uidSetter());
+  _iconNode.addModificator(selectionModificator());
 
   _sphereMesh.setTechnique(
         mtt::dlPipeline::colorFrameType,
@@ -52,9 +52,9 @@ AmbientLightRenderObserver::AmbientLightRenderObserver(
   _sphereNode.setDrawable(&_sphereMesh, mtt::Sphere());
   registerCulledDrawable(_sphereNode);
   positionRotateJoint().addChild(_sphereNode);
-  _sphereNode.registerModificator(visibleFilter());
-  _sphereNode.registerModificator(uidSetter());
-  _sphereNode.registerModificator(selectionModificator());
+  _sphereNode.addModificator(visibleFilter());
+  _sphereNode.addModificator(uidSetter());
+  _sphereNode.addModificator(selectionModificator());
 
   _cubemapObserver.setCallback(
     [&](std::shared_ptr<mtt::CubeTexture> environmentMap)

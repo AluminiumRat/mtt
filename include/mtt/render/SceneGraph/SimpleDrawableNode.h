@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include <mtt/render/SceneGraph/DrawableNode.h>
 
 namespace mtt
@@ -19,11 +21,18 @@ namespace mtt
 
     inline void setLocalBoundSphere(const Sphere& newValue) noexcept;
 
+    virtual void registerAreaModificators(AreaModificatorSet& set) override;
+    virtual void unregisterAreaModificators(
+                                    AreaModificatorSet& set) noexcept override;
+
   protected:
     virtual void buildDrawActions(DrawPlanBuildInfo& buildInfo) override;
-  
+
   private:
     Drawable* _drawable;
+
+    using AreaModificators = std::vector<AreaModificatorSet*>;
+    AreaModificators _areaModificators;
   };
 
   const Drawable* SimpleDrawableNode::drawable() const noexcept

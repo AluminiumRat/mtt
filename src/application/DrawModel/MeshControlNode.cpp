@@ -7,7 +7,7 @@ using namespace mtt;
 MeshControlNode::MeshControlNode(LogicalDevice& device) :
   _mesh(device)
 {
-  _mesh.registerModificator(_lodFilter);
+  _mesh.addModificator(_lodFilter);
   setDrawable(&_mesh, Sphere());
 }
 

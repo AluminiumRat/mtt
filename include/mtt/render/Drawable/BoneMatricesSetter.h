@@ -4,11 +4,11 @@
 
 #include <glm/mat4x4.hpp>
 
-#include <mtt/render/Drawable/Drawable.h>
+#include <mtt/render/Drawable/DrawableModificator.h>
 
 namespace mtt
 {
-  class BoneMatricesSetter : public Drawable::Modificator
+  class BoneMatricesSetter : public DrawableModificator
   {
   public:
     BoneMatricesSetter() = default;
@@ -18,7 +18,7 @@ namespace mtt
     virtual ~BoneMatricesSetter() noexcept = default;
 
     virtual void draw(DrawPlanBuildInfo& buildInfo,
-                      Modificator** next,
+                      DrawableModificator** next,
                       size_t modifiactorsLeft,
                       Drawable& drawable) const override;
 

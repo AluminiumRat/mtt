@@ -3,7 +3,7 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
-#include <mtt/render/Drawable/Drawable.h>
+#include <mtt/render/Drawable/DrawableModificator.h>
 
 namespace mtt
 {
@@ -14,7 +14,7 @@ namespace mtt
   /// Drawable are drawn at the same size regardless of distance.
   /// Warning!!! The bounding sphere of drawable node is not valid. Do not use
   /// culling with this modificator.
-  class AutoscaleDrawableModificator : public Drawable::Modificator
+  class AutoscaleDrawableModificator : public DrawableModificator
   {
   public:
     enum Mode
@@ -35,7 +35,7 @@ namespace mtt
     inline void setMode(Mode newValue) noexcept;
 
     virtual void draw(DrawPlanBuildInfo& buildInfo,
-                      Modificator** next,
+                      DrawableModificator** next,
                       size_t modifiactorsLeft,
                       Drawable& drawable) const override;
 

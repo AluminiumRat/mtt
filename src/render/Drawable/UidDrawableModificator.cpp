@@ -9,7 +9,7 @@ void UidDrawableModificator::setUid(UID newValue) noexcept
 }
 
 void UidDrawableModificator::draw(DrawPlanBuildInfo& buildInfo,
-                                  Modificator** next,
+                                  DrawableModificator** next,
                                   size_t modifiactorsLeft,
                                   Drawable& drawable) const
 {

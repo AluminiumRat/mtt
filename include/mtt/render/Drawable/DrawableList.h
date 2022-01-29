@@ -17,9 +17,13 @@ namespace mtt
     inline size_t childsNumber() const noexcept;
     inline Drawable& child(size_t index) noexcept;
     inline const Drawable& child(size_t index) const noexcept;
-    inline void addChild(Drawable& newChild);
+    void addChild(Drawable& newChild);
     void removeChild(size_t index) noexcept;
     void removeChild(Drawable& removable) noexcept;
+
+    virtual void registerAreaModificators(AreaModificatorSet& set) override;
+    virtual void unregisterAreaModificators(
+                                    AreaModificatorSet& set) noexcept override;
 
   protected:
     virtual void buildDrawActions(DrawPlanBuildInfo& buildInfo) override;
@@ -27,6 +31,9 @@ namespace mtt
   private:
     using Childs = std::vector<Drawable*>;
     Childs _childs;
+
+    using AreaModificators = std::vector<AreaModificatorSet*>;
+    AreaModificators _areaModificators;
   };
 
   inline size_t DrawableList::childsNumber() const noexcept
@@ -42,10 +49,5 @@ namespace mtt
   inline const Drawable& DrawableList::child(size_t index) const noexcept
   {
     return *_childs[index];
-  }
-
-  inline void DrawableList::addChild(Drawable& newChild)
-  {
-    _childs.push_back(&newChild);
   }
 }

@@ -1,10 +1,10 @@
 #pragma once
 
-#include <mtt/render/Drawable/Drawable.h>
+#include <mtt/render/Drawable/DrawableModificator.h>
 
 namespace mtt
 {
-  class SelectionDrawableModificator : public Drawable::Modificator
+  class SelectionDrawableModificator : public DrawableModificator
   {
   public:
     SelectionDrawableModificator();
@@ -17,7 +17,7 @@ namespace mtt
     virtual void setSelected(bool newValue) noexcept;
 
     virtual void draw(DrawPlanBuildInfo& buildInfo,
-                      Modificator** next,
+                      DrawableModificator** next,
                       size_t modifiactorsLeft,
                       Drawable& drawable) const override;
 

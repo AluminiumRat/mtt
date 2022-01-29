@@ -39,9 +39,9 @@ void EnvironmentModelRenderObserver::_updateModel() noexcept
       {
         try
         {
-          model->registerModificator(visibleFilter());
-          model->registerModificator(uidSetter());
-          model->registerModificator(selectionModificator());
+          model->addModificator(visibleFilter());
+          model->addModificator(uidSetter());
+          model->addModificator(selectionModificator());
           _drawModel = std::move(model);
           registerCulledDrawable(*_drawModel);
           fullTransformJoint().addChild(*_drawModel);

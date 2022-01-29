@@ -1,10 +1,10 @@
 #pragma once
 
-#include <mtt/render/Drawable/Drawable.h>
+#include <mtt/render/Drawable/DrawableModificator.h>
 
 namespace mtt
 {
-  class LODDrawableFilter : public Drawable::Modificator
+  class LODDrawableFilter : public DrawableModificator
   {
   public:
     LODDrawableFilter();
@@ -19,7 +19,7 @@ namespace mtt
     void setRange(float minMppx, float maxMppx) noexcept;
 
     virtual void draw(DrawPlanBuildInfo& buildInfo,
-                      Modificator** next,
+                      DrawableModificator** next,
                       size_t modifiactorsLeft,
                       Drawable& drawable) const override;
   private:

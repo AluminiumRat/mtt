@@ -210,7 +210,7 @@ void SceneRenderObserver::_addCulled(mtt::DrawableNode& drawable) noexcept
 {
   try
   {
-    _commonData.renderScene().culledData().addNode(drawable);
+    _commonData.renderScene().culledData().addDrawable(drawable);
   }
   catch(const std::exception& error)
   {
@@ -226,7 +226,7 @@ void SceneRenderObserver::_removeCulled(mtt::DrawableNode& drawable) noexcept
 {
   try
   {
-    _commonData.renderScene().culledData().removeNode(drawable);
+    _commonData.renderScene().culledData().removeDrawable(drawable);
   }
   catch(const std::exception& error)
   {

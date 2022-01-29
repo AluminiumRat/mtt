@@ -14,7 +14,7 @@ namespace mtt
     virtual ~DrawVisitor() = default;
 
     virtual void startPass() override;
-    virtual void visit(const AbstractField::Area& area) override;
+    virtual void visit(const FieldArea& area) override;
     virtual void finishPass() override;
 
   private:

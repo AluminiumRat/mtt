@@ -2,11 +2,12 @@
 #include <stdexcept>
 
 #include <mtt/render/Drawable/Drawable.h>
+#include <mtt/render/Drawable/DrawableModificator.h>
 #include <mtt/utilities/Abort.h>
 
 using namespace mtt;
 
-void Drawable::registerModificator(Modificator& modificator)
+void Drawable::addModificator(DrawableModificator& modificator)
 {
   if(std::find( _modificators.begin(),
                 _modificators.end(),
@@ -14,23 +15,31 @@ void Drawable::registerModificator(Modificator& modificator)
   _modificators.push_back(&modificator);
 }
 
-void Drawable::unregisterModificator(Modificator& modificator) noexcept
+void Drawable::removeModificator(DrawableModificator& modificator) noexcept
 {
   Modificators::iterator iModificator = std::find(_modificators.begin(),
                                                   _modificators.end(),
                                                   &modificator);
   if(iModificator == _modificators.end()) return;
-  try
+  _modificators.erase(iModificator);
+}
+
+void Drawable::addToDrawPlan(DrawPlanBuildInfo& buildInfo)
+{
+  if(_modificators.empty()) buildDrawActions(buildInfo);
+  else
   {
-    _modificators.erase(iModificator);
+    _modificators[0]->draw( buildInfo,
+                            &_modificators[0] + 1,
+                            _modificators.size() - 1,
+                            *this);
   }
-  catch(std::exception& error)
-  {
-    Log() << error.what();
-    Abort("Drawable::unregistedModificator: unable to unregister modificator");
-  }
-  catch(...)
-  {
-    Abort("Drawable::unregistedModificator: unknown error");
-  }
+}
+
+void Drawable::registerAreaModificators(AreaModificatorSet& set)
+{
+}
+
+void Drawable::unregisterAreaModificators(AreaModificatorSet& set) noexcept
+{
 }

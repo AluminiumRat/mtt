@@ -6,7 +6,7 @@ using namespace mtt;
 
 void SkinControlNode::setBoneRefs(const BoneRefs& newValue)
 {
-  if(!_boneRefs.empty()) unregisterModificator(_boneMatricesSetter);
+  if(!_boneRefs.empty()) removeModificator(_boneMatricesSetter);
   _boneRefs.clear();
 
   if (!newValue.empty())
@@ -14,13 +14,13 @@ void SkinControlNode::setBoneRefs(const BoneRefs& newValue)
     try
     {
       _boneMatricesSetter.matrices.resize(newValue.size());
-      registerModificator(_boneMatricesSetter);
+      addModificator(_boneMatricesSetter);
       _boneRefs = newValue;
       updateSkinFromBones();
     }
     catch (...)
     {
-      unregisterModificator(_boneMatricesSetter);
+      removeModificator(_boneMatricesSetter);
       _boneRefs.clear();
       throw;
     }

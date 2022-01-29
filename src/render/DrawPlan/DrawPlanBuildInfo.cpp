@@ -9,7 +9,8 @@ DrawPlanBuildInfo::DrawPlanBuildInfo(DrawPlan& theDrawPlan) :
   currentFramePlan(nullptr),
   frameType(baseFrameTypes::colorFrameType),
   builder(nullptr),
-  frame(nullptr)
+  frame(nullptr),
+  areaModificators(nullptr)
 {
 }
 

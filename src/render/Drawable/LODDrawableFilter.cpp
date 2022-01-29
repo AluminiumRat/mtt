@@ -19,7 +19,7 @@ void LODDrawableFilter::setRange(float minMppx, float maxMppx) noexcept
 }
 
 void LODDrawableFilter::draw( DrawPlanBuildInfo& buildInfo,
-                              Modificator** next,
+                              DrawableModificator** next,
                               size_t modifiactorsLeft,
                               Drawable& drawable) const
 {

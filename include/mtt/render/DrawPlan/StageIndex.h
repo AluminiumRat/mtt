@@ -36,6 +36,9 @@ namespace mtt
     /// this stage in the frame plan.
     constexpr StageIndex subsidiaryStage(-1);
 
+    /// Prepare data for area modificators
+    constexpr StageIndex modificatorsPrepareStage(0);
+
     /// Single stage for uid render
     constexpr StageIndex uidStage(0);
 

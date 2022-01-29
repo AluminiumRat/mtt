@@ -5,22 +5,26 @@ using namespace mtt;
 
 CombinedDrawableNode::~CombinedDrawableNode() noexcept
 {
-  for (DrawableNode* node : _drawables)
+  for ( size_t childIndex = 0;
+        childIndex < _drawables.childsNumber();
+        childIndex++)
   {
-    node->removeBoundObserver(*this);
+    DrawableNode& child = static_cast<DrawableNode&>(
+                                                  _drawables.child(childIndex));
+    child.removeBoundObserver(*this);
   }
 }
 
 void CombinedDrawableNode::addNode(DrawableNode& node)
 {
-  _drawables.push_back(&node);
+  _drawables.addChild(node);
   try
   {
     node.addBoundObserver(*this);
   }
   catch(...)
   {
-    _drawables.pop_back();
+    _drawables.removeChild(node);
     throw;
   }
   _updateBound();
@@ -28,38 +32,45 @@ void CombinedDrawableNode::addNode(DrawableNode& node)
 
 void CombinedDrawableNode::removeNode(DrawableNode& node) noexcept
 {
-  for(Drawables::iterator iDrawable = _drawables.begin();
-      iDrawable != _drawables.end();
-      iDrawable++)
-  {
-    if(*iDrawable == &node)
-    {
-      _drawables.erase(iDrawable);
-      break;
-    }
-  }
+  _drawables.removeChild(node);
   node.removeBoundObserver(*this);
   _updateBound();
 }
 
-void CombinedDrawableNode::onNodeBoundChanged(DrawableNode& node,
+void CombinedDrawableNode::registerAreaModificators(AreaModificatorSet& set)
+{
+  _drawables.registerAreaModificators(set);
+}
+
+void CombinedDrawableNode::unregisterAreaModificators(
+                                              AreaModificatorSet& set) noexcept
+{
+  _drawables.unregisterAreaModificators(set);
+}
+
+void CombinedDrawableNode::onNodeBoundChanged(BoundedNode& node,
                                               const Sphere& oldBound) noexcept
 {
   _updateBound();
 }
 
-void CombinedDrawableNode::onNodeRemoved(DrawableNode& node) noexcept
+void CombinedDrawableNode::onNodeRemoved(BoundedNode& node) noexcept
 {
-  removeNode(node);
+  removeNode(static_cast<DrawableNode&>(node));
 }
 
 void CombinedDrawableNode::_updateBound() noexcept
 {
   Sphere bound;
-  for(DrawableNode* drawable : _drawables)
+  for ( size_t childIndex = 0;
+        childIndex < _drawables.childsNumber();
+        childIndex++)
   {
-    bound.extend(drawable->transformedBoundSphere());
+    DrawableNode& child = static_cast<DrawableNode&>(
+                                                  _drawables.child(childIndex));
+    bound.extend(child.transformedBoundSphere());
   }
+
   updateBoundSphere(bound);
   setLocalBoundSphere(bound);
 }
@@ -70,8 +81,5 @@ void CombinedDrawableNode::updateBoundSphere(Sphere& boundSphere) noexcept
 
 void CombinedDrawableNode::buildDrawActions(DrawPlanBuildInfo& buildInfo)
 {
-  for (DrawableNode* drawable : _drawables)
-  {
-    drawable->addToDrawPlan(buildInfo);
-  }
+  _drawables.addToDrawPlan(buildInfo);
 }

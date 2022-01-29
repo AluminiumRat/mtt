@@ -61,6 +61,6 @@ IconDrawableNode::IconDrawableNode( const QString& imageFilename,
   _iconMesh.extraData().setAlbedoSampler(std::move(colorSampler));
 
   setDrawable(&_iconMesh, mtt::Sphere());
-  registerModificator(_autoscale);
-  registerModificator(_autorotate);
+  addModificator(_autoscale);
+  addModificator(_autorotate);
 }

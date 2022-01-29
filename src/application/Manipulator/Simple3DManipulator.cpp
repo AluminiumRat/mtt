@@ -20,7 +20,7 @@ Simple3DManipulator::Simple3DManipulator(
   _activatedColor(1.f, 1.f, 1.f, .8f)
 {
   _autoscale.setMode(_scaleMode);
-  _mesh.registerModificator(_autoscale);
+  _mesh.addModificator(_autoscale);
   _node.setDrawable(&_mesh, Sphere());
 
   _updateColor();

@@ -3,11 +3,11 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
-#include <mtt/render/Drawable/Drawable.h>
+#include <mtt/render/Drawable/DrawableModificator.h>
 
 namespace mtt
 {
-  class RotateToCameraModificator : public Drawable::Modificator
+  class RotateToCameraModificator : public DrawableModificator
   {
   public:
     RotateToCameraModificator() = default;
@@ -17,7 +17,7 @@ namespace mtt
     virtual ~RotateToCameraModificator() noexcept = default;
 
     virtual void draw(DrawPlanBuildInfo& buildInfo,
-                      Modificator** next,
+                      DrawableModificator** next,
                       size_t modifiactorsLeft,
                       Drawable& drawable) const override;
   };
