@@ -3,7 +3,7 @@
 #include <mtt/application/Widgets/RenderWidget/OrbitalCameraController.h>
 #include <mtt/application/Widgets/RenderWidget/RenderWidget.h>
 #include <mtt/application/Widgets/RenderWidget/ClickSelectHandler.h>
-#include <mtt/dlPipeline/ColorFrameBuilder.h>
+#include <mtt/clPipeline/ColorFrameBuilder.h>
 #include <mtt/render/SceneGraph/CameraNode.h>
 
 #include <Manipulator/EditorManipulatorController.h>
@@ -34,7 +34,7 @@ protected:
                                 mtt::SceneToSurfaceRenderer& renderer) override;
 
 private:
-  mtt::dlPipeline::ColorFrameBuilder _colorFrameBuilder;
+  mtt::clPipeline::ColorFrameBuilder _colorFrameBuilder;
 
   mtt::ClickSelectHandler::FrameBuiled _uidFrameBuilder;
   mtt::SceneToImageRenderer _uidRenderer;

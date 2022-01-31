@@ -1,9 +1,9 @@
 #include <stdexcept>
 
 #include <mtt/application/Application.h>
-#include <mtt/dlPipeline/MeshTechniques/MeshCompositeColorTechnique.h>
-#include <mtt/dlPipeline/MeshTechniques/ShadowmapMeshTechnique.h>
-#include <mtt/dlPipeline/constants.h>
+#include <mtt/clPipeline/MeshTechniques/MeshCompositeColorTechnique.h>
+#include <mtt/clPipeline/MeshTechniques/ShadowmapMeshTechnique.h>
+#include <mtt/clPipeline/constants.h>
 #include <mtt/render/Mesh/DepthMeshTechnique.h>
 #include <mtt/render/Mesh/UidMeshTechnique.h>
 #include <mtt/render/Pipeline/Buffer.h>
@@ -25,10 +25,10 @@ MeshRenderObserver::MeshRenderObserver( MeshObject& object,
 
   mtt::LogicalDevice& device = mtt::Application::instance().displayDevice();
 
-  std::unique_ptr<mtt::dlPipeline::MeshCompositeColorTechnique> colorTechnique;
-  colorTechnique.reset(new mtt::dlPipeline::MeshCompositeColorTechnique(
+  std::unique_ptr<mtt::clPipeline::MeshCompositeColorTechnique> colorTechnique;
+  colorTechnique.reset(new mtt::clPipeline::MeshCompositeColorTechnique(
                                           VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST));
-  _mesh.setTechnique( mtt::dlPipeline::colorFrameType,
+  _mesh.setTechnique( mtt::clPipeline::colorFrameType,
                       std::move(colorTechnique));
 
   std::unique_ptr<mtt::UidMeshTechnique> uidTechnique(
@@ -36,19 +36,19 @@ MeshRenderObserver::MeshRenderObserver( MeshObject& object,
                                           VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
                                           true,
                                           true));
-  _mesh.setTechnique( mtt::dlPipeline::uidFrameType,
+  _mesh.setTechnique( mtt::clPipeline::uidFrameType,
                       std::move(uidTechnique));
 
   std::unique_ptr<mtt::DepthMeshTechnique> depthTechnique;
   depthTechnique.reset(new mtt::DepthMeshTechnique(
                                           VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST));
-  _mesh.setTechnique( mtt::dlPipeline::depthmapFrameType,
+  _mesh.setTechnique( mtt::clPipeline::depthmapFrameType,
                       std::move(depthTechnique));
 
-  std::unique_ptr<mtt::dlPipeline::ShadowmapMeshTechnique> shadowmapTechnique;
-  shadowmapTechnique.reset(new mtt::dlPipeline::ShadowmapMeshTechnique(
+  std::unique_ptr<mtt::clPipeline::ShadowmapMeshTechnique> shadowmapTechnique;
+  shadowmapTechnique.reset(new mtt::clPipeline::ShadowmapMeshTechnique(
                                           VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST));
-  _mesh.setTechnique( mtt::dlPipeline::shadowmapFrameType,
+  _mesh.setTechnique( mtt::clPipeline::shadowmapFrameType,
                       std::move(shadowmapTechnique));
 
   _drawableNode.setDrawable(&_mesh, mtt::Sphere());

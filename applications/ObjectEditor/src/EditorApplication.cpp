@@ -1,6 +1,6 @@
 #include <memory>
 
-#include <mtt/dlPipeline/MeshTechniques/ModelTechniquesFactory.h>
+#include <mtt/clPipeline/MeshTechniques/ModelTechniquesFactory.h>
 
 #include <EditorApplication.h>
 
@@ -27,14 +27,14 @@ EditorApplication::EditorApplication(int& argc, char** argv) :
               VK_API_VERSION_1_2,
               deviceFeatures(),
               enableValidation),
-  mmdModelLibrary(std::make_unique<mtt::dlPipeline::ModelTechniquesFactory>(
+  mmdModelLibrary(std::make_unique<mtt::clPipeline::ModelTechniquesFactory>(
                                           true,
                                           true,
                                           true,
                                           true,
                                           VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST),
                   textureLibrary),
-  fbxModelLibrary(std::make_unique<mtt::dlPipeline::ModelTechniquesFactory>(
+  fbxModelLibrary(std::make_unique<mtt::clPipeline::ModelTechniquesFactory>(
                                           true,
                                           true,
                                           true,

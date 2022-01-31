@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mtt/dlPipeline/Lighting/AbstractLightApplicator.h>
+#include <mtt/clPipeline/Lighting/AbstractLightApplicator.h>
 #include <mtt/render/Drawable/VisibleDrawableFilter.h>
 #include <mtt/render/SceneGraph/SimpleDrawableNode.h>
 
@@ -22,7 +22,7 @@ public:
 
 protected:
   virtual void setApplicator(
-                          mtt::dlPipeline::AbstractLightApplicator& applicator);
+                          mtt::clPipeline::AbstractLightApplicator& applicator);
   virtual void updateBounding();
   virtual mtt::Sphere getBoundingSphere() const noexcept;
 
@@ -36,6 +36,6 @@ private:
   LightObject& _lightObject;
 
   mtt::SimpleDrawableNode _applicatorNode;
-  mtt::dlPipeline::AbstractLightApplicator* _lightApplicator;
+  mtt::clPipeline::AbstractLightApplicator* _lightApplicator;
   mtt::VisibleDrawableFilter _enableFilter;
 };
