@@ -14,6 +14,8 @@ UnlightedColorTechnique::UnlightedColorTechnique(
                           TEX_COORDS_FEATURE |
                           ALBEDO_SAMPLER_FEATURE |
                           OPAQUE_SAMPLER_FEATURE |
+                          EMISSION_SAMPLER_FEATURE |
+                          REFLECTION_SAMPLER_FEATURE |
                           SKELETON_FEATURE,
                         forwardLightStage,
                         topology,

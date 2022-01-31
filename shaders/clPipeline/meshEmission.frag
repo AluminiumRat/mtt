@@ -8,18 +8,18 @@
 #endif
 
 #ifdef ENABLE_EMISSION_TEXTURE
-  layout(binding = emissionTextureBinding, set = staticSet)
-                                              uniform sampler2D emissionSampler;
+  layout( set = staticSet,
+          binding = emissionTextureBinding) uniform sampler2D emissionSampler;
 #endif
 #ifdef ENABLE_REFLECTION
-  layout(binding = reflectionTextureBinding, set = staticSet)
-                                              uniform sampler2D reflectionSampler;
+  layout( set = staticSet,
+          binding = reflectionTextureBinding) uniform sampler2D reflectionSampler;
 #endif
 
 layout(location = 0) out vec4 outColor;
 
-layout(binding = surfaceMaterialUniformBinding, set = staticSet)
-                                                            uniform MaterialBuffer
+layout( set = staticSet,
+        binding = surfaceMaterialUniformBinding) uniform MaterialBuffer
 {
   vec3 albedo;
   float roughness;

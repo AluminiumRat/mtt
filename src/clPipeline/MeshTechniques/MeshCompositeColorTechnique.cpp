@@ -42,10 +42,12 @@ void MeshCompositeColorTechnique::_updateTechniquesFlags() noexcept
   {
     _transparentTechniqueEnabled = true;
   }
-  else _opaqueTechniqueEnabled = true;
-
-  _emissionTechniqueEnabled = _materialData->emission != glm::vec3(0) ||
+  else
+  {
+    _opaqueTechniqueEnabled = true;
+    _emissionTechniqueEnabled = _materialData->emission != glm::vec3(0) ||
                                           _materialData->reflectionFactor != 0;
+  }
 }
 
 void MeshCompositeColorTechnique::registerVariable(
