@@ -1,10 +1,10 @@
-#include <mtt/dlPipeline/MeshTechniques/ShadowmapMeshTechnique.h>
-#include <mtt/dlPipeline/constants.h>
+#include <mtt/clPipeline/MeshTechniques/ShadowmapMeshTechnique.h>
+#include <mtt/clPipeline/constants.h>
 #include <mtt/render/DrawPlan/DrawMeshAction.h>
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
 
 using namespace mtt;
-using namespace mtt::dlPipeline;
+using namespace mtt::clPipeline;
 
 ShadowmapMeshTechnique::ShadowmapMeshTechnique(VkPrimitiveTopology topology) :
   BaseGeometryTechnique(SKELETON_FEATURE |
@@ -27,7 +27,7 @@ void ShadowmapMeshTechnique::adjustPipeline(GraphicsPipeline& pipeline,
   std::unique_ptr<ShaderModule> fragmentShader(
                               new ShaderModule( ShaderModule::FRAGMENT_SHADER,
                                                 renderPass.device()));
-  fragmentShader->newFragment().loadFromFile("dlPipeline/meshShadowmap.frag");
+  fragmentShader->newFragment().loadFromFile("clPipeline/meshShadowmap.frag");
   pipeline.addShader(std::move(fragmentShader));
 
   pipeline.addResource( "nearfarBinding",
