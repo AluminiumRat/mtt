@@ -36,7 +36,6 @@ namespace mtt
     private:
       std::optional<InputAttachment> _frontBufferAttachment;
       std::optional<InputAttachment> _backBufferAttachment;
-      bool _useAlpha;
     };
   }
 }

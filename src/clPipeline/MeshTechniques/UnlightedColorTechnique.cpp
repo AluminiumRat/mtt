@@ -1,11 +1,11 @@
-#include <mtt/clPipeline/MeshTechniques/TransparentColorTechnique.h>
+#include <mtt/clPipeline/MeshTechniques/UnlightedColorTechnique.h>
 #include <mtt/clPipeline/constants.h>
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
 
 using namespace mtt;
 using namespace mtt::clPipeline;
 
-TransparentColorTechnique::TransparentColorTechnique(
+UnlightedColorTechnique::UnlightedColorTechnique(
                                                 bool depthTestEnabled,
                                                 bool depthWriteEnabled,
                                                 VkCompareOp depthCompareOp,
@@ -13,6 +13,7 @@ TransparentColorTechnique::TransparentColorTechnique(
   BaseGeometryTechnique(MATERIAL_FEATURE |
                           TEX_COORDS_FEATURE |
                           ALBEDO_SAMPLER_FEATURE |
+                          OPAQUE_SAMPLER_FEATURE |
                           SKELETON_FEATURE,
                         forwardLightStage,
                         topology,
@@ -23,8 +24,8 @@ TransparentColorTechnique::TransparentColorTechnique(
 {
 }
 
-void TransparentColorTechnique::adjustPipeline( GraphicsPipeline& pipeline,
-                                                AbstractRenderPass& renderPass)
+void UnlightedColorTechnique::adjustPipeline( GraphicsPipeline& pipeline,
+                                              AbstractRenderPass& renderPass)
 {
   BaseGeometryTechnique::adjustPipeline(pipeline, renderPass);
 
@@ -35,6 +36,8 @@ void TransparentColorTechnique::adjustPipeline( GraphicsPipeline& pipeline,
   std::unique_ptr<ShaderModule> fragmentShader(
                                 new ShaderModule( ShaderModule::FRAGMENT_SHADER,
                                                   renderPass.device()));
-  fragmentShader->newFragment().loadFromFile("clPipeline/meshTransparent.frag");
+  fragmentShader->newFragment().loadFromFile("clPipeline/meshUnlighted.frag");
   pipeline.addShader(std::move(fragmentShader));
+
+  pipeline.setDefine("ENABLE_ALPHA_TEST");
 }

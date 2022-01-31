@@ -157,6 +157,8 @@ namespace mtt
     std::optional<BoneMatricesUniform> _boneMatricesUniform;
 
     Buffer* _boneInverseMatricesUniformBuffer;
+
+    bool _useAlpha;
   };
 
   inline int BaseGeometryTechnique::availableFeatures() const noexcept

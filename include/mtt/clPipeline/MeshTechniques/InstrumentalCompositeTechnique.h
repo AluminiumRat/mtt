@@ -1,7 +1,7 @@
 #pragma once
 
 #include <mtt/clPipeline/MeshTechniques/SelectionMeshTechnique.h>
-#include <mtt/clPipeline/MeshTechniques/TransparentColorTechnique.h>
+#include <mtt/clPipeline/MeshTechniques/UnlightedColorTechnique.h>
 #include <mtt/render/Mesh/CompositeMeshTechnique.h>
 
 namespace mtt
@@ -23,7 +23,7 @@ namespace mtt
       virtual void addToDrawPlan(DrawPlanBuildInfo& buildInfo) override;
 
     private:
-      TransparentColorTechnique _colorTechnique;
+      UnlightedColorTechnique _colorTechnique;
       SelectionMeshTechnique _selectionTechnique;
     };
   }

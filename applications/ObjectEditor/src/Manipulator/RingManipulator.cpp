@@ -1,6 +1,6 @@
 #include <mtt/application/EditCommands/SetPropertyCommand.h>
 #include <mtt/application/EditCommands/UndoStack.h>
-#include <mtt/clPipeline/MeshTechniques/TransparentColorTechnique.h>
+#include <mtt/clPipeline/MeshTechniques/UnlightedColorTechnique.h>
 #include <mtt/clPipeline/constants.h>
 #include <mtt/render/Drawable/AntiscaleDrawableModificator.h>
 #include <mtt/utilities/Abort.h>
@@ -89,7 +89,7 @@ RingManipulator::RingManipulator( RotatableObject& object,
 
   setGeometry(positions);
   setTechnique( mtt::clPipeline::colorFrameType,
-                std::make_unique<mtt::clPipeline::TransparentColorTechnique>(
+                std::make_unique<mtt::clPipeline::UnlightedColorTechnique>(
                                           false,
                                           false,
                                           VK_COMPARE_OP_ALWAYS,

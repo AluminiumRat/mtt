@@ -59,6 +59,7 @@ IconDrawableNode::IconDrawableNode( const QString& imageFilename,
                       new mtt::Sampler( mtt::PipelineResource::STATIC, device));
   colorSampler->setAttachedTexture(iconTexture);
   _iconMesh.extraData().setAlbedoSampler(std::move(colorSampler));
+  _iconMesh.extraData().setAlphaInAlbedoSamplerIsOpacity(true);
 
   setDrawable(&_iconMesh, mtt::Sphere());
   addModificator(_autoscale);

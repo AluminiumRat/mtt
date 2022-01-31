@@ -31,7 +31,8 @@ BaseGeometryTechnique::BaseGeometryTechnique( int availableFeatures,
   _emissiveSampler(nullptr),
   _reflectionSampler(nullptr),
   _boneNumber(0),
-  _boneInverseMatricesUniformBuffer(nullptr)
+  _boneInverseMatricesUniformBuffer(nullptr),
+  _useAlpha(false)
 {
 }
 
@@ -315,6 +316,16 @@ void BaseGeometryTechnique::registerVariable( AbstractMeshVariable& variable,
       invalidatePipeline();
     }
   }
+  if (_availableFeatures & ALBEDO_SAMPLER_FEATURE)
+  {
+    if(name == MeshExtraData::alphaInAlbedoSamplerIsOpacityVariableName)
+    {
+      MeshBoolVariable& useAlphaVariable =
+                                      static_cast<MeshBoolVariable&>(variable);
+      _useAlpha = useAlphaVariable.value();
+      invalidatePipeline();
+    }
+  }
 }
 
 void BaseGeometryTechnique::unregisterVariable(
@@ -326,6 +337,14 @@ void BaseGeometryTechnique::unregisterVariable(
     if(name == MeshExtraData::boneNumberVariableName)
     {
       _boneNumber = 0;
+      invalidatePipeline();
+    }
+  }
+  if (_availableFeatures & ALBEDO_SAMPLER_FEATURE)
+  {
+    if (name == MeshExtraData::alphaInAlbedoSamplerIsOpacityVariableName)
+    {
+      _useAlpha = false;
       invalidatePipeline();
     }
   }
@@ -402,6 +421,7 @@ void BaseGeometryTechnique::adjustPipeline( GraphicsPipeline& pipeline,
     _pipeline->addResource( MeshExtraData::albedoSamplerBinding,
                             *_albedoSampler,
                             VK_SHADER_STAGE_FRAGMENT_BIT);
+    if (_useAlpha) _pipeline->setDefine("USE_ALPHA_FROM_DIFFUSE_TEXTURE");
   }
 
   if(opaqueMappingEnabled())

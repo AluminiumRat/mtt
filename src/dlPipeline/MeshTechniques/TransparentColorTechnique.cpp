@@ -18,8 +18,7 @@ TransparentColorTechnique::TransparentColorTechnique(
                           NORMAL_SAMPLER_FEATURE,
                         peelingGBufferStage,
                         topology,
-                        NEAR_FIRST_ORDER),
-  _useAlpha(false)
+                        NEAR_FIRST_ORDER)
 {
 }
 
@@ -32,7 +31,6 @@ void TransparentColorTechnique::registerVariable(
   {
     MeshBoolVariable& useAlphaVariable =
                                       static_cast<MeshBoolVariable&>(variable);
-    _useAlpha = useAlphaVariable.value();
     invalidatePipeline();
   }
 }
@@ -44,7 +42,6 @@ void TransparentColorTechnique::unregisterVariable(
   BaseGeometryTechnique::unregisterVariable(variable, name);
   if (name == MeshExtraData::alphaInAlbedoSamplerIsOpacityVariableName)
   {
-    _useAlpha = false;
     invalidatePipeline();
   }
 }
@@ -85,7 +82,6 @@ void TransparentColorTechnique::adjustPipeline( GraphicsPipeline& pipeline,
   fragmentShader->newFragment().loadFromFile("dlPipeline/meshGBuffer.frag");
   fragmentShader->setDefine("ENABLE_DEPTH_PEELING");
   fragmentShader->setDefine("ENABLE_ALPHA_TEST");
-  if(_useAlpha) fragmentShader->setDefine("USE_ALPHA_FROM_DIFFUSE_TEXTURE");
   pipeline.addShader(std::move(fragmentShader));
 }
 
