@@ -118,6 +118,10 @@ namespace mtt
                     size_t indicesNumber);
     void removeIndices(VkPrimitiveTopology topology) noexcept;
 
+    virtual void registerAreaModificators(AreaModificatorSet& set) override;
+    virtual void unregisterAreaModificators(
+                                    AreaModificatorSet& set) noexcept override;
+
     void setGeometry(const CommonMeshGeometry& meshData);
 
     inline MeshExtraData& extraData() noexcept;
@@ -166,6 +170,9 @@ namespace mtt
     inline static const size_t topologiesNumber =
                                       size_t(VK_PRIMITIVE_TOPOLOGY_PATCH_LIST);
     IndicesRecord _indicesTable[topologiesNumber];
+
+    using AreaModificators = std::vector<AreaModificatorSet*>;
+    AreaModificators _areaModificators;
   };
 
   inline LogicalDevice& Mesh::device() const noexcept

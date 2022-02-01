@@ -8,6 +8,7 @@
 
 namespace mtt
 {
+  class AreaModificatorSet;
   class Buffer;
   class CompositeMeshTechnique;
   struct DrawPlanBuildInfo;
@@ -52,6 +53,9 @@ namespace mtt
                                   const std::string& name);
     virtual void unregisterVariable(AbstractMeshVariable& variable,
                                     const std::string& name) noexcept;
+
+    virtual void registerAreaModificators(AreaModificatorSet& set);
+    virtual void unregisterAreaModificators(AreaModificatorSet& set) noexcept;
 
     virtual void addToDrawPlan(DrawPlanBuildInfo& buildInfo) = 0;
 

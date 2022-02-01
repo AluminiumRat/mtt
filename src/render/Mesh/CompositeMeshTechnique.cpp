@@ -236,3 +236,32 @@ void CompositeMeshTechnique::unregisterVariable
     subtechnique->unregisterVariable(variable, name);
   }
 }
+
+void CompositeMeshTechnique::registerAreaModificators(AreaModificatorSet& set)
+{
+  try
+  {
+    for (AbstractMeshTechnique* subtechnique : _subtechniques)
+    {
+      subtechnique->registerAreaModificators(set);
+    }
+  }
+  catch (std::exception& error)
+  {
+    Log() << error.what();
+    Abort("CompositeMeshTechnique::registerAreaModificators: unable to register modificator.");
+  }
+  catch(...)
+  {
+    Abort("CompositeMeshTechnique::registerAreaModificators: unable to register modificator.");
+  }
+}
+
+void CompositeMeshTechnique::unregisterAreaModificators(
+                                              AreaModificatorSet& set) noexcept
+{
+  for (AbstractMeshTechnique* subtechnique : _subtechniques)
+  {
+    subtechnique->unregisterAreaModificators(set);
+  }
+}

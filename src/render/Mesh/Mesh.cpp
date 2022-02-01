@@ -147,6 +147,38 @@ void Mesh::removeIndices(VkPrimitiveTopology topology) noexcept
   _indicesTable[topology].indicesNumber = 0;
 }
 
+void Mesh::registerAreaModificators(AreaModificatorSet& set)
+{
+  Drawable::registerAreaModificators(set);
+  _areaModificators.push_back(&set);
+  try
+  {
+    _techniquesList.pass( [&](AbstractMeshTechnique& technique)
+                          {
+                            technique.registerAreaModificators(set);
+                          });
+  }
+  catch (...)
+  {
+    Abort("Mesh::registerAreaModificators: unable to register modificator in techniques.");
+  }
+}
+
+void Mesh::unregisterAreaModificators(AreaModificatorSet& set) noexcept
+{
+  Drawable::unregisterAreaModificators(set);
+  AreaModificators::iterator iModificators = std::find(
+    _areaModificators.begin(),
+    _areaModificators.end(),
+    &set);
+  if (iModificators == _areaModificators.end()) return;
+  _areaModificators.erase(iModificators);
+  _techniquesList.pass( [&](AbstractMeshTechnique& technique)
+                        {
+                          technique.unregisterAreaModificators(set);
+                        });
+}
+
 void Mesh::setGeometry(const CommonMeshGeometry& meshData)
 {
   if(!meshData.positions.empty())
@@ -290,6 +322,11 @@ void Mesh::bindTechnique(AbstractMeshTechnique& technique)
       }
     }
 
+    for (AreaModificatorSet* modificator : _areaModificators)
+    {
+      technique.registerAreaModificators(*modificator);
+    }
+
     _extraData.onTechniqueAdded(technique);
   }
   catch (std::exception& error)
@@ -317,6 +354,11 @@ void Mesh::releaseTechnique(AbstractMeshTechnique& technique) noexcept
     {
       technique.unregisterIndicesBuffer(VkPrimitiveTopology(topology));
     }
+  }
+
+  for (AreaModificatorSet* modificator : _areaModificators)
+  {
+    technique.unregisterAreaModificators(*modificator);
   }
 }
 

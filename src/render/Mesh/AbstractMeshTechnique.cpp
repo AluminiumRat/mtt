@@ -79,3 +79,12 @@ void AbstractMeshTechnique::unregisterVariable(
                                               const std::string& name) noexcept
 {
 }
+
+void AbstractMeshTechnique::registerAreaModificators(AreaModificatorSet& set)
+{
+}
+
+void AbstractMeshTechnique::unregisterAreaModificators(
+                                              AreaModificatorSet& set) noexcept
+{
+}

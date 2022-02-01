@@ -44,6 +44,10 @@ namespace mtt
     virtual void unregisterVariable(AbstractMeshVariable& variable,
                                     const std::string& name) noexcept override;
 
+    virtual void registerAreaModificators(AreaModificatorSet& set) override;
+    virtual void unregisterAreaModificators(
+                                    AreaModificatorSet& set) noexcept override;
+
   protected:
     void registerSubtechnique(AbstractMeshTechnique& technique);
     void unregisterSubtechnique(AbstractMeshTechnique& technique);
