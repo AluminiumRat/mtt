@@ -25,6 +25,14 @@ SceneRenderObserver::SceneRenderObserver(EditorCommonData& commonData) :
   _setScene(_commonData.scene());
 }
 
+SceneRenderObserver::~SceneRenderObserver() noexcept
+{
+  while (!_objectObservers.empty())
+  {
+    _removeObject(_objectObservers.front()->object());
+  }
+}
+
 void SceneRenderObserver::_setScene(EditorScene* newScene) noexcept
 {
   if(_scene != nullptr)
@@ -166,6 +174,25 @@ void SceneRenderObserver::_addObject(mtt::Object& object) noexcept
       {
         _addUnculled(observerPtr->unculledDrawable(drawableIndex));
       }
+
+      connect(observerPtr,
+              &MeshRenderObserver::areaModificatorRegistered,
+              this,
+              &SceneRenderObserver::_addModificator,
+              Qt::DirectConnection);
+
+      connect(observerPtr,
+              &MeshRenderObserver::areaModificatorUnregistered,
+              this,
+              &SceneRenderObserver::_removeModificator,
+              Qt::DirectConnection);
+
+      for(size_t modificatorIndex = 0;
+          modificatorIndex != observerPtr->areaModificatorsNumber();
+          modificatorIndex++)
+      {
+        _addModificator(observerPtr->areaModificator(modificatorIndex));
+      }
     }
   }
   catch(std::exception& error)
@@ -200,6 +227,14 @@ void SceneRenderObserver::_removeObject(mtt::Object& object) noexcept
       {
         _removeUnculled(observer.unculledDrawable(drawableIndex));
       }
+
+      for(size_t modificatorIndex = 0;
+          modificatorIndex != observer.areaModificatorsNumber();
+          modificatorIndex++)
+      {
+        _removeModificator(observer.areaModificator(modificatorIndex));
+      }
+
       _objectObservers.erase(iObserver);
       break;
     }
@@ -224,18 +259,7 @@ void SceneRenderObserver::_addCulled(mtt::DrawableNode& drawable) noexcept
 
 void SceneRenderObserver::_removeCulled(mtt::DrawableNode& drawable) noexcept
 {
-  try
-  {
-    _commonData.renderScene().culledData().removeDrawable(drawable);
-  }
-  catch(const std::exception& error)
-  {
-    mtt::Log() << "SceneRenderObserver::_removeCulled: " << error.what();
-  }
-  catch(...)
-  {
-    mtt::Log() << "SceneRenderObserver::_removeCulled: unknown error";
-  }
+  _commonData.renderScene().culledData().removeDrawable(drawable);
 }
 
 void SceneRenderObserver::_addUnculled(mtt::Drawable& drawable) noexcept
@@ -256,16 +280,28 @@ void SceneRenderObserver::_addUnculled(mtt::Drawable& drawable) noexcept
 
 void SceneRenderObserver::_removeUnculled(mtt::Drawable& drawable) noexcept
 {
+  _commonData.renderScene().unculledData().removeChild(drawable);
+}
+
+void SceneRenderObserver::_addModificator(
+                                    mtt::AreaModificator& modificator) noexcept
+{
   try
   {
-    _commonData.renderScene().unculledData().removeChild(drawable);
+    _commonData.renderScene().culledData().addModificator(modificator);
   }
   catch(const std::exception& error)
   {
-    mtt::Log() << "SceneRenderObserver::_removeUnculled: " << error.what();
+    mtt::Log() << "SceneRenderObserver::_addModificator: " << error.what();
   }
   catch(...)
   {
-    mtt::Log() << "SceneRenderObserver::_removeUnculled: unknown error";
+    mtt::Log() << "SceneRenderObserver::_addModificator: unknown error";
   }
+}
+
+void SceneRenderObserver::_removeModificator(
+                                    mtt::AreaModificator& modificator) noexcept
+{
+  _commonData.renderScene().culledData().removeModificator(modificator);
 }

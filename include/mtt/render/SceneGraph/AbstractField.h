@@ -4,6 +4,7 @@
 
 namespace mtt
 {
+  class AreaModificator;
   class DrawableNode;
   class FieldArea;
   class ViewFrustum;
@@ -27,6 +28,9 @@ namespace mtt
 
     virtual void addDrawable(DrawableNode& node) = 0;
     virtual void removeDrawable(DrawableNode& node) noexcept = 0;
+
+    virtual void addModificator(AreaModificator& modificator) = 0;
+    virtual void removeModificator(AreaModificator& modificator) noexcept = 0;
 
     inline void pass(Visitor& visitor, const ViewFrustum& frustum) const;
 

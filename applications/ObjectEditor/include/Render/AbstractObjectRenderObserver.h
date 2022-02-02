@@ -8,6 +8,7 @@
 #include <mtt/render/Drawable/SelectionDrawableModificator.h>
 #include <mtt/render/Drawable/UidDrawableModificator.h>
 #include <mtt/render/Drawable/VisibleDrawableFilter.h>
+#include <mtt/render/SceneGraph/AreaModificator.h>
 #include <mtt/render/SceneGraph/DrawableNode.h>
 
 namespace mtt
@@ -41,17 +42,26 @@ public:
   inline mtt::Drawable& unculledDrawable(size_t index) noexcept;
   inline const mtt::Drawable& unculledDrawable(size_t index) const noexcept;
 
+  inline size_t areaModificatorsNumber() const noexcept;
+  inline mtt::AreaModificator& areaModificator(size_t index) noexcept;
+  inline const mtt::AreaModificator& areaModificator(
+                                                  size_t index) const noexcept;
+
 signals:
   void culledDrawableRegistered(mtt::DrawableNode& drawable);
   void culledDrawableUnregistered(mtt::DrawableNode& drawable);
   void unculledDrawableRegistered(mtt::Drawable& drawable);
   void unculledDrawableUnregistered(mtt::Drawable& drawable);
+  void areaModificatorRegistered(mtt::AreaModificator& modificator);
+  void areaModificatorUnregistered(mtt::AreaModificator& modificator);
 
 protected:
   void registerCulledDrawable(mtt::DrawableNode& drawable);
-  void unregisterCulledDrawable(mtt::DrawableNode& drawable);
+  void unregisterCulledDrawable(mtt::DrawableNode& drawable) noexcept;
   void registerUnculledDrawable(mtt::Drawable& drawable);
-  void unregisterUnculledDrawable(mtt::Drawable& drawable);
+  void unregisterUnculledDrawable(mtt::Drawable& drawable) noexcept;
+  void registerAreaModificator(mtt::AreaModificator& modificator);
+  void unregisterAreaModificator(mtt::AreaModificator& modificator) noexcept;
 
   inline mtt::SelectionDrawableModificator& selectionModificator() noexcept;
   inline const mtt::SelectionDrawableModificator&
@@ -71,9 +81,12 @@ private:
 
   using CulledDrawables = std::vector<mtt::DrawableNode*>;
   CulledDrawables _culledDrawables;
-  
+
   using UnculledDrawables = std::vector<mtt::Drawable*>;
   UnculledDrawables _unculledDrawables;
+
+  using AreaModificators = std::vector<mtt::AreaModificator*>;
+  AreaModificators _areaModificators;
 
   mtt::SelectionDrawableModificator _selectionModificator;
   mtt::VisibleDrawableFilter _visibleFilter;
@@ -125,6 +138,24 @@ inline const mtt::Drawable&
     AbstractObjectRenderObserver::unculledDrawable(size_t index) const noexcept
 {
   return *_unculledDrawables[index];
+}
+
+inline size_t
+          AbstractObjectRenderObserver::areaModificatorsNumber() const noexcept
+{
+  return _areaModificators.size();
+}
+
+inline mtt::AreaModificator&
+          AbstractObjectRenderObserver::areaModificator(size_t index) noexcept
+{
+  return *_areaModificators[index];
+}
+
+inline const mtt::AreaModificator&
+      AbstractObjectRenderObserver::areaModificator(size_t index) const noexcept
+{
+  return *_areaModificators[index];
 }
 
 inline mtt::SelectionDrawableModificator&

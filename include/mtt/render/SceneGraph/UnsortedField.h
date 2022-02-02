@@ -16,6 +16,10 @@ namespace mtt
     virtual void addDrawable(DrawableNode& node) override;
     virtual void removeDrawable(DrawableNode& node) noexcept override;
 
+    virtual void addModificator(AreaModificator& modificator) override;
+    virtual void removeModificator(
+                                AreaModificator& modificator) noexcept override;
+
   protected:
     virtual void enumerateAreas(Visitor& visitor,
                                 const ViewFrustum& frustum) const override;

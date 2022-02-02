@@ -15,6 +15,18 @@ FieldArea::~FieldArea() noexcept
 void FieldArea::addDrawable(DrawableNode& node)
 {
   _drawables.push_back(&node);
+  try
+  {
+    if(_modificators.has_value())
+    {
+      node.registerAreaModificators(_modificators.value());
+    }
+  }
+  catch (...)
+  {
+    _drawables.pop_back();
+    throw;
+  }
 }
 
 void FieldArea::removeDrawable(DrawableNode& node) noexcept
@@ -24,6 +36,10 @@ void FieldArea::removeDrawable(DrawableNode& node) noexcept
                                             &node);
   if(iDrawable == _drawables.end()) return;
   _drawables.erase(iDrawable);
+  if (_modificators.has_value())
+  {
+    node.unregisterAreaModificators(_modificators.value());
+  }
 }
 
 void FieldArea::_attachModificators()
@@ -79,7 +95,8 @@ void FieldArea::removeModificator(AreaModificator& modificator) noexcept
   _detachModificators();
   try
   {
-    _modificators.emplace(std::move(newModificators));
+    if(newModificators.empty()) _modificators.reset();
+    else _modificators.emplace(std::move(newModificators));
     _attachModificators();
   }
   catch (std::exception& error)

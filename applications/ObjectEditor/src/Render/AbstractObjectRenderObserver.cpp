@@ -45,7 +45,7 @@ void AbstractObjectRenderObserver::registerCulledDrawable(
 }
 
 void AbstractObjectRenderObserver::unregisterCulledDrawable(
-                                                    mtt::DrawableNode& drawable)
+                                          mtt::DrawableNode& drawable) noexcept
 {
   CulledDrawables::iterator iDrawable = std::find(_culledDrawables.begin(),
                                                   _culledDrawables.end(),
@@ -76,7 +76,7 @@ void AbstractObjectRenderObserver::registerUnculledDrawable(
 }
 
 void AbstractObjectRenderObserver::unregisterUnculledDrawable(
-                                                        mtt::Drawable& drawable)
+                                              mtt::Drawable& drawable) noexcept
 {
   UnculledDrawables::iterator iDrawable = std::find(_unculledDrawables.begin(),
                                                     _unculledDrawables.end(),
@@ -89,6 +89,37 @@ void AbstractObjectRenderObserver::unregisterUnculledDrawable(
 
   _unculledDrawables.erase(iDrawable);
   emit unculledDrawableUnregistered(drawable);
+}
+
+void AbstractObjectRenderObserver::registerAreaModificator(
+                                              mtt::AreaModificator& modificator)
+{
+  if(std::find( _areaModificators.begin(),
+                _areaModificators.end(),
+                &modificator) != _areaModificators.end())
+  {
+    mtt::Log() << "AbstractObjectRenderObserver::registerAreaModificator: modificator is already registered.";
+    return;
+  }
+
+  _areaModificators.push_back(&modificator);
+  emit areaModificatorRegistered(modificator);
+}
+
+void AbstractObjectRenderObserver::unregisterAreaModificator(
+                                    mtt::AreaModificator& modificator) noexcept
+{
+  AreaModificators::iterator iModificator = std::find(_areaModificators.begin(),
+                                                      _areaModificators.end(),
+                                                      &modificator);
+  if(iModificator == _areaModificators.end())
+  {
+    mtt::Log() << "AbstractObjectRenderObserver::unregisterAreaModificator: modificator is not registered.";
+    return;
+  }
+
+  _areaModificators.erase(iModificator);
+  emit areaModificatorUnregistered(modificator);
 }
 
 void AbstractObjectRenderObserver::_updateSelected(

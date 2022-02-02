@@ -24,8 +24,8 @@ public:
   explicit SceneRenderObserver(EditorCommonData& commonData);
   SceneRenderObserver(const SceneRenderObserver&) = delete;
   SceneRenderObserver& operator = (const SceneRenderObserver&) = delete;
-  virtual ~SceneRenderObserver() noexcept = default;
-  
+  virtual ~SceneRenderObserver() noexcept;
+
 private:
   void _setScene(EditorScene* newScene) noexcept;
   void _clear() noexcept;
@@ -35,6 +35,8 @@ private:
   void _removeCulled(mtt::DrawableNode& drawable) noexcept;
   void _addUnculled(mtt::Drawable& drawable) noexcept;
   void _removeUnculled(mtt::Drawable& drawable) noexcept;
+  void _addModificator(mtt::AreaModificator& modificator) noexcept;
+  void _removeModificator(mtt::AreaModificator& modificator) noexcept;
 
 private:
   EditorCommonData& _commonData;
