@@ -5,7 +5,7 @@
 #include <mtt/clPipeline/MeshTechniques/EmissionTechnique.h>
 #include <mtt/clPipeline/MeshTechniques/OpaqueColorTechnique.h>
 #include <mtt/clPipeline/MeshTechniques/SelectionMeshTechnique.h>
-#include <mtt/clPipeline/MeshTechniques/UnlightedColorTechnique.h>
+#include <mtt/clPipeline/MeshTechniques/TransparentProxyTechnique.h>
 #include <mtt/render/Mesh/CompositeMeshTechnique.h>
 #include <mtt/render/Mesh/MeshExtraData.h>
 
@@ -43,7 +43,7 @@ namespace mtt
       OpaqueColorTechnique _opaqueTechnique;
       bool _opaqueTechniqueEnabled;
 
-      UnlightedColorTechnique _transparentTechnique;
+      TransparentProxyTechnique _transparentTechnique;
       bool _transparentTechniqueEnabled;
 
       EmissionTechnique _emissionTechnique;

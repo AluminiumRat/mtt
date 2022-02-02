@@ -41,6 +41,7 @@ set(HEADERS
     "../../include/mtt/clPipeline/MeshTechniques/OpaqueColorTechnique.h"
     "../../include/mtt/clPipeline/MeshTechniques/SelectionMeshTechnique.h"
     "../../include/mtt/clPipeline/MeshTechniques/ShadowmapMeshTechnique.h"
+    "../../include/mtt/clPipeline/MeshTechniques/TransparentProxyTechnique.h"
     "../../include/mtt/clPipeline/MeshTechniques/UnlightedColorTechnique.h"
 
     "../../include/mtt/clPipeline/RenderPass/AmbientWeightPass.h"
@@ -71,6 +72,7 @@ set(SOURCES
     "MeshTechniques/OpaqueColorTechnique.cpp"
     "MeshTechniques/SelectionMeshTechnique.cpp"
     "MeshTechniques/ShadowmapMeshTechnique.cpp"
+    "MeshTechniques/TransparentProxyTechnique.cpp"
     "MeshTechniques/UnlightedColorTechnique.cpp"
 
     "RenderPass/AmbientWeightPass.cpp"

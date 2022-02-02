@@ -8,7 +8,7 @@ MeshCompositeColorTechnique::MeshCompositeColorTechnique(
                                                 VkPrimitiveTopology topology) :
   _opaqueTechnique(topology),
   _opaqueTechniqueEnabled(false),
-  _transparentTechnique(true, true, VK_COMPARE_OP_GREATER_OR_EQUAL, topology),
+  _transparentTechnique(topology),
   _transparentTechniqueEnabled(false),
   _emissionTechnique(topology),
   _emissionTechniqueEnabled(false),

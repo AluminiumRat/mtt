@@ -71,6 +71,7 @@ set(HEADERS
     "../../include/mtt/render/Mesh/DepthMeshTechnique.h"
     "../../include/mtt/render/Mesh/Mesh.h"
     "../../include/mtt/render/Mesh/MeshExtraData.h"
+    "../../include/mtt/render/Mesh/ModificatorProxyTechnique.h"
     "../../include/mtt/render/Mesh/MeshTechniquesFactory.h"
     "../../include/mtt/render/Mesh/MeshVariable.h"
     "../../include/mtt/render/Mesh/MonotopologyMeshTechnique.h"
@@ -180,6 +181,7 @@ set(SOURCES
     "Mesh/DepthMeshTechnique.cpp"
     "Mesh/Mesh.cpp"
     "Mesh/MeshExtraData.cpp"
+    "Mesh/ModificatorProxyTechnique.cpp"
     "Mesh/MonotopologyMeshTechnique.cpp"
     "Mesh/UidMeshTechnique.cpp"
 
