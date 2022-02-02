@@ -73,6 +73,7 @@ class ColorFramePlan : public AbstractFramePlan
 public:
   ColorFramePlan(AbstractFrame& theFrame) :
     AbstractFramePlan(theFrame),
+    modificatorsPrepareBin(memoryPool()),
     gbufferBin(memoryPool()),
     ambientWeightBin(memoryPool()),
     lightingBin(memoryPool()),
@@ -81,6 +82,7 @@ public:
     forwardLightBin(memoryPool()),
     selectionBin(memoryPool())
   {
+    registerBin(modificatorsPrepareBin, modificatorsPrepareStage);
     registerBin(gbufferBin, gBufferStage);
     registerBin(ambientWeightBin, ambientWeightStage);
     registerBin(lightingBin, lightingStage);
@@ -95,6 +97,7 @@ public:
   virtual ~ColorFramePlan() noexcept = default;
 
 private:
+  DrawBin modificatorsPrepareBin;
   DrawBin gbufferBin;
   DrawBin ambientWeightBin;
   DrawBin lightingBin;
@@ -337,6 +340,10 @@ void ColorFrameBuilder::scheduleRender( AbstractFramePlan& plan,
   ColorFrame& frame = static_cast<ColorFrame&>(target);
 
   DrawContext drawContext{drawProducer, nullptr};
+
+  DrawBin* modificatorsPrepareBin = plan.getBin(modificatorsPrepareStage);
+  if(modificatorsPrepareBin == nullptr) Abort("ColorFrameBuilder::scheduleRender: modificatorsPrepareBin is null.");
+  modificatorsPrepareBin->scheduleDraw(drawContext);
 
   drawContext.frameBuffer = frame.geometryPassFrameBuffer.get();
   _gBufferPass->scheduleRender(plan, drawContext);

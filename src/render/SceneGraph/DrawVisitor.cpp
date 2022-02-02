@@ -31,7 +31,7 @@ void DrawVisitor::visit(const FieldArea& area)
   {
     for (AreaModificator* modificator : area.modificators()->modificators())
     {
-      modificator->buildPrepareActions(_buildInfo);
+      modificator->addToDrawPlan(_buildInfo);
     }
   }
 

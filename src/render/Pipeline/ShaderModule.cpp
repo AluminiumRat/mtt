@@ -25,7 +25,7 @@ void ShaderModule::Fragment::setText( const std::string& newText,
 {
   _text = newText;
   _hash = newHash;
-  if(_hash.empty()) _hash = "n";
+  if(_hash.empty()) _hash = newText;
   _shaderModule._cleanup();
   _shaderModule._incrementRevision();
 }
@@ -66,6 +66,26 @@ void ShaderModule::Fragment::loadFromFile(const std::string& filename)
   file.close();
 
   setText(text, filename);
+}
+
+void ShaderModule::Fragment::replace( const std::string& originWord,
+                                      const std::string& newWord)
+{
+  std::string newText = text();
+
+  size_t cursor = 0;
+  while(true)
+  {
+    cursor = newText.find(originWord, cursor);
+    if (cursor == std::string::npos) break;
+
+    newText.replace(cursor, originWord.length(), newWord);
+    cursor += newWord.size();
+  }
+
+  std::string newHash = hash() + (originWord + newWord);
+
+  setText(newText, newHash);
 }
 
 ShaderModule::ShaderModule(Type theType, LogicalDevice& device) :

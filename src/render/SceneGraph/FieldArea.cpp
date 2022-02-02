@@ -7,6 +7,11 @@
 
 using namespace mtt;
 
+FieldArea::FieldArea()
+{
+  _modificators.emplace();
+}
+
 FieldArea::~FieldArea() noexcept
 {
   _detachModificators();
@@ -76,8 +81,20 @@ void FieldArea::addModificator(AreaModificator& modificator)
   newModificators.push_back(&modificator);
 
   _detachModificators();
-  _modificators.emplace(std::move(newModificators));
-  _attachModificators();
+  try
+  {
+    _modificators.emplace(std::move(newModificators));
+    _attachModificators();
+  }
+  catch (std::exception& error)
+  {
+    Log() << error.what();
+    Abort("FieldArea::addModificator: unable to remove area modificator.");
+  }
+  catch (...)
+  {
+    Abort("FieldArea::addModificator: unable to remove area modificator.");
+  }
 }
 
 void FieldArea::removeModificator(AreaModificator& modificator) noexcept
@@ -95,8 +112,7 @@ void FieldArea::removeModificator(AreaModificator& modificator) noexcept
   _detachModificators();
   try
   {
-    if(newModificators.empty()) _modificators.reset();
-    else _modificators.emplace(std::move(newModificators));
+    _modificators.emplace(std::move(newModificators));
     _attachModificators();
   }
   catch (std::exception& error)

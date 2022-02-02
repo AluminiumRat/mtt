@@ -9,6 +9,7 @@ namespace mtt
   class AreaModificatorSet
   {
   public:
+    AreaModificatorSet() = default;
     inline AreaModificatorSet(std::vector<AreaModificator*>&& modificators);
     AreaModificatorSet(const AreaModificatorSet&) = delete;
     AreaModificatorSet& operator = (const AreaModificatorSet&) = delete;

@@ -1,5 +1,5 @@
+#include <mtt/clPipeline/Background/BackgroundDrawable.h>
 #include <mtt/clPipeline/RenderPass/BackgroundPass.h>
-#include <mtt/clPipeline/BackgroundDrawable.h>
 #include <mtt/clPipeline/constants.h>
 #include <mtt/render/DrawPlan/DrawMeshAction.h>
 #include <mtt/utilities/Abort.h>
@@ -48,13 +48,13 @@ void BackgroundDrawable::DrawTechnique::_rebuildPipeline(
     std::unique_ptr<ShaderModule> vertexShader(
                                   new ShaderModule( ShaderModule::VERTEX_SHADER,
                                                     _pipeline->device()));
-    vertexShader->newFragment().loadFromFile("clPipeline/background.vert");
+    vertexShader->newFragment().loadFromFile("clPipeline/backgroundDrawable.vert");
     _pipeline->addShader(std::move(vertexShader));
 
     std::unique_ptr<ShaderModule> fragmentShader(
                                 new ShaderModule( ShaderModule::FRAGMENT_SHADER,
                                                   _pipeline->device()));
-    fragmentShader->newFragment().loadFromFile("clPipeline/background.frag");
+    fragmentShader->newFragment().loadFromFile("clPipeline/backgroundDrawable.frag");
     _pipeline->addShader(std::move(fragmentShader));
 
     _pipeline->setTopology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP);
@@ -85,12 +85,12 @@ void BackgroundDrawable::DrawTechnique::addToDrawPlan(
 
   uint32_t pointsNumber = 4;
 
-  DrawData drawData;
+  BackgroundDrawData drawData;
   drawData.properties = _parent._properties;
   drawData.viewToLocal = glm::inverse(buildInfo.drawMatrices.localToViewMatrix);
 
-  using DrawAction = DrawMeshAction<VolatileUniform<DrawData>,
-                                    DrawData,
+  using DrawAction = DrawMeshAction<VolatileUniform<BackgroundDrawData>,
+                                    BackgroundDrawData,
                                     VolatileUniform<DrawMatrices>,
                                     DrawMatrices,
                                     InputAttachment,
@@ -108,13 +108,13 @@ void BackgroundDrawable::DrawTechnique::addToDrawPlan(
                                       BackgroundPass::depthMapAttachmentIndex);
 }
 
-BackgroundDrawable::BackgroundDrawable(LogicalDevice& device) :
+BackgroundDrawable::BackgroundDrawable( const BackgroundProperties& properties,
+                                        Sampler& luminanceSampler,
+                                        LogicalDevice& device) :
   _device(device),
-  _properties{glm::vec3(1.f),
-              40.f,
-              10.f},
+  _properties(properties),
   _depthAttachment(device),
-  _luminanceSampler(PipelineResource::STATIC, device),
+  _luminanceSampler(luminanceSampler),
   _technique(*this)
 {
 }
@@ -125,13 +125,7 @@ void BackgroundDrawable::buildDrawActions(DrawPlanBuildInfo& buildInfo)
   _technique.addToDrawPlan(buildInfo);
 }
 
-void BackgroundDrawable::setLuminanceTexture(
-                                  std::shared_ptr<CubeTexture> texture) noexcept
+void BackgroundDrawable::reset() noexcept
 {
-  if((_luminanceSampler.attachedTexture(0) != nullptr) != (texture != nullptr))
-  {
-    _technique.invalidate();
-  }
-
-  _luminanceSampler.setAttachedTexture(std::move(texture), 0);
+  _technique.invalidate();
 }

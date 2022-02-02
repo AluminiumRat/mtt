@@ -29,6 +29,7 @@ namespace mtt
 
     void setDefine(const std::string& name, const std::string& value);
     void setDefine(const std::string& name);
+    inline const std::string* defineValue(const std::string& name) noexcept;
     void removeDefine(const std::string& name) noexcept;
 
     void addResource( const std::string& bindingName,
@@ -40,10 +41,11 @@ namespace mtt
 
     void forceBuild();
 
-  protected:
     inline size_t shaderNumber() const noexcept;
     inline ShaderModule& shader(size_t shaderIndex) noexcept;
     inline const ShaderModule& shader(size_t shaderIndex) const noexcept;
+
+  protected:
     virtual void addShader(std::unique_ptr<ShaderModule> shaderModule);
     virtual std::unique_ptr<ShaderModule>
                               removeShader(ShaderModule& shaderModule) noexcept;
@@ -111,6 +113,14 @@ namespace mtt
   inline LogicalDevice& AbstractPipeline::device() const noexcept
   {
     return _device;
+  }
+
+  inline const std::string* AbstractPipeline::defineValue(
+                                              const std::string& name) noexcept
+  {
+    Defines::const_iterator iDefine = _defines.find(name);
+    if(iDefine == _defines.end()) return nullptr;
+    return &iDefine->second;
   }
 
   inline size_t AbstractPipeline::shaderNumber() const noexcept

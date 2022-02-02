@@ -12,7 +12,7 @@ BackgroundObserver::BackgroundObserver( BackgroundObject& object,
                                         EditorCommonData& commonData) :
   Object3DRenderObserver(object, commonData),
   _object(object),
-  _backgroundDrawable(mtt::Application::instance().displayDevice()),
+  _backgroundRenderer(mtt::Application::instance().displayDevice()),
   _cubemapObserver(object.cubemap())
 {
   connect(&_object,
@@ -56,18 +56,51 @@ BackgroundObserver::BackgroundObserver( BackgroundObject& object,
     });
 
   positionRotateJoint().addChild(_backgroundDrawableNode);
-  _backgroundDrawableNode.setDrawable(&_backgroundDrawable, mtt::Sphere());
+  _backgroundDrawableNode.setDrawable(&_backgroundRenderer.drawable(),
+                                      mtt::Sphere());
   _backgroundDrawableNode.addModificator(visibleFilter());
   registerUnculledDrawable(_backgroundDrawableNode);
+
+  positionRotateJoint().addChild(_backgroundRenderer.areaModificator());
+  _updateAreaModificator();
 
   positionRotateJoint().addChild(_lightDrawableNode);
   _lightDrawableNode.addModificator(visibleFilter());
   registerUnculledDrawable(_lightDrawableNode);
 }
 
+void BackgroundObserver::updateVisible(bool newVisible) noexcept
+{
+  Object3DRenderObserver::updateVisible(newVisible);
+  _updateAreaModificator();
+}
+
+void BackgroundObserver::_updateAreaModificator() noexcept
+{
+  try
+  {
+    if(_object.visible())
+    {
+      registerAreaModificator(_backgroundRenderer.areaModificator());
+    }
+    else
+    {
+      unregisterAreaModificator(_backgroundRenderer.areaModificator());
+    }
+  }
+  catch (std::exception& error)
+  {
+    mtt::Log() << "BackgroundObserver::_updateAreaModificator: unable to update area modificator: " << error.what();
+  }
+  catch (...)
+  {
+    mtt::Log() << "BackgroundObserver::_updateAreaModificator: unable to update area modificator: unknown error";
+  }
+}
+
 void BackgroundObserver::_updateLuminanceTexture() noexcept
 {
-  _backgroundDrawable.setLuminanceTexture(_luminanceTexture);
+  _backgroundRenderer.setLuminanceTexture(_luminanceTexture);
 
   if(_lightDrawable.has_value())
   {
@@ -127,7 +160,7 @@ void BackgroundObserver::_updateLightDrawable() noexcept
 void BackgroundObserver::_updateLuminance() noexcept
 {
   glm::vec3 newLuminance = _object.color() * _object.luminance();
-  _backgroundDrawable.setLuminance(newLuminance);
+  _backgroundRenderer.setLuminance(newLuminance);
   if(_lightDrawable.has_value())
   {
     _lightDrawable->setIlluminance(glm::pi<float>() * newLuminance);
@@ -136,11 +169,11 @@ void BackgroundObserver::_updateLuminance() noexcept
 
 void BackgroundObserver::_updateDissolutionStartDistance() noexcept
 {
-  _backgroundDrawable.setDissolutionStartDistance(
+  _backgroundRenderer.setDissolutionStartDistance(
                                           _object.dissolutionStartDistance());
 }
 
 void BackgroundObserver::_updateDissolutionLength() noexcept
 {
-  _backgroundDrawable.setDissolutionLength(_object.dissolutionLength());
+  _backgroundRenderer.setDissolutionLength(_object.dissolutionLength());
 }

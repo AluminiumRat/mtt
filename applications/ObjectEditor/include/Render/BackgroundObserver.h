@@ -3,8 +3,8 @@
 #include <memory>
 #include <optional>
 
+#include <mtt/clPipeline/Background/Background.h>
 #include <mtt/clPipeline/Lighting/AmbientLightApplicator.h>
-#include <mtt/clPipeline/BackgroundDrawable.h>
 #include <mtt/render/Pipeline/CubeTexture.h>
 #include <mtt/render/SceneGraph/SimpleDrawableNode.h>
 
@@ -26,7 +26,11 @@ public:
 
   inline BackgroundObject& object() const noexcept;
 
+protected:
+  virtual void updateVisible(bool newVisible) noexcept override;
+
 private:
+  void _updateAreaModificator() noexcept;
   void _updateLuminance() noexcept;
   void _updateDissolutionStartDistance() noexcept;
   void _updateDissolutionLength() noexcept;
@@ -38,7 +42,7 @@ private:
 
   std::shared_ptr<mtt::CubeTexture> _luminanceTexture;
 
-  mtt::clPipeline::BackgroundDrawable _backgroundDrawable;
+  mtt::clPipeline::Background _backgroundRenderer;
   mtt::SimpleDrawableNode _backgroundDrawableNode;
 
   std::optional<mtt::clPipeline::AmbientLightApplicator> _lightDrawable;

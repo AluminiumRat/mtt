@@ -15,7 +15,7 @@ namespace mtt
     using Drawables = std::vector<DrawableNode*>;
 
   public:
-    FieldArea() = default;
+    FieldArea();
     FieldArea(const FieldArea&) = delete;
     FieldArea& operator = (const FieldArea&) = delete;
     virtual ~FieldArea() noexcept;

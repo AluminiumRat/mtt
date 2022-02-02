@@ -64,6 +64,7 @@ set(HEADERS
     "../../include/mtt/render/DrawPlan/MultipleResourceSetter.h"
     "../../include/mtt/render/DrawPlan/ResourceSetter.h"
     "../../include/mtt/render/DrawPlan/StageIndex.h"
+    "../../include/mtt/render/DrawPlan/UpdateResourcesAction.h"
 
     "../../include/mtt/render/Mesh/AbstractMeshTechnique.h"
     "../../include/mtt/render/Mesh/BaseGeometryTechnique.h"

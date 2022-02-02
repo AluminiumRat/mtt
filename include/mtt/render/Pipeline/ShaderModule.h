@@ -42,6 +42,8 @@ namespace mtt
                     const std::string& newHash = std::string());
 
       void loadFromFile(const std::string& filename);
+      void replace( const std::string& originWord,
+                    const std::string& newWord);
 
     private:
       std::string _text;
@@ -71,6 +73,7 @@ namespace mtt
 
     void setDefine(const std::string& name, const std::string& value);
     void setDefine(const std::string& name);
+    inline const std::string* defineValue(const std::string& name) noexcept;
     void removeDefine(const std::string& name) noexcept;
 
   private:
@@ -123,5 +126,13 @@ namespace mtt
   inline size_t ShaderModule::revision() const noexcept
   {
     return _revision;
+  }
+
+  inline const std::string* ShaderModule::defineValue(
+                                              const std::string& name) noexcept
+  {
+    Defines::const_iterator iDefine = _defines.find(name);
+    if(iDefine == _defines.end()) return nullptr;
+    return &iDefine->second;
   }
 }

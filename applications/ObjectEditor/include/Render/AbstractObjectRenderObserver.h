@@ -71,9 +71,9 @@ protected:
   inline mtt::UidDrawableModificator& uidSetter() noexcept;
   inline const mtt::UidDrawableModificator& uidSetter() const noexcept;
 
-private:
-  void _updateSelected(const std::vector<mtt::Object*>& objects) noexcept;
-  void _updateVisible(bool newVisible);
+  virtual void updateSelected(
+                            const std::vector<mtt::Object*>& objects) noexcept;
+  virtual void updateVisible(bool newVisible) noexcept;
 
 private:
   DisplayedObject& _object;

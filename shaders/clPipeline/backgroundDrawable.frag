@@ -1,4 +1,4 @@
-//background.frag
+//backgroundDrawable.frag
 
 layout(location = 0) in noperspective vec2 inClipCoord;
 

@@ -28,6 +28,11 @@ include_directories("../../include"
                     ${VKMEMALLOC_PATH})
 
 set(HEADERS
+    "../../include/mtt/clPipeline/Background/Background.h"
+    "../../include/mtt/clPipeline/Background/BackgroundAreaModificator.h"
+    "../../include/mtt/clPipeline/Background/BackgroundDrawable.h"
+    "../../include/mtt/clPipeline/Background/BackgroundProperties.h"
+
     "../../include/mtt/clPipeline/Lighting/AbstractLightApplicator.h"
     "../../include/mtt/clPipeline/Lighting/AmbientLightApplicator.h"
     "../../include/mtt/clPipeline/Lighting/DirectLightApplicator.h"
@@ -35,6 +40,7 @@ set(HEADERS
     "../../include/mtt/clPipeline/Lighting/ShadowmapProvider.h"
 
     "../../include/mtt/clPipeline/MeshTechniques/EmissionTechnique.h"
+    "../../include/mtt/clPipeline/MeshTechniques/FLColorTechnique.h"
     "../../include/mtt/clPipeline/MeshTechniques/InstrumentalCompositeTechnique.h"
     "../../include/mtt/clPipeline/MeshTechniques/MeshCompositeColorTechnique.h"
     "../../include/mtt/clPipeline/MeshTechniques/ModelTechniquesFactory.h"
@@ -53,12 +59,15 @@ set(HEADERS
     "../../include/mtt/clPipeline/RenderPass/SelectionPass.h"
     "../../include/mtt/clPipeline/RenderPass/ShadowmapPass.h"
 
-    "../../include/mtt/clPipeline/BackgroundDrawable.h"
     "../../include/mtt/clPipeline/ColorFrameBuilder.h"
     "../../include/mtt/clPipeline/constants.h"
     )
 
 set(SOURCES
+    "Background/Background.cpp"
+    "Background/BackgroundAreaModificator.cpp"
+    "Background/BackgroundDrawable.cpp"
+
     "Lighting/AbstractLightApplicator.cpp"
     "Lighting/AmbientLightApplicator.cpp"
     "Lighting/DirectLightApplicator.cpp"
@@ -66,6 +75,7 @@ set(SOURCES
     "Lighting/ShadowmapProvider.cpp"
 
     "MeshTechniques/EmissionTechnique.cpp"
+    "MeshTechniques/FLColorTechnique.cpp"
     "MeshTechniques/InstrumentalCompositeTechnique.cpp"
     "MeshTechniques/MeshCompositeColorTechnique.cpp"
     "MeshTechniques/ModelTechniquesFactory.cpp"
@@ -84,7 +94,6 @@ set(SOURCES
     "RenderPass/SelectionPass.cpp"
     "RenderPass/ShadowmapPass.cpp"
 
-    "BackgroundDrawable.cpp"
     "ColorFrameBuilder.cpp"
     )
 

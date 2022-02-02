@@ -1,5 +1,5 @@
 #include <mtt/clPipeline/MeshTechniques/TransparentProxyTechnique.h>
-#include <mtt/clPipeline/MeshTechniques/UnlightedColorTechnique.h>
+#include <mtt/clPipeline/MeshTechniques/FLColorTechnique.h>
 
 using namespace mtt;
 using namespace clPipeline;
@@ -14,9 +14,5 @@ TransparentProxyTechnique::TransparentProxyTechnique(
 std::unique_ptr<AbstractMeshTechnique>
             TransparentProxyTechnique::createTechnique(AreaModificatorSet& set)
 {
-  return std::make_unique<UnlightedColorTechnique>(
-                                                true,
-                                                true,
-                                                VK_COMPARE_OP_GREATER_OR_EQUAL,
-                                                _topology);
+  return std::make_unique<FLColorTechnique>(set, _topology);
 }

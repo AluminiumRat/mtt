@@ -17,16 +17,16 @@ AbstractObjectRenderObserver::AbstractObjectRenderObserver(
   connect(&_object,
           &Object3D::completeVisibleChanged,
           this,
-          &AbstractObjectRenderObserver::_updateVisible,
+          &AbstractObjectRenderObserver::updateVisible,
           Qt::DirectConnection);
-  _updateVisible(_object.completeVisible());
+  updateVisible(_object.completeVisible());
 
   connect(&_commonData,
           &EditorCommonData::selectedObjectsChanged,
           this,
-          &AbstractObjectRenderObserver::_updateSelected,
+          &AbstractObjectRenderObserver::updateSelected,
           Qt::DirectConnection);
-  _updateSelected(_commonData.selectedObjects());
+  updateSelected(_commonData.selectedObjects());
 }
 
 void AbstractObjectRenderObserver::registerCulledDrawable(
@@ -122,7 +122,7 @@ void AbstractObjectRenderObserver::unregisterAreaModificator(
   emit areaModificatorUnregistered(modificator);
 }
 
-void AbstractObjectRenderObserver::_updateSelected(
+void AbstractObjectRenderObserver::updateSelected(
                               const std::vector<mtt::Object*>& objects) noexcept
 {
   for(mtt::Object* object : objects)
@@ -136,7 +136,7 @@ void AbstractObjectRenderObserver::_updateSelected(
   _selectionModificator.setSelected(false);
 }
 
-void AbstractObjectRenderObserver::_updateVisible(bool newVisible)
+void AbstractObjectRenderObserver::updateVisible(bool newVisible) noexcept
 {
   _visibleFilter.setVisible(newVisible);
 }
