@@ -9,7 +9,7 @@ DrawBin::DrawBin(ActionMemoryPool& memoryPool) :
 {
 }
 
-void DrawBin::scheduleDraw(DrawContext& drawContext)
+void DrawBin::execute(DrawContext& drawContext)
 {
   std::sort(_queue.begin(),
             _queue.end(),
@@ -20,6 +20,6 @@ void DrawBin::scheduleDraw(DrawContext& drawContext)
 
   for(ActionRecord& record : _queue)
   {
-    record.action->schedule(drawContext);
+    record.action->execute(drawContext);
   }
 }

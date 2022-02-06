@@ -24,7 +24,7 @@ void GeneralRenderPass::scheduleRender( AbstractFramePlan& plan,
           Abort("GeneralRenderPass::scheduleRender: render bin is not supported.");
         }
 
-        renderBin->scheduleDraw(context);
+        renderBin->execute(context);
       }
     };
 

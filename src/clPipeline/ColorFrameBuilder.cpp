@@ -343,7 +343,7 @@ void ColorFrameBuilder::scheduleRender( AbstractFramePlan& plan,
 
   DrawBin* modificatorsPrepareBin = plan.getBin(modificatorsPrepareStage);
   if(modificatorsPrepareBin == nullptr) Abort("ColorFrameBuilder::scheduleRender: modificatorsPrepareBin is null.");
-  modificatorsPrepareBin->scheduleDraw(drawContext);
+  modificatorsPrepareBin->execute(drawContext);
 
   drawContext.frameBuffer = frame.geometryPassFrameBuffer.get();
   _gBufferPass->scheduleRender(plan, drawContext);

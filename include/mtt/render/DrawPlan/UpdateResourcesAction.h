@@ -15,7 +15,7 @@ namespace mtt
     UpdateResourcesAction& operator = (const UpdateResourcesAction&) = delete;
     virtual ~UpdateResourcesAction() noexcept = default;
 
-    inline virtual void schedule(DrawContext& context) override;
+    inline virtual void execute(DrawContext& context) override;
 
   private:
     MultipleResourceSetter<ResourceSetterParams...> _resourceSetter;
@@ -30,7 +30,7 @@ namespace mtt
   }
 
   template <typename... ResourceSetterParams>
-  inline void UpdateResourcesAction<ResourceSetterParams...>::schedule(
+  inline void UpdateResourcesAction<ResourceSetterParams...>::execute(
                                                           DrawContext& context)
   {
     _resourceSetter.setup(context);

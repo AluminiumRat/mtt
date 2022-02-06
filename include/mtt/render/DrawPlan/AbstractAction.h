@@ -12,6 +12,6 @@ namespace mtt
     AbstractAction& operator = (const AbstractAction&) = delete;
     virtual ~AbstractAction() noexcept = default;
 
-    virtual void schedule(DrawContext& context) = 0;
+    virtual void execute(DrawContext& context) = 0;
   };
 }

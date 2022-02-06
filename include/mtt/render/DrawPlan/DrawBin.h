@@ -22,7 +22,7 @@ namespace mtt
 		inline bool empty() const noexcept;
 		inline void clear() noexcept;
 
-		void scheduleDraw(DrawContext& drawContext);
+		void execute(DrawContext& drawContext);
 
 	private:
 		struct ActionRecord

@@ -25,7 +25,7 @@ namespace mtt
     DrawMeshAction& operator = (const DrawMeshAction&) = delete;
     virtual ~DrawMeshAction() noexcept = default;
 
-    inline virtual void schedule(DrawContext& context) override;
+    inline virtual void execute(DrawContext& context) override;
 
   private:
     GraphicsPipeline& _pipeline;
@@ -53,7 +53,7 @@ namespace mtt
   }
 
   template <typename... ResourceSetterParams>
-  inline void DrawMeshAction<ResourceSetterParams...>::schedule(
+  inline void DrawMeshAction<ResourceSetterParams...>::execute(
                                                           DrawContext& context)
   {
     _resourceSetter.setup(context);
