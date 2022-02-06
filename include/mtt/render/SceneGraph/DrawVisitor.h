@@ -1,10 +1,14 @@
 #pragma once
 
+#include <set>
+
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
 #include <mtt/render/SceneGraph/AbstractField.h>
 
 namespace mtt
 {
+  class AreaModificator;
+
   class DrawVisitor : public AbstractField::Visitor
   {
   public:
@@ -20,5 +24,6 @@ namespace mtt
   private:
     DrawPlanBuildInfo& _buildInfo;
     ViewFrustum _localFrustum;
+    std::set<AreaModificator*> _modificators;
   };
 }

@@ -14,10 +14,15 @@ DrawVisitor::DrawVisitor(DrawPlanBuildInfo& buildInfo) :
 
 void DrawVisitor::startPass()
 {
+  _modificators.clear();
 }
 
 void DrawVisitor::finishPass()
 {
+  for (AreaModificator* modificator : _modificators)
+  {
+    modificator->addToDrawPlan(_buildInfo);
+  }
 }
 
 void DrawVisitor::visit(const FieldArea& area)
@@ -31,7 +36,7 @@ void DrawVisitor::visit(const FieldArea& area)
   {
     for (AreaModificator* modificator : area.modificators()->modificators())
     {
-      modificator->addToDrawPlan(_buildInfo);
+      _modificators.insert(modificator);
     }
   }
 
