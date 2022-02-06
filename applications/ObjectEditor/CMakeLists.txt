@@ -96,7 +96,6 @@ set(HEADERS
 
     "include/Render/AbstractLightRenderObserver.h"
     "include/Render/AbstractObjectRenderObserver.h"
-    "include/Render/AmbientLightRenderObserver.h"
     "include/Render/BackgroundObserver.h"
     "include/Render/BonesObserver.h"
     "include/Render/CubemapObserver.h"
@@ -107,6 +106,8 @@ set(HEADERS
     "include/Render/LODRenderObserver.h"
     "include/Render/MaterialObserver.h"
     "include/Render/MeshRenderObserver.h"
+    "include/Render/NewAbstractLightRenderObserver.h"
+    "include/Render/NewAmbientLightRenderObserver.h"
     "include/Render/Object3DRenderObserver.h"
     "include/Render/SceneRenderObserver.h"
     "include/Render/SkeletonRenderObserver.h"
@@ -202,7 +203,6 @@ set(SOURCES
 
     "src/Render/AbstractLightRenderObserver.cpp"
     "src/Render/AbstractObjectRenderObserver.cpp"
-    "src/Render/AmbientLightRenderObserver.cpp"
     "src/Render/BackgroundObserver.cpp"
     "src/Render/BonesObserver.cpp"
     "src/Render/CubemapObserver.cpp"
@@ -213,6 +213,8 @@ set(SOURCES
     "src/Render/LODRenderObserver.cpp"
     "src/Render/MaterialObserver.cpp"
     "src/Render/MeshRenderObserver.cpp"
+    "src/Render/NewAbstractLightRenderObserver.cpp"
+    "src/Render/NewAmbientLightRenderObserver.cpp"
     "src/Render/Object3DRenderObserver.cpp"
     "src/Render/SceneRenderObserver.cpp"
     "src/Render/SkeletonRenderObserver.cpp"

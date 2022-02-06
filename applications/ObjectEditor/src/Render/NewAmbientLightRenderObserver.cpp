@@ -6,7 +6,7 @@
 #include <mtt/render/Pipeline/Buffer.h>
 
 #include <Objects/AmbientLightObject.h>
-#include <Render/AmbientLightRenderObserver.h>
+#include <Render/NewAmbientLightRenderObserver.h>
 #include <EditorApplication.h>
 #include <EditorCommonData.h>
 
@@ -15,13 +15,13 @@
 
 #define CYRCLE_SEGMENTS 32
 
-AmbientLightRenderObserver::AmbientLightRenderObserver(
+NewAmbientLightRenderObserver::NewAmbientLightRenderObserver(
                                                 AmbientLightObject& object,
                                                 EditorCommonData& commonData) :
-  AbstractLightRenderObserver(object, commonData),
+  NewAbstractLightRenderObserver(object, commonData),
   _lightObject(object),
-  _lightDrawable(EditorApplication::instance().displayDevice()),
-  _cubemapObserver(object.ambientMap()),
+  _light(EditorApplication::instance().displayDevice()),
+  _cubemapObserver(_lightObject.ambientMap()),
   _sphereMesh(EditorApplication::instance().displayDevice()),
   _iconNode(ICON_FILE, ICON_SIZE)
 {
@@ -56,6 +56,8 @@ AmbientLightRenderObserver::AmbientLightRenderObserver(
   _sphereNode.addModificator(uidSetter());
   _sphereNode.addModificator(selectionModificator());
 
+  setLightObject(_light);
+
   _cubemapObserver.setCallback(
     [&](std::shared_ptr<mtt::CubeTexture> environmentMap)
     {
@@ -69,38 +71,60 @@ AmbientLightRenderObserver::AmbientLightRenderObserver(
         diffuseLuminanceMap->buildDiffuseLuminanceMap(environmentMap,
                                                       luminanceMapExtent);
       }
-      _lightDrawable.setDiffuseLuminanceMap(diffuseLuminanceMap);
-      _lightDrawable.setAmbientMap(environmentMap);
+      _light.setDiffuseLuminanceMap(diffuseLuminanceMap);
+      _light.setAmbientMap(environmentMap);
     });
 
-  setApplicator(_lightDrawable);
+  connect(&_lightObject,
+          &AmbientLightObject::baseIlluminanceChanged,
+          this,
+          &NewAmbientLightRenderObserver::_updateIlluminance,
+          Qt::DirectConnection);
+  connect(&_lightObject,
+          &AmbientLightObject::colorChanged,
+          this,
+          &NewAmbientLightRenderObserver::_updateIlluminance,
+          Qt::DirectConnection);
+  _updateIlluminance();
+
+  connect(&_lightObject,
+          &AmbientLightObject::distanceChanged,
+          this,
+          &NewAmbientLightRenderObserver::_updateDistance,
+          Qt::DirectConnection);
+  _updateDistance();
 
   connect(&_lightObject,
           &AmbientLightObject::saturationDistanceChanged,
           this,
-          &AmbientLightRenderObserver::_updateSaturationDistance,
+          &NewAmbientLightRenderObserver::_updateSaturationDistance,
           Qt::DirectConnection);
   _updateSaturationDistance();
 }
 
-void AmbientLightRenderObserver::updateBounding()
+void NewAmbientLightRenderObserver::_updateIlluminance() noexcept
 {
-  AbstractLightRenderObserver::updateBounding();
-  _sphereNode.setLocalBoundSphere(getBoundingSphere());
+  _light.setIlluminance(_lightObject.color() * _lightObject.baseIlluminance());
 }
 
-void AmbientLightRenderObserver::updateDistance() noexcept
+void NewAmbientLightRenderObserver::_updateDistance() noexcept
 {
-  AbstractLightRenderObserver::updateDistance();
-  _updateSphereMesh();
+  _light.setDistance(_lightObject.distance());
+  try
+  {
+    _updateSphereMesh();
+  }
+  catch (std::exception& error)
+  {
+    mtt::Log() << "NewAmbientLightRenderObserver::_updateDistance: unable to update sphere mesh: " << error.what();
+  }
+  catch (...)
+  {
+    mtt::Log() << "NewAmbientLightRenderObserver::_updateDistance: unable to update sphere mesh: unknown error.";
+  }
 }
 
-void AmbientLightRenderObserver::_updateSaturationDistance() noexcept
-{
-  _lightDrawable.setSaturationDistance(_lightObject.saturationDistance());
-}
-
-void AmbientLightRenderObserver::_updateSphereMesh() noexcept
+void NewAmbientLightRenderObserver::_updateSphereMesh()
 {
   std::vector<glm::vec3> vertices;
   vertices.reserve(CYRCLE_SEGMENTS * 2 * 3);
@@ -145,4 +169,12 @@ void AmbientLightRenderObserver::_updateSphereMesh() noexcept
                             vertices.size() * sizeof(glm::vec3));
   _sphereMesh.setPositionBuffer(positionsBuffer);
   _sphereMesh.setVerticesNumber(uint32_t(vertices.size()));
+
+  _sphereNode.setLocalBoundSphere(mtt::Sphere(glm::vec3(0.f),
+                                              _lightObject.distance()));
+}
+
+void NewAmbientLightRenderObserver::_updateSaturationDistance() noexcept
+{
+  _light.setSaturationDistance(_lightObject.saturationDistance());
 }

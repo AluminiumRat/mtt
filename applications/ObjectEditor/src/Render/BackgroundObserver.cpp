@@ -13,6 +13,7 @@ BackgroundObserver::BackgroundObserver( BackgroundObject& object,
   Object3DRenderObserver(object, commonData),
   _object(object),
   _backgroundRenderer(mtt::Application::instance().displayDevice()),
+  _lightDrawable(nullptr),
   _cubemapObserver(object.cubemap())
 {
   connect(&_object,
@@ -63,10 +64,6 @@ BackgroundObserver::BackgroundObserver( BackgroundObject& object,
 
   positionRotateJoint().addChild(_backgroundRenderer.areaModificator());
   _updateAreaModificator();
-
-  positionRotateJoint().addChild(_lightDrawableNode);
-  _lightDrawableNode.addModificator(visibleFilter());
-  registerUnculledDrawable(_lightDrawableNode);
 }
 
 void BackgroundObserver::updateVisible(bool newVisible) noexcept
@@ -102,7 +99,7 @@ void BackgroundObserver::_updateLuminanceTexture() noexcept
 {
   _backgroundRenderer.setLuminanceTexture(_luminanceTexture);
 
-  if(_lightDrawable.has_value())
+  if(_light.has_value())
   {
     try
     {
@@ -116,8 +113,8 @@ void BackgroundObserver::_updateLuminanceTexture() noexcept
         diffuseLuminanceMap->buildDiffuseLuminanceMap(_luminanceTexture,
                                                       luminanceMapExtent);
       }
-      _lightDrawable->setDiffuseLuminanceMap(diffuseLuminanceMap);
-      _lightDrawable->setAmbientMap(_luminanceTexture);
+      _light->setDiffuseLuminanceMap(diffuseLuminanceMap);
+      _light->setAmbientMap(_luminanceTexture);
     }
     catch (std::exception& error)
     {
@@ -132,16 +129,24 @@ void BackgroundObserver::_updateLuminanceTexture() noexcept
 
 void BackgroundObserver::_updateLightDrawable() noexcept
 {
-  _lightDrawableNode.setDrawable(nullptr, mtt::Sphere());
-  _lightDrawable.reset();
+  unregisterUnculledDrawable(*_lightDrawable);
+  _lightDrawable = nullptr;
+  _light.reset();
 
   if(_object.lightEnabled())
   {
     try
     {
-      _lightDrawable.emplace(mtt::Application::instance().displayDevice());
-      _lightDrawable->setInfinityAreaMode(true);
-      _lightDrawableNode.setDrawable(&_lightDrawable.value(), mtt::Sphere());
+      _light.emplace(mtt::Application::instance().displayDevice());
+      _light->setInfinityAreaMode(true);
+
+      _lightDrawable = _light->defferedLightApplicator();
+      if(_lightDrawable != nullptr)
+      {
+        positionRotateJoint().addChild(*_lightDrawable);
+        _lightDrawable->addModificator(visibleFilter());
+        registerUnculledDrawable(*_lightDrawable);
+      }
 
       _updateLuminance();
       _updateLuminanceTexture();
@@ -161,9 +166,9 @@ void BackgroundObserver::_updateLuminance() noexcept
 {
   glm::vec3 newLuminance = _object.color() * _object.luminance();
   _backgroundRenderer.setLuminance(newLuminance);
-  if(_lightDrawable.has_value())
+  if(_light.has_value())
   {
-    _lightDrawable->setIlluminance(glm::pi<float>() * newLuminance);
+    _light->setIlluminance(glm::pi<float>() * newLuminance);
   }
 }
 

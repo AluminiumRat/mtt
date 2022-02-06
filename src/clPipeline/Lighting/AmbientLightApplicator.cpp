@@ -78,10 +78,10 @@ void AmbientLightApplicator::DrawTechnique::_adjustPipeline(
       pipeline.setDefine("AMBIENT_MAP_ENABLED");
     }
 
-    if(_parent._luminanceMapSampler.attachedTexture(0) != nullptr)
+    if(_parent._diffuseLuminanceSampler.attachedTexture(0) != nullptr)
     {
       pipeline.addResource( "diffuseLuminanceMapBinding",
-                            _parent._luminanceMapSampler,
+                            _parent._diffuseLuminanceSampler,
                             VK_SHADER_STAGE_FRAGMENT_BIT);
       pipeline.setDefine("DIFFUSE_LUMINANCE_MAP_ENABLED");
     }
@@ -90,14 +90,16 @@ void AmbientLightApplicator::DrawTechnique::_adjustPipeline(
   std::unique_ptr<ShaderModule> vertexShader(
                                   new ShaderModule( ShaderModule::VERTEX_SHADER,
                                                     pipeline.device()));
-  vertexShader->newFragment().loadFromFile("clPipeline/ambientLight.vert");
+  vertexShader->newFragment().loadFromFile(
+                                        "clPipeline/ambientLightDrawable.vert");
   pipeline.addShader(std::move(vertexShader));
 
   std::unique_ptr<ShaderModule> fragmentShader(
                                 new ShaderModule( ShaderModule::FRAGMENT_SHADER,
                                                   pipeline.device()));
   fragmentShader->newFragment().loadFromFile("clPipeline/materialLib.frag");
-  fragmentShader->newFragment().loadFromFile("clPipeline/ambientLight.frag");
+  fragmentShader->newFragment().loadFromFile(
+                                        "clPipeline/ambientLightDrawable.frag");
   pipeline.addShader(std::move(fragmentShader));
 
   if(_weightRender) pipeline.setDefine("WEIGHT_RENDER");
@@ -115,7 +117,7 @@ void AmbientLightApplicator::DrawTechnique::_adjustPipeline(
     _pipeline->setTopology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
   }
 
-  if(_parent._infinityAreaMode) _pipeline->setDefine("INFINITY_AREA");
+  if(_parent._lightData.infinityAreaMode) _pipeline->setDefine("INFINITY_AREA");
 }
 
 void AmbientLightApplicator::DrawTechnique::addToDrawPlan(
@@ -133,13 +135,10 @@ void AmbientLightApplicator::DrawTechnique::addToDrawPlan(
 
   uint32_t pointsNumber = _fullScreenRender ? 4 : 36;
 
-  LightData lightData;
-  lightData.illuminance = _parent.baseIlluminance();
+  AmbientLightDrawData lightData;
+  static_cast<AmbientLightData&>(lightData) = _parent._lightData;
   lightData.position =
               buildInfo.drawMatrices.localToViewMatrix * glm::vec4(0, 0, 0, 1);
-  lightData.distance = _parent.distance();
-  lightData.saturationDistance = std::min(_parent.saturationDistance(),
-                                          _parent.distance());
   lightData.clipToView = buildInfo.drawMatrices.clipToViewMatrix;
   lightData.viewToLocal =
                         glm::inverse(buildInfo.drawMatrices.localToViewMatrix);
@@ -155,13 +154,13 @@ void AmbientLightApplicator::DrawTechnique::addToDrawPlan(
 }
 
 void AmbientLightApplicator::DrawTechnique::_makeWeightAction(
-                                                  DrawPlanBuildInfo& buildInfo,
-                                                  DrawBin& renderBin,
-                                                  uint32_t pointsNumber,
-                                                  const LightData& lightData)
+                                          DrawPlanBuildInfo& buildInfo,
+                                          DrawBin& renderBin,
+                                          uint32_t pointsNumber,
+                                          const AmbientLightDrawData& lightData)
 {
-  using DrawAction = DrawMeshAction<VolatileUniform<LightData>,
-                                    LightData,
+  using DrawAction = DrawMeshAction<VolatileUniform<AmbientLightDrawData>,
+                                    AmbientLightDrawData,
                                     VolatileUniform<DrawMatrices>,
                                     DrawMatrices,
                                     Texture2D,
@@ -181,13 +180,13 @@ void AmbientLightApplicator::DrawTechnique::_makeWeightAction(
 }
 
 void AmbientLightApplicator::DrawTechnique::_makeApplyAction(
-                                                  DrawPlanBuildInfo& buildInfo,
-                                                  DrawBin& renderBin,
-                                                  uint32_t pointsNumber,
-                                                  const LightData& lightData)
+                                          DrawPlanBuildInfo& buildInfo,
+                                          DrawBin& renderBin,
+                                          uint32_t pointsNumber,
+                                          const AmbientLightDrawData& lightData)
 {
-  using DrawAction = DrawMeshAction<VolatileUniform<LightData>,
-                                    LightData,
+  using DrawAction = DrawMeshAction<VolatileUniform<AmbientLightDrawData>,
+                                    AmbientLightDrawData,
                                     VolatileUniform<DrawMatrices>,
                                     DrawMatrices,
                                     Texture2D,
@@ -221,10 +220,13 @@ void AmbientLightApplicator::DrawTechnique::_makeApplyAction(
                                       LightingPass::specularSamplerMapIndex);
 }
 
-AmbientLightApplicator::AmbientLightApplicator(LogicalDevice& device) :
+AmbientLightApplicator::AmbientLightApplicator(
+                                              AmbientLightData& lightData,
+                                              Sampler& ambientMapSampler,
+                                              Sampler& diffuseLuminanceSampler,
+                                              LogicalDevice& device) :
   _device(device),
-  _infinityAreaMode(false),
-  _saturationDistance(0.f),
+  _lightData(lightData),
   _weightMapSampler(PipelineResource::VOLATILE, device),
   _weightTexture(nullptr),
   _depthMapSampler(PipelineResource::VOLATILE, device),
@@ -235,10 +237,8 @@ AmbientLightApplicator::AmbientLightApplicator(LogicalDevice& device) :
   _albedoTexture(nullptr),
   _specularMapSampler(PipelineResource::VOLATILE, device),
   _specularTexture(nullptr),
-  _ambientMapSampler(PipelineResource::STATIC, device),
-  _ambientMap(nullptr),
-  _luminanceMapSampler(PipelineResource::STATIC, device),
-  _diffuseLuminanceMap(nullptr)
+  _ambientMapSampler(ambientMapSampler),
+  _diffuseLuminanceSampler(diffuseLuminanceSampler)
 {
   std::shared_ptr<Texture2D> weightTexture =
                                             std::make_shared<Texture2D>(device);
@@ -277,7 +277,12 @@ AmbientLightApplicator::AmbientLightApplicator(LogicalDevice& device) :
                           std::make_unique<DrawTechnique>(false, true, *this);
 }
 
-void AmbientLightApplicator::_invalidateTechniques() noexcept
+void AmbientLightApplicator::updateBound() noexcept
+{
+  setLocalBoundSphere(Sphere(glm::vec3(0.f), _lightData.distance));
+}
+
+void AmbientLightApplicator::resetPipelines() noexcept
 {
   _techniques.shapeSet.weightTechnique->invalidate();
   _techniques.shapeSet.applyTechnique->invalidate();
@@ -286,29 +291,12 @@ void AmbientLightApplicator::_invalidateTechniques() noexcept
   _techniques.fullscreenSet.applyTechnique->invalidate();
 }
 
-void AmbientLightApplicator::setAmbientMap(std::shared_ptr<CubeTexture> newMap)
-{
-  if(newMap.get() == _ambientMap) return;
-  _ambientMap = newMap.get();
-  _ambientMapSampler.setAttachedTexture(std::move(newMap), 0);
-  _invalidateTechniques();
-}
-
-void AmbientLightApplicator::setDiffuseLuminanceMap(
-                                            std::shared_ptr<CubeTexture> newMap)
-{
-  if(newMap.get() == _diffuseLuminanceMap) return;
-  _diffuseLuminanceMap = newMap.get();
-  _luminanceMapSampler.setAttachedTexture(std::move(newMap), 0);
-  _invalidateTechniques();
-}
-
 bool AmbientLightApplicator::_fullscreen(
                               const DrawPlanBuildInfo& buildInfo) const noexcept
 {
-  if(_infinityAreaMode) return true;
+  if(_lightData.infinityAreaMode) return true;
 
-  Sphere boundSphere(glm::vec3(0.f, 0.f, 0.f), distance() * sqrt(3.f));
+  Sphere boundSphere(glm::vec3(0.f, 0.f, 0.f), _lightData.distance * sqrt(3.f));
   boundSphere.translate(buildInfo.drawMatrices.localToViewMatrix);
 
   const Plane& nearPlane = buildInfo.viewFrustum.face(ViewFrustum::FACE_NEAR);
@@ -324,7 +312,7 @@ void AmbientLightApplicator::buildDrawActions(DrawPlanBuildInfo& buildInfo)
                                                     _techniques.fullscreenSet :
                                                     _techniques.shapeSet;
 
-  if(!_infinityAreaMode)
+  if(!_lightData.infinityAreaMode)
   {
     techniquesSet.weightTechnique->addToDrawPlan(buildInfo);
   }

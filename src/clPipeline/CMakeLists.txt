@@ -33,8 +33,12 @@ set(HEADERS
     "../../include/mtt/clPipeline/Background/BackgroundDrawable.h"
     "../../include/mtt/clPipeline/Background/BackgroundProperties.h"
 
+    "../../include/mtt/clPipeline/Lighting/AbstractLight.h"
+    "../../include/mtt/clPipeline/Lighting/AmbientLight.h"
     "../../include/mtt/clPipeline/Lighting/AbstractLightApplicator.h"
     "../../include/mtt/clPipeline/Lighting/AmbientLightApplicator.h"
+    "../../include/mtt/clPipeline/Lighting/AmbientLightAreaModificator.h"
+    "../../include/mtt/clPipeline/Lighting/AmbientLightData.h"
     "../../include/mtt/clPipeline/Lighting/DirectLightApplicator.h"
     "../../include/mtt/clPipeline/Lighting/ShadowmapBuilder.h"
     "../../include/mtt/clPipeline/Lighting/ShadowmapProvider.h"
@@ -69,7 +73,9 @@ set(SOURCES
     "Background/BackgroundDrawable.cpp"
 
     "Lighting/AbstractLightApplicator.cpp"
+    "Lighting/AmbientLight.cpp"
     "Lighting/AmbientLightApplicator.cpp"
+    "Lighting/AmbientLightAreaModificator.cpp"
     "Lighting/DirectLightApplicator.cpp"
     "Lighting/ShadowmapBuilder.cpp"
     "Lighting/ShadowmapProvider.cpp"

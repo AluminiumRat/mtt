@@ -6,13 +6,13 @@
 
 #include <glm/vec3.hpp>
 
-#include <mtt/clPipeline/Lighting/AbstractLightApplicator.h>
+#include <mtt/clPipeline/Lighting/AmbientLightData.h>
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
 #include <mtt/render/Pipeline/GraphicsPipeline.h>
 #include <mtt/render/Pipeline/Sampler.h>
-#include <mtt/render/Pipeline/CubeTexture.h>
 #include <mtt/render/Pipeline/Texture2D.h>
 #include <mtt/render/Pipeline/VolatileUniform.h>
+#include <mtt/render/SceneGraph/DrawableNode.h>
 
 namespace mtt
 {
@@ -20,41 +20,25 @@ namespace mtt
 
   namespace clPipeline
   {
-    class AmbientLightApplicator : public AbstractLightApplicator
+    class AmbientLightApplicator : public DrawableNode
     {
     public:
-      explicit AmbientLightApplicator(LogicalDevice& device);
+      explicit AmbientLightApplicator(AmbientLightData& lightData,
+                                      Sampler& ambientMapSampler,
+                                      Sampler& diffuseLuminanceSampler,
+                                      LogicalDevice& device);
       AmbientLightApplicator(const AmbientLightApplicator&) = delete;
       AmbientLightApplicator& operator = (
                                         const AmbientLightApplicator&) = delete;
       virtual ~AmbientLightApplicator() = default;
 
-      inline bool infinityAreaMode() const noexcept;
-      inline void setInfinityAreaMode(bool newValue) noexcept;
-
-      inline float saturationDistance() const noexcept;
-      inline void setSaturationDistance(float newValue) noexcept;
-
-      inline CubeTexture* ambientMap() const noexcept;
-      void setAmbientMap(std::shared_ptr<CubeTexture> newMap);
-
-      inline CubeTexture* diffuseLuminanceMap() const noexcept;
-      void setDiffuseLuminanceMap(std::shared_ptr<CubeTexture> newMap);
+      void resetPipelines() noexcept;
+      void updateBound() noexcept;
 
     protected:
       virtual void buildDrawActions(DrawPlanBuildInfo& buildInfo) override;
 
     private:
-      struct LightData
-      {
-        alignas(16) glm::vec3 illuminance;
-        alignas(16) glm::vec3 position;
-        alignas(4) float distance;
-        alignas(4) float saturationDistance;
-        alignas(16) glm::mat4 clipToView;
-        alignas(16) glm::mat4 viewToLocal;
-      };
-
       class DrawTechnique
       {
       public:
@@ -69,6 +53,8 @@ namespace mtt
 
         void addToDrawPlan(DrawPlanBuildInfo& buildInfo);
 
+        void resetPipelines() noexcept;
+
       private:
         void _rebuildPipeline(AbstractRenderPass& renderPass, StageIndex stage);
         void _adjustPipeline(GraphicsPipeline& pipeline);
@@ -76,12 +62,12 @@ namespace mtt
         void _makeApplyAction(DrawPlanBuildInfo& buildInfo,
                               DrawBin& renderBin,
                               uint32_t pointsNumber,
-                              const LightData& lightData);
+                              const AmbientLightDrawData& lightData);
 
         void _makeWeightAction( DrawPlanBuildInfo& buildInfo,
                                 DrawBin& renderBin,
                                 uint32_t pointsNumber,
-                                const LightData& lightData);
+                                const AmbientLightDrawData& lightData);
       private:
         std::optional<GraphicsPipeline> _pipeline;
 
@@ -93,15 +79,13 @@ namespace mtt
 
     private:
       bool _fullscreen(const DrawPlanBuildInfo& buildInfo) const noexcept;
-      void _invalidateTechniques() noexcept;
 
     private:
       LogicalDevice& _device;
 
-      bool _infinityAreaMode;
-      float _saturationDistance;
+      AmbientLightData& _lightData;
 
-      VolatileUniform<LightData> _lightDataUniform;
+      VolatileUniform<AmbientLightDrawData> _lightDataUniform;
       VolatileUniform<DrawMatrices> _matricesUniform;
 
       Sampler _weightMapSampler;
@@ -119,11 +103,8 @@ namespace mtt
       Sampler _specularMapSampler;
       Texture2D* _specularTexture;
 
-      Sampler _ambientMapSampler;
-      CubeTexture* _ambientMap;
-
-      Sampler _luminanceMapSampler;
-      CubeTexture* _diffuseLuminanceMap;
+      Sampler& _ambientMapSampler;
+      Sampler& _diffuseLuminanceSampler;
 
       struct TechniquesCollection
       {
@@ -138,40 +119,5 @@ namespace mtt
       };
       TechniquesCollection _techniques;
     };
-
-    inline bool AmbientLightApplicator::infinityAreaMode() const noexcept
-    {
-      return _infinityAreaMode;
-    }
-
-    inline void AmbientLightApplicator::setInfinityAreaMode(
-                                                        bool newValue) noexcept
-    {
-      if(_infinityAreaMode == newValue) return;
-      _infinityAreaMode = newValue;
-      _invalidateTechniques();
-    }
-
-    inline float AmbientLightApplicator::saturationDistance() const noexcept
-    {
-      return _saturationDistance;
-    }
-
-    inline void AmbientLightApplicator::setSaturationDistance(
-                                                        float newValue) noexcept
-    {
-      _saturationDistance = newValue;
-    }
-
-    inline CubeTexture* AmbientLightApplicator::ambientMap() const noexcept
-    {
-      return _ambientMap;
-    }
-
-    inline CubeTexture*
-                    AmbientLightApplicator::diffuseLuminanceMap() const noexcept
-    {
-      return _diffuseLuminanceMap;
-    }
   }
 }

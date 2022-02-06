@@ -1,4 +1,5 @@
 #include <mtt/clPipeline/Background/BackgroundAreaModificator.h>
+#include <mtt/clPipeline/Lighting/AmbientLightAreaModificator.h>
 #include <mtt/clPipeline/MeshTechniques/FLColorTechnique.h>
 #include <mtt/clPipeline/constants.h>
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
@@ -8,9 +9,12 @@ using namespace mtt::clPipeline;
 
 FLColorTechnique::FLColorTechnique( AreaModificatorSet& modificatorSet,
                                     VkPrimitiveTopology topology) :
-  BaseGeometryTechnique(MATERIAL_FEATURE |
+  BaseGeometryTechnique(NORMALS_FEATURE |
+                          MATERIAL_FEATURE |
                           TEX_COORDS_FEATURE |
                           ALBEDO_SAMPLER_FEATURE |
+                          SPECULAR_SAMPLER_FEATURE |
+                          NORMAL_SAMPLER_FEATURE |
                           OPAQUE_SAMPLER_FEATURE |
                           EMISSION_SAMPLER_FEATURE |
                           REFLECTION_SAMPLER_FEATURE |
@@ -23,7 +27,8 @@ FLColorTechnique::FLColorTechnique( AreaModificatorSet& modificatorSet,
 {
   for (AreaModificator* modificator : _modificators.modificators())
   {
-    if(modificator->type() == BackgroundAreaModificator::typeIndex)
+    if( modificator->type() == BackgroundAreaModificator::typeIndex ||
+        modificator->type() == AmbientLightAreaModificator::typeIndex)
     {
       modificator->addConsumer(*this);
     }
@@ -34,7 +39,8 @@ FLColorTechnique::~FLColorTechnique()  noexcept
 {
   for (AreaModificator* modificator : _modificators.modificators())
   {
-    if (modificator->type() == BackgroundAreaModificator::typeIndex)
+    if (modificator->type() == BackgroundAreaModificator::typeIndex ||
+        modificator->type() == AmbientLightAreaModificator::typeIndex)
     {
       modificator->removeConsumer(*this);
     }
@@ -58,9 +64,12 @@ void FLColorTechnique::adjustPipeline(GraphicsPipeline& pipeline,
   std::unique_ptr<ShaderModule> fragmentShader(
                                 new ShaderModule( ShaderModule::FRAGMENT_SHADER,
                                                   renderPass.device()));
+  fragmentShader->newFragment().loadFromFile("clPipeline/materialLib.frag");
   fragmentShader->newFragment().loadFromFile("clPipeline/meshFL.frag");
   fragmentShader->setDefine("MODIFICATOR_DECLARATION", "");
   fragmentShader->setDefine("APPLY_POSTEFFECT", "");
+  fragmentShader->setDefine("APPLY_AMBIENT_WEIGHT", "");
+  fragmentShader->setDefine("APPLY_LIGHT", "");
 
   for(size_t modificatorIndex = 0;
       modificatorIndex < _modificators.modificators().size();
@@ -75,6 +84,15 @@ void FLColorTechnique::adjustPipeline(GraphicsPipeline& pipeline,
       backgroundModificator.adjustPipeline( pipeline,
                                             *fragmentShader,
                                             modificatorIndex);
+    }
+
+    if(modificator.type() == AmbientLightAreaModificator::typeIndex)
+    {
+      AmbientLightAreaModificator& lightModificator =
+                        static_cast<AmbientLightAreaModificator&>(modificator);
+      lightModificator.adjustPipeline(pipeline,
+                                      *fragmentShader,
+                                      modificatorIndex);
     }
   }
 

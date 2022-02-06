@@ -2,13 +2,13 @@
 
 #include <glm/vec3.hpp>
 
-#include <mtt/render/Drawable/Drawable.h>
+#include <mtt/render/SceneGraph/DrawableNode.h>
 
 namespace mtt
 {
   namespace clPipeline
   {
-    class AbstractLightApplicator : public Drawable
+    class AbstractLightApplicator : public DrawableNode
     {
     public:
       AbstractLightApplicator();

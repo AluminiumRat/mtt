@@ -1,4 +1,4 @@
-//ambientLight.frag
+//ambientLightDrawable.frag
 
 layout(location = 0) in noperspective vec2 inClipCoord;
 
@@ -34,9 +34,10 @@ layout( binding = lightDataBinding,
         set = volatileSet) uniform LightData
 {
   vec3 illuminance;
-  vec3 position;
   float distance;
   float saturationDistance;
+  bool infArea;
+  vec3 position;
   mat4 clipToView;
   mat4 viewToLocal;
 } lightData;
@@ -51,6 +52,8 @@ layout( binding = lightDataBinding,
 #ifdef AMBIENT_MAP_ENABLED
   vec3 readAmbientMap(vec3 direction, float roughness)
   {
+    roughness = max(roughness, .001f);
+
     int sideSize = textureSize(ambientMap, 0).x;
     float pixelAngle = M_PI / 2.f / sideSize;
 
@@ -112,7 +115,7 @@ void main()
     #endif
 
     vec3 specular = texelFetch(specularMap, fragCoord, 0).xyz;
-    float roughness = max(specular.x, .001f);
+    float roughness = specular.x;
     float specularStrength = specular.y;
     float metallic = specular.z;
 

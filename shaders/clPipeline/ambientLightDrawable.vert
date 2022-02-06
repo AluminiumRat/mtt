@@ -1,4 +1,4 @@
-//ambientLight.vert
+//ambientLightDrawable.vert
 
 layout(location = 0) out noperspective vec2 outClipCoord;
 
@@ -66,9 +66,10 @@ layout(location = 0) out noperspective vec2 outClipCoord;
   layout(binding = lightDataBinding, set = volatileSet) uniform LightData
   {
     vec3 illuminance;
-    vec3 position;
     float distance;
     float saturationDistance;
+    bool infArea;
+    vec3 position;
     mat4 clipToView;
     mat3 viewToLocal;
   } lightData;

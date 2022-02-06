@@ -4,7 +4,7 @@
 #include <optional>
 
 #include <mtt/clPipeline/Background/Background.h>
-#include <mtt/clPipeline/Lighting/AmbientLightApplicator.h>
+#include <mtt/clPipeline/Lighting/AmbientLight.h>
 #include <mtt/render/Pipeline/CubeTexture.h>
 #include <mtt/render/SceneGraph/SimpleDrawableNode.h>
 
@@ -45,8 +45,8 @@ private:
   mtt::clPipeline::Background _backgroundRenderer;
   mtt::SimpleDrawableNode _backgroundDrawableNode;
 
-  std::optional<mtt::clPipeline::AmbientLightApplicator> _lightDrawable;
-  mtt::SimpleDrawableNode _lightDrawableNode;
+  std::optional<mtt::clPipeline::AmbientLight> _light;
+  mtt::DrawableNode* _lightDrawable;
 
   CubemapObserver _cubemapObserver;
 };
