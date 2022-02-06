@@ -14,14 +14,20 @@ BackgroundObserver::BackgroundObserver( BackgroundObject& object,
   _object(object),
   _backgroundRenderer(mtt::Application::instance().displayDevice()),
   _lightDrawable(nullptr),
+  _lightModificator(nullptr),
   _cubemapObserver(object.cubemap())
 {
   connect(&_object,
+          &BackgroundObject::visibleChanged,
+          this,
+          &BackgroundObserver::_updateLight,
+          Qt::DirectConnection);
+  connect(&_object,
           &BackgroundObject::lightEnabledChanged,
           this,
-          &BackgroundObserver::_updateLightDrawable,
+          &BackgroundObserver::_updateLight,
           Qt::DirectConnection);
-  _updateLightDrawable();
+  _updateLight();
 
   connect(&_object,
           &BackgroundObject::luminanceChanged,
@@ -127,13 +133,30 @@ void BackgroundObserver::_updateLuminanceTexture() noexcept
   }
 }
 
-void BackgroundObserver::_updateLightDrawable() noexcept
+void BackgroundObserver::_removeLight() noexcept
 {
-  unregisterUnculledDrawable(*_lightDrawable);
-  _lightDrawable = nullptr;
-  _light.reset();
+  if (_lightDrawable != nullptr)
+  {
+    unregisterUnculledDrawable(*_lightDrawable);
+    positionRotateJoint().removeChild(*_lightDrawable);
+    _lightDrawable = nullptr;
+  }
 
-  if(_object.lightEnabled())
+  if (_lightModificator != nullptr)
+  {
+    unregisterAreaModificator(*_lightModificator);
+    positionRotateJoint().removeChild(*_lightModificator);
+    _lightModificator = nullptr;
+  }
+
+  _light.reset();
+}
+
+void BackgroundObserver::_updateLight() noexcept
+{
+  _removeLight();
+
+  if(_object.visible() && _object.lightEnabled())
   {
     try
     {
@@ -144,8 +167,14 @@ void BackgroundObserver::_updateLightDrawable() noexcept
       if(_lightDrawable != nullptr)
       {
         positionRotateJoint().addChild(*_lightDrawable);
-        _lightDrawable->addModificator(visibleFilter());
         registerUnculledDrawable(*_lightDrawable);
+      }
+
+      _lightModificator = _light->forwardLightModificator();
+      if (_lightModificator != nullptr)
+      {
+        positionRotateJoint().addChild(*_lightModificator);
+        registerAreaModificator(*_lightModificator);
       }
 
       _updateLuminance();
@@ -153,10 +182,12 @@ void BackgroundObserver::_updateLightDrawable() noexcept
     }
     catch(std::exception& error)
     {
+      _removeLight();
       mtt::Log() << "BackgroundObserver::_updateLightDrawable: " << error.what();
     }
     catch(...)
     {
+      _removeLight();
       mtt::Log() << "BackgroundObserver::_updateLightDrawable: unknown error";
     }
   }

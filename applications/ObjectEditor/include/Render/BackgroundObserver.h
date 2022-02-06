@@ -7,6 +7,7 @@
 #include <mtt/clPipeline/Lighting/AmbientLight.h>
 #include <mtt/render/Pipeline/CubeTexture.h>
 #include <mtt/render/SceneGraph/SimpleDrawableNode.h>
+#include <mtt/render/SceneGraph/AreaModificator.h>
 
 #include <Render/Object3DRenderObserver.h>
 #include <Render/CubemapObserver.h>
@@ -34,7 +35,8 @@ private:
   void _updateLuminance() noexcept;
   void _updateDissolutionStartDistance() noexcept;
   void _updateDissolutionLength() noexcept;
-  void _updateLightDrawable() noexcept;
+  void _updateLight() noexcept;
+  void _removeLight() noexcept;
   void _updateLuminanceTexture() noexcept;
 
 private:
@@ -47,6 +49,7 @@ private:
 
   std::optional<mtt::clPipeline::AmbientLight> _light;
   mtt::DrawableNode* _lightDrawable;
+  mtt::AreaModificator* _lightModificator;
 
   CubemapObserver _cubemapObserver;
 };
