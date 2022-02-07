@@ -17,18 +17,17 @@ namespace mtt
 
 class LightObject;
 
-class NewAbstractLightRenderObserver : public Object3DRenderObserver
+class AbstractLightRenderObserver : public Object3DRenderObserver
 {
   Q_OBJECT
 
 public:
-  NewAbstractLightRenderObserver( LightObject& object,
-                                  EditorCommonData& commonData);
-  NewAbstractLightRenderObserver(
-                                const NewAbstractLightRenderObserver&) = delete;
-  NewAbstractLightRenderObserver& operator = (
-                                const NewAbstractLightRenderObserver&) = delete;
-  virtual ~NewAbstractLightRenderObserver() noexcept = default;
+  AbstractLightRenderObserver(LightObject& object,
+                              EditorCommonData& commonData);
+  AbstractLightRenderObserver(const AbstractLightRenderObserver&) = delete;
+  AbstractLightRenderObserver& operator = (
+                                  const AbstractLightRenderObserver&) = delete;
+  virtual ~AbstractLightRenderObserver() noexcept = default;
 
 protected:
   void setLightObject(mtt::clPipeline::AbstractLight& light);
@@ -48,7 +47,7 @@ private:
   mtt::AreaModificator* _forwardLightApplicator;
 };
 
-inline bool NewAbstractLightRenderObserver::infinityArea() const noexcept
+inline bool AbstractLightRenderObserver::infinityArea() const noexcept
 {
   return _infinityArea;
 }

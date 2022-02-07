@@ -7,22 +7,22 @@
 #include <mtt/render/Mesh/Mesh.h>
 #include <mtt/render/SceneGraph/SimpleDrawableNode.h>
 
-#include <Render/NewAbstractLightRenderObserver.h>
+#include <Render/AbstractLightRenderObserver.h>
 #include <Render/IconDrawableNode.h>
 
 class DirectLightObject;
 
-class NewDirectLightRenderObserver : public NewAbstractLightRenderObserver
+class DirectLightRenderObserver : public AbstractLightRenderObserver
 {
   Q_OBJECT
 
 public:
-  NewDirectLightRenderObserver( DirectLightObject& object,
-                                EditorCommonData& commonData);
-  NewDirectLightRenderObserver(const NewDirectLightRenderObserver&) = delete;
-  NewDirectLightRenderObserver& operator = (
-                                  const NewDirectLightRenderObserver&) = delete;
-  virtual ~NewDirectLightRenderObserver() noexcept = default;
+  DirectLightRenderObserver(DirectLightObject& object,
+                            EditorCommonData& commonData);
+  DirectLightRenderObserver(const DirectLightRenderObserver&) = delete;
+  DirectLightRenderObserver& operator = (
+                                    const DirectLightRenderObserver&) = delete;
+  virtual ~DirectLightRenderObserver() noexcept = default;
 
 private:
   void _updateIlluminance() noexcept;

@@ -4,23 +4,23 @@
 #include <mtt/render/Mesh/Mesh.h>
 #include <mtt/render/SceneGraph/SimpleDrawableNode.h>
 
-#include <Render/NewAbstractLightRenderObserver.h>
+#include <Render/AbstractLightRenderObserver.h>
 #include <Render/CubemapObserver.h>
 #include <Render/IconDrawableNode.h>
 
 class AmbientLightObject;
 
-class NewAmbientLightRenderObserver : public NewAbstractLightRenderObserver
+class AmbientLightRenderObserver : public AbstractLightRenderObserver
 {
   Q_OBJECT
 
 public:
-  NewAmbientLightRenderObserver(AmbientLightObject& object,
-                                EditorCommonData& commonData);
-  NewAmbientLightRenderObserver(const NewAmbientLightRenderObserver&) = delete;
-  NewAmbientLightRenderObserver& operator = (
-                                const NewAmbientLightRenderObserver&) = delete;
-  virtual ~NewAmbientLightRenderObserver() noexcept = default;
+  AmbientLightRenderObserver( AmbientLightObject& object,
+                              EditorCommonData& commonData);
+  AmbientLightRenderObserver(const AmbientLightRenderObserver&) = delete;
+  AmbientLightRenderObserver& operator = (
+                                    const AmbientLightRenderObserver&) = delete;
+  virtual ~AmbientLightRenderObserver() noexcept = default;
 
 private:
   void _updateIlluminance() noexcept;

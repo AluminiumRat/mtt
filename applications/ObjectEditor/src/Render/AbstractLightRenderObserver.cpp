@@ -4,9 +4,9 @@
 #include <mtt/utilities/Log.h>
 
 #include <Objects/LightObject.h>
-#include <Render/NewAbstractLightRenderObserver.h>
+#include <Render/AbstractLightRenderObserver.h>
 
-NewAbstractLightRenderObserver::NewAbstractLightRenderObserver(
+AbstractLightRenderObserver::AbstractLightRenderObserver(
                                                 LightObject& object,
                                                 EditorCommonData& commonData) :
   Object3DRenderObserver(object, commonData),
@@ -18,12 +18,12 @@ NewAbstractLightRenderObserver::NewAbstractLightRenderObserver(
   connect(&_object,
           &LightObject::enabledChanged,
           this,
-          &NewAbstractLightRenderObserver::_updateEnabled,
+          &AbstractLightRenderObserver::_updateEnabled,
           Qt::DirectConnection);
   _updateEnabled();
 }
 
-void NewAbstractLightRenderObserver::setLightObject(
+void AbstractLightRenderObserver::setLightObject(
                                         mtt::clPipeline::AbstractLight& light)
 {
   _clearDrawables();
@@ -53,7 +53,7 @@ void NewAbstractLightRenderObserver::setLightObject(
   }
 }
 
-void NewAbstractLightRenderObserver::setInfinityArea(bool newValue)
+void AbstractLightRenderObserver::setInfinityArea(bool newValue)
 {
   if(_infinityArea == newValue) return;
 
@@ -76,15 +76,15 @@ void NewAbstractLightRenderObserver::setInfinityArea(bool newValue)
   }
   catch (std::exception& error)
   {
-    mtt::Log() << "NewAbstractLightRenderObserver::setInfinityArea: unable to registed deffered light applicator: " << error.what();
+    mtt::Log() << "AbstractLightRenderObserver::setInfinityArea: unable to registed deffered light applicator: " << error.what();
   }
   catch (...)
   {
-    mtt::Log() << "NewAbstractLightRenderObserver::setInfinityArea: unable to registed deffered light applicator";
+    mtt::Log() << "AbstractLightRenderObserver::setInfinityArea: unable to registed deffered light applicator";
   }
 }
 
-void NewAbstractLightRenderObserver::_clearDrawables() noexcept
+void AbstractLightRenderObserver::_clearDrawables() noexcept
 {
   if (_defferedLightApplicator != nullptr)
   {
@@ -102,7 +102,7 @@ void NewAbstractLightRenderObserver::_clearDrawables() noexcept
   }
 }
 
-void NewAbstractLightRenderObserver::_updateEnabled() noexcept
+void AbstractLightRenderObserver::_updateEnabled() noexcept
 {
   _enableFilter.setVisible(_object.enabled());
   if (_forwardLightApplicator != nullptr)
@@ -114,11 +114,11 @@ void NewAbstractLightRenderObserver::_updateEnabled() noexcept
     }
     catch (std::exception& error)
     {
-      mtt::Log() << "NewAbstractLightRenderObserver::_updateEnabled: " << error.what();
+      mtt::Log() << "AbstractLightRenderObserver::_updateEnabled: " << error.what();
     }
     catch (...)
     {
-      mtt::Log() << "NewAbstractLightRenderObserver::_updateEnabled: unable to register area modificator";
+      mtt::Log() << "AbstractLightRenderObserver::_updateEnabled: unable to register area modificator";
     }
   }
 }

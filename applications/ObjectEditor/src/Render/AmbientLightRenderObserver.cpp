@@ -6,7 +6,7 @@
 #include <mtt/render/Pipeline/Buffer.h>
 
 #include <Objects/AmbientLightObject.h>
-#include <Render/NewAmbientLightRenderObserver.h>
+#include <Render/AmbientLightRenderObserver.h>
 #include <EditorApplication.h>
 #include <EditorCommonData.h>
 
@@ -15,10 +15,10 @@
 
 #define CYRCLE_SEGMENTS 32
 
-NewAmbientLightRenderObserver::NewAmbientLightRenderObserver(
+AmbientLightRenderObserver::AmbientLightRenderObserver(
                                                 AmbientLightObject& object,
                                                 EditorCommonData& commonData) :
-  NewAbstractLightRenderObserver(object, commonData),
+  AbstractLightRenderObserver(object, commonData),
   _lightObject(object),
   _light(EditorApplication::instance().displayDevice()),
   _cubemapObserver(_lightObject.ambientMap()),
@@ -78,36 +78,36 @@ NewAmbientLightRenderObserver::NewAmbientLightRenderObserver(
   connect(&_lightObject,
           &AmbientLightObject::baseIlluminanceChanged,
           this,
-          &NewAmbientLightRenderObserver::_updateIlluminance,
+          &AmbientLightRenderObserver::_updateIlluminance,
           Qt::DirectConnection);
   connect(&_lightObject,
           &AmbientLightObject::colorChanged,
           this,
-          &NewAmbientLightRenderObserver::_updateIlluminance,
+          &AmbientLightRenderObserver::_updateIlluminance,
           Qt::DirectConnection);
   _updateIlluminance();
 
   connect(&_lightObject,
           &AmbientLightObject::distanceChanged,
           this,
-          &NewAmbientLightRenderObserver::_updateDistance,
+          &AmbientLightRenderObserver::_updateDistance,
           Qt::DirectConnection);
   _updateDistance();
 
   connect(&_lightObject,
           &AmbientLightObject::saturationDistanceChanged,
           this,
-          &NewAmbientLightRenderObserver::_updateSaturationDistance,
+          &AmbientLightRenderObserver::_updateSaturationDistance,
           Qt::DirectConnection);
   _updateSaturationDistance();
 }
 
-void NewAmbientLightRenderObserver::_updateIlluminance() noexcept
+void AmbientLightRenderObserver::_updateIlluminance() noexcept
 {
   _light.setIlluminance(_lightObject.color() * _lightObject.baseIlluminance());
 }
 
-void NewAmbientLightRenderObserver::_updateDistance() noexcept
+void AmbientLightRenderObserver::_updateDistance() noexcept
 {
   _light.setDistance(_lightObject.distance());
   try
@@ -116,15 +116,15 @@ void NewAmbientLightRenderObserver::_updateDistance() noexcept
   }
   catch (std::exception& error)
   {
-    mtt::Log() << "NewAmbientLightRenderObserver::_updateDistance: unable to update sphere mesh: " << error.what();
+    mtt::Log() << "AmbientLightRenderObserver::_updateDistance: unable to update sphere mesh: " << error.what();
   }
   catch (...)
   {
-    mtt::Log() << "NewAmbientLightRenderObserver::_updateDistance: unable to update sphere mesh: unknown error.";
+    mtt::Log() << "AmbientLightRenderObserver::_updateDistance: unable to update sphere mesh: unknown error.";
   }
 }
 
-void NewAmbientLightRenderObserver::_updateSphereMesh()
+void AmbientLightRenderObserver::_updateSphereMesh()
 {
   std::vector<glm::vec3> vertices;
   vertices.reserve(CYRCLE_SEGMENTS * 2 * 3);
@@ -174,7 +174,7 @@ void NewAmbientLightRenderObserver::_updateSphereMesh()
                                               _lightObject.distance()));
 }
 
-void NewAmbientLightRenderObserver::_updateSaturationDistance() noexcept
+void AmbientLightRenderObserver::_updateSaturationDistance() noexcept
 {
   _light.setSaturationDistance(_lightObject.saturationDistance());
 }

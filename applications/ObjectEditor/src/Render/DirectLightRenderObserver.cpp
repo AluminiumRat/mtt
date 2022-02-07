@@ -6,7 +6,7 @@
 #include <mtt/render/Pipeline/Buffer.h>
 
 #include <Objects/DirectLightObject.h>
-#include <Render/NewDirectLightRenderObserver.h>
+#include <Render/DirectLightRenderObserver.h>
 #include <EditorApplication.h>
 #include <EditorCommonData.h>
 
@@ -16,10 +16,10 @@
 #define CAP_SEGMENTS 32
 #define BODY_SEGMENTS 6
 
-NewDirectLightRenderObserver::NewDirectLightRenderObserver(
+DirectLightRenderObserver::DirectLightRenderObserver(
                                                 DirectLightObject& object,
                                                 EditorCommonData& commonData) :
-  NewAbstractLightRenderObserver(object, commonData),
+  AbstractLightRenderObserver(object, commonData),
   _lightObject(object),
   _light(EditorApplication::instance().displayDevice()),
   _cylinderMesh(EditorApplication::instance().displayDevice()),
@@ -61,78 +61,78 @@ NewDirectLightRenderObserver::NewDirectLightRenderObserver(
   connect(&_lightObject,
           &DirectLightObject::baseIlluminanceChanged,
           this,
-          &NewDirectLightRenderObserver::_updateIlluminance,
+          &DirectLightRenderObserver::_updateIlluminance,
           Qt::DirectConnection);
   connect(&_lightObject,
           &DirectLightObject::colorChanged,
           this,
-          &NewDirectLightRenderObserver::_updateIlluminance,
+          &DirectLightRenderObserver::_updateIlluminance,
           Qt::DirectConnection);
   _updateIlluminance();
 
   connect(&_lightObject,
           &DirectLightObject::distanceChanged,
           this,
-          &NewDirectLightRenderObserver::_updateDistance,
+          &DirectLightRenderObserver::_updateDistance,
           Qt::DirectConnection);
   _updateDistance();
 
   connect(&_lightObject,
           &DirectLightObject::radiusChanged,
           this,
-          &NewDirectLightRenderObserver::_updateRadius,
+          &DirectLightRenderObserver::_updateRadius,
           Qt::DirectConnection);
   _updateRadius();
 
   connect(&_lightObject,
           &DirectLightObject::shadowsEnabledChanged,
           this,
-          &NewDirectLightRenderObserver::_updateShadowsEnabled,
+          &DirectLightRenderObserver::_updateShadowsEnabled,
           Qt::DirectConnection);
   _updateShadowsEnabled();
 
   connect(&_lightObject,
           &DirectLightObject::shadowmapSizeChanged,
           this,
-          &NewDirectLightRenderObserver::_updateShadowMapSize,
+          &DirectLightRenderObserver::_updateShadowMapSize,
           Qt::DirectConnection);
   _updateShadowMapSize();
 
   connect(&_lightObject,
           &DirectLightObject::cascadeSizeChanged,
           this,
-          &NewDirectLightRenderObserver::_updateCascadeSize,
+          &DirectLightRenderObserver::_updateCascadeSize,
           Qt::DirectConnection);
   _updateCascadeSize();
 
   connect(&_lightObject,
           &DirectLightObject::blurSizeChanged,
           this,
-          &NewDirectLightRenderObserver::_updateBlur,
+          &DirectLightRenderObserver::_updateBlur,
           Qt::DirectConnection);
   _updateBlur();
 }
 
-void NewDirectLightRenderObserver::_updateIlluminance() noexcept
+void DirectLightRenderObserver::_updateIlluminance() noexcept
 {
   _light.setIlluminance(_lightObject.baseIlluminance() * _lightObject.color());
 }
 
-void NewDirectLightRenderObserver::_updateDistance() noexcept
+void DirectLightRenderObserver::_updateDistance() noexcept
 {
   _light.setDistance(_lightObject.distance());
   _updateDepthCamera();
   _updateCylinderMesh();
 }
 
-void NewDirectLightRenderObserver::_updateRadius() noexcept
+void DirectLightRenderObserver::_updateRadius() noexcept
 {
   _light.setRadius(_lightObject.radius());
   _updateDepthCamera();
   _updateCylinderMesh();
 }
 
-void NewDirectLightRenderObserver::_updateCylinderMesh() noexcept
+void DirectLightRenderObserver::_updateCylinderMesh() noexcept
 {
   try
   {
@@ -204,15 +204,15 @@ void NewDirectLightRenderObserver::_updateCylinderMesh() noexcept
   }
   catch (std::exception& error)
   {
-    mtt::Log() << "NewDirectLightRenderObserver::_updateCylinderMesh: unable to update cylinder mesh: " << error.what();
+    mtt::Log() << "DirectLightRenderObserver::_updateCylinderMesh: unable to update cylinder mesh: " << error.what();
   }
   catch (...)
   {
-    mtt::Log() << "NewDirectLightRenderObserver::_updateCylinderMesh: unable to update cylinder mesh: unknown error.";
+    mtt::Log() << "DirectLightRenderObserver::_updateCylinderMesh: unable to update cylinder mesh: unknown error.";
   }
 }
 
-void NewDirectLightRenderObserver::_updateDepthCamera() noexcept
+void DirectLightRenderObserver::_updateDepthCamera() noexcept
 {
   if (_shadowMapProvider == nullptr) return;
   float radius = _lightObject.radius();
@@ -224,7 +224,7 @@ void NewDirectLightRenderObserver::_updateDepthCamera() noexcept
                                                   _lightObject.distance());
 }
 
-void NewDirectLightRenderObserver::_updateShadowsEnabled() noexcept
+void DirectLightRenderObserver::_updateShadowsEnabled() noexcept
 {
   if(_lightObject.shadowsEnabled() && _shadowMapProvider == nullptr)
   {
@@ -247,12 +247,12 @@ void NewDirectLightRenderObserver::_updateShadowsEnabled() noexcept
     catch (std::exception& error)
     {
       _removeShadowmapProvider();
-      mtt::Log() << "NewDirectLightRenderObserver::_updateShadowsEnabled: unable to update shadow map provider: " << error.what();
+      mtt::Log() << "DirectLightRenderObserver::_updateShadowsEnabled: unable to update shadow map provider: " << error.what();
     }
     catch (...)
     {
       _removeShadowmapProvider();
-      mtt::Log() << "NewDirectLightRenderObserver::_updateShadowsEnabled: unable to update shadow map provider: unknown error.";
+      mtt::Log() << "DirectLightRenderObserver::_updateShadowsEnabled: unable to update shadow map provider: unknown error.";
     }
   }
 
@@ -262,14 +262,14 @@ void NewDirectLightRenderObserver::_updateShadowsEnabled() noexcept
   }
 }
 
-void NewDirectLightRenderObserver::_removeShadowmapProvider() noexcept
+void DirectLightRenderObserver::_removeShadowmapProvider() noexcept
 {
   _light.setShadowMapProvider(nullptr);
   positionRotateJoint().removeChild(_shadowMapProvider->camera());
   _shadowMapProvider.reset();
 }
 
-void NewDirectLightRenderObserver::_updateShadowMapSize() noexcept
+void DirectLightRenderObserver::_updateShadowMapSize() noexcept
 {
   if(_shadowMapProvider == nullptr) return;
   uint frameSize = std::max(1u, uint(_lightObject.shadowmapSize()));
@@ -277,12 +277,12 @@ void NewDirectLightRenderObserver::_updateShadowMapSize() noexcept
   _shadowMapProvider->setFrameExtent(frameExtent);
 }
 
-void NewDirectLightRenderObserver::_updateCascadeSize() noexcept
+void DirectLightRenderObserver::_updateCascadeSize() noexcept
 {
   _light.setCascadeSize(_lightObject.cascadeSize());
 }
 
-void NewDirectLightRenderObserver::_updateBlur() noexcept
+void DirectLightRenderObserver::_updateBlur() noexcept
 {
   _light.setBlurSize(_lightObject.blurSize());
 }
