@@ -23,7 +23,7 @@ ShadowMapProvider::ShadowMapProvider( size_t framePoolsNumber,
   if(frameExtent.x == 0 || frameExtent.y == 0) Abort("ShadowMapProvider::ShadowMapProvider: wrong frame extent.");
 }
 
-void ShadowMapProvider::setFrameExtent(glm::uvec2 frameExtent)
+void ShadowMapProvider::setFrameExtent(glm::uvec2 frameExtent) noexcept
 {
   if (frameExtent.x == 0 || frameExtent.y == 0) Abort("ShadowMapProvider::setFrameExtent: wrong frame extent.");
 

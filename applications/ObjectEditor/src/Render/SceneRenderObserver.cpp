@@ -5,7 +5,7 @@
 #include <Objects/OEVisitor.h>
 #include <Render/NewAmbientLightRenderObserver.h>
 #include <Render/BackgroundObserver.h>
-#include <Render/DirectLightRenderObserver.h>
+#include <Render/NewDirectLightRenderObserver.h>
 #include <Render/EnvironmentModelRenderObserver.h>
 #include <Render/LODRenderObserver.h>
 #include <Render/SceneRenderObserver.h>
@@ -108,7 +108,7 @@ void SceneRenderObserver::_addObject(mtt::Object& object) noexcept
 
     virtual void visit(DirectLightObject& object) override
     {
-      result.reset(new DirectLightRenderObserver(object, *commonData));
+      result.reset(new NewDirectLightRenderObserver(object, *commonData));
     }
 
     virtual void visit(EnvironmentModel& object) override

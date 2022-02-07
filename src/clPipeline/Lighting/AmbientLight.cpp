@@ -20,6 +20,8 @@ AmbientLight::AmbientLight(LogicalDevice& device) :
   _lightData.distance = 100.f;
   _lightData.saturationDistance = 0.f;
   _lightData.infinityAreaMode = false;
+
+  _updateBound();
 }
 
 DrawableNode* AmbientLight::defferedLightApplicator() noexcept

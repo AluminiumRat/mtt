@@ -10,8 +10,10 @@
 
 namespace mtt
 {
-  class LogicalDevice;
   class AbstractField;
+  struct DrawPlanBuildInfo;
+  class ImageView;
+  class LogicalDevice;
 
   namespace clPipeline
   {
@@ -23,12 +25,16 @@ namespace mtt
       static constexpr VkImageLayout shadowmapLayout =
                                       VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
     public:
-      /// Area of shadow map in clip space
-      struct Area
+      struct ShadowMapInfo
       {
-        glm::vec2 topleftCorner;
-        glm::vec2 size;
+        ImageView* map;
+        struct
+        {
+          float multiplicator;
+          glm::vec2 shift;
+        } coordCorrection; //resultCoord = originCoord * multiplicator + shift
       };
+      using CascadeInfo = std::vector<ShadowMapInfo>;
 
     public:
       ShadowMapProvider(size_t framePoolsNumber,
@@ -47,10 +53,9 @@ namespace mtt
       inline AbstractField* targetField() const noexcept;
       void setTargetField(AbstractField* newField) noexcept;
 
-      ImageView& createShadowMap( const Area& mapPart,
-                                  DrawPlan& drawPlan,
-                                  const AbstractFramePlan& dependentFrame,
-                                  ViewInfo& rootViewInfo);
+      CascadeInfo createShadowMap(size_t cascadeSize,
+                                  DrawPlanBuildInfo& buildInfo);
+
     private:
       struct FrameRecord
       {
@@ -65,9 +70,27 @@ namespace mtt
         ~FrameRecord() = default;
       };
 
+      /// Area of shadow map in clip space
+      struct Area
+      {
+        glm::vec2 topleftCorner;
+        glm::vec2 size;
+      };
+
+    private:
+      ImageView& _createShadowMap( const Area& mapPart,
+                                  DrawPlan& drawPlan,
+                                  const AbstractFramePlan& dependentFrame,
+                                  ViewInfo& rootViewInfo);
+
       FrameRecord& _getOrCreateFrame(size_t index);
       void _setupRenderCamera(CameraNode& renderCamera,
                               const Area& mapPart) const noexcept;
+
+      Area _getTopArea(DrawPlanBuildInfo& buildInfo) const noexcept;
+      glm::vec2 _getCascadeDirectionPoint(DrawPlanBuildInfo& buildInfo,
+                                          glm::vec2 startPoint) const noexcept;
+      Area _alignArea(const ShadowMapProvider::Area& source) const noexcept;
 
     private:
       glm::ivec2 _frameExtent;

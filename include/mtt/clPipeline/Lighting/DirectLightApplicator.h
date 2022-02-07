@@ -4,16 +4,13 @@
 #include <optional>
 #include <vector>
 
-#include <glm/vec4.hpp>
-
-#include <mtt/clPipeline/Lighting/AbstractLightApplicator.h>
 #include <mtt/clPipeline/Lighting/ShadowMapProvider.h>
-#include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
+#include <mtt/clPipeline/Lighting/DirectLightData.h>
 #include <mtt/render/Pipeline/GraphicsPipeline.h>
-#include <mtt/render/Pipeline/InputAttachment.h>
 #include <mtt/render/Pipeline/Sampler.h>
 #include <mtt/render/Pipeline/Texture2D.h>
 #include <mtt/render/Pipeline/VolatileUniform.h>
+#include <mtt/render/SceneGraph/DrawableNode.h>
 
 namespace mtt
 {
@@ -21,59 +18,36 @@ namespace mtt
 
   namespace clPipeline
   {
-    class DirectLightApplicator : public AbstractLightApplicator
+    class DirectLight;
+
+    class DirectLightApplicator : public DrawableNode
     {
     public:
-      explicit DirectLightApplicator(LogicalDevice& device);
+      DirectLightApplicator(DirectLight& light, LogicalDevice& device);
       DirectLightApplicator(const DirectLightApplicator&) = delete;
       DirectLightApplicator& operator = (const DirectLightApplicator&) = delete;
       virtual ~DirectLightApplicator() = default;
 
-      inline float radius() const noexcept;
-      inline virtual void setRadius(float newValue) noexcept;
-
-      inline ShadowMapProvider* shadowMapProvider() const noexcept;
-      void setShadowMapProvider(ShadowMapProvider* newProvider) noexcept;
-
-      inline size_t cascadeSize() const noexcept;
-      /// newValue should not be 0
-      void setCascadeSize(size_t newValue) noexcept;
-
-      inline float blurSize() const noexcept;
-      inline void setBlurSize(float newValue) noexcept;
+      void resetPipelines() noexcept;
+      void updateBound() noexcept;
 
     protected:
       virtual void buildDrawActions(DrawPlanBuildInfo& buildInfo) override;
 
     private:
-      struct LightData
-      {
-        alignas(16) glm::vec3 illuminance;
-        alignas(16) glm::vec3 lightInverseDirection;
-        alignas(4) float distance;
-        alignas(4) float radius;
-        alignas(16) glm::mat4 clipToView;
-        alignas(16) glm::mat4 viewToLocal;
-      };
-
-      struct ShadowMapInfo
-      {
-        ImageView* map;
-        glm::vec4 coordCorrection;
-      };
-      using CascadeInfo = std::vector<ShadowMapInfo>;
-
       class DrawTechnique
       {
       public:
-        DrawTechnique(bool fullscreenRender, DirectLightApplicator& parent);
+        DrawTechnique(bool fullscreenRender,
+                      DirectLight& light,
+                      DirectLightApplicator& applicator);
         DrawTechnique(const DrawTechnique&) = delete;
         DrawTechnique& operator = (const DrawTechnique&) = delete;
         virtual ~DrawTechnique() = default;
-  
+
         void invalidatePipeline() noexcept;
         void addToDrawPlan( DrawPlanBuildInfo& buildInfo,
-                            const CascadeInfo& cascadeInfo);
+                            const ShadowMapProvider::CascadeInfo& cascadeInfo);
 
       private:
         void _rebuildPipeline(AbstractRenderPass& renderPass);
@@ -81,34 +55,28 @@ namespace mtt
 
         void _makeNonshadowCommand( DrawPlanBuildInfo& buildInfo,
                                     uint32_t pointsNumber,
-                                    const LightData& lightData);
+                                    const DirectLightDrawData& lightData);
 
-        void _makeShadowCommand(DrawPlanBuildInfo& buildInfo,
-                                uint32_t pointsNumber,
-                                const LightData& lightData,
-                                const CascadeInfo& cascadeInfo);
+        void _makeShadowCommand(
+                            DrawPlanBuildInfo& buildInfo,
+                            uint32_t pointsNumber,
+                            const DirectLightDrawData& lightData,
+                            const ShadowMapProvider::CascadeInfo& cascadeInfo);
 
       private:
         bool _fullscreenRender;
         std::optional<GraphicsPipeline> _pipeline;
-        DirectLightApplicator& _parent;
+        DirectLight& _light;
+        DirectLightApplicator& _applicator;
       };
 
     private:
       void _rebuildShadowmapSampler();
       bool _fullscreen(const DrawPlanBuildInfo& buildInfo) const noexcept;
-      CascadeInfo _createShadowMap(DrawPlanBuildInfo& buildInfo);
-      ShadowMapProvider::Area _getTopArea(
-                                  DrawPlanBuildInfo& buildInfo) const noexcept;
-      glm::vec2 _getCascadeDirectionPoint(DrawPlanBuildInfo& buildInfo,
-                                          glm::vec2 startPoint) const noexcept;
-      ShadowMapProvider::Area _alignArea(
-                          const ShadowMapProvider::Area& source) const noexcept;
 
     private:
       LogicalDevice& _device;
-
-      ShadowMapProvider* _shadowMapProvider;
+      DirectLight& _light;
 
       Sampler _depthMapSampler;
       Texture2D* _depthTexture;
@@ -125,15 +93,11 @@ namespace mtt
       std::optional<Sampler> _shadowmapSampler;
       std::vector<std::shared_ptr<Texture2D>> _shadowmapTextures;
 
-      float _radius;
-      VolatileUniform<LightData> _lightDataUniform;
+      VolatileUniform<DirectLightDrawData> _lightDataUniform;
 
       using CoordsCorrectionData = std::vector<glm::vec4>;
       VolatileUniform<CoordsCorrectionData> _coordsCorrectionUniform;
       VolatileUniform<DrawMatrices> _matricesUniform;
-
-      size_t _cascadeSize;
-      float _blurSize;
 
       struct Techniques
       {
@@ -142,36 +106,5 @@ namespace mtt
       };
       Techniques _techniques;
     };
-
-    inline float DirectLightApplicator::radius() const noexcept
-    {
-      return _radius;
-    }
-
-    inline void DirectLightApplicator::setRadius(float newValue) noexcept
-    {
-      _radius = newValue;
-    }
-
-    inline ShadowMapProvider*
-                      DirectLightApplicator::shadowMapProvider() const noexcept
-    {
-      return _shadowMapProvider;
-    }
-
-    inline size_t DirectLightApplicator::cascadeSize() const noexcept
-    {
-      return _cascadeSize;
-    }
-
-    inline float DirectLightApplicator::blurSize() const noexcept
-    {
-      return _blurSize;
-    }
-
-    inline void DirectLightApplicator::setBlurSize(float newValue) noexcept
-    {
-      _blurSize = newValue;
-    }
   }
 }

@@ -39,7 +39,7 @@ namespace mtt
       virtual ~ShadowMapProvider() noexcept = default;
 
       inline glm::uvec2 frameExtent() const noexcept;
-      void setFrameExtent(glm::uvec2 frameExtent);
+      void setFrameExtent(glm::uvec2 frameExtent) noexcept;
 
       inline CameraNode& camera() noexcept;
       inline const CameraNode& camera() const noexcept;

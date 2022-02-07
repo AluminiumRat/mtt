@@ -1,8 +1,9 @@
+#include <mtt/clPipeline/Lighting/DirectLight.h>
 #include <mtt/clPipeline/Lighting/DirectLightApplicator.h>
-#include <mtt/clPipeline/Lighting/ShadowMapProvider.h>
 #include <mtt/clPipeline/RenderPass/LightingPass.h>
 #include <mtt/clPipeline/constants.h>
 #include <mtt/render/DrawPlan/DrawMeshAction.h>
+#include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
 #include <mtt/utilities/Abort.h>
 #include <mtt/utilities/clip.h>
 
@@ -10,10 +11,12 @@ using namespace mtt;
 using namespace mtt::clPipeline;
 
 DirectLightApplicator::DrawTechnique::DrawTechnique(
-                                                bool fullscreenRender,
-                                                DirectLightApplicator& parent) :
+                                            bool fullscreenRender,
+                                            DirectLight& light,
+                                            DirectLightApplicator& applicator) :
   _fullscreenRender(fullscreenRender),
-  _parent(parent)
+  _light(light),
+  _applicator(applicator)
 {
 }
 
@@ -41,41 +44,41 @@ void DirectLightApplicator::DrawTechnique::_rebuildPipeline(
 void DirectLightApplicator::DrawTechnique::_adjustPipeline()
 {
   _pipeline->addResource( "lightDataBinding",
-                          _parent._lightDataUniform,
+                          _applicator._lightDataUniform,
                           VK_SHADER_STAGE_VERTEX_BIT |
                           VK_SHADER_STAGE_FRAGMENT_BIT);
 
   _pipeline->addResource( "depthMapBinding",
-                          _parent._depthMapSampler,
+                          _applicator._depthMapSampler,
                           VK_SHADER_STAGE_FRAGMENT_BIT);
 
   _pipeline->addResource( "normalMapBinding",
-                          _parent._normalMapSampler,
+                          _applicator._normalMapSampler,
                           VK_SHADER_STAGE_FRAGMENT_BIT);
 
   _pipeline->addResource( "albedoMapBinding",
-                          _parent._albedoMapSampler,
+                          _applicator._albedoMapSampler,
                           VK_SHADER_STAGE_FRAGMENT_BIT);
 
   _pipeline->addResource( "specularMapBinding",
-                          _parent._specularMapSampler,
+                          _applicator._specularMapSampler,
                           VK_SHADER_STAGE_FRAGMENT_BIT);
 
-  if(_parent._shadowmapSampler.has_value())
+  if(_applicator._shadowmapSampler.has_value())
   {
     _pipeline->setDefine("SHADOW_MAP_ENABLED");
     _pipeline->setDefine( "SHADOW_CASCADE_SIZE",
-                          std::to_string(_parent.cascadeSize()));
+                          std::to_string(_light.cascadeSize()));
 
     _pipeline->addResource( "shadowMapBinding",
-                            _parent._shadowmapSampler.value(),
+                            _applicator._shadowmapSampler.value(),
                             VK_SHADER_STAGE_FRAGMENT_BIT);
 
     _pipeline->addResource( "shadowCoordsCorrectionBinding",
-                            _parent._coordsCorrectionUniform,
+                            _applicator._coordsCorrectionUniform,
                             VK_SHADER_STAGE_FRAGMENT_BIT);
   }
-  
+
   std::unique_ptr<ShaderModule> vertexShader(
                                   new ShaderModule( ShaderModule::VERTEX_SHADER,
                                                     _pipeline->device()));
@@ -97,15 +100,15 @@ void DirectLightApplicator::DrawTechnique::_adjustPipeline()
   else
   {
     _pipeline->addResource( DrawMatrices::bindingName,
-                            _parent._matricesUniform,
+                            _applicator._matricesUniform,
                             VK_SHADER_STAGE_VERTEX_BIT);
     _pipeline->setTopology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
   }
 }
 
 void DirectLightApplicator::DrawTechnique::addToDrawPlan(
-                                          DrawPlanBuildInfo& buildInfo,
-                                          const CascadeInfo& cascadeInfo)
+                              DrawPlanBuildInfo& buildInfo,
+                              const ShadowMapProvider::CascadeInfo& cascadeInfo)
 {
   AbstractRenderPass* renderPass = buildInfo.builder->stagePass(lightingStage);
   if(renderPass == nullptr) return;
@@ -117,14 +120,14 @@ void DirectLightApplicator::DrawTechnique::addToDrawPlan(
 
   uint32_t pointsNumber = _fullscreenRender ? 4 : 36;
 
-  LightData lightData;
-  lightData.illuminance = _parent.baseIlluminance();
+  DirectLightDrawData lightData;
+  lightData.illuminance = _light.illuminance();
   lightData.lightInverseDirection =
               buildInfo.drawMatrices.localToViewMatrix * glm::vec4(0, 0, 1, 0);
   lightData.lightInverseDirection =
                                 glm::normalize(lightData.lightInverseDirection);
-  lightData.distance = _parent.distance();
-  lightData.radius = _parent.radius();
+  lightData.distance = _light.distance();
+  lightData.radius = _light.radius();
   lightData.clipToView = buildInfo.drawMatrices.clipToViewMatrix;
   lightData.viewToLocal =
                         glm::inverse(buildInfo.drawMatrices.localToViewMatrix);
@@ -145,15 +148,15 @@ void DirectLightApplicator::DrawTechnique::addToDrawPlan(
 }
 
 void DirectLightApplicator::DrawTechnique::_makeNonshadowCommand(
-                                                  DrawPlanBuildInfo& buildInfo,
-                                                  uint32_t pointsNumber,
-                                                  const LightData& lightData)
+                                          DrawPlanBuildInfo& buildInfo,
+                                          uint32_t pointsNumber,
+                                          const DirectLightDrawData& lightData)
 {
   DrawBin* renderBin = buildInfo.currentFramePlan->getBin(lightingStage);
   if(renderBin == nullptr) Abort("DirectLightApplicator::DrawTechnique::_makeNonshadowCommand: light render bin is not supported.");
 
-  using DrawAction = DrawMeshAction<VolatileUniform<LightData>,
-                                    LightData,
+  using DrawAction = DrawMeshAction<VolatileUniform<DirectLightDrawData>,
+                                    DirectLightDrawData,
                                     VolatileUniform<DrawMatrices>,
                                     DrawMatrices,
                                     Texture2D,
@@ -170,25 +173,25 @@ void DirectLightApplicator::DrawTechnique::_makeNonshadowCommand(
                                       buildInfo.viewport,
                                       buildInfo.scissor,
                                       pointsNumber,
-                                      _parent._lightDataUniform,
+                                      _applicator._lightDataUniform,
                                       lightData,
-                                      _parent._matricesUniform,
+                                      _applicator._matricesUniform,
                                       buildInfo.drawMatrices,
-                                      *_parent._depthTexture,
+                                      *_applicator._depthTexture,
                                       LightingPass::depthSamplerMapIndex,
-                                      *_parent._normalTexture,
+                                      *_applicator._normalTexture,
                                       LightingPass::normalSamplerMapIndex,
-                                      *_parent._albedoTexture,
+                                      *_applicator._albedoTexture,
                                       LightingPass::albedoSamplerMapIndex,
-                                      *_parent._specularTexture,
+                                      *_applicator._specularTexture,
                                       LightingPass::specularSamplerMapIndex);
 }
 
 void DirectLightApplicator::DrawTechnique::_makeShadowCommand(
-                                                DrawPlanBuildInfo& buildInfo,
-                                                uint32_t pointsNumber,
-                                                const LightData& lightData,
-                                                const CascadeInfo& cascadeInfo)
+                            DrawPlanBuildInfo& buildInfo,
+                            uint32_t pointsNumber,
+                            const DirectLightDrawData& lightData,
+                            const ShadowMapProvider::CascadeInfo& cascadeInfo)
 {
   std::vector<Texture2D*> shadowTextures;
   shadowTextures.reserve(cascadeInfo.size());
@@ -198,16 +201,23 @@ void DirectLightApplicator::DrawTechnique::_makeShadowCommand(
   correctionData.reserve(cascadeInfo.size());
   for(size_t layerIndex = 0; layerIndex < cascadeInfo.size(); layerIndex++)
   {
-    correctionData.push_back(cascadeInfo[layerIndex].coordCorrection);
-    shadowTextures.push_back(_parent._shadowmapTextures[layerIndex].get());
+    float blurRadius = (_light.blurSize() / 2.f) / (2.f * _light.radius());
+    blurRadius *= cascadeInfo[layerIndex].coordCorrection.multiplicator;
+
+    correctionData.push_back(glm::vec4(
+                          cascadeInfo[layerIndex].coordCorrection.multiplicator,
+                          cascadeInfo[layerIndex].coordCorrection.shift.x,
+                          cascadeInfo[layerIndex].coordCorrection.shift.y,
+                          blurRadius));
+    shadowTextures.push_back(_applicator._shadowmapTextures[layerIndex].get());
     shadowImageViews.push_back(cascadeInfo[layerIndex].map);
   }
 
   DrawBin* renderBin = buildInfo.currentFramePlan->getBin(lightingStage);
   if(renderBin == nullptr) Abort("DirectLightApplicator::DrawTechnique::_makeShadowCommand: light render bin is not supported.");
 
-  using DrawAction = DrawMeshAction<VolatileUniform<LightData>,
-                                    LightData,
+  using DrawAction = DrawMeshAction<VolatileUniform<DirectLightDrawData>,
+                                    DirectLightDrawData,
                                     VolatileUniform<CoordsCorrectionData>,
                                     CoordsCorrectionData,
                                     VolatileUniform<DrawMatrices>,
@@ -227,27 +237,28 @@ void DirectLightApplicator::DrawTechnique::_makeShadowCommand(
                                       buildInfo.viewport,
                                       buildInfo.scissor,
                                       pointsNumber,
-                                      _parent._lightDataUniform,
+                                      _applicator._lightDataUniform,
                                       lightData,
-                                      _parent._coordsCorrectionUniform,
+                                      _applicator._coordsCorrectionUniform,
                                       correctionData,
-                                      _parent._matricesUniform,
+                                      _applicator._matricesUniform,
                                       buildInfo.drawMatrices,
                                       shadowTextures,
                                       shadowImageViews,
-                                      *_parent._depthTexture,
+                                      *_applicator._depthTexture,
                                       LightingPass::depthSamplerMapIndex,
-                                      *_parent._normalTexture,
+                                      *_applicator._normalTexture,
                                       LightingPass::normalSamplerMapIndex,
-                                      *_parent._albedoTexture,
+                                      *_applicator._albedoTexture,
                                       LightingPass::albedoSamplerMapIndex,
-                                      *_parent._specularTexture,
+                                      *_applicator._specularTexture,
                                       LightingPass::specularSamplerMapIndex);
 }
 
-DirectLightApplicator::DirectLightApplicator(LogicalDevice& device) :
+DirectLightApplicator::DirectLightApplicator( DirectLight& light,
+                                              LogicalDevice& device) :
   _device(device),
-  _shadowMapProvider(nullptr),
+  _light(light),
   _depthMapSampler(PipelineResource::VOLATILE, device),
   _depthTexture(nullptr),
   _normalMapSampler(PipelineResource::VOLATILE, device),
@@ -255,10 +266,7 @@ DirectLightApplicator::DirectLightApplicator(LogicalDevice& device) :
   _albedoMapSampler(PipelineResource::VOLATILE, device),
   _albedoTexture(nullptr),
   _specularMapSampler(PipelineResource::VOLATILE, device),
-  _specularTexture(nullptr),
-  _radius(10),
-  _cascadeSize(3),
-  _blurSize(0)
+  _specularTexture(nullptr)
 {
   std::shared_ptr<Texture2D> depthTexture = std::make_shared<Texture2D>(device);
   _depthTexture = depthTexture.get();
@@ -279,48 +287,40 @@ DirectLightApplicator::DirectLightApplicator(LogicalDevice& device) :
   _specularTexture = specularTexture.get();
   _specularMapSampler.setAttachedTexture(std::move(specularTexture));
 
-  _techniques.shapeTechnique = std::make_unique<DrawTechnique>(false, *this);
+  _techniques.shapeTechnique = std::make_unique<DrawTechnique>( false,
+                                                                _light,
+                                                                *this);
   _techniques.fullscreenTechnique = std::make_unique<DrawTechnique>(true,
+                                                                    _light,
                                                                     *this);
 }
 
-void DirectLightApplicator::setShadowMapProvider(
-                                      ShadowMapProvider* newProvider) noexcept
+void DirectLightApplicator::resetPipelines() noexcept
 {
-  if(_shadowMapProvider == newProvider) return;
-
   _techniques.shapeTechnique->invalidatePipeline();
   _techniques.fullscreenTechnique->invalidatePipeline();
 
   _shadowmapSampler.reset();
   _shadowmapTextures.clear();
-
-  _shadowMapProvider = newProvider;
 }
 
-void DirectLightApplicator::setCascadeSize(size_t newValue) noexcept
+void DirectLightApplicator::updateBound() noexcept
 {
-  if(_cascadeSize == newValue) return;
-  if(newValue == 0) Abort("DirectLightApplicator::setCascadeSize: new value is 0");
-
-  _techniques.shapeTechnique->invalidatePipeline();
-  _techniques.fullscreenTechnique->invalidatePipeline();
-
-  _shadowmapSampler.reset();
-  _shadowmapTextures.clear();
-
-  _cascadeSize = newValue;
+  setLocalBoundSphere(_light.getBoundSphere());
 }
 
 void DirectLightApplicator::_rebuildShadowmapSampler()
 {
   try
   {
-    _shadowmapSampler.emplace(cascadeSize(),
+    _shadowmapSampler.emplace(_light.cascadeSize(),
                               PipelineResource::VOLATILE,
                               _device);
 
-    for(size_t layerIndex = 0; layerIndex < cascadeSize(); layerIndex++)
+    _shadowmapTextures.clear();
+    for(size_t layerIndex = 0;
+        layerIndex < _light.cascadeSize();
+        layerIndex++)
     {
       _shadowmapTextures.push_back(std::make_shared<Texture2D>(_device));
       _shadowmapSampler->setAttachedTexture(_shadowmapTextures[layerIndex],
@@ -344,9 +344,7 @@ void DirectLightApplicator::_rebuildShadowmapSampler()
 bool DirectLightApplicator::_fullscreen(
                               const DrawPlanBuildInfo& buildInfo) const noexcept
 {
-  float halfdistance = distance() / 2;
-  float boundRadius = sqrt(halfdistance * halfdistance + _radius * _radius);
-  Sphere boundSphere(glm::vec3(0.f, 0.f, - halfdistance), boundRadius);
+  Sphere boundSphere = _light.getBoundSphere();
   boundSphere.translate(buildInfo.drawMatrices.localToViewMatrix);
 
   const Plane& nearPlane = buildInfo.viewFrustum.face(ViewFrustum::FACE_NEAR);
@@ -358,15 +356,17 @@ void DirectLightApplicator::buildDrawActions(DrawPlanBuildInfo& buildInfo)
 {
   if (buildInfo.frameType != colorFrameType) return;
 
-  if(_shadowMapProvider != nullptr && !_shadowmapSampler.has_value())
+  if(_light.shadowMapProvider() != nullptr && !_shadowmapSampler.has_value())
   {
     _rebuildShadowmapSampler();
   }
 
-  CascadeInfo cascadeInfo;
-  if(_shadowMapProvider != nullptr)
+  ShadowMapProvider::CascadeInfo cascadeInfo;
+  if(_light.shadowMapProvider() != nullptr)
   {
-    cascadeInfo = _createShadowMap(buildInfo);
+    cascadeInfo = _light.shadowMapProvider()->createShadowMap(
+                                                          _light.cascadeSize(),
+                                                          buildInfo);
     if (cascadeInfo.size() == 0) return;
   }
 
@@ -376,138 +376,4 @@ void DirectLightApplicator::buildDrawActions(DrawPlanBuildInfo& buildInfo)
     _techniques.fullscreenTechnique->addToDrawPlan(buildInfo, cascadeInfo);
   }
   else _techniques.shapeTechnique->addToDrawPlan(buildInfo, cascadeInfo);
-}
-
-DirectLightApplicator::CascadeInfo
-          DirectLightApplicator::_createShadowMap(DrawPlanBuildInfo& buildInfo)
-{
-  ShadowMapProvider::Area area = _getTopArea(buildInfo);
-  if(area.size.x <= 0 || area.size.y <= 0) return CascadeInfo();
-
-  glm::vec2 centralPoint = area.topleftCorner + area.size / 2.f;
-
-  glm::vec2 directionPoint = _getCascadeDirectionPoint( buildInfo,
-                                                        centralPoint);
-  glm::vec2 shift = directionPoint - centralPoint;
-
-  CascadeInfo result;
-  result.reserve(_shadowmapTextures.size());
-
-  for(size_t layerIndex = 0;
-      layerIndex < _shadowmapTextures.size();
-      layerIndex++)
-  {
-    ShadowMapProvider::Area alignedArea = _alignArea(area);
-
-    ShadowMapInfo info{};
-    info.map = &shadowMapProvider()->createShadowMap(
-                                                    alignedArea,
-                                                    buildInfo.drawPlan,
-                                                    *buildInfo.currentFramePlan,
-                                                    buildInfo.rootViewInfo);
-
-    float mapSize = float(_shadowMapProvider->frameExtent().x);
-    float pixelSize = radius() * alignedArea.size.x / mapSize;
-    float blurWidth = blurSize() / pixelSize;
-
-    glm::vec2 uvAreaSize = alignedArea.size / 2.f;
-    glm::vec2 uvAreaCorner =
-              alignedArea.topleftCorner * glm::vec2(.5f, .5f) + glm::vec2(.5f);
-
-    info.coordCorrection = glm::vec4( 1.f / uvAreaSize.x,
-                                      -uvAreaCorner.x / uvAreaSize.x,
-                                      -uvAreaCorner.y / uvAreaSize.y,
-                                      blurWidth / 2.f / mapSize);
-    result.push_back(info);
-
-    shift /= 2.f;
-
-    glm::vec2 center = area.topleftCorner + area.size / 2.f;
-    center = center + shift;
-    area.size /= 2.f;
-    area.topleftCorner = center - area.size / 2.f;
-  }
-
-  return result;
-}
-
-ShadowMapProvider::Area DirectLightApplicator::_getTopArea(
-                                    DrawPlanBuildInfo& buildInfo) const noexcept
-{
-  glm::mat4& clipToView = buildInfo.drawMatrices.clipToViewMatrix;
-  glm::mat4 toLightView =
-                        glm::inverse(buildInfo.drawMatrices.localToViewMatrix);
-  glm::mat4 toLightClip = _shadowMapProvider->camera().projectionMatrix();
-  glm::mat4 pointsTransform = toLightClip * toLightView * clipToView;
-
-  glm::vec4 frustumPoints[] = { pointsTransform * glm::vec4(-1, -1, 1, 1),
-                                pointsTransform * glm::vec4( 1, -1, 1, 1),
-                                pointsTransform * glm::vec4( 1,  1, 1, 1),
-                                pointsTransform * glm::vec4(-1,  1, 1, 1),
-                                pointsTransform * glm::vec4(-1, -1, 0, 1),
-                                pointsTransform * glm::vec4( 1, -1, 0, 1),
-                                pointsTransform * glm::vec4( 1,  1, 0, 1),
-                                pointsTransform * glm::vec4(-1,  1, 0, 1)};
-  glm::vec4 clipArea{1,1,-1,-1};
-
-  for(glm::vec4& point : frustumPoints)
-  {
-    if(point.x > point.w) point.x = point.w;
-    if(point.x < -point.w) point.x = -point.w;
-    point.x /= point.w;
-
-    if(point.y > point.w) point.y = point.w;
-    if(point.y < -point.w) point.y = -point.w;
-    point.y /= point.w;
-
-    clipArea.x = std::min(clipArea.x, point.x);
-    clipArea.y = std::min(clipArea.y, point.y);
-    clipArea.z = std::max(clipArea.z, point.x);
-    clipArea.w = std::max(clipArea.w, point.y);
-  }
-
-  ShadowMapProvider::Area result;
-  result.topleftCorner = glm::vec2(clipArea.x, clipArea.y);
-  result.size = glm::vec2(clipArea.z - clipArea.x, clipArea.w - clipArea.y);
-  return result;
-}
-
-glm::vec2 DirectLightApplicator::_getCascadeDirectionPoint(
-                                          DrawPlanBuildInfo& buildInfo,
-                                          glm::vec2 startPoint) const noexcept
-{
-  glm::mat4 toLightView =
-                        glm::inverse(buildInfo.drawMatrices.localToViewMatrix);
-  glm::mat4 toLightClip = _shadowMapProvider->camera().projectionMatrix();
-  glm::mat4 endPointTransform = toLightClip * toLightView;
-  glm::vec4 endPoint = endPointTransform *
-                        glm::vec4(buildInfo.currentViewInfo.viewPosition, 1.f);
-  glm::vec4 startPoint4d(startPoint, .5f, 1);
-  clipSegment(startPoint4d, endPoint);
-  glm::vec2 directionPoint = endPoint / endPoint.w;
-
-  return directionPoint;
-}
-
-ShadowMapProvider::Area DirectLightApplicator::_alignArea(
-                          const ShadowMapProvider::Area& source) const noexcept
-{
-  float areaSize = std::max(source.size.x, source.size.y);
-  float sizeOrder = ceil(log2(areaSize));
-  areaSize = exp2(sizeOrder);
-  if(areaSize > 2.f) areaSize = 2.f;
-
-  glm::vec2 mapExtent = _shadowMapProvider->frameExtent();
-  float granularity = areaSize / mapExtent.x * 2.f;
-
-  glm::vec2 sourceCenter = source.topleftCorner + source.size / 2.f;
-  glm::vec2 alignedCorner = sourceCenter - glm::vec2(areaSize) / 2.f;
-  alignedCorner = glm::round(alignedCorner / granularity) * granularity;
-  alignedCorner = glm::clamp(alignedCorner, -1.f, 1.f);
-
-  ShadowMapProvider::Area alignedArea;
-  alignedArea.topleftCorner = alignedCorner;
-  alignedArea.size = glm::vec2(areaSize);
-
-  return alignedArea;
 }
