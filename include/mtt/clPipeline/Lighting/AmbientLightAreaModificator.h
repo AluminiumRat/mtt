@@ -1,7 +1,7 @@
 #pragma once
 
 #include <mtt/clPipeline/Lighting/AmbientLightData.h>
-#include <mtt/render/SceneGraph/AreaModificator.h>
+#include <mtt/clPipeline/Lighting/LightAreaModificator.h>
 #include <mtt/render/Pipeline/Sampler.h>
 #include <mtt/render/Pipeline/VolatileUniform.h>
 
@@ -9,11 +9,8 @@ namespace mtt
 {
   namespace clPipeline
   {
-    class AmbientLightAreaModificator : public AreaModificator
+    class AmbientLightAreaModificator : public LightAreaModificator
     {
-    public:
-      static const size_t typeIndex;
-
     public:
       AmbientLightAreaModificator(const AmbientLightData& lightData,
                                   Sampler& ambientMapSampler,
@@ -23,9 +20,9 @@ namespace mtt
                                   const AmbientLightAreaModificator&) = delete;
       virtual ~AmbientLightAreaModificator() = default;
 
-      void adjustPipeline(AbstractPipeline& targetPipeline,
-                          ShaderModule& targetShader,
-                          size_t modificatorIndex);
+      virtual void adjustPipeline(AbstractPipeline& targetPipeline,
+                                  ShaderModule& targetShader,
+                                  size_t modificatorIndex) override;
 
       inline void reset() noexcept;
 

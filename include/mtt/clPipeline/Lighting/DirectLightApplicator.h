@@ -71,7 +71,6 @@ namespace mtt
       };
 
     private:
-      void _rebuildShadowmapSampler();
       bool _fullscreen(const DrawPlanBuildInfo& buildInfo) const noexcept;
 
     private:
@@ -89,9 +88,6 @@ namespace mtt
 
       Sampler _specularMapSampler;
       Texture2D* _specularTexture;
-
-      std::optional<Sampler> _shadowmapSampler;
-      std::vector<std::shared_ptr<Texture2D>> _shadowmapTextures;
 
       VolatileUniform<DirectLightDrawData> _lightDataUniform;
 

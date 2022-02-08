@@ -1,8 +1,11 @@
+#include <stdexcept>
+
 #include <mtt/clPipeline/Background/BackgroundAreaModificator.h>
 #include <mtt/clPipeline/constants.h>
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
 #include <mtt/render/DrawPlan/UpdateResourcesAction.h>
 #include <mtt/render/Pipeline/AbstractPipeline.h>
+#include <mtt/utilities/Abort.h>
 
 using namespace mtt;
 using namespace mtt::clPipeline;
@@ -42,51 +45,63 @@ void BackgroundAreaModificator::adjustPipeline(
                                               ShaderModule& targetShader,
                                               size_t modificatorIndex)
 {
-  std::string indexStr = std::to_string(modificatorIndex);
+  try
+  {
+    std::string indexStr = std::to_string(modificatorIndex);
 
-  ShaderModule::Fragment& fragment = targetShader.newFragment();
-  fragment.loadFromFile("clPipeline/backgroundModificator.frag");
+    ShaderModule::Fragment& fragment = targetShader.newFragment();
+    fragment.loadFromFile("clPipeline/backgroundModificator.frag");
 
-  std::string applyFunctionName("modificator");
-  applyFunctionName += indexStr;
-  fragment.replace("$APPLY_FUNCTION$", applyFunctionName);
+    std::string applyFunctionName("modificator");
+    applyFunctionName += indexStr;
+    fragment.replace("$APPLY_FUNCTION$", applyFunctionName);
 
-  const std::string* declaration =
+    const std::string* declaration =
                             targetShader.defineValue("MODIFICATOR_DECLARATION");
-  if (declaration != nullptr)
-  {
-    std::string newDeclaration = *declaration +
+    if (declaration != nullptr)
+    {
+      std::string newDeclaration = *declaration +
                             (std::string("void ") + applyFunctionName + "();");
-    targetShader.setDefine("MODIFICATOR_DECLARATION", newDeclaration);
-  }
+      targetShader.setDefine("MODIFICATOR_DECLARATION", newDeclaration);
+    }
 
-  const std::string* apply = targetShader.defineValue("APPLY_POSTEFFECT");
-  if (apply != nullptr)
-  {
-    std::string newApply = *apply + (applyFunctionName + "();");
-    targetShader.setDefine("APPLY_POSTEFFECT", newApply);
-  }
+    const std::string* apply = targetShader.defineValue("APPLY_POSTEFFECT");
+    if (apply != nullptr)
+    {
+      std::string newApply = *apply + (applyFunctionName + "();");
+      targetShader.setDefine("APPLY_POSTEFFECT", newApply);
+    }
 
-  fragment.replace("$INDEX$", indexStr);
+    fragment.replace("$INDEX$", indexStr);
 
-  std::string drawDataBindingName("drawDataBinding");
-  drawDataBindingName += indexStr;
-  targetPipeline.addResource( drawDataBindingName,
-                              _drawDataUniform,
-                              VK_SHADER_STAGE_FRAGMENT_BIT);
-
-  if(_luminanceSampler.attachedTexture(0) != nullptr)
-  {
-    fragment.replace("$LUMINANCE_SAMPLER_ENABLED$", "1");
-
-    std::string luminanceSamplerBindingName("luminanceTextureBinding");
-    luminanceSamplerBindingName += indexStr;
-    targetPipeline.addResource( luminanceSamplerBindingName,
-                                _luminanceSampler,
+    std::string drawDataBindingName("drawDataBinding");
+    drawDataBindingName += indexStr;
+    targetPipeline.addResource( drawDataBindingName,
+                                _drawDataUniform,
                                 VK_SHADER_STAGE_FRAGMENT_BIT);
+
+    if(_luminanceSampler.attachedTexture(0) != nullptr)
+    {
+      fragment.replace("$LUMINANCE_SAMPLER_ENABLED$", "1");
+
+      std::string luminanceSamplerBindingName("luminanceTextureBinding");
+      luminanceSamplerBindingName += indexStr;
+      targetPipeline.addResource( luminanceSamplerBindingName,
+                                  _luminanceSampler,
+                                  VK_SHADER_STAGE_FRAGMENT_BIT);
+    }
+    else
+    {
+      fragment.replace("$LUMINANCE_SAMPLER_ENABLED$", "0");
+    }
   }
-  else
+  catch (std::exception& error)
   {
-    fragment.replace("$LUMINANCE_SAMPLER_ENABLED$", "0");
+    mtt::Log() << error.what();
+    mtt::Abort("BackgroundAreaModificator::adjustPipeline: unable to adjust pipeline.");
+  }
+  catch (...)
+  {
+    mtt::Abort("BackgroundAreaModificator::adjustPipeline: unknown error.");
   }
 }

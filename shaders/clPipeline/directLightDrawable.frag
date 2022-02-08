@@ -1,13 +1,17 @@
-//directLight.frag
+//directLightDrawable.frag
 
 layout(location = 0) in noperspective vec2 inClipCoord;
 
-layout (set = volatileSet, binding = depthMapBinding) uniform sampler2D depthMap;
-layout (set = volatileSet, binding = normalMapBinding) uniform sampler2D normalMap;
-layout (set = volatileSet, binding = albedoMapBinding) uniform sampler2D albedoMap;
-layout (set = volatileSet, binding = specularMapBinding) uniform sampler2D specularMap;
+layout (set = volatileSet,
+        binding = depthMapBinding) uniform sampler2D depthMap;
+layout (set = volatileSet,
+        binding = normalMapBinding) uniform sampler2D normalMap;
+layout (set = volatileSet,
+        binding = albedoMapBinding) uniform sampler2D albedoMap;
+layout (set = volatileSet,
+        binding = specularMapBinding) uniform sampler2D specularMap;
 
-layout(binding = lightDataBinding, set = volatileSet) uniform LightData
+layout(set = volatileSet, binding = lightDataBinding) uniform LightData
 {
   vec3 illuminance;
   vec3 lightInverseDirection;
@@ -18,10 +22,10 @@ layout(binding = lightDataBinding, set = volatileSet) uniform LightData
 } lightData;
 
 #ifdef SHADOW_MAP_ENABLED
-  layout(binding = shadowMapBinding, set = volatileSet)
-                              uniform sampler2D shadowMap[SHADOW_CASCADE_SIZE];
+  layout( set = volatileSet, binding = shadowMapBinding)
+                                uniform sampler2D shadowMap[SHADOW_CASCADE_SIZE];
 
-  layout(binding = shadowCoordsCorrectionBinding, set = volatileSet)
+  layout(set = volatileSet, binding = shadowCoordsCorrectionBinding)
                                                   uniform ShadowCoordsCorrection
   {
     vec4 values[SHADOW_CASCADE_SIZE]; // x is multiplicator

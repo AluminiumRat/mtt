@@ -1,5 +1,5 @@
 #include <mtt/clPipeline/Background/BackgroundAreaModificator.h>
-#include <mtt/clPipeline/Lighting/AmbientLightAreaModificator.h>
+#include <mtt/clPipeline/Lighting/LightAreaModificator.h>
 #include <mtt/clPipeline/MeshTechniques/FLColorTechnique.h>
 #include <mtt/clPipeline/constants.h>
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
@@ -28,7 +28,7 @@ FLColorTechnique::FLColorTechnique( AreaModificatorSet& modificatorSet,
   for (AreaModificator* modificator : _modificators.modificators())
   {
     if( modificator->type() == BackgroundAreaModificator::typeIndex ||
-        modificator->type() == AmbientLightAreaModificator::typeIndex)
+        modificator->type() == LightAreaModificator::typeIndex)
     {
       modificator->addConsumer(*this);
     }
@@ -40,7 +40,7 @@ FLColorTechnique::~FLColorTechnique()  noexcept
   for (AreaModificator* modificator : _modificators.modificators())
   {
     if (modificator->type() == BackgroundAreaModificator::typeIndex ||
-        modificator->type() == AmbientLightAreaModificator::typeIndex)
+        modificator->type() == LightAreaModificator::typeIndex)
     {
       modificator->removeConsumer(*this);
     }
@@ -86,10 +86,10 @@ void FLColorTechnique::adjustPipeline(GraphicsPipeline& pipeline,
                                             modificatorIndex);
     }
 
-    if(modificator.type() == AmbientLightAreaModificator::typeIndex)
+    if(modificator.type() == LightAreaModificator::typeIndex)
     {
-      AmbientLightAreaModificator& lightModificator =
-                        static_cast<AmbientLightAreaModificator&>(modificator);
+      LightAreaModificator& lightModificator =
+                                static_cast<LightAreaModificator&>(modificator);
       lightModificator.adjustPipeline(pipeline,
                                       *fragmentShader,
                                       modificatorIndex);

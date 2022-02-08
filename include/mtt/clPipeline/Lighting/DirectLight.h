@@ -1,15 +1,19 @@
 #pragma once
 
+#include <optional>
+
 #include <mtt/clPipeline/Lighting/AbstractLight.h>
 #include <mtt/clPipeline/Lighting/DirectLightApplicator.h>
+#include <mtt/clPipeline/Lighting/DirectLightAreaModificator.h>
 #include <mtt/clPipeline/Lighting/DirectLightData.h>
 #include <mtt/render/Pipeline/Sampler.h>
-#include <mtt/render/Pipeline/Texture2D.h>
 #include <mtt/utilities/Abort.h>
 #include <mtt/utilities/Sphere.h>
 
 namespace mtt
 {
+  struct DrawPlanBuildInfo;
+
   namespace clPipeline
   {
     class ShadowMapProvider;
@@ -43,15 +47,29 @@ namespace mtt
 
       inline float blurSize() const noexcept;
       inline void setBlurSize(float newValue) noexcept;
+      /// Blur radius in UV coordinates, i.e. blur radius relative to light
+      /// diameter
+      inline float blurRelativeRadius() const noexcept;
 
       inline Sphere getBoundSphere() const noexcept;
+
+    private:
+      friend class DirectLightApplicator;
+      friend class DirectLightAreaModificator;
+      DirectLightDrawData buildDrawData(
+                            const DrawPlanBuildInfo& buildInfo) const noexcept;
+      Sampler& getOrCreateShdowmapSampler();
 
     private:
       void _updateBound() noexcept;
       void _resetPipelines() noexcept;
 
     private:
+      LogicalDevice& _device;
+
       ShadowMapProvider* _shadowMapProvider;
+      std::optional<Sampler> _shadowmapSampler;
+
       glm::vec3 _illuminance;
       float _distance;
       float _radius;
@@ -59,6 +77,7 @@ namespace mtt
       float _blurSize;
 
       DirectLightApplicator _defferedLightApplicator;
+      DirectLightAreaModificator _forwardLightApplicator;
     };
 
     inline const glm::vec3& DirectLight::illuminance() const noexcept
@@ -129,6 +148,11 @@ namespace mtt
     inline void DirectLight::setBlurSize(float newValue) noexcept
     {
       _blurSize = newValue;
+    }
+
+    inline float DirectLight::blurRelativeRadius() const noexcept
+    {
+      return (blurSize() / 2.f) / (2.f * radius());
     }
 
     inline Sphere DirectLight::getBoundSphere() const noexcept

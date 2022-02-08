@@ -41,6 +41,8 @@ set(HEADERS
     "../../include/mtt/clPipeline/Lighting/DirectLight.h"
     "../../include/mtt/clPipeline/Lighting/DirectLightApplicator.h"
     "../../include/mtt/clPipeline/Lighting/DirectLightData.h"
+    "../../include/mtt/clPipeline/Lighting/DirectLightAreaModificator.h"
+    "../../include/mtt/clPipeline/Lighting/LightAreaModificator.h"
     "../../include/mtt/clPipeline/Lighting/ShadowmapBuilder.h"
     "../../include/mtt/clPipeline/Lighting/ShadowmapProvider.h"
 
@@ -78,6 +80,8 @@ set(SOURCES
     "Lighting/AmbientLightAreaModificator.cpp"
     "Lighting/DirectLight.cpp"
     "Lighting/DirectLightApplicator.cpp"
+    "Lighting/DirectLightAreaModificator.cpp"
+    "Lighting/LightAreaModificator.cpp"
     "Lighting/ShadowmapBuilder.cpp"
     "Lighting/ShadowmapProvider.cpp"
 

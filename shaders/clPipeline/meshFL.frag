@@ -157,15 +157,14 @@ MODIFICATOR_DECLARATION
 float overallAmbientWeight = 0;
 vec4 surfaceColor = vec4(0);
 vec3 normal = vec3(1.f, 0.f, 0.f);
+vec3 toView = vec3(0.f, 0.f, 1.f);
+float viewDotNorm = 0;
 vec3 specular = vec3(0.f, 0.f, 0.f); //roughness, strength, metallic
 float roughness = 0.f;
 
-void applyAmbient(vec3 diffuseIlluminance, vec3 reflectionIlluminance)
+void applyLight(vec3 lambertLuminance, vec3 reflectionLuminance)
 {
-  vec3 diffuseLuminance = diffuseIlluminance * surfaceColor.rgb / M_PI;
-  vec3 reflectionLuminance = reflectionIlluminance / M_PI;
-
-  float viewDotNorm = dot(normalize(-viewCoord), normal);
+  vec3 diffuseLuminance = lambertLuminance * surfaceColor.rgb;
 
   vec3 plasticLuminance =
             diffuseLuminance +
@@ -181,6 +180,9 @@ void main()
 {
   surfaceColor = getSurfaceColor();
   normal = getNormal();
+
+  toView = normalize(-viewCoord.xyz);
+  viewDotNorm = dot(toView, normal);
 
   specular = getSpecular();
   roughness = specular.x;

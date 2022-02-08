@@ -73,14 +73,14 @@ void $APPLY_FUNCTION$()
     float weight = getWeight$INDEX$() / max(overallAmbientWeight, 1.f);
   #endif
 
-  vec3 diffuseIlluminance = lightData$INDEX$.illuminance * weight;
+  vec3 lambertLuminance = lightData$INDEX$.illuminance * weight / M_PI;
   #if $DIFFUSE_LUMINANCE_MAP_ENABLED$
     vec3 probeDirection =
                       normalize(mat3(lightData$INDEX$.viewToLocal) * normal);
     probeDirection.z = -probeDirection.z;
     vec3 diffuseLuminanceProbe =
                         texture(diffuseLuminanceMap$INDEX$, probeDirection).rgb;
-    diffuseIlluminance *= diffuseLuminanceProbe;
+    lambertLuminance *= diffuseLuminanceProbe;
   #endif
 
   #if $AMBIENT_MAP_ENABLED$
@@ -88,11 +88,11 @@ void $APPLY_FUNCTION$()
     vec3 reflectionDir =
             normalize(mat3(lightData$INDEX$.viewToLocal) * reflectionDirView);
     reflectionDir.z = -reflectionDir.z;
-    vec3 reflectionIlluminance = readAmbientMap$INDEX$(reflectionDir, roughness);
-    reflectionIlluminance *= lightData$INDEX$.illuminance * weight;
+    vec3 reflectionLuminance = readAmbientMap$INDEX$(reflectionDir, roughness);
+    reflectionLuminance *= lightData$INDEX$.illuminance * weight / M_PI;
   #else
-    vec3 reflectionIlluminance = lightData$INDEX$.illuminance * weight;
+    vec3 reflectionLuminance = lightData$INDEX$.illuminance * weight / M_PI;
   #endif
 
-  applyAmbient(diffuseIlluminance, reflectionIlluminance);
+  applyLight(lambertLuminance, reflectionLuminance);
 }

@@ -1,4 +1,4 @@
-//directLight.vert
+//directLightDrawable.vert
 
 layout(location = 0) out noperspective vec2 outClipCoord;
 
