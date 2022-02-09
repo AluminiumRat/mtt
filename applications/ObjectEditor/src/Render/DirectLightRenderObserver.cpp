@@ -1,10 +1,3 @@
-#include <vector>
-
-#include <mtt/clPipeline/MeshTechniques/InstrumentalCompositeTechnique.h>
-#include <mtt/clPipeline/constants.h>
-#include <mtt/render/Mesh/UidMeshTechnique.h>
-#include <mtt/render/Pipeline/Buffer.h>
-
 #include <Objects/DirectLightObject.h>
 #include <Render/DirectLightRenderObserver.h>
 #include <EditorApplication.h>
@@ -19,43 +12,10 @@
 DirectLightRenderObserver::DirectLightRenderObserver(
                                                 DirectLightObject& object,
                                                 EditorCommonData& commonData) :
-  AbstractLightRenderObserver(object, commonData),
+  AbstractLightRenderObserver(object, commonData, ICON_FILE, ICON_SIZE),
   _lightObject(object),
-  _light(EditorApplication::instance().displayDevice()),
-  _cylinderMesh(EditorApplication::instance().displayDevice()),
-  _iconNode(ICON_FILE, ICON_SIZE)
+  _light(EditorApplication::instance().displayDevice())
 {
-  registerUnculledDrawable(_iconNode);
-  positionJoint().addChild(_iconNode);
-  _iconNode.addModificator(visibleFilter());
-  _iconNode.addModificator(uidSetter());
-  _iconNode.addModificator(selectionModificator());
-
-  _cylinderMesh.setTechnique(
-      mtt::clPipeline::colorFrameType,
-      std::make_unique<mtt::clPipeline::InstrumentalCompositeTechnique>(
-                                                VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
-                                                true,
-                                                true));
-  _cylinderMesh.setTechnique( mtt::clPipeline::uidFrameType,
-                              std::make_unique<mtt::UidMeshTechnique>(
-                                                VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
-                                                true,
-                                                true));
-
-  mtt::SurfaceMaterialData materialData;
-  materialData.albedo = glm::vec3(.7f, .7f, .4f);
-  materialData.roughness = 1;
-  materialData.specularStrength = 1;
-  _cylinderMesh.extraData().setSurfaceMaterialData(materialData);
-
-  _cylinderNode.setDrawable(&_cylinderMesh, mtt::Sphere());
-  registerCulledDrawable(_cylinderNode);
-  positionRotateJoint().addChild(_cylinderNode);
-  _cylinderNode.addModificator(visibleFilter());
-  _cylinderNode.addModificator(uidSetter());
-  _cylinderNode.addModificator(selectionModificator());
-
   setLightObject(_light);
 
   connect(&_lightObject,
@@ -188,19 +148,7 @@ void DirectLightRenderObserver::_updateCylinderMesh() noexcept
                           -length);
     vertices.emplace_back(radius, 0.f, -length);
 
-    mtt::LogicalDevice& device = EditorApplication::instance().displayDevice();
-    std::shared_ptr<mtt::Buffer> positionsBuffer(
-                                  new mtt::Buffer(device,
-                                                  mtt::Buffer::VERTEX_BUFFER));
-    positionsBuffer->setData( vertices.data(),
-                              vertices.size() * sizeof(glm::vec3));
-    _cylinderMesh.setPositionBuffer(positionsBuffer);
-    _cylinderMesh.setVerticesNumber(uint32_t(vertices.size()));
-
-    float boundRadius = sqrt(_lightObject.radius() * _lightObject.radius() +
-                            _lightObject.distance() * _lightObject.distance());
-
-    _cylinderNode.setLocalBoundSphere(mtt::Sphere(glm::vec3(0.f), boundRadius));
+    setHullGeometry(vertices);
   }
   catch (std::exception& error)
   {

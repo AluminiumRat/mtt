@@ -4,11 +4,8 @@
 
 #include <mtt/clPipeline/Lighting/DirectLight.h>
 #include <mtt/clPipeline/Lighting/ShadowMapProvider.h>
-#include <mtt/render/Mesh/Mesh.h>
-#include <mtt/render/SceneGraph/SimpleDrawableNode.h>
 
 #include <Render/AbstractLightRenderObserver.h>
-#include <Render/IconDrawableNode.h>
 
 class DirectLightObject;
 
@@ -38,13 +35,6 @@ private:
 
 private:
   DirectLightObject& _lightObject;
-
   std::unique_ptr<mtt::clPipeline::ShadowMapProvider> _shadowMapProvider;
-
   mtt::clPipeline::DirectLight _light;
-
-  mtt::Mesh _cylinderMesh;
-  mtt::SimpleDrawableNode _cylinderNode;
-
-  IconDrawableNode _iconNode;
 };
