@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <mtt/clPipeline/Lighting/AbstractLight.h>
 #include <mtt/clPipeline/Lighting/AmbientLightApplicator.h>
 #include <mtt/clPipeline/Lighting/AmbientLightAreaModificator.h>
@@ -16,7 +18,9 @@ namespace mtt
     class AmbientLight : public AbstractLight
     {
     public:
-      explicit AmbientLight(LogicalDevice& device);
+      explicit AmbientLight(bool forwardLightingEnabled,
+                            bool defferedLightingEnabled,
+                            LogicalDevice& device);
       AmbientLight(const AmbientLight&) = delete;
       AmbientLight& operator = (const AmbientLight&) = delete;
 
@@ -54,8 +58,8 @@ namespace mtt
       Sampler _diffuseLuminanceSampler;
       CubeTexture* _diffuseLuminanceMap;
 
-      AmbientLightApplicator _defferedApplicator;
-      AmbientLightAreaModificator _forwardApplicator;
+      std::unique_ptr<AmbientLightApplicator> _defferedApplicator;
+      std::unique_ptr<AmbientLightAreaModificator> _forwardApplicator;
     };
 
     inline bool AmbientLight::infinityAreaMode() const noexcept

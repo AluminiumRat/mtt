@@ -3,19 +3,31 @@
 using namespace mtt;
 using namespace clPipeline;
 
-AmbientLight::AmbientLight(LogicalDevice& device) :
+AmbientLight::AmbientLight( bool forwardLightingEnabled,
+                            bool defferedLightingEnabled,
+                            LogicalDevice& device) :
   _ambientMapSampler(PipelineResource::STATIC, device),
   _ambientMap(nullptr),
   _diffuseLuminanceSampler(PipelineResource::STATIC, device),
-  _diffuseLuminanceMap(nullptr),
-  _defferedApplicator(_lightData,
-                      _ambientMapSampler,
-                      _diffuseLuminanceSampler,
-                      device),
-  _forwardApplicator( _lightData,
-                      _ambientMapSampler,
-                      _diffuseLuminanceSampler)
+  _diffuseLuminanceMap(nullptr)
 {
+  if (forwardLightingEnabled)
+  {
+    _forwardApplicator.reset(new AmbientLightAreaModificator(
+                                                    _lightData,
+                                                    _ambientMapSampler,
+                                                    _diffuseLuminanceSampler));
+  }
+
+  if (defferedLightingEnabled)
+  {
+    _defferedApplicator.reset(new AmbientLightApplicator(
+                                                      _lightData,
+                                                      _ambientMapSampler,
+                                                      _diffuseLuminanceSampler,
+                                                      device));
+  }
+
   _lightData.illuminance = glm::vec3(1.f);
   _lightData.distance = 100.f;
   _lightData.saturationDistance = 0.f;
@@ -26,18 +38,25 @@ AmbientLight::AmbientLight(LogicalDevice& device) :
 
 DrawableNode* AmbientLight::defferedLightApplicator() noexcept
 {
-  return &_defferedApplicator;
+  return _defferedApplicator.get();
 }
 
 AreaModificator* AmbientLight::forwardLightModificator() noexcept
 {
-  return &_forwardApplicator;
+  return _forwardApplicator.get();
 }
 
 void AmbientLight::_updateBound() noexcept
 {
-  _defferedApplicator.updateBound();
-  _forwardApplicator.updateBound();
+  if (_defferedApplicator != nullptr)
+  {
+    _defferedApplicator->updateBound();
+  }
+
+  if (_forwardApplicator != nullptr)
+  {
+    _forwardApplicator->updateBound();
+  }
 }
 
 void AmbientLight::setAmbientMap(std::shared_ptr<CubeTexture> newMap) noexcept
@@ -59,6 +78,6 @@ void AmbientLight::setDiffuseLuminanceMap(
 
 void AmbientLight::_resetPipelines() noexcept
 {
-  _defferedApplicator.resetPipelines();
-  _forwardApplicator.reset();
+  if (_defferedApplicator != nullptr) _defferedApplicator->resetPipelines();
+  if (_forwardApplicator != nullptr) _forwardApplicator->reset();
 }

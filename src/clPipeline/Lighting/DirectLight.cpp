@@ -5,40 +5,59 @@
 using namespace mtt;
 using namespace clPipeline;
 
-DirectLight::DirectLight(LogicalDevice& device) :
+DirectLight::DirectLight( bool forwardLightingEnabled,
+                          bool defferedLightingEnabled,
+                          LogicalDevice& device) :
   _device(device),
   _shadowMapProvider(nullptr),
   _illuminance(1.f),
   _distance(50.f),
   _radius(10.f),
   _cascadeSize(1),
-  _blurSize(0.f),
-  _defferedLightApplicator(*this, device),
-  _forwardLightApplicator(*this)
+  _blurSize(0.f)
 {
+  if(forwardLightingEnabled)
+  {
+    _forwardLightApplicator.reset(new DirectLightAreaModificator(*this));
+  }
+
+  if(defferedLightingEnabled)
+  {
+    _defferedLightApplicator.reset(new DirectLightApplicator(*this, device));
+  }
+
   _updateBound();
 }
 
 DrawableNode* DirectLight::defferedLightApplicator() noexcept
 {
-  return &_defferedLightApplicator;
+  return _defferedLightApplicator.get();
 }
 
 AreaModificator* DirectLight::forwardLightModificator() noexcept
 {
-  return &_forwardLightApplicator;
+  return _forwardLightApplicator.get();
 }
 
 void DirectLight::_updateBound() noexcept
 {
-  _defferedLightApplicator.updateBound();
-  _forwardLightApplicator.updateBound();
+  if (_defferedLightApplicator != nullptr)
+  {
+    _defferedLightApplicator->updateBound();
+  }
+  if(_forwardLightApplicator != nullptr)
+  {
+    _forwardLightApplicator->updateBound();
+  }
 }
 
 void DirectLight::_resetPipelines() noexcept
 {
-  _defferedLightApplicator.resetPipelines();
-  _forwardLightApplicator.reset();
+  if (_defferedLightApplicator != nullptr)
+  {
+    _defferedLightApplicator->resetPipelines();
+  }
+  if (_forwardLightApplicator != nullptr) _forwardLightApplicator->reset();
   _shadowmapSampler.reset();
 }
 

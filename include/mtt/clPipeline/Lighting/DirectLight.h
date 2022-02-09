@@ -1,6 +1,7 @@
 #pragma once
 
 #include <optional>
+#include <memory>
 
 #include <mtt/clPipeline/Lighting/AbstractLight.h>
 #include <mtt/clPipeline/Lighting/DirectLightApplicator.h>
@@ -21,7 +22,9 @@ namespace mtt
     class DirectLight : public AbstractLight
     {
     public:
-      explicit DirectLight(LogicalDevice& device);
+      explicit DirectLight( bool forwardLightingEnabled,
+                            bool defferedLightingEnabled,
+                            LogicalDevice& device);
       DirectLight(const DirectLight&) = delete;
       DirectLight& operator = (const DirectLight&) = delete;
       virtual ~DirectLight() = default;
@@ -76,8 +79,8 @@ namespace mtt
       size_t _cascadeSize;
       float _blurSize;
 
-      DirectLightApplicator _defferedLightApplicator;
-      DirectLightAreaModificator _forwardLightApplicator;
+      std::unique_ptr<DirectLightApplicator> _defferedLightApplicator;
+      std::unique_ptr<DirectLightAreaModificator> _forwardLightApplicator;
     };
 
     inline const glm::vec3& DirectLight::illuminance() const noexcept

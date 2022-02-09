@@ -160,7 +160,7 @@ void BackgroundObserver::_updateLight() noexcept
   {
     try
     {
-      _light.emplace(mtt::Application::instance().displayDevice());
+      _light.emplace(true, true, mtt::Application::instance().displayDevice());
       _light->setInfinityAreaMode(true);
 
       _lightDrawable = _light->defferedLightApplicator();
