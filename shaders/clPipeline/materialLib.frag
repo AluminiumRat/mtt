@@ -1,4 +1,6 @@
 //materialLib.frag
+#ifndef MATERIAL_LIB
+#define MATERIAL_LIB
 
 float GGXDistribution(float normDotHalf, float roughness)
 {
@@ -27,6 +29,47 @@ float fresnelFactor(float basis, float viewDotHalf)
   return basis + (1.f - basis) * compliment;
 }
 
+vec3 getPlasticLuminance( vec3 lambertLuminance,
+                          vec3 specularLuminance,
+                          vec3 albedo,
+                          float specularStrength,
+                          float viewDotHalf)
+{
+  vec3 diffuseLuminance = lambertLuminance * albedo;
+
+  float frensel = fresnelFactor(.1f, viewDotHalf);
+
+  return diffuseLuminance + specularLuminance * specularStrength * frensel;
+}
+
+vec3 getMetallicLuminance(vec3 specularLuminance,
+                          vec3 albedo,
+                          float viewDotHalf)
+{
+  float frensel = fresnelFactor(.8f, viewDotHalf);
+  return albedo * specularLuminance * frensel;
+}
+
+vec3 getLuminance(vec3 lambertLuminance,
+                  vec3 specularLuminance,
+                  vec3 albedo,
+                  float specularStrength,
+                  float metallic,
+                  float viewDotHalf)
+{
+  vec3 plasticLuminance = getPlasticLuminance(lambertLuminance,
+                                              specularLuminance,
+                                              albedo,
+                                              specularStrength,
+                                              viewDotHalf);
+
+  vec3 metallicLuminance = getMetallicLuminance(specularLuminance,
+                                                albedo,
+                                                viewDotHalf);
+
+  return mix(plasticLuminance, metallicLuminance, metallic);
+}
+
 vec3 getLuminance(vec3 albedo,
                   float roughness,
                   float specularStrength,
@@ -49,15 +92,16 @@ vec3 getLuminance(vec3 albedo,
                                                 normDotView);
   float specularFactor =  distributionFactor * geometryFactor /
                                                             (4.f * normDotView);
+  vec3 specularLuminance = illuminance * specularFactor;
 
-  vec3 lambertFactor = albedo * (lightDotNorm / M_PI);
-  vec3 plasticReflection = lambertFactor + vec3(specularFactor *
-                            specularStrength * fresnelFactor(.1f, viewDotHalf));
-  vec3 plasticLuminance = illuminance * plasticReflection;
-  
-  vec3 metallicReflection = albedo *
-                            (specularFactor * fresnelFactor(.8f, viewDotHalf));
-  vec3 metallicLuminance = illuminance * metallicReflection;
+  vec3 lambertLuminance = illuminance * (lightDotNorm / M_PI);
 
-  return mix(plasticLuminance, metallicLuminance, metallic);
+  return getLuminance(lambertLuminance,
+                      specularLuminance,
+                      albedo,
+                      specularStrength,
+                      metallic,
+                      viewDotHalf);
 }
+
+#endif

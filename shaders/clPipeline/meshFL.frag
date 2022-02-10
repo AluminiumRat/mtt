@@ -162,18 +162,14 @@ float viewDotNorm = 0;
 vec3 specular = vec3(0.f, 0.f, 0.f); //roughness, strength, metallic
 float roughness = 0.f;
 
-void applyLight(vec3 lambertLuminance, vec3 reflectionLuminance)
+void applyLight(vec3 lambertLuminance, vec3 specularLuminance)
 {
-  vec3 diffuseLuminance = lambertLuminance * surfaceColor.rgb;
-
-  vec3 plasticLuminance =
-            diffuseLuminance +
-            reflectionLuminance * specular.y * fresnelFactor(.1f, viewDotNorm);
-
-  vec3 metallicLuminance = reflectionLuminance * surfaceColor.rgb *
-                                                fresnelFactor(.8f, viewDotNorm);
-
-  outColor.rgb += mix(plasticLuminance, metallicLuminance, specular.z);
+  outColor.rgb += getLuminance( lambertLuminance,
+                                specularLuminance,
+                                surfaceColor.rgb,
+                                specular.y,
+                                specular.z,
+                                viewDotNorm);
 }
 
 void main()
