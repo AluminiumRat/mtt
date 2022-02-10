@@ -2,6 +2,8 @@
 
 #include <memory>
 
+#include <glm/mat4x4.hpp>
+
 #include <mtt/clPipeline/RenderPass/ShadowmapPass.h>
 #include <mtt/render/SceneRenderer/AbstractFrame.h>
 #include <mtt/render/SceneRenderer/OneTargetFrameBuilder.h>
@@ -26,6 +28,10 @@ namespace mtt
         ShadowMapFramePlan(const ShadowMapFramePlan&) = delete;
         ShadowMapFramePlan& operator = (const ShadowMapFramePlan&) = delete;
         virtual ~ShadowMapFramePlan() noexcept = default;
+
+        glm::mat4 viewProjectionMatrix;   /// This value is setted externally
+                                          /// and used as a tag to find
+                                          /// duplicate frame queries
 
       private:
         DrawBin _shadowmapBin;

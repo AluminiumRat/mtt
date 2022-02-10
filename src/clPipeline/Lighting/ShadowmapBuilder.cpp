@@ -37,6 +37,7 @@ public:
 
 ShadowmapBuilder::ShadowMapFramePlan::ShadowMapFramePlan(AbstractFrame& frame) :
   AbstractFramePlan(frame),
+  viewProjectionMatrix(1),
   _shadowmapBin(memoryPool())
 {
   registerBin(_shadowmapBin, shadowmapStage);

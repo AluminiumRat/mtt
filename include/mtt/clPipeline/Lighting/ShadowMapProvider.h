@@ -78,11 +78,20 @@ namespace mtt
       };
 
     private:
-      ImageView& _createShadowMap( const Area& mapPart,
+      ImageView& _getShadowMap( const Area& mapPart,
+                                DrawPlan& drawPlan,
+                                const AbstractFramePlan& dependentFrame,
+                                ViewInfo& rootViewInfo);
+      ImageView* _tryUseExistingPlan(
+                                  const std::vector<AbstractFramePlan*>& plans,
+                                  CameraNode& renderCamera,
                                   DrawPlan& drawPlan,
-                                  const AbstractFramePlan& dependentFrame,
-                                  ViewInfo& rootViewInfo);
-
+                                  const AbstractFramePlan& dependentFrame);
+      void _buildNewMap(CameraNode& renderCamera,
+                        OneTargetFrameBuilder::Frame& frame,
+                        DrawPlan& drawPlan,
+                        const AbstractFramePlan& dependentFrame,
+                        ViewInfo& rootViewInfo);
       FrameRecord& _getOrCreateFrame(size_t index);
       void _setupRenderCamera(CameraNode& renderCamera,
                               const Area& mapPart) const noexcept;
