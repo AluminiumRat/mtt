@@ -64,6 +64,7 @@ void FLColorTechnique::adjustPipeline(GraphicsPipeline& pipeline,
   std::unique_ptr<ShaderModule> fragmentShader(
                                 new ShaderModule( ShaderModule::FRAGMENT_SHADER,
                                                   renderPass.device()));
+  fragmentShader->newFragment().loadFromFile("meshLib.frag");
   fragmentShader->newFragment().loadFromFile("clPipeline/materialLib.frag");
   fragmentShader->newFragment().loadFromFile("clPipeline/meshFL.frag");
   fragmentShader->setDefine("MODIFICATOR_DECLARATION", "");

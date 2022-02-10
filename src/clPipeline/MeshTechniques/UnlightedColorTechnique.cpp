@@ -38,6 +38,7 @@ void UnlightedColorTechnique::adjustPipeline( GraphicsPipeline& pipeline,
   std::unique_ptr<ShaderModule> fragmentShader(
                                 new ShaderModule( ShaderModule::FRAGMENT_SHADER,
                                                   renderPass.device()));
+  fragmentShader->newFragment().loadFromFile("meshLib.frag");
   fragmentShader->newFragment().loadFromFile("clPipeline/meshUnlighted.frag");
   pipeline.addShader(std::move(fragmentShader));
 
