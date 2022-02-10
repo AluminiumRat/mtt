@@ -29,7 +29,11 @@ AsyncTaskDialog::AsyncTaskDialog(AsyncTaskQueue& queue) :
           this,
           &AsyncTaskDialog::_processCounters);
   _processCounters(_queue.counters());
+}
 
+void AsyncTaskDialog::showEvent(QShowEvent* theEvent)
+{
+  QDialog::showEvent(theEvent);
   _adjustDialogSize();
 }
 

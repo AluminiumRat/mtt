@@ -20,7 +20,10 @@ namespace mtt
     AsyncTaskDialog(const AsyncTaskDialog&) = delete;
     AsyncTaskDialog& operator = (const AsyncTaskDialog&) = delete;
     virtual ~AsyncTaskDialog() noexcept = default;
-  
+
+  protected:
+    virtual void showEvent(QShowEvent* theEvent) override;
+
   private:
     void _addTaskWidget(AbstractAsyncTask& task) noexcept;
     void _removeTaskWidget(AbstractAsyncTask& task) noexcept;
