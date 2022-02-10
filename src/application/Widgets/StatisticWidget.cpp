@@ -10,6 +10,7 @@ StatisticWidget::StatisticWidget(QWidget* parent) :
   _ui(new Ui::StatisticWidget)
 {
   _ui->setupUi(this);
+  setFixedSize(size());
 }
 
 StatisticWidget::~StatisticWidget() noexcept
@@ -39,4 +40,7 @@ void StatisticWidget::_update() noexcept
 {
   const ApplicationStatistic& statistic = Application::instance().statistic();
   _ui->cpsValueLabel->setText(QString::number(statistic.cyclesPerSecond));
+
+  float cycleTime = 1000000.f / statistic.cyclesPerSecond;
+  _ui->cycleTymeValueLabel->setText(QString::number(cycleTime));
 }
