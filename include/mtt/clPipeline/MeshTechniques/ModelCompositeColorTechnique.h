@@ -1,6 +1,7 @@
 #pragma once
 
 #include <optional>
+#include <memory>
 
 #include <mtt/clPipeline/MeshTechniques/EmissionTechnique.h>
 #include <mtt/clPipeline/MeshTechniques/OpaqueColorTechnique.h>
@@ -13,14 +14,16 @@ namespace mtt
 {
   namespace clPipeline
   {
-    class MeshCompositeColorTechnique : public CompositeMeshTechnique
+    class ModelCompositeColorTechnique : public CompositeMeshTechnique
     {
     public:
-      explicit MeshCompositeColorTechnique(VkPrimitiveTopology topology);
-      MeshCompositeColorTechnique(const MeshCompositeColorTechnique&) = delete;
-      MeshCompositeColorTechnique& operator = (
-                                  const MeshCompositeColorTechnique&) = delete;
-      virtual ~MeshCompositeColorTechnique() noexcept = default;
+      explicit ModelCompositeColorTechnique(bool enableSelectionTechnique,
+                                            VkPrimitiveTopology topology);
+      ModelCompositeColorTechnique(
+                                  const ModelCompositeColorTechnique&) = delete;
+      ModelCompositeColorTechnique& operator = (
+                                  const ModelCompositeColorTechnique&) = delete;
+      virtual ~ModelCompositeColorTechnique() noexcept = default;
 
       virtual void registerVariable(AbstractMeshVariable& variable,
                                     const std::string& name) override;
@@ -37,19 +40,16 @@ namespace mtt
       virtual void addToDrawPlan(DrawPlanBuildInfo& buildInfo) override;
 
     private:
-      void _updateTechniquesFlags() noexcept;
+      void _updateTechniques();
 
     private:
-      OpaqueColorTechnique _opaqueTechnique;
-      bool _opaqueTechniqueEnabled;
+      VkPrimitiveTopology _topology;
+      bool _needUpdateTechniques;
 
-      TransparentProxyTechnique _transparentTechnique;
-      bool _transparentTechniqueEnabled;
-
-      EmissionTechnique _emissionTechnique;
-      bool _emissionTechniqueEnabled;
-
-      SelectionMeshTechnique _selectionTechnique;
+      std::unique_ptr<OpaqueColorTechnique> _opaqueTechnique;
+      std::unique_ptr<TransparentProxyTechnique> _transparentTechnique;
+      std::unique_ptr<EmissionTechnique> _emissionTechnique;
+      std::unique_ptr<SelectionMeshTechnique> _selectionTechnique;
 
       std::optional<SurfaceMaterialData> _materialData;
       bool _useAlphaFromAlbedoSampler;

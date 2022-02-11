@@ -1,4 +1,4 @@
-#include <mtt/clPipeline/MeshTechniques/MeshCompositeColorTechnique.h>
+#include <mtt/clPipeline/MeshTechniques/ModelCompositeColorTechnique.h>
 #include <mtt/clPipeline/MeshTechniques/ModelTechniquesFactory.h>
 #include <mtt/clPipeline/MeshTechniques/ShadowmapMeshTechnique.h>
 #include <mtt/clPipeline/constants.h>
@@ -9,12 +9,15 @@
 using namespace mtt;
 using namespace mtt::clPipeline;
 
-ModelTechniquesFactory::ModelTechniquesFactory( bool createColorTechnique,
-                                                bool createShadowmapTechnique,
-                                                bool createDepthTechnique,
-                                                bool createUidTechnique,
-                                                VkPrimitiveTopology topology) :
+ModelTechniquesFactory::ModelTechniquesFactory(
+                                            bool createColorTechnique,
+                                            bool enableSelectionColorTechnique,
+                                            bool createShadowmapTechnique,
+                                            bool createDepthTechnique,
+                                            bool createUidTechnique,
+                                            VkPrimitiveTopology topology) :
   _createColorTechnique(createColorTechnique),
+  _enableSelectionColorTechnique(enableSelectionColorTechnique),
   _createShadowmapTechnique(createShadowmapTechnique),
   _createDepthTechnique(createDepthTechnique),
   _createUidTechnique(createUidTechnique),
@@ -27,7 +30,9 @@ void ModelTechniquesFactory::setupTechniques(Mesh& mesh)
   if (_createColorTechnique)
   {
     mesh.setTechnique(colorFrameType,
-                      std::make_unique<MeshCompositeColorTechnique>(_topology));
+                      std::make_unique<ModelCompositeColorTechnique>(
+                                                _enableSelectionColorTechnique,
+                                                _topology));
   }
 
   if (_createShadowmapTechnique)

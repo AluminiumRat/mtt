@@ -1,7 +1,7 @@
 #include <stdexcept>
 
 #include <mtt/application/Application.h>
-#include <mtt/clPipeline/MeshTechniques/MeshCompositeColorTechnique.h>
+#include <mtt/clPipeline/MeshTechniques/ModelCompositeColorTechnique.h>
 #include <mtt/clPipeline/MeshTechniques/ShadowmapMeshTechnique.h>
 #include <mtt/clPipeline/constants.h>
 #include <mtt/render/Mesh/DepthMeshTechnique.h>
@@ -25,8 +25,9 @@ MeshRenderObserver::MeshRenderObserver( MeshObject& object,
 
   mtt::LogicalDevice& device = mtt::Application::instance().displayDevice();
 
-  std::unique_ptr<mtt::clPipeline::MeshCompositeColorTechnique> colorTechnique;
-  colorTechnique.reset(new mtt::clPipeline::MeshCompositeColorTechnique(
+  std::unique_ptr<mtt::clPipeline::ModelCompositeColorTechnique> colorTechnique;
+  colorTechnique.reset(new mtt::clPipeline::ModelCompositeColorTechnique(
+                                          true,
                                           VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST));
   _mesh.setTechnique( mtt::clPipeline::colorFrameType,
                       std::move(colorTechnique));

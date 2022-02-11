@@ -12,6 +12,7 @@ namespace mtt
     {
     public:
       ModelTechniquesFactory( bool createColorTechnique,
+                              bool enableSelectionColorTechnique,
                               bool createShadowmapTechnique,
                               bool createDepthTechnique,
                               bool createUidTechnique,
@@ -25,6 +26,7 @@ namespace mtt
 
     private:
       bool _createColorTechnique;
+      bool _enableSelectionColorTechnique;
       bool _createShadowmapTechnique;
       bool _createDepthTechnique;
       bool _createUidTechnique;
