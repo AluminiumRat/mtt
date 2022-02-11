@@ -25,6 +25,10 @@ namespace mtt
     protected:
       virtual void adjustPipeline(GraphicsPipeline& pipeline,
                                   AbstractRenderPass& renderPass) override;
+
+      virtual float getCustomPriority(
+                  const DrawPlanBuildInfo& buildInfo) const noexcept override;
+
     private:
       bool _depthTestEnabled;
       bool _depthWriteEnabled;

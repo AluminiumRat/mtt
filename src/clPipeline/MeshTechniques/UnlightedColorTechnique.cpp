@@ -19,7 +19,7 @@ UnlightedColorTechnique::UnlightedColorTechnique(
                           SKELETON_FEATURE,
                         forwardLightStage,
                         topology,
-                        FAR_FIRST_ORDER),
+                        depthTestEnabled ? FAR_FIRST_ORDER : CUSTOM_ORDER),
   _depthTestEnabled(depthTestEnabled),
   _depthWriteEnabled(depthWriteEnabled),
   _depthCompareOp(depthCompareOp)
@@ -43,4 +43,11 @@ void UnlightedColorTechnique::adjustPipeline( GraphicsPipeline& pipeline,
   pipeline.addShader(std::move(fragmentShader));
 
   pipeline.setDefine("ENABLE_ALPHA_TEST");
+}
+
+float UnlightedColorTechnique::getCustomPriority(
+                              const DrawPlanBuildInfo& buildInfo) const noexcept
+{
+  float distance = buildInfo.normalizedDistance(glm::vec3(0));
+  return distance - 1;
 }
