@@ -5,6 +5,7 @@
 
 #include <vulkan/vulkan.h>
 
+#include <mtt/render/Pipeline/ShaderLoader.h>
 #include <mtt/render/PhysicalDevice.h>
 #include <mtt/utilities/Abort.h>
 #include <mtt/utilities/StringRegistry.h>
@@ -42,6 +43,10 @@ namespace mtt
     inline const PhysicalDevice& physicalDevice(size_t index) const;
     inline PhysicalDevice& physicalDevice(size_t index);
 
+    inline ShaderLoader& shaderLoader() const noexcept;
+    /// newLoader should not be null
+    void setShaderLoader(std::unique_ptr<ShaderLoader> newLoader) noexcept;
+
   public:
     StringRegistry namesRegistry;
 
@@ -64,6 +69,8 @@ namespace mtt
 
     using PhysicalDevices = std::vector<std::unique_ptr<PhysicalDevice>>;
     PhysicalDevices _physicalDevices;
+
+    std::unique_ptr<ShaderLoader> _shaderLoader;
 
     static RenderLibInstance* _instance;
   };
@@ -103,5 +110,10 @@ namespace mtt
   inline PhysicalDevice& RenderLibInstance::physicalDevice(size_t index)
   {
     return *_physicalDevices[index];
+  }
+
+  inline ShaderLoader& RenderLibInstance::shaderLoader() const noexcept
+  {
+    return *_shaderLoader;
   }
 }

@@ -1,14 +1,12 @@
-#define _CRT_SECURE_NO_WARNINGS
-#include <cstdlib>
-#include <fstream>
-#include <iostream>
-#include <sstream>
 #include <vector>
+#include <stdexcept>
 
 #include <shaderc/shaderc.hpp>
 
 #include <mtt/render/Pipeline/ShaderModule.h>
+#include <mtt/render/Pipeline/ShaderLoader.h>
 #include <mtt/render/LogicalDevice.h>
+#include <mtt/render/RenderLibInstance.h>
 #include <mtt/utilities/Abort.h>
 
 using namespace mtt;
@@ -32,38 +30,9 @@ void ShaderModule::Fragment::setText( const std::string& newText,
 
 void ShaderModule::Fragment::loadFromFile(const std::string& filename)
 {
-  std::ifstream file(filename, std::ios::ate | std::ios::binary);
-  if (!file.is_open())
-  {
-    file.open("shaders/" + filename, std::ios::ate | std::ios::binary);
-  }
-  if (!file.is_open())
-  {
-    const char* patchesEnv = std::getenv("SHADER_SEARCH_PATCHES");
-    if(patchesEnv != nullptr)
-    {
-      std::istringstream envStream(patchesEnv);
-      std::string path;
-      while(std::getline(envStream, path, ';'))
-      {
-        file.open(path + "/" + filename, std::ios::ate | std::ios::binary);
-        if (file.is_open()) break;
-      }
-    }
-  }
-  if (!file.is_open())
-  {
-    throw std::runtime_error("Failed to open shader file :" + filename);
-  }
-
-  size_t dataSize = (size_t)file.tellg();
-  std::string text;
-  text.resize(dataSize);
-
-  file.seekg(0);
-  file.read(text.data(), dataSize);
-
-  file.close();
+  ShaderLoader& loader = RenderLibInstance::instance().shaderLoader();
+  std::string text = loader.loadText(filename);
+  if(text.empty()) throw std::runtime_error("Shader file " + filename + " is empty.");
 
   setText(text, filename);
 }

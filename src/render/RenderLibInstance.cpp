@@ -5,6 +5,7 @@
 #include <vk_mem_alloc.h>
 
 #include <mtt/render/RenderLibInstance.h>
+#include <mtt/utilities/Abort.h>
 #include <mtt/utilities/Log.h>
 
 using namespace mtt;
@@ -33,7 +34,8 @@ RenderLibInstance::RenderLibInstance( const char* applicationName,
   _handle(VK_NULL_HANDLE),
   _debugMessenger(VK_NULL_HANDLE),
   _isValidationEnabled(enableValidation),
-  _vulkanApiVersion(vulkanApiVersion)
+  _vulkanApiVersion(vulkanApiVersion),
+  _shaderLoader(new ShaderLoader())
 {
   if(_instance != nullptr) Abort("RenderLibInstance::RenderLibInstance: RenderLib is already initialized.");
 
@@ -225,4 +227,11 @@ void RenderLibInstance::_cleanup() noexcept
     vkDestroyInstance(_handle, nullptr);
     _handle = VK_NULL_HANDLE;
   }
+}
+
+void RenderLibInstance::setShaderLoader(
+                              std::unique_ptr<ShaderLoader> newLoader) noexcept
+{
+  if(newLoader == nullptr) Abort("RenderLibInstance::setShaderLoader: new loader is null");
+  _shaderLoader.swap(newLoader);
 }

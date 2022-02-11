@@ -41,6 +41,7 @@ namespace mtt
       void setText( const std::string& newText,
                     const std::string& newHash = std::string());
 
+      /// filename in utf8 encoding
       void loadFromFile(const std::string& filename);
       void replace( const std::string& originWord,
                     const std::string& newWord);

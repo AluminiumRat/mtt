@@ -5,6 +5,7 @@
 #include <QtGui/QWindow>
 
 #include <mtt/application/Application.h>
+#include <mtt/application/ApplicationShaderLoader.h>
 #include <mtt/render/RenderSurface.h>
 
 using namespace mtt;
@@ -28,6 +29,9 @@ Application::Application( int& argc,
   _instance = this;
 
   createDisplayDevice(displayDeviceFeatures);
+
+  renderLibInstance.setShaderLoader(
+                                  std::make_unique<ApplicationShaderLoader>());
 
   startTimer(0);
 }

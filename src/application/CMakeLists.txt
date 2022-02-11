@@ -121,8 +121,9 @@ set(HEADERS
     "../../include/mtt/application/WorkCycle/RenderSceneAction.h"
     "../../include/mtt/application/WorkCycle/WorkCycle.h"
 
-    "../../include/mtt/application/ApplicationStatistic.h"
     "../../include/mtt/application/Application.h"
+    "../../include/mtt/application/ApplicationShaderLoader.h"
+    "../../include/mtt/application/ApplicationStatistic.h"
     "../../include/mtt/application/CommonEditData.h"
     "../../include/mtt/application/DataStream.h"
     )
@@ -196,6 +197,7 @@ set(SOURCES
     "WorkCycle/WorkCycle.cpp"
 
     "Application.cpp"
+    "ApplicationShaderLoader.cpp"
     "CommonEditData.cpp"
     )
 
