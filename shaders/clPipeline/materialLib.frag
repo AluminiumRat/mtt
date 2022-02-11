@@ -29,6 +29,14 @@ float fresnelFactor(float basis, float viewDotHalf)
   return basis + (1.f - basis) * compliment;
 }
 
+vec3 getPlasticSpecular(  vec3 specularLuminance,
+                          float specularStrength,
+                          float viewDotHalf)
+{
+  float frensel = fresnelFactor(.1f, viewDotHalf);
+  return specularLuminance * specularStrength * frensel;
+}
+
 vec3 getPlasticLuminance( vec3 lambertLuminance,
                           vec3 specularLuminance,
                           vec3 albedo,
@@ -36,9 +44,7 @@ vec3 getPlasticLuminance( vec3 lambertLuminance,
                           float viewDotHalf)
 {
   vec3 diffuseLuminance = lambertLuminance * albedo;
-
   float frensel = fresnelFactor(.1f, viewDotHalf);
-
   return diffuseLuminance + specularLuminance * specularStrength * frensel;
 }
 

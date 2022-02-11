@@ -17,14 +17,25 @@ float viewDotNorm = 0;
 vec3 specular = vec3(0.f, 0.f, 0.f); //roughness, strength, metallic
 float roughness = 0.f;
 
+vec3 pureLuminance = vec3(0.f);
+vec3 mutedLuminance = vec3(0.f);
+
 void applyLight(vec3 lambertLuminance, vec3 specularLuminance)
 {
-  outColor.rgb += getLuminance( lambertLuminance,
-                                specularLuminance,
-                                surfaceColor.rgb,
-                                specular.y,
-                                specular.z,
-                                viewDotNorm);
+  vec3 pureReflected = getPlasticSpecular(specularLuminance,
+                                          specular.y,
+                                          viewDotNorm);
+  pureReflected *= (1.f - specular.z);
+  pureLuminance += pureReflected;
+
+  vec3 mutedReflected = getLuminance( lambertLuminance,
+                                      specularLuminance,
+                                      surfaceColor.rgb,
+                                      specular.y,
+                                      specular.z,
+                                      viewDotNorm);
+  mutedReflected -= pureReflected;
+  mutedLuminance += mutedReflected;
 }
 
 void main()
@@ -43,7 +54,7 @@ void main()
   APPLY_AMBIENT_WEIGHT
   APPLY_LIGHT
 
-  outColor.rgb *= outColor.a;
+  outColor.rgb = mutedLuminance * outColor.a + pureLuminance;
   outColor.rgb += getEmission();
 
   APPLY_POSTEFFECT
