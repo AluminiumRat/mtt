@@ -14,8 +14,11 @@ namespace mtt
 
     class DirectLightAreaModificator : public LightAreaModificator
     {
-    public:
+    private:
+      friend class DirectLight;
       DirectLightAreaModificator(DirectLight& light);
+
+    public:
       DirectLightAreaModificator(const DirectLightAreaModificator&) = delete;
       DirectLightAreaModificator& operator = (
                                     const DirectLightAreaModificator&) = delete;

@@ -22,8 +22,11 @@ namespace mtt
 
     class DirectLightApplicator : public DrawableNode
     {
-    public:
+    private:
+      friend class DirectLight;
       DirectLightApplicator(DirectLight& light, LogicalDevice& device);
+
+    public:
       DirectLightApplicator(const DirectLightApplicator&) = delete;
       DirectLightApplicator& operator = (const DirectLightApplicator&) = delete;
       virtual ~DirectLightApplicator() = default;
