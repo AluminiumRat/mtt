@@ -2,6 +2,9 @@
 
 #include <glm/vec3.hpp>
 
+#include <mtt/render/SceneGraph/ProtectedGroupNode.h>
+#include <mtt/render/CompositeRenderObject.h>
+
 namespace mtt
 {
   class AreaModificator;
@@ -9,7 +12,8 @@ namespace mtt
 
   namespace clPipeline
   {
-    class AbstractLight
+    class AbstractLight : public CompositeRenderObject,
+                          public ProtectedGroupNode
     {
     public:
       AbstractLight() = default;

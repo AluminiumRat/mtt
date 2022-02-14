@@ -44,30 +44,20 @@ public:
 protected:
   void setLightObject(mtt::clPipeline::AbstractLight& light);
 
-  inline bool infinityArea() const noexcept;
-  void setInfinityArea(bool newValue);
-
   /// newGeometry should be in VK_PRIMITIVE_TOPOLOGY_LINE_LIST topology
   void setHullGeometry(const std::vector<glm::vec3> newGeometry);
 
 private:
-  void _clearDrawables() noexcept;
+  void _clearLightRenderer() noexcept;
   void _updateEnabled() noexcept;
 
 private:
   LightObject& _object;
-  bool _infinityArea;
-  mtt::DrawableNode* _defferedLightApplicator;
-  mtt::VisibleDrawableFilter _enableFilter;
-  mtt::AreaModificator* _forwardLightApplicator;
+
+  mtt::clPipeline::AbstractLight* _lightRenderer;
 
   std::optional<IconDrawableNode> _iconNode;
 
   mtt::Mesh _hullMesh;
   mtt::SimpleDrawableNode _hullNode;
 };
-
-inline bool AbstractLightRenderObserver::infinityArea() const noexcept
-{
-  return _infinityArea;
-}

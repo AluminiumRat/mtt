@@ -13,8 +13,6 @@ BackgroundObserver::BackgroundObserver( BackgroundObject& object,
   Object3DRenderObserver(object, commonData),
   _object(object),
   _backgroundRenderer(mtt::Application::instance().displayDevice()),
-  _lightDrawable(nullptr),
-  _lightModificator(nullptr),
   _cubemapObserver(object.cubemap())
 {
   connect(&_object,
@@ -124,21 +122,12 @@ void BackgroundObserver::_updateLuminanceTexture() noexcept
 
 void BackgroundObserver::_removeLight() noexcept
 {
-  if (_lightDrawable != nullptr)
+  if (_light.has_value())
   {
-    unregisterUnculledDrawable(*_lightDrawable);
-    positionRotateJoint().removeChild(*_lightDrawable);
-    _lightDrawable = nullptr;
+    unregisterCompositeObject(_light.value());
+    positionRotateJoint().removeChild(_light.value());
+    _light.reset();
   }
-
-  if (_lightModificator != nullptr)
-  {
-    unregisterAreaModificator(*_lightModificator);
-    positionRotateJoint().removeChild(*_lightModificator);
-    _lightModificator = nullptr;
-  }
-
-  _light.reset();
 }
 
 void BackgroundObserver::_updateLight() noexcept
@@ -149,22 +138,13 @@ void BackgroundObserver::_updateLight() noexcept
   {
     try
     {
-      _light.emplace(true, true, mtt::Application::instance().displayDevice());
-      _light->setInfinityAreaMode(true);
+      _light.emplace( true,
+                      true,
+                      true,
+                      mtt::Application::instance().displayDevice());
 
-      _lightDrawable = _light->defferedLightApplicator();
-      if(_lightDrawable != nullptr)
-      {
-        positionRotateJoint().addChild(*_lightDrawable);
-        registerUnculledDrawable(*_lightDrawable);
-      }
-
-      _lightModificator = _light->forwardLightModificator();
-      if (_lightModificator != nullptr)
-      {
-        positionRotateJoint().addChild(*_lightModificator);
-        registerAreaModificator(*_lightModificator);
-      }
+      positionRotateJoint().addChild(_light.value());
+      registerCompositeObject(_light.value());
 
       _updateLuminance();
       _updateLuminanceTexture();

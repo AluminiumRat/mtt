@@ -46,8 +46,6 @@ private:
   mtt::clPipeline::Background _backgroundRenderer;
 
   std::optional<mtt::clPipeline::AmbientLight> _light;
-  mtt::DrawableNode* _lightDrawable;
-  mtt::AreaModificator* _lightModificator;
 
   CubemapObserver _cubemapObserver;
 };

@@ -20,6 +20,7 @@ namespace mtt
     public:
       explicit AmbientLight(bool forwardLightingEnabled,
                             bool defferedLightingEnabled,
+                            bool infinityAreaMode,
                             LogicalDevice& device);
       AmbientLight(const AmbientLight&) = delete;
       AmbientLight& operator = (const AmbientLight&) = delete;
@@ -28,7 +29,6 @@ namespace mtt
       virtual AreaModificator* forwardLightModificator() noexcept override;
 
       inline bool infinityAreaMode() const noexcept;
-      inline void setInfinityAreaMode(bool newValue) noexcept;
 
       inline const glm::vec3& illuminance() const noexcept;
       inline void setIlluminance(const glm::vec3& newValue) noexcept;
@@ -44,6 +44,15 @@ namespace mtt
 
       inline CubeTexture* diffuseLuminanceMap() const noexcept;
       void setDiffuseLuminanceMap(std::shared_ptr<CubeTexture> newMap) noexcept;
+
+      virtual size_t culledDrawablesNumber() const noexcept override;
+      virtual DrawableNode& culledDrawable(size_t index) noexcept override;
+
+      virtual size_t areaModificatorsNumber() const noexcept override;
+      virtual AreaModificator& areaModificator(size_t index) noexcept override;
+
+      virtual size_t unculledDrawablesNumber() const noexcept override;
+      virtual Drawable& unculledDrawable(size_t index) noexcept override;
 
     private:
       void _updateBound() noexcept;
@@ -65,13 +74,6 @@ namespace mtt
     inline bool AmbientLight::infinityAreaMode() const noexcept
     {
       return _lightData.infinityAreaMode;
-    }
-
-    inline void AmbientLight::setInfinityAreaMode(bool newValue) noexcept
-    {
-      if(_lightData.infinityAreaMode == newValue) return;
-      _lightData.infinityAreaMode = newValue;
-      _resetPipelines();
     }
 
     inline const glm::vec3& AmbientLight::illuminance() const noexcept

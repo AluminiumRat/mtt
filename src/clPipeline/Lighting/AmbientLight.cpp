@@ -1,10 +1,12 @@
 #include <mtt/clPipeline/Lighting/AmbientLight.h>
+#include <mtt/utilities/Abort.h>
 
 using namespace mtt;
 using namespace clPipeline;
 
 AmbientLight::AmbientLight( bool forwardLightingEnabled,
                             bool defferedLightingEnabled,
+                            bool infinityAreaMode,
                             LogicalDevice& device) :
   _ambientMapSampler(PipelineResource::STATIC, device),
   _ambientMap(nullptr),
@@ -17,6 +19,7 @@ AmbientLight::AmbientLight( bool forwardLightingEnabled,
                                                     _lightData,
                                                     _ambientMapSampler,
                                                     _diffuseLuminanceSampler));
+    addChildProtected(*_forwardApplicator);
   }
 
   if (defferedLightingEnabled)
@@ -26,12 +29,13 @@ AmbientLight::AmbientLight( bool forwardLightingEnabled,
                                                       _ambientMapSampler,
                                                       _diffuseLuminanceSampler,
                                                       device));
+    addChildProtected(*_defferedApplicator);
   }
 
   _lightData.illuminance = glm::vec3(1.f);
   _lightData.distance = 100.f;
   _lightData.saturationDistance = 0.f;
-  _lightData.infinityAreaMode = false;
+  _lightData.infinityAreaMode = infinityAreaMode;
 
   _updateBound();
 }
@@ -80,4 +84,42 @@ void AmbientLight::_resetPipelines() noexcept
 {
   if (_defferedApplicator != nullptr) _defferedApplicator->resetPipelines();
   if (_forwardApplicator != nullptr) _forwardApplicator->reset();
+}
+
+size_t AmbientLight::culledDrawablesNumber() const noexcept
+{
+  if (_lightData.infinityAreaMode) return 0;
+  else return _defferedApplicator == nullptr ? 0 : 1;
+}
+
+DrawableNode& AmbientLight::culledDrawable(size_t index) noexcept
+{
+  if (_lightData.infinityAreaMode || _defferedApplicator == nullptr) Abort("AmbientLight::culledDrawable: no culled drawables available.");
+  else return *_defferedApplicator;
+}
+
+size_t AmbientLight::areaModificatorsNumber() const noexcept
+{
+  return _forwardApplicator == nullptr ? 0 : 1;
+}
+
+AreaModificator& AmbientLight::areaModificator(size_t index) noexcept
+{
+  if(_forwardApplicator == nullptr) Abort("AmbientLight::areaModificator: no area modificators available.");
+  else return *_forwardApplicator;
+}
+
+size_t AmbientLight::unculledDrawablesNumber() const noexcept
+{
+  if (_lightData.infinityAreaMode)
+  {
+    return _defferedApplicator == nullptr ? 0 : 1;
+  }
+  else return 0;
+}
+
+Drawable& AmbientLight::unculledDrawable(size_t index) noexcept
+{
+  if (!_lightData.infinityAreaMode || _defferedApplicator == nullptr) Abort("AmbientLight::unculledDrawable: no unculled drawables available.");
+  else return *_defferedApplicator;
 }

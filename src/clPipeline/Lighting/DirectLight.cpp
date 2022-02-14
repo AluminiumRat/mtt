@@ -1,6 +1,7 @@
 #include <mtt/clPipeline/Lighting/DirectLight.h>
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
 #include <mtt/render/Pipeline/Texture2D.h>
+#include <mtt/utilities/Abort.h>
 
 using namespace mtt;
 using namespace clPipeline;
@@ -19,11 +20,13 @@ DirectLight::DirectLight( bool forwardLightingEnabled,
   if(forwardLightingEnabled)
   {
     _forwardLightApplicator.reset(new DirectLightAreaModificator(*this));
+    addChildProtected(*_forwardLightApplicator);
   }
 
   if(defferedLightingEnabled)
   {
     _defferedLightApplicator.reset(new DirectLightApplicator(*this, device));
+    addChildProtected(*_defferedLightApplicator);
   }
 
   _updateBound();
@@ -109,4 +112,26 @@ DirectLightDrawData DirectLight::buildDrawData(
   drawData.viewToLocal = glm::inverse(buildInfo.drawMatrices.localToViewMatrix);
 
   return drawData;
+}
+
+size_t DirectLight::culledDrawablesNumber() const noexcept
+{
+  return _defferedLightApplicator == nullptr ? 0 : 1;
+}
+
+DrawableNode& DirectLight::culledDrawable(size_t index) noexcept
+{
+  if (_defferedLightApplicator == nullptr) Abort("DirectLight::culledDrawable: no culled drawables available.");
+  else return *_defferedLightApplicator;
+}
+
+size_t DirectLight::areaModificatorsNumber() const noexcept
+{
+  return _forwardLightApplicator == nullptr ? 0 : 1;
+}
+
+AreaModificator& DirectLight::areaModificator(size_t index) noexcept
+{
+  if (_forwardLightApplicator == nullptr) Abort("DirectLight::areaModificator: no area modificators available.");
+  else return *_forwardLightApplicator;
 }

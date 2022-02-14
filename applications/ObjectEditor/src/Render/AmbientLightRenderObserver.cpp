@@ -12,14 +12,9 @@ AmbientLightRenderObserver::AmbientLightRenderObserver(
                                                 EditorCommonData& commonData) :
   AbstractLightRenderObserver(object, commonData, ICON_FILE, ICON_SIZE),
   _lightObject(object),
-  _light(true, true, EditorApplication::instance().displayDevice()),
+  _light(true, true, false, EditorApplication::instance().displayDevice()),
   _cubemapObserver(_lightObject.ambientMap())
 {
-  mtt::SurfaceMaterialData materialData;
-  materialData.albedo = glm::vec3(.7f, .7f, .4f);
-  materialData.roughness = 1;
-  materialData.specularStrength = 1;
-
   setLightObject(_light);
 
   _cubemapObserver.setCallback(

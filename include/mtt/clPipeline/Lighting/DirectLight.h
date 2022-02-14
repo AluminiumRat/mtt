@@ -56,6 +56,12 @@ namespace mtt
 
       inline Sphere getBoundSphere() const noexcept;
 
+      virtual size_t culledDrawablesNumber() const noexcept override;
+      virtual DrawableNode& culledDrawable(size_t index) noexcept override;
+
+      virtual size_t areaModificatorsNumber() const noexcept override;
+      virtual AreaModificator& areaModificator(size_t index) noexcept override;
+
     private:
       friend class DirectLightApplicator;
       friend class DirectLightAreaModificator;
