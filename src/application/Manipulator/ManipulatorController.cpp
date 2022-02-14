@@ -50,7 +50,7 @@ void ManipulatorController::_setRenderScene(RenderScene* newScene) noexcept
 
   if (_manipulatorDrawable != nullptr && _renderScene != nullptr)
   {
-    _renderScene->unculledData().removeChild(*_manipulatorDrawable);
+    _renderScene->removeUnculledDrawable(*_manipulatorDrawable);
   }
 
   _renderScene = newScene;
@@ -59,7 +59,7 @@ void ManipulatorController::_setRenderScene(RenderScene* newScene) noexcept
   {
     if (_manipulatorDrawable != nullptr && _renderScene != nullptr)
     {
-      _renderScene->unculledData().addChild(*_manipulatorDrawable);
+      _renderScene->addUnculledDrawable(*_manipulatorDrawable);
     }
   }
   catch (std::exception& error)
@@ -79,7 +79,7 @@ void ManipulatorController::resetManipulator() noexcept
   {
     if (_manipulatorDrawable != nullptr && _renderScene != nullptr)
     {
-      _renderScene->unculledData().removeChild(*_manipulatorDrawable);
+      _renderScene->removeUnculledDrawable(*_manipulatorDrawable);
     }
 
     if(_currentManipulator != nullptr)
@@ -115,7 +115,7 @@ void ManipulatorController::setManipulator(AbstractManipulator* newManipulator)
       _manipulatorDrawable = &_currentManipulator->drawable();
       if(_renderScene != nullptr)
       {
-        _renderScene->unculledData().addChild(*_manipulatorDrawable);
+        _renderScene->addUnculledDrawable(*_manipulatorDrawable);
       }
     }
   }

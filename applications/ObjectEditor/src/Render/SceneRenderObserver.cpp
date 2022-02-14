@@ -245,7 +245,7 @@ void SceneRenderObserver::_addCulled(mtt::DrawableNode& drawable) noexcept
 {
   try
   {
-    _commonData.renderScene().culledData().addDrawable(drawable);
+    _commonData.renderScene().addCulledDrawable(drawable);
   }
   catch(const std::exception& error)
   {
@@ -259,14 +259,14 @@ void SceneRenderObserver::_addCulled(mtt::DrawableNode& drawable) noexcept
 
 void SceneRenderObserver::_removeCulled(mtt::DrawableNode& drawable) noexcept
 {
-  _commonData.renderScene().culledData().removeDrawable(drawable);
+  _commonData.renderScene().removeCulledDrawable(drawable);
 }
 
 void SceneRenderObserver::_addUnculled(mtt::Drawable& drawable) noexcept
 {
   try
   {
-    _commonData.renderScene().unculledData().addChild(drawable);
+    _commonData.renderScene().addUnculledDrawable(drawable);
   }
   catch(const std::exception& error)
   {
@@ -280,7 +280,7 @@ void SceneRenderObserver::_addUnculled(mtt::Drawable& drawable) noexcept
 
 void SceneRenderObserver::_removeUnculled(mtt::Drawable& drawable) noexcept
 {
-  _commonData.renderScene().unculledData().removeChild(drawable);
+  _commonData.renderScene().removeUnculledDrawable(drawable);
 }
 
 void SceneRenderObserver::_addModificator(
@@ -288,7 +288,7 @@ void SceneRenderObserver::_addModificator(
 {
   try
   {
-    _commonData.renderScene().culledData().addModificator(modificator);
+    _commonData.renderScene().addAreaModificator(modificator);
   }
   catch(const std::exception& error)
   {
@@ -303,5 +303,5 @@ void SceneRenderObserver::_addModificator(
 void SceneRenderObserver::_removeModificator(
                                     mtt::AreaModificator& modificator) noexcept
 {
-  _commonData.renderScene().culledData().removeModificator(modificator);
+  _commonData.renderScene().removeAreaModificator(modificator);
 }
