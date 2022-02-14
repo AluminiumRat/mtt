@@ -118,6 +118,7 @@ set(HEADERS
     "../../include/mtt/render/SceneGraph/FieldArea.h"
     "../../include/mtt/render/SceneGraph/GroupNode.h"
     "../../include/mtt/render/SceneGraph/Joint.h"
+    "../../include/mtt/render/SceneGraph/ProtectedGroupNode.h"
     "../../include/mtt/render/SceneGraph/SimpleDrawableNode.h"
     "../../include/mtt/render/SceneGraph/UnsortedField.h"
 
@@ -134,6 +135,7 @@ set(HEADERS
 
     "../../include/mtt/render/Utilities/DescriptorCounter.h"
 
+    "../../include/mtt/render/CompositeRenderObject.h"
     "../../include/mtt/render/Image.h"
     "../../include/mtt/render/ImageView.h"
     "../../include/mtt/render/Lockable.h"
@@ -218,8 +220,8 @@ set(SOURCES
     "SceneGraph/DrawableNode.cpp"
     "SceneGraph/DrawVisitor.cpp"
     "SceneGraph/FieldArea.cpp"
-    "SceneGraph/GroupNode.cpp"
     "SceneGraph/Joint.cpp"
+    "SceneGraph/ProtectedGroupNode.cpp"
     "SceneGraph/SimpleDrawableNode.cpp"
     "SceneGraph/UnsortedField.cpp"
 
@@ -232,6 +234,7 @@ set(SOURCES
 
     "Utilities/DescriptorCounter.cpp"
 
+    "CompositeRenderObject.cpp"
     "Image.cpp"
     "ImageView.cpp"
     "Lockable.cpp"

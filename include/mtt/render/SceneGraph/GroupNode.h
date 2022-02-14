@@ -2,11 +2,11 @@
 
 #include <vector>
 
-#include <mtt/render/SceneGraph/AbstractNode.h>
+#include <mtt/render/SceneGraph/ProtectedGroupNode.h>
 
 namespace mtt
 {
-  class GroupNode : public AbstractNode
+  class GroupNode : public ProtectedGroupNode
   {
   public:
     GroupNode() noexcept = default;
@@ -14,36 +14,27 @@ namespace mtt
     GroupNode& operator = (const GroupNode&) = delete;
     virtual ~GroupNode() noexcept = default;
 
-    /// Only translation, rotation and uniform scale.
-    /// Nonuniform scale is not supported.
-    virtual void setTransformMatrix(
-                                  const glm::mat4& newValue) noexcept override;
-
-    inline size_t childNumber() const noexcept;
-    inline AbstractNode& child(size_t index) noexcept;
-    inline const AbstractNode& child(size_t index) const noexcept;
-    bool hasChild(AbstractNode& child) const noexcept;
-    virtual void addChild(AbstractNode& child);
-    virtual void removeChild(size_t index) noexcept;
-    virtual void removeChild(AbstractNode& child) noexcept;
+    inline void addChild(AbstractNode& child);
+    inline void removeChild(size_t index) noexcept;
+    inline void removeChild(AbstractNode& child) noexcept;
 
   private:
     using Childs = std::vector<AbstractNode*>;
     Childs _childs;
   };
 
-  inline size_t GroupNode::childNumber() const noexcept
+  inline void GroupNode::addChild(AbstractNode& child)
   {
-    return _childs.size();
+    addChildProtected(child);
   }
 
-  inline AbstractNode& GroupNode::child(size_t index) noexcept
+  inline void GroupNode::removeChild(size_t index) noexcept
   {
-    return *_childs[index];
+    removeChildProtected(index);
   }
 
-  inline const AbstractNode& GroupNode::child(size_t index) const noexcept
+  inline void GroupNode::removeChild(AbstractNode& child) noexcept
   {
-    return *_childs[index];
+    removeChildProtected(child);
   }
 }

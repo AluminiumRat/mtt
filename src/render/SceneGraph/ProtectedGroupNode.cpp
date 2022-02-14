@@ -1,11 +1,11 @@
 #include <algorithm>
 
-#include <mtt/render/SceneGraph/GroupNode.h>
+#include <mtt/render/SceneGraph/ProtectedGroupNode.h>
 #include <mtt/utilities/Abort.h>
 
 using namespace mtt;
 
-void GroupNode::setTransformMatrix(const glm::mat4& newValue) noexcept
+void ProtectedGroupNode::setTransformMatrix(const glm::mat4& newValue) noexcept
 {
   AbstractNode::setTransformMatrix(newValue);
   for(AbstractNode* child : _childs)
@@ -14,22 +14,22 @@ void GroupNode::setTransformMatrix(const glm::mat4& newValue) noexcept
   }
 }
 
-bool GroupNode::hasChild(AbstractNode& child) const noexcept
+bool ProtectedGroupNode::hasChild(AbstractNode& child) const noexcept
 {
   return std::find(_childs.begin(), _childs.end(), &child) != _childs.end();
 }
 
-void GroupNode::addChild(AbstractNode& child)
+void ProtectedGroupNode::addChildProtected(AbstractNode& child)
 {
   if(std::find(_childs.begin(), _childs.end(), &child) != _childs.end())
   {
-    Abort("GroupNode::addChild: the child is already registered.");
+    Abort("ProtectedGroupNode::addChildProtected: the child is already registered.");
   }
   _childs.push_back(&child);
   child.setTransformMatrix(transformMatrix());
 }
 
-void GroupNode::removeChild(size_t index) noexcept
+void ProtectedGroupNode::removeChildProtected(size_t index) noexcept
 {
   try
   {
@@ -37,17 +37,17 @@ void GroupNode::removeChild(size_t index) noexcept
   }
   catch(...)
   {
-    Abort("GroupNode::removeChild: unable to remove child.");
+    Abort("ProtectedGroupNode::removeChildProtected: unable to remove child.");
   }
 }
 
-void GroupNode::removeChild(AbstractNode& child) noexcept
+void ProtectedGroupNode::removeChildProtected(AbstractNode& child) noexcept
 {
   for(size_t index = 0; index < _childs.size(); index++)
   {
     if(_childs[index] == &child)
     {
-      removeChild(index);
+      removeChildProtected(index);
       return;
     }
   }

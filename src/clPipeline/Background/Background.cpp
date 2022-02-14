@@ -11,6 +11,9 @@ Background::Background(LogicalDevice& device) :
   _areaModificator(_properties, _luminanceSampler),
   _drawable(_properties, _luminanceSampler, device)
 {
+  _drawableNode.setDrawable(&_drawable, mtt::Sphere());
+  addChildProtected(_drawableNode);
+  addChildProtected(_areaModificator);
 }
 
 void Background::setLuminanceTexture(
@@ -23,4 +26,24 @@ void Background::setLuminanceTexture(
   }
 
   _luminanceSampler.setAttachedTexture(std::move(texture), 0);
+}
+
+size_t Background::areaModificatorsNumber() const noexcept
+{
+  return 1;
+}
+
+AreaModificator& Background::areaModificator(size_t index) noexcept
+{
+  return _areaModificator;
+}
+
+size_t Background::unculledDrawablesNumber() const noexcept
+{
+  return 1;
+}
+
+Drawable& Background::unculledDrawable(size_t index) noexcept
+{
+  return _drawableNode;
 }

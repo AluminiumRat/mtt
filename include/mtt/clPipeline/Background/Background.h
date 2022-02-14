@@ -9,6 +9,9 @@
 #include <mtt/clPipeline/Background/BackgroundProperties.h>
 #include <mtt/render/Pipeline/CubeTexture.h>
 #include <mtt/render/Pipeline/Sampler.h>
+#include <mtt/render/SceneGraph/ProtectedGroupNode.h>
+#include <mtt/render/SceneGraph/SimpleDrawableNode.h>
+#include <mtt/render/CompositeRenderObject.h>
 
 namespace mtt
 {
@@ -16,7 +19,8 @@ namespace mtt
 
   namespace clPipeline
   {
-    class Background
+    class Background :  public CompositeRenderObject,
+                        public ProtectedGroupNode
     {
     public:
       explicit Background(LogicalDevice& device);
@@ -43,6 +47,12 @@ namespace mtt
       inline BackgroundDrawable& drawable() noexcept;
       inline const BackgroundDrawable& drawable() const noexcept;
 
+      virtual size_t areaModificatorsNumber() const noexcept override;
+      virtual AreaModificator& areaModificator(size_t index) noexcept override;
+
+      virtual size_t unculledDrawablesNumber() const noexcept override;
+      virtual Drawable& unculledDrawable(size_t index) noexcept override;
+
     private:
       friend class BackgroundAreaModificator;
       friend class BackgroundDrawable;
@@ -52,6 +62,7 @@ namespace mtt
       Sampler _luminanceSampler;
       BackgroundAreaModificator _areaModificator;
       BackgroundDrawable _drawable;
+      mtt::SimpleDrawableNode _drawableNode;
     };
 
     inline const glm::vec3& Background::luminance() const noexcept

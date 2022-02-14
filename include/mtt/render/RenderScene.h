@@ -4,6 +4,7 @@
 
 #include <mtt/render/Drawable/DrawableList.h>
 #include <mtt/render/SceneGraph/AbstractField.h>
+#include <mtt/render/CompositeRenderObject.h>
 
 namespace mtt
 {
@@ -27,6 +28,10 @@ namespace mtt
 
     inline void addHUDDrawable(Drawable& newChild);
     inline void removeHUDDrawable(Drawable& child) noexcept;
+
+    inline void addCompositeObject(CompositeRenderObject& composite);
+    inline void removeCompositeObject(
+                                    CompositeRenderObject& composite) noexcept;
 
     inline AbstractField& culledData() noexcept;
     inline const AbstractField& culledData() const noexcept;
@@ -82,6 +87,77 @@ namespace mtt
   inline void RenderScene::removeHUDDrawable(Drawable& child) noexcept
   {
     _hudData.removeChild(child);
+  }
+
+  inline void RenderScene::addCompositeObject(CompositeRenderObject& composite)
+  {
+    try
+    {
+      for(size_t drawableIndex = 0;
+          drawableIndex < composite.culledDrawablesNumber();
+          drawableIndex++)
+      {
+        addCulledDrawable(composite.culledDrawable(drawableIndex));
+      }
+
+      for(size_t modificatorIndex = 0;
+          modificatorIndex < composite.areaModificatorsNumber();
+          modificatorIndex++)
+      {
+        addAreaModificator(composite.areaModificator(modificatorIndex));
+      }
+
+      for(size_t drawableIndex = 0;
+          drawableIndex < composite.unculledDrawablesNumber();
+          drawableIndex++)
+      {
+        addUnculledDrawable(composite.unculledDrawable(drawableIndex));
+      }
+
+      for(size_t drawableIndex = 0;
+          drawableIndex < composite.hudDrawablesNumber();
+          drawableIndex++)
+      {
+        addHUDDrawable(composite.hudDrawable(drawableIndex));
+      }
+    }
+    catch (...)
+    {
+      removeCompositeObject(composite);
+      throw;
+    }
+  }
+
+  inline void RenderScene::removeCompositeObject(
+                                    CompositeRenderObject& composite) noexcept
+  {
+    for(size_t drawableIndex = 0;
+        drawableIndex < composite.culledDrawablesNumber();
+        drawableIndex++)
+    {
+      removeCulledDrawable(composite.culledDrawable(drawableIndex));
+    }
+
+    for(size_t modificatorIndex = 0;
+        modificatorIndex < composite.areaModificatorsNumber();
+        modificatorIndex++)
+    {
+      removeAreaModificator(composite.areaModificator(modificatorIndex));
+    }
+
+    for(size_t drawableIndex = 0;
+        drawableIndex < composite.unculledDrawablesNumber();
+        drawableIndex++)
+    {
+      removeUnculledDrawable(composite.unculledDrawable(drawableIndex));
+    }
+
+    for(size_t drawableIndex = 0;
+        drawableIndex < composite.hudDrawablesNumber();
+        drawableIndex++)
+    {
+      removeHUDDrawable(composite.hudDrawable(drawableIndex));
+    }
   }
 
   inline AbstractField& RenderScene::culledData() noexcept

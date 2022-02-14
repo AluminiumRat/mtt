@@ -36,8 +36,8 @@ void Joint::_updateChilds() noexcept
   }
 }
 
-void Joint::addChild(AbstractNode& child)
+void Joint::addChildProtected(AbstractNode& child)
 {
-  GroupNode::addChild(child);
+  GroupNode::addChildProtected(child);
   child.setTransformMatrix(transformMatrix() * _jointMatrix);
 }

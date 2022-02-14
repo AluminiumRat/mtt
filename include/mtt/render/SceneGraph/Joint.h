@@ -29,7 +29,8 @@ namespace mtt
     /// Nonuniform scale is not supported.
     virtual void silentSetJointMatrix(const glm::mat4& newValue) noexcept;
 
-    virtual void addChild(AbstractNode& child) override;
+  protected:
+    virtual void addChildProtected(AbstractNode& child) override;
 
   private:
     void _updateChilds() noexcept;

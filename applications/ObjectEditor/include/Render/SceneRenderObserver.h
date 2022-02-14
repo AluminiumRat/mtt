@@ -37,6 +37,8 @@ private:
   void _removeUnculled(mtt::Drawable& drawable) noexcept;
   void _addModificator(mtt::AreaModificator& modificator) noexcept;
   void _removeModificator(mtt::AreaModificator& modificator) noexcept;
+  void _addCompositeObject(mtt::CompositeRenderObject& theObject) noexcept;
+  void _removeCompositeObject(mtt::CompositeRenderObject& theObject) noexcept;
 
 private:
   EditorCommonData& _commonData;

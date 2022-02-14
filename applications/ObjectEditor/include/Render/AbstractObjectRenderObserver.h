@@ -10,6 +10,7 @@
 #include <mtt/render/Drawable/VisibleDrawableFilter.h>
 #include <mtt/render/SceneGraph/AreaModificator.h>
 #include <mtt/render/SceneGraph/DrawableNode.h>
+#include <mtt/render/CompositeRenderObject.h>
 
 namespace mtt
 {
@@ -47,6 +48,11 @@ public:
   inline const mtt::AreaModificator& areaModificator(
                                                   size_t index) const noexcept;
 
+  inline size_t compositeObjectsNumber() const noexcept;
+  inline mtt::CompositeRenderObject& compositeObject(size_t index) noexcept;
+  inline const mtt::CompositeRenderObject& compositeObject(
+                                                  size_t index) const noexcept;
+
 signals:
   void culledDrawableRegistered(mtt::DrawableNode& drawable);
   void culledDrawableUnregistered(mtt::DrawableNode& drawable);
@@ -54,6 +60,8 @@ signals:
   void unculledDrawableUnregistered(mtt::Drawable& drawable);
   void areaModificatorRegistered(mtt::AreaModificator& modificator);
   void areaModificatorUnregistered(mtt::AreaModificator& modificator);
+  void compositeObjectRegistered(mtt::CompositeRenderObject& theObject);
+  void compositeObjectUnregistered(mtt::CompositeRenderObject& theObject);
 
 protected:
   void registerCulledDrawable(mtt::DrawableNode& drawable);
@@ -62,6 +70,9 @@ protected:
   void unregisterUnculledDrawable(mtt::Drawable& drawable) noexcept;
   void registerAreaModificator(mtt::AreaModificator& modificator);
   void unregisterAreaModificator(mtt::AreaModificator& modificator) noexcept;
+  void registerCompositeObject(mtt::CompositeRenderObject& theObject);
+  void unregisterCompositeObject(
+                                mtt::CompositeRenderObject& theObject) noexcept;
 
   inline mtt::SelectionDrawableModificator& selectionModificator() noexcept;
   inline const mtt::SelectionDrawableModificator&
@@ -87,6 +98,9 @@ private:
 
   using AreaModificators = std::vector<mtt::AreaModificator*>;
   AreaModificators _areaModificators;
+
+  using CompositeObjects = std::vector<mtt::CompositeRenderObject*>;
+  CompositeObjects _compositeObjects;
 
   mtt::SelectionDrawableModificator _selectionModificator;
   mtt::VisibleDrawableFilter _visibleFilter;
@@ -156,6 +170,24 @@ inline const mtt::AreaModificator&
       AbstractObjectRenderObserver::areaModificator(size_t index) const noexcept
 {
   return *_areaModificators[index];
+}
+
+inline size_t
+          AbstractObjectRenderObserver::compositeObjectsNumber() const noexcept
+{
+  return _compositeObjects.size();
+}
+
+inline mtt::CompositeRenderObject&
+            AbstractObjectRenderObserver::compositeObject(size_t index) noexcept
+{
+  return *_compositeObjects[index];
+}
+
+inline const mtt::CompositeRenderObject&
+      AbstractObjectRenderObserver::compositeObject(size_t index) const noexcept
+{
+  return *_compositeObjects[index];
 }
 
 inline mtt::SelectionDrawableModificator&

@@ -193,6 +193,25 @@ void SceneRenderObserver::_addObject(mtt::Object& object) noexcept
       {
         _addModificator(observerPtr->areaModificator(modificatorIndex));
       }
+
+      connect(observerPtr,
+              &MeshRenderObserver::compositeObjectRegistered,
+              this,
+              &SceneRenderObserver::_addCompositeObject,
+              Qt::DirectConnection);
+
+      connect(observerPtr,
+              &MeshRenderObserver::compositeObjectUnregistered,
+              this,
+              &SceneRenderObserver::_removeCompositeObject,
+              Qt::DirectConnection);
+
+      for(size_t objectIndex = 0;
+          objectIndex != observerPtr->compositeObjectsNumber();
+          objectIndex++)
+      {
+        _addCompositeObject(observerPtr->compositeObject(objectIndex));
+      }
     }
   }
   catch(std::exception& error)
@@ -233,6 +252,13 @@ void SceneRenderObserver::_removeObject(mtt::Object& object) noexcept
           modificatorIndex++)
       {
         _removeModificator(observer.areaModificator(modificatorIndex));
+      }
+
+      for(size_t objectIndex = 0;
+          objectIndex != observer.compositeObjectsNumber();
+          objectIndex++)
+      {
+        _removeCompositeObject(observer.compositeObject(objectIndex));
       }
 
       _objectObservers.erase(iObserver);
@@ -304,4 +330,27 @@ void SceneRenderObserver::_removeModificator(
                                     mtt::AreaModificator& modificator) noexcept
 {
   _commonData.renderScene().removeAreaModificator(modificator);
+}
+
+void SceneRenderObserver::_addCompositeObject(
+                                mtt::CompositeRenderObject& theObject) noexcept
+{
+  try
+  {
+    _commonData.renderScene().addCompositeObject(theObject);
+  }
+  catch(const std::exception& error)
+  {
+    mtt::Log() << "SceneRenderObserver::_addCompositeObject: " << error.what();
+  }
+  catch(...)
+  {
+    mtt::Log() << "SceneRenderObserver::_addCompositeObject: unknown error";
+  }
+}
+
+void SceneRenderObserver::_removeCompositeObject(
+                                mtt::CompositeRenderObject& theObject) noexcept
+{
+  _commonData.renderScene().removeCompositeObject(theObject);
 }

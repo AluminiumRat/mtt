@@ -62,34 +62,23 @@ BackgroundObserver::BackgroundObserver( BackgroundObject& object,
       _updateLuminanceTexture();
     });
 
-  positionRotateJoint().addChild(_backgroundDrawableNode);
-  _backgroundDrawableNode.setDrawable(&_backgroundRenderer.drawable(),
-                                      mtt::Sphere());
-  _backgroundDrawableNode.addModificator(visibleFilter());
-  registerUnculledDrawable(_backgroundDrawableNode);
+  positionRotateJoint().addChild(_backgroundRenderer);
 
-  positionRotateJoint().addChild(_backgroundRenderer.areaModificator());
-  _updateAreaModificator();
+  if (_object.visible()) registerCompositeObject(_backgroundRenderer);
 }
 
 void BackgroundObserver::updateVisible(bool newVisible) noexcept
 {
   Object3DRenderObserver::updateVisible(newVisible);
-  _updateAreaModificator();
+  _updateBackgroundVisible();
 }
 
-void BackgroundObserver::_updateAreaModificator() noexcept
+void BackgroundObserver::_updateBackgroundVisible() noexcept
 {
   try
   {
-    if(_object.visible())
-    {
-      registerAreaModificator(_backgroundRenderer.areaModificator());
-    }
-    else
-    {
-      unregisterAreaModificator(_backgroundRenderer.areaModificator());
-    }
+    if(_object.visible()) registerCompositeObject(_backgroundRenderer);
+    else unregisterCompositeObject(_backgroundRenderer);
   }
   catch (std::exception& error)
   {

@@ -122,6 +122,37 @@ void AbstractObjectRenderObserver::unregisterAreaModificator(
   emit areaModificatorUnregistered(modificator);
 }
 
+void AbstractObjectRenderObserver::registerCompositeObject(
+                                          mtt::CompositeRenderObject& theObject)
+{
+  if(std::find( _compositeObjects.begin(),
+                _compositeObjects.end(),
+                &theObject) != _compositeObjects.end())
+  {
+    mtt::Log() << "AbstractObjectRenderObserver::registerCompositeObject: object is already registered.";
+    return;
+  }
+
+  _compositeObjects.push_back(&theObject);
+  emit compositeObjectRegistered(theObject);
+}
+
+void AbstractObjectRenderObserver::unregisterCompositeObject(
+                                mtt::CompositeRenderObject& theObject) noexcept
+{
+  CompositeObjects::iterator iObject = std::find( _compositeObjects.begin(),
+                                                  _compositeObjects.end(),
+                                                  &theObject);
+  if(iObject == _compositeObjects.end())
+  {
+    mtt::Log() << "AbstractObjectRenderObserver::unregisterCompositeObject: object is not registered.";
+    return;
+  }
+
+  _compositeObjects.erase(iObject);
+  emit compositeObjectUnregistered(theObject);
+}
+
 void AbstractObjectRenderObserver::updateSelected(
                               const std::vector<mtt::Object*>& objects) noexcept
 {
