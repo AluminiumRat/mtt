@@ -113,6 +113,7 @@ set(HEADERS
     "../../include/mtt/render/SceneGraph/BoundObserver.h"
     "../../include/mtt/render/SceneGraph/CameraNode.h"
     "../../include/mtt/render/SceneGraph/CombinedDrawableNode.h"
+    "../../include/mtt/render/SceneGraph/CompositeObjectNode.h"
     "../../include/mtt/render/SceneGraph/DrawableNode.h"
     "../../include/mtt/render/SceneGraph/DrawVisitor.h"
     "../../include/mtt/render/SceneGraph/FieldArea.h"

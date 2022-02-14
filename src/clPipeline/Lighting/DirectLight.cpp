@@ -32,16 +32,6 @@ DirectLight::DirectLight( bool forwardLightingEnabled,
   _updateBound();
 }
 
-DrawableNode* DirectLight::defferedLightApplicator() noexcept
-{
-  return _defferedLightApplicator.get();
-}
-
-AreaModificator* DirectLight::forwardLightModificator() noexcept
-{
-  return _forwardLightApplicator.get();
-}
-
 void DirectLight::_updateBound() noexcept
 {
   if (_defferedLightApplicator != nullptr)

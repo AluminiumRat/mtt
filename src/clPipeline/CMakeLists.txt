@@ -33,7 +33,6 @@ set(HEADERS
     "../../include/mtt/clPipeline/Background/BackgroundDrawable.h"
     "../../include/mtt/clPipeline/Background/BackgroundProperties.h"
 
-    "../../include/mtt/clPipeline/Lighting/AbstractLight.h"
     "../../include/mtt/clPipeline/Lighting/AmbientLight.h"
     "../../include/mtt/clPipeline/Lighting/AmbientLightApplicator.h"
     "../../include/mtt/clPipeline/Lighting/AmbientLightAreaModificator.h"

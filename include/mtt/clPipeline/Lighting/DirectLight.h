@@ -3,11 +3,11 @@
 #include <optional>
 #include <memory>
 
-#include <mtt/clPipeline/Lighting/AbstractLight.h>
 #include <mtt/clPipeline/Lighting/DirectLightApplicator.h>
 #include <mtt/clPipeline/Lighting/DirectLightAreaModificator.h>
 #include <mtt/clPipeline/Lighting/DirectLightData.h>
 #include <mtt/render/Pipeline/Sampler.h>
+#include <mtt/render/SceneGraph/CompositeObjectNode.h>
 #include <mtt/utilities/Abort.h>
 #include <mtt/utilities/Sphere.h>
 
@@ -19,7 +19,7 @@ namespace mtt
   {
     class ShadowMapProvider;
 
-    class DirectLight : public AbstractLight
+    class DirectLight : public CompositeObjectNode
     {
     public:
       explicit DirectLight( bool forwardLightingEnabled,
@@ -28,9 +28,6 @@ namespace mtt
       DirectLight(const DirectLight&) = delete;
       DirectLight& operator = (const DirectLight&) = delete;
       virtual ~DirectLight() = default;
-
-      virtual DrawableNode* defferedLightApplicator() noexcept override;
-      virtual AreaModificator* forwardLightModificator() noexcept override;
 
       inline const glm::vec3& illuminance() const noexcept;
       inline void setIlluminance(const glm::vec3& newValue) noexcept;

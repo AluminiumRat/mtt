@@ -1,10 +1,10 @@
 #include <stdexcept>
 
-#include <mtt/clPipeline/Lighting/AbstractLight.h>
 #include <mtt/clPipeline/MeshTechniques/InstrumentalCompositeTechnique.h>
 #include <mtt/clPipeline/constants.h>
 #include <mtt/render/Mesh/UidMeshTechnique.h>
 #include <mtt/render/Pipeline/Buffer.h>
+#include <mtt/render/SceneGraph/CompositeObjectNode.h>
 #include <mtt/utilities/Box.h>
 #include <mtt/utilities/Log.h>
 
@@ -66,7 +66,7 @@ AbstractLightRenderObserver::AbstractLightRenderObserver(
 }
 
 void AbstractLightRenderObserver::setLightObject(
-                                        mtt::clPipeline::AbstractLight& light)
+                                                mtt::CompositeObjectNode& light)
 {
   _clearLightRenderer();
 

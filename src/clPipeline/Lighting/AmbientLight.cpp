@@ -40,16 +40,6 @@ AmbientLight::AmbientLight( bool forwardLightingEnabled,
   _updateBound();
 }
 
-DrawableNode* AmbientLight::defferedLightApplicator() noexcept
-{
-  return _defferedApplicator.get();
-}
-
-AreaModificator* AmbientLight::forwardLightModificator() noexcept
-{
-  return _forwardApplicator.get();
-}
-
 void AmbientLight::_updateBound() noexcept
 {
   if (_defferedApplicator != nullptr)

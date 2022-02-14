@@ -14,13 +14,9 @@
 
 namespace mtt
 {
-  class DrawableNode;
   class AreaModificator;
-
-  namespace clPipeline
-  {
-    class AbstractLight;
-  }
+  class CompositeObjectNode;
+  class DrawableNode;
 }
 
 class LightObject;
@@ -42,7 +38,7 @@ public:
   virtual ~AbstractLightRenderObserver() noexcept = default;
 
 protected:
-  void setLightObject(mtt::clPipeline::AbstractLight& light);
+  void setLightObject(mtt::CompositeObjectNode& light);
 
   /// newGeometry should be in VK_PRIMITIVE_TOPOLOGY_LINE_LIST topology
   void setHullGeometry(const std::vector<glm::vec3> newGeometry);
@@ -54,7 +50,7 @@ private:
 private:
   LightObject& _object;
 
-  mtt::clPipeline::AbstractLight* _lightRenderer;
+  mtt::CompositeObjectNode* _lightRenderer;
 
   std::optional<IconDrawableNode> _iconNode;
 

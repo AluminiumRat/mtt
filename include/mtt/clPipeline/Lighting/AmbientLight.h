@@ -2,12 +2,12 @@
 
 #include <memory>
 
-#include <mtt/clPipeline/Lighting/AbstractLight.h>
 #include <mtt/clPipeline/Lighting/AmbientLightApplicator.h>
 #include <mtt/clPipeline/Lighting/AmbientLightAreaModificator.h>
 #include <mtt/clPipeline/Lighting/AmbientLightData.h>
 #include <mtt/render/Pipeline/Sampler.h>
 #include <mtt/render/Pipeline/CubeTexture.h>
+#include <mtt/render/SceneGraph/CompositeObjectNode.h>
 
 namespace mtt
 {
@@ -15,7 +15,7 @@ namespace mtt
 
   namespace clPipeline
   {
-    class AmbientLight : public AbstractLight
+    class AmbientLight : public CompositeObjectNode
     {
     public:
       explicit AmbientLight(bool forwardLightingEnabled,
@@ -24,9 +24,6 @@ namespace mtt
                             LogicalDevice& device);
       AmbientLight(const AmbientLight&) = delete;
       AmbientLight& operator = (const AmbientLight&) = delete;
-
-      virtual DrawableNode* defferedLightApplicator() noexcept override;
-      virtual AreaModificator* forwardLightModificator() noexcept override;
 
       inline bool infinityAreaMode() const noexcept;
 

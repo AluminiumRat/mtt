@@ -9,9 +9,8 @@
 #include <mtt/clPipeline/Background/BackgroundProperties.h>
 #include <mtt/render/Pipeline/CubeTexture.h>
 #include <mtt/render/Pipeline/Sampler.h>
-#include <mtt/render/SceneGraph/ProtectedGroupNode.h>
+#include <mtt/render/SceneGraph/CompositeObjectNode.h>
 #include <mtt/render/SceneGraph/SimpleDrawableNode.h>
-#include <mtt/render/CompositeRenderObject.h>
 
 namespace mtt
 {
@@ -19,8 +18,7 @@ namespace mtt
 
   namespace clPipeline
   {
-    class Background :  public CompositeRenderObject,
-                        public ProtectedGroupNode
+    class Background :  public CompositeObjectNode
     {
     public:
       explicit Background(LogicalDevice& device);
@@ -41,21 +39,11 @@ namespace mtt
       inline const CubeTexture* luminanceTexture() const noexcept;
       inline CubeTexture* luminanceTexture() noexcept;
 
-      inline BackgroundAreaModificator& areaModificator() noexcept;
-      inline const BackgroundAreaModificator& areaModificator() const noexcept;
-
-      inline BackgroundDrawable& drawable() noexcept;
-      inline const BackgroundDrawable& drawable() const noexcept;
-
       virtual size_t areaModificatorsNumber() const noexcept override;
       virtual AreaModificator& areaModificator(size_t index) noexcept override;
 
       virtual size_t unculledDrawablesNumber() const noexcept override;
       virtual Drawable& unculledDrawable(size_t index) noexcept override;
-
-    private:
-      friend class BackgroundAreaModificator;
-      friend class BackgroundDrawable;
 
     private:
       BackgroundProperties _properties;
@@ -104,27 +92,6 @@ namespace mtt
     inline CubeTexture* Background::luminanceTexture() noexcept
     {
       return static_cast<CubeTexture*>(_luminanceSampler.attachedTexture(0));
-    }
-
-    inline BackgroundAreaModificator& Background::areaModificator() noexcept
-    {
-      return _areaModificator;
-    }
-
-    inline const BackgroundAreaModificator&
-                                  Background::areaModificator() const noexcept
-    {
-      return _areaModificator;
-    }
-
-    inline BackgroundDrawable& Background::drawable() noexcept
-    {
-      return _drawable;
-    }
-
-    inline const BackgroundDrawable& Background::drawable() const noexcept
-    {
-      return _drawable;
     }
   }
 }
