@@ -7,15 +7,14 @@
 
 namespace mtt
 {
+  class MovableObject;
   class UndoStack;
 }
-
-class MovableObject;
 
 class AxisManipulator : public mtt::AxisMove3DManipulator
 {
 public:
-  AxisManipulator(MovableObject& object, mtt::UndoStack& undoStack);
+  AxisManipulator(mtt::MovableObject& object, mtt::UndoStack& undoStack);
   AxisManipulator(const AxisManipulator&) = delete;
   AxisManipulator& operator = (const AxisManipulator&) = delete;
   virtual ~AxisManipulator() noexcept = default;
@@ -30,7 +29,7 @@ protected:
 
 private:
   mtt::UndoStack& _undoStack;
-  MovableObject& _object;
+  mtt::MovableObject& _object;
 
   mtt::UndoStack::GroupLocker _groupCommandLocker;
 

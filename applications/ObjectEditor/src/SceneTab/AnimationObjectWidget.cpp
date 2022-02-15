@@ -3,7 +3,7 @@
 
 #include <GeneratedFiles/ui_AnimationObjectWidget.h>
 
-AnimationObjectWidget::AnimationObjectWidget( AnimationObject& object,
+AnimationObjectWidget::AnimationObjectWidget( mtt::AnimationObject& object,
                                               AnimationPlayer& player) :
   _ui(new Ui::AnimationObjectWidget),
   _object(object),

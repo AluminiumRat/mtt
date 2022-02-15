@@ -54,10 +54,10 @@ void LoadModelTask::_loadSkeletons()
   for (; skeletonsNumber != 0; skeletonsNumber--)
   {
     _skeletons.push_back(
-                    ObjectLoader::loadObject<SkeletonObject>( true,
-                                                              *_stream,
-                                                              _fileDirectory,
-                                                              _mixUIDValue));
+                  ObjectLoader::loadObject<mtt::SkeletonObject>(true,
+                                                                *_stream,
+                                                                _fileDirectory,
+                                                                _mixUIDValue));
   }
 }
 
@@ -79,7 +79,7 @@ void LoadModelTask::_loadAnimations()
   for (; animationsNumber != 0; animationsNumber--)
   {
     _animations.push_back(
-                    ObjectLoader::loadObject<AnimationObject>(true,
+              ObjectLoader::loadObject<mtt::AnimationObject>( true,
                                                               *_stream,
                                                               _fileDirectory,
                                                               _mixUIDValue));
@@ -106,7 +106,7 @@ void LoadModelTask::asyncPart()
 
 void LoadModelTask::_clearScene() noexcept
 {
-  AnimationGroup& animations = _scene.root().animationGroup();
+  mtt::AnimationGroup& animations = _scene.root().animationGroup();
   while (animations.childsNumber() != 0)
   {
     animations.removeChild( animations.child(animations.childsNumber() -1),
@@ -127,7 +127,7 @@ void LoadModelTask::_clearScene() noexcept
                           true);
   }
 
-  SkeletonGroup& skeletons = _scene.root().skeletonGroup();
+  mtt::SkeletonGroup& skeletons = _scene.root().skeletonGroup();
   while (skeletons.childsNumber() != 0)
   {
     skeletons.removeChild(skeletons.child(skeletons.childsNumber() -1),
@@ -143,7 +143,7 @@ void LoadModelTask::finalizePart()
 
   try
   {
-    for (std::unique_ptr<AnimationObject>& animation : _animations)
+    for (std::unique_ptr<mtt::AnimationObject>& animation : _animations)
     {
       _scene.root().animationGroup().addChild(std::move(animation));
     }
@@ -158,7 +158,7 @@ void LoadModelTask::finalizePart()
       _scene.root().materialsGroup().addChild(std::move(material));
     }
 
-    for (std::unique_ptr<SkeletonObject>& skeleton : _skeletons)
+    for (std::unique_ptr<mtt::SkeletonObject>& skeleton : _skeletons)
     {
       _scene.root().skeletonGroup().addChild(std::move(skeleton));
     }

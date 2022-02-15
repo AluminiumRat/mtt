@@ -4,7 +4,7 @@
 
 #include <QtWidgets/QWidget>
 
-#include <Objects/MovableObject.h>
+#include <mtt/editorLib/Objects/MovableObject.h>
 
 namespace mtt
 {
@@ -19,7 +19,7 @@ namespace Ui
 class MovableObjectWidget : public QWidget
 {
 public:
-  MovableObjectWidget(MovableObject& object, mtt::UndoStack& undoStack);
+  MovableObjectWidget(mtt::MovableObject& object, mtt::UndoStack& undoStack);
   MovableObjectWidget(const MovableObjectWidget&) = delete;
   MovableObjectWidget& operator = (const MovableObjectWidget&) = delete;
   virtual ~MovableObjectWidget() noexcept;

@@ -10,10 +10,9 @@
 
 namespace mtt
 {
+  class CubemapObject;
   class CubeTexture;
 };
-
-class CubemapObject;
 
 class CubemapObserver : public QObject
 {
@@ -23,7 +22,7 @@ public:
   using Callback = std::function<void(std::shared_ptr<mtt::CubeTexture>)>;
 
 public:
-  CubemapObserver(CubemapObject& object);
+  CubemapObserver(mtt::CubemapObject& object);
   CubemapObserver(const CubemapObserver&) = delete;
   CubemapObserver& operator = (const CubemapObserver&) = delete;
   virtual ~CubemapObserver() = default;
@@ -34,7 +33,7 @@ private:
   void _updateTexture() noexcept;
 
 private:
-  CubemapObject& _object;
+  mtt::CubemapObject& _object;
   Callback _callback;
 
   using StopperUniquePtr = std::unique_ptr<mtt::AsyncTaskQueue::TaskStopper>;

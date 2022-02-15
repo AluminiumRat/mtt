@@ -21,9 +21,9 @@ QString ObjectLoader::_loadFilename()
   return fileInfo.canonicalFilePath();
 }
 
-void ObjectLoader::_readCubemapData(CubemapObject& object)
+void ObjectLoader::_readCubemapData(mtt::CubemapObject& object)
 {
-  CubemapObject::Textures textures;
+  mtt::CubemapObject::Textures textures;
   for (QString& filename : textures)
   {
     filename = _loadFilename();
@@ -31,32 +31,32 @@ void ObjectLoader::_readCubemapData(CubemapObject& object)
   object.setTextures(textures);
 }
 
-void ObjectLoader::visit(AmbientLightObject& object)
+void ObjectLoader::visit(mtt::AmbientLightObject& object)
 {
   OEVisitor::visit(object);
   object.setSaturationDistance(_stream.readFloat());
   _readCubemapData(object.ambientMap());
 }
 
-void ObjectLoader::visit(AnimationObject& object)
+void ObjectLoader::visit(mtt::AnimationObject& object)
 {
   OEVisitor::visit(object);
   uint32_t childNumber = _stream.readUint32();
   for (; childNumber != 0; childNumber--)
   {
-    object.addChild(loadObject<AnimationTrack>( true,
-                                                _stream,
-                                                _fileDirectory,
-                                                _mixUIDValue));
+    object.addChild(loadObject<mtt::AnimationTrack>( true,
+                                                    _stream,
+                                                    _fileDirectory,
+                                                    _mixUIDValue));
   }
 }
 
 template<typename ValueType>
-void ObjectLoader::_readKeypoint(
-            mtt::ValueKeypoint<ValueType, AnimationTrack::TimeType>& keypoint)
+void ObjectLoader::_readKeypoint( mtt::ValueKeypoint<ValueType,
+                                  mtt::AnimationTrack::TimeType>& keypoint)
 {
   uint32_t timeCount = _stream.readUint32();
-  AnimationTrack::TimeType time(timeCount);
+  mtt::AnimationTrack::TimeType time(timeCount);
   keypoint.setTime(time);
 
   ValueType value;
@@ -72,7 +72,7 @@ mtt::UID ObjectLoader::_readUID()
   return _stream.readUID().mixedUID(_mixUIDValue);
 }
 
-void ObjectLoader::visit(AnimationTrack& object)
+void ObjectLoader::visit(mtt::AnimationTrack& object)
 {
   OEVisitor::visit(object);
   object.setEnabled(_stream.readBool());
@@ -80,8 +80,8 @@ void ObjectLoader::visit(AnimationTrack& object)
   uint16_t keypointsNumber = _stream.readUint16();
   for (; keypointsNumber != 0; keypointsNumber--)
   {
-    std::unique_ptr<AnimationTrack::PositionKeypoint> keypoint(
-                                      new AnimationTrack::PositionKeypoint());
+    std::unique_ptr<mtt::AnimationTrack::PositionKeypoint> keypoint(
+                                  new mtt::AnimationTrack::PositionKeypoint());
     _readKeypoint(*keypoint);
     object.addPositionKeypoint(std::move(keypoint));
   }
@@ -89,8 +89,8 @@ void ObjectLoader::visit(AnimationTrack& object)
   keypointsNumber = _stream.readUint16();
   for (; keypointsNumber != 0; keypointsNumber--)
   {
-    std::unique_ptr<AnimationTrack::RotationKeypoint> keypoint(
-                                      new AnimationTrack::RotationKeypoint());
+    std::unique_ptr<mtt::AnimationTrack::RotationKeypoint> keypoint(
+                                  new mtt::AnimationTrack::RotationKeypoint());
     _readKeypoint(*keypoint);
     object.addRotationKeypoint(std::move(keypoint));
   }
@@ -98,8 +98,8 @@ void ObjectLoader::visit(AnimationTrack& object)
   keypointsNumber = _stream.readUint16();
   for (; keypointsNumber != 0; keypointsNumber--)
   {
-    std::unique_ptr<AnimationTrack::ScaleKeypoint> keypoint(
-                                        new AnimationTrack::ScaleKeypoint());
+    std::unique_ptr<mtt::AnimationTrack::ScaleKeypoint> keypoint(
+                                      new mtt::AnimationTrack::ScaleKeypoint());
     _readKeypoint(*keypoint);
     object.addScaleKeypoint(std::move(keypoint));
   }
@@ -107,7 +107,7 @@ void ObjectLoader::visit(AnimationTrack& object)
   object.setSkeletonId(_readUID());
 }
 
-void ObjectLoader::visit(BackgroundObject& object)
+void ObjectLoader::visit(mtt::BackgroundObject& object)
 {
   OEVisitor::visit(object);
   object.setLightEnabled(_stream.readBool());
@@ -118,7 +118,7 @@ void ObjectLoader::visit(BackgroundObject& object)
   _readCubemapData(object.cubemap());
 }
 
-void ObjectLoader::visit(DirectLightObject& object)
+void ObjectLoader::visit(mtt::DirectLightObject& object)
 {
   OEVisitor::visit(object);
   object.setRadius(_stream.readFloat());
@@ -128,13 +128,13 @@ void ObjectLoader::visit(DirectLightObject& object)
   object.setBlurSize(_stream.readFloat());
 }
 
-void ObjectLoader::visit(DisplayedObject& object)
+void ObjectLoader::visit(mtt::DisplayedObject& object)
 {
   OEVisitor::visit(object);
   object.setVisible(_stream.readBool());
 }
 
-void ObjectLoader::visit(EnvironmentModel& object)
+void ObjectLoader::visit(mtt::EnvironmentModel& object)
 {
   OEVisitor::visit(object);
   object.setFilename(_loadFilename());
@@ -146,7 +146,7 @@ void ObjectLoader::visit(GeometryObject& object)
   object.setSkeletonId(_readUID());
 }
 
-void ObjectLoader::visit(LightObject& object)
+void ObjectLoader::visit(mtt::LightObject& object)
 {
   OEVisitor::visit(object);
   object.setEnabled(_stream.readBool());
@@ -178,13 +178,13 @@ void ObjectLoader::visit(MaterialObject& object)
   object.setAlbedo(_stream.readVec3());
   object.setAlbedoTexture(_loadFilename());
   object.setUseAlphaFromAlbedoTexture(_stream.readBool());
-  
+
   object.setRoughness(_stream.readFloat());
   object.setSpecularStrength(_stream.readFloat());
   object.setSpecularTexture(_loadFilename());
 
   object.setMetallic(_stream.readFloat());
-  
+
   object.setOpaqueFactor(_stream.readFloat());
   object.setOpaqueTexture(_loadFilename());
 
@@ -257,34 +257,34 @@ void ObjectLoader::visit(MeshObject& object)
   object.setMaterialId(_readUID());
 }
 
-void ObjectLoader::visit(MovableObject& object)
+void ObjectLoader::visit(mtt::MovableObject& object)
 {
   OEVisitor::visit(object);
   object.setPosition(_stream.readVec3());
 }
 
-void ObjectLoader::visit(RotatableObject& object)
+void ObjectLoader::visit(mtt::RotatableObject& object)
 {
   OEVisitor::visit(object);
   object.setRotation(_stream.readQuat());
 }
 
-void ObjectLoader::visit(ScalableObject& object)
+void ObjectLoader::visit(mtt::ScalableObject& object)
 {
   OEVisitor::visit(object);
   object.setScale(_stream.readVec3());
 }
 
-void ObjectLoader::visit(SkeletonObject& object)
+void ObjectLoader::visit(mtt::SkeletonObject& object)
 {
   OEVisitor::visit(object);
   uint32_t childsNumber = _stream.readUint32();
   for (; childsNumber != 0; childsNumber--)
   {
-    object.addChild(loadObject<SkeletonObject>( true,
-                                                _stream,
-                                                _fileDirectory,
-                                                _mixUIDValue));
+    object.addChild(loadObject<mtt::SkeletonObject>( true,
+                                                    _stream,
+                                                    _fileDirectory,
+                                                    _mixUIDValue));
   }
 }
 

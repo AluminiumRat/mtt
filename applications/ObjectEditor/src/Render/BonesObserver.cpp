@@ -30,12 +30,12 @@ BonesObserver::BonesObserver( MeshObject& object,
     {
       BoneRefObject& boneRef = _boneBatch.boneRef(boneIndex);
       _bones[boneIndex].refConnection=
-                                    connect(&boneRef,
-                                            &BoneRefObject::boneRefChanged,
-                                            [&, boneIndex](SkeletonObject* bone)
-                                            {
-                                              _setBoneObject(bone, boneIndex);
-                                            });
+                              connect(&boneRef,
+                                      &BoneRefObject::boneRefChanged,
+                                      [&, boneIndex](mtt::SkeletonObject* bone)
+                                      {
+                                        _setBoneObject(bone, boneIndex);
+                                      });
       _setBoneObject(boneRef.bone(), boneIndex);
 
       _bones[boneIndex].inverseMatrixConnection =
@@ -80,15 +80,15 @@ void BonesObserver::_onMeshMoved() noexcept
 {
   for(size_t boneIndex = 0; boneIndex < _bones.size(); boneIndex++)
   {
-    SkeletonObject* bone = _bones[boneIndex].bone;
+    mtt::SkeletonObject* bone = _bones[boneIndex].bone;
     if(bone != nullptr) _setBoneMatrix(bone, boneIndex);
   }
 }
 
-void BonesObserver::_setBoneObject( SkeletonObject* boneObject,
+void BonesObserver::_setBoneObject( mtt::SkeletonObject* boneObject,
                                     size_t boneIndex) noexcept
 {
-  SkeletonObject* oldBoneObject = _bones[boneIndex].bone;
+  mtt::SkeletonObject* oldBoneObject = _bones[boneIndex].bone;
   if(oldBoneObject != nullptr)
   {
     disconnect(_bones[boneIndex].transformConnection);
@@ -97,18 +97,18 @@ void BonesObserver::_setBoneObject( SkeletonObject* boneObject,
   if(boneObject != nullptr)
   {
     _bones[boneIndex].transformConnection =
-                                      connect(boneObject,
-                                              &SkeletonObject::transformChanged,
-                                              [&, boneObject, boneIndex]()
-                                              {
-                                                _setBoneMatrix( boneObject,
-                                                                boneIndex);
-                                              });
+                                connect(boneObject,
+                                        &mtt::SkeletonObject::transformChanged,
+                                        [&, boneObject, boneIndex]()
+                                        {
+                                          _setBoneMatrix( boneObject,
+                                                          boneIndex);
+                                        });
     _setBoneMatrix(boneObject, boneIndex);
   }
 }
 
-void BonesObserver::_setBoneMatrix( SkeletonObject* boneObject,
+void BonesObserver::_setBoneMatrix( mtt::SkeletonObject* boneObject,
                                     size_t boneIndex) noexcept
 {
   const glm::mat4& meshTransform = _object.localToWorldTransform();

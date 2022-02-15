@@ -6,28 +6,28 @@
 
 #include <GeneratedFiles/ui_MovableObjectWidget.h>
 
-MovableObjectWidget::MovableObjectWidget( MovableObject& object,
+MovableObjectWidget::MovableObjectWidget( mtt::MovableObject& object,
                                           mtt::UndoStack& undoStack) :
   _ui(new Ui::MovableObjectWidget)
 {
   _ui->setupUi(this);
 
-  mtt::Vec3PropertyWidget<MovableObject>* positionWidget =
-                  new mtt::Vec3PropertyWidget<MovableObject>(
-                                                object,
-                                                &MovableObject::position,
-                                                &MovableObject::setPosition,
-                                                &MovableObject::positionChanged,
-                                                undoStack);
+  mtt::Vec3PropertyWidget<mtt::MovableObject>* positionWidget =
+                  new mtt::Vec3PropertyWidget<mtt::MovableObject>(
+                                          object,
+                                          &mtt::MovableObject::position,
+                                          &mtt::MovableObject::setPosition,
+                                          &mtt::MovableObject::positionChanged,
+                                          undoStack);
   _ui->positionLayout->addWidget(positionWidget, 3);
 
-  mtt::RotationPropertyWidget<MovableObject>* rotationWidget =
-              new mtt::RotationPropertyWidget<MovableObject>(
-                                                object,
-                                                &MovableObject::rotation,
-                                                &MovableObject::setRotation,
-                                                &MovableObject::rotationChanged,
-                                                undoStack);
+  mtt::RotationPropertyWidget<mtt::MovableObject>* rotationWidget =
+              new mtt::RotationPropertyWidget<mtt::MovableObject>(
+                                          object,
+                                          &mtt::MovableObject::rotation,
+                                          &mtt::MovableObject::setRotation,
+                                          &mtt::MovableObject::rotationChanged,
+                                          undoStack);
   _ui->rotationLayout->addWidget(rotationWidget, 3);
 
   adjustSize();

@@ -4,7 +4,7 @@
 
 #include <QtWidgets/QWidget>
 
-#include <Objects/ScalableObject.h>
+#include <mtt/editorLib/Objects/ScalableObject.h>
 
 namespace mtt
 {
@@ -19,7 +19,7 @@ namespace Ui
 class ScalableObjectWidget : public QWidget
 {
 public:
-  ScalableObjectWidget(ScalableObject& object, mtt::UndoStack& undoStack);
+  ScalableObjectWidget(mtt::ScalableObject& object, mtt::UndoStack& undoStack);
   ScalableObjectWidget(const ScalableObjectWidget&) = delete;
   ScalableObjectWidget& operator = (const ScalableObjectWidget&) = delete;
   virtual ~ScalableObjectWidget() noexcept;

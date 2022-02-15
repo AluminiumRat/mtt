@@ -1,13 +1,12 @@
 #include <mtt/render/Drawable/AntiscaleDrawableModificator.h>
-#include <Objects/Object3D.h>
 #include <Render/Object3DRenderObserver.h>
 
-Object3DRenderObserver::Object3DRenderObserver( Object3D& object,
+Object3DRenderObserver::Object3DRenderObserver( mtt::Object3D& object,
                                                 EditorCommonData& commonData) :
   AbstractObjectRenderObserver(object, commonData)
 {
   connect(&object,
-          &Object3D::transformChanged,
+          &mtt::Object3D::transformChanged,
           this,
           &Object3DRenderObserver::_setObjectTransform,
           Qt::DirectConnection);

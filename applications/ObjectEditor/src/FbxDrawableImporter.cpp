@@ -26,9 +26,9 @@ FbxDrawableImporter::Result FbxDrawableImporter::import(
 
 void FbxDrawableImporter::pushTranslation(FbxNode& node)
 {
-  std::unique_ptr<SkeletonObject> newSkeleton(
-                                      new SkeletonObject(node.GetName(), true));
-  SkeletonObject& skeletonRef = *newSkeleton;
+  std::unique_ptr<mtt::SkeletonObject> newSkeleton(
+                                new mtt::SkeletonObject(node.GetName(), true));
+  mtt::SkeletonObject& skeletonRef = *newSkeleton;
   _skeletonMap[&node] = &skeletonRef;
 
   FbxDouble3 position = node.LclTranslation.Get();
@@ -130,7 +130,7 @@ void FbxDrawableImporter::_resolveBoneLinks()
     {
       SkeletonMap::const_iterator iBone = _skeletonMap.find(bone.node);
       if(iBone == _skeletonMap.end()) throw std::runtime_error("Unable to find the bone node.");
-      SkeletonObject* skeleton = iBone->second;
+      mtt::SkeletonObject* skeleton = iBone->second;
 
       std::unique_ptr<BoneRefObject> newRef(
                               new BoneRefObject(skeleton->name(), true));

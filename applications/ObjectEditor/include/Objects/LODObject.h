@@ -3,11 +3,11 @@
 #include <float.h>
 
 #include <mtt/application/Scene/SpecialGroup.h>
+#include <mtt/editorLib/Objects/DisplayedObject.h>
 
-#include <Objects/DisplayedObject.h>
 #include <Objects/MeshObject.h>
 
-class LODObject : public mtt::SpecialGroup< DisplayedObject,
+class LODObject : public mtt::SpecialGroup< mtt::DisplayedObject,
                                             MeshObject>
 {
   Q_OBJECT

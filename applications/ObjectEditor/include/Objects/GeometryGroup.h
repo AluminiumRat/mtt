@@ -4,7 +4,7 @@
 
 #include <Objects/LODObject.h>
 
-class GeometryGroup : public mtt::SpecialGroup< DisplayedObject,
+class GeometryGroup : public mtt::SpecialGroup< mtt::DisplayedObject,
                                                 LODObject>
 {
   Q_OBJECT

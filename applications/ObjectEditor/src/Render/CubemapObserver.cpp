@@ -1,18 +1,18 @@
 #include <stdexcept>
 
+#include <mtt/editorLib/Objects/CubemapObject.h>
 #include <mtt/render/Pipeline/CubeTexture.h>
 #include <mtt/utilities/Log.h>
 
 #include <AsyncTasks/UploadCubetextureTask.h>
-#include <Objects/CubemapObject.h>
 #include <Render/CubemapObserver.h>
 #include <EditorApplication.h>
 
-CubemapObserver::CubemapObserver(CubemapObject& object) :
+CubemapObserver::CubemapObserver(mtt::CubemapObject& object) :
   _object(object)
 {
   connect(&_object,
-          &CubemapObject::texturesChanged,
+          &mtt::CubemapObject::texturesChanged,
           this,
           &CubemapObserver::_updateTexture,
           Qt::DirectConnection);

@@ -5,7 +5,7 @@
 
 #include <GeneratedFiles/ui_BackgroundWidget.h>
 
-BackgroundWidget::BackgroundWidget( BackgroundObject& object,
+BackgroundWidget::BackgroundWidget( mtt::BackgroundObject& object,
                                     mtt::UndoStack& undoStack) :
   _ui(new Ui::BackgroundWidget)
 {
@@ -13,39 +13,40 @@ BackgroundWidget::BackgroundWidget( BackgroundObject& object,
 
   _lightConnection.emplace( *_ui->lightCheckbox,
                             object,
-                            &BackgroundObject::lightEnabled,
-                            &BackgroundObject::setLightEnabled,
-                            &BackgroundObject::lightEnabledChanged,
+                            &mtt::BackgroundObject::lightEnabled,
+                            &mtt::BackgroundObject::setLightEnabled,
+                            &mtt::BackgroundObject::lightEnabledChanged,
                             undoStack);
 
-  mtt::ColorPropertyWidget<BackgroundObject>* colorWidget =
-                  new mtt::ColorPropertyWidget<BackgroundObject>( 
-                                                object,
-                                                &BackgroundObject::color,
-                                                &BackgroundObject::setColor,
-                                                &BackgroundObject::colorChanged,
-                                                undoStack);
+  mtt::ColorPropertyWidget<mtt::BackgroundObject>* colorWidget =
+                  new mtt::ColorPropertyWidget<mtt::BackgroundObject>(
+                                          object,
+                                          &mtt::BackgroundObject::color,
+                                          &mtt::BackgroundObject::setColor,
+                                          &mtt::BackgroundObject::colorChanged,
+                                          undoStack);
   _ui->colorLayout->addWidget(colorWidget, 3);
 
   _luminanceConnection.emplace( *_ui->luminanceSpin,
                                 object,
-                                &BackgroundObject::luminance,
-                                &BackgroundObject::setLuminance,
-                                &BackgroundObject::luminanceChanged,
+                                &mtt::BackgroundObject::luminance,
+                                &mtt::BackgroundObject::setLuminance,
+                                &mtt::BackgroundObject::luminanceChanged,
                                 undoStack);
 
-  _startConnection.emplace( *_ui->startSpin,
-                            object,
-                            &BackgroundObject::dissolutionStartDistance,
-                            &BackgroundObject::setDissolutionStartDistance,
-                            &BackgroundObject::dissolutionStartDistanceChanged,
-                            undoStack);
+  _startConnection.emplace(
+                        *_ui->startSpin,
+                        object,
+                        &mtt::BackgroundObject::dissolutionStartDistance,
+                        &mtt::BackgroundObject::setDissolutionStartDistance,
+                        &mtt::BackgroundObject::dissolutionStartDistanceChanged,
+                        undoStack);
 
   _lengthConnection.emplace( *_ui->lengthSpin,
                             object,
-                            &BackgroundObject::dissolutionLength,
-                            &BackgroundObject::setDissolutionLength,
-                            &BackgroundObject::dissolutionLengthChanged,
+                            &mtt::BackgroundObject::dissolutionLength,
+                            &mtt::BackgroundObject::setDissolutionLength,
+                            &mtt::BackgroundObject::dissolutionLengthChanged,
                             undoStack);
 
   CubemapWidget* cubemapWidget = new CubemapWidget( object.cubemap(),

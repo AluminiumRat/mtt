@@ -6,7 +6,10 @@
 
 #include <mtt/application/Manipulator/Composite3DManipulator.h>
 
-class Object3D;
+namespace mtt
+{
+  class Object3D;
+}
 
 class ObjectManipulator : public QObject,
                           public mtt::Composite3DManipulator
@@ -40,7 +43,7 @@ public:
   inline static const glm::vec4 zActivatedColor = glm::vec4(.1f, .1f, 1.f, .8f);
 
 public:
-  ObjectManipulator(Object3D& object);
+  ObjectManipulator(mtt::Object3D& object);
   ObjectManipulator(const ObjectManipulator&) = delete;
   ObjectManipulator& operator = (const ObjectManipulator&) = delete;
   virtual ~ObjectManipulator() noexcept = default;
@@ -55,7 +58,7 @@ private:
   void _updatePosition() noexcept;
 
 private:
-  Object3D& _object;
+  mtt::Object3D& _object;
   Orientation _orientation;
 };
 

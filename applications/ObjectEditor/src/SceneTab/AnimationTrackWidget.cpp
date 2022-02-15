@@ -4,7 +4,7 @@
 
 #include <GeneratedFiles/ui_AnimationTrackWidget.h>
 
-AnimationTrackWidget::AnimationTrackWidget( AnimationTrack& object,
+AnimationTrackWidget::AnimationTrackWidget( mtt::AnimationTrack& object,
                                             mtt::Object& skeletonSelectArea,
                                             mtt::UndoStack& undoStack) :
   _ui(new Ui::AnimationTrackWidget)
@@ -12,20 +12,20 @@ AnimationTrackWidget::AnimationTrackWidget( AnimationTrack& object,
   _ui->setupUi(this);
   _enabledConnection.emplace( *_ui->enabledBox,
                               object,
-                              &AnimationTrack::enabled,
-                              &AnimationTrack::setEnabled,
-                              &AnimationTrack::enabledChanged,
+                              &mtt::AnimationTrack::enabled,
+                              &mtt::AnimationTrack::setEnabled,
+                              &mtt::AnimationTrack::enabledChanged,
                               undoStack);
 
-  using ReferenceWidget = mtt::ReferencePropertyWidget< AnimationTrack,
-                                                        SkeletonObject>;
-  ReferenceWidget* referenceWidget = new ReferenceWidget(
-                                          object,
-                                          &AnimationTrack::skeleton,
-                                          &AnimationTrack::setSkeleton,
-                                          &AnimationTrack::skeletonRefChanged,
-                                          undoStack,
-                                          skeletonSelectArea);
+  using ReferenceWidget = mtt::ReferencePropertyWidget< mtt::AnimationTrack,
+                                                        mtt::SkeletonObject>;
+  ReferenceWidget* referenceWidget =
+                  new ReferenceWidget(object,
+                                      &mtt::AnimationTrack::skeleton,
+                                      &mtt::AnimationTrack::setSkeleton,
+                                      &mtt::AnimationTrack::skeletonRefChanged,
+                                      undoStack,
+                                      skeletonSelectArea);
   _ui->boneLayout->addWidget(referenceWidget, 3);
   adjustSize();
 }

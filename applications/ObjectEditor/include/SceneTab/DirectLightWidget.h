@@ -8,8 +8,7 @@
 #include <mtt/application/Widgets/PropertiesWidgets/BoolCheckboxConnection.h>
 #include <mtt/application/Widgets/PropertiesWidgets/FloatSpinConnection.h>
 #include <mtt/application/Widgets/PropertiesWidgets/IntSpinConnection.h>
-
-#include <Objects/DirectLightObject.h>
+#include <mtt/editorLib/Objects/DirectLightObject.h>
 
 namespace mtt
 {
@@ -24,7 +23,7 @@ namespace Ui
 class DirectLightWidget : public QWidget
 {
 public:
-  DirectLightWidget(DirectLightObject& object, mtt::UndoStack& undoStack);
+  DirectLightWidget(mtt::DirectLightObject& object, mtt::UndoStack& undoStack);
   DirectLightWidget(const DirectLightWidget&) = delete;
   DirectLightWidget& operator = (const DirectLightWidget&) = delete;
   virtual ~DirectLightWidget() noexcept;
@@ -32,14 +31,14 @@ public:
 private:
   std::unique_ptr<Ui::DirectLightWidget> _ui;
 
-  using BoolConnection = mtt::BoolCheckboxConnection<DirectLightObject>;
+  using BoolConnection = mtt::BoolCheckboxConnection<mtt::DirectLightObject>;
   std::optional<BoolConnection> _shadowsConnection;
 
-  using FloatConnection = mtt::FloatSpinConnection<DirectLightObject>;
+  using FloatConnection = mtt::FloatSpinConnection<mtt::DirectLightObject>;
   std::optional<FloatConnection> _radiusConnection;
   std::optional<FloatConnection> _blurConnection;
 
-  using IntConnection = mtt::IntSpinConnection<DirectLightObject, size_t>;
+  using IntConnection = mtt::IntSpinConnection<mtt::DirectLightObject, size_t>;
   std::optional<IntConnection> _mapSizeConnection;
   std::optional<IntConnection> _cascadeSizeConnection;
 };

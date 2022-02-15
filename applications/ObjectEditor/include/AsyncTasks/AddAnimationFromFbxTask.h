@@ -5,8 +5,7 @@
 #include <QtCore/QString>
 
 #include <mtt/application/AsyncTasks/AbstractAsyncTask.h>
-
-#include <Objects/AnimationObject.h>
+#include <mtt/editorLib/Objects/AnimationObject.h>
 
 class EditorCommonData;
 
@@ -26,5 +25,5 @@ private:
   QString _filename;
   EditorCommonData& _commonData;
 
-  std::unique_ptr<AnimationObject> _animation;
+  std::unique_ptr<mtt::AnimationObject> _animation;
 };

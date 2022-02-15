@@ -7,14 +7,17 @@
 
 #include <Render/AbstractLightRenderObserver.h>
 
-class DirectLightObject;
+namespace mtt
+{
+  class DirectLightObject;
+}
 
 class DirectLightRenderObserver : public AbstractLightRenderObserver
 {
   Q_OBJECT
 
 public:
-  DirectLightRenderObserver(DirectLightObject& object,
+  DirectLightRenderObserver(mtt::DirectLightObject& object,
                             EditorCommonData& commonData);
   DirectLightRenderObserver(const DirectLightRenderObserver&) = delete;
   DirectLightRenderObserver& operator = (
@@ -34,7 +37,7 @@ private:
   void _updateBlur() noexcept;
 
 private:
-  DirectLightObject& _lightObject;
+  mtt::DirectLightObject& _lightObject;
   std::unique_ptr<mtt::clPipeline::ShadowMapProvider> _shadowMapProvider;
   mtt::clPipeline::DirectLight _light;
 };

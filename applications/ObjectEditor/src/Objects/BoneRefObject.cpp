@@ -11,7 +11,7 @@ BoneRefObject::BoneRefObject( const QString& name,
 {
 }
 
-void BoneRefObject::setBone(SkeletonObject* bone)
+void BoneRefObject::setBone(mtt::SkeletonObject* bone)
 {
   if(bone == nullptr) setBoneId(mtt::UID());
   else setBoneId(bone->id());
@@ -37,12 +37,12 @@ void BoneRefObject::setBoneId(const mtt::UID& id)
   }
 }
 
-void BoneRefObject::_connectBone(SkeletonObject& bone)
+void BoneRefObject::_connectBone(mtt::SkeletonObject& bone)
 {
   emit boneRefChanged(&bone);
 }
 
-void BoneRefObject::_disconnectBone(SkeletonObject& bone) noexcept
+void BoneRefObject::_disconnectBone(mtt::SkeletonObject& bone) noexcept
 {
   emit boneRefChanged(nullptr);
 }

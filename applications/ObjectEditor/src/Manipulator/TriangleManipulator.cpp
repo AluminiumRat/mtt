@@ -2,12 +2,12 @@
 #include <mtt/application/EditCommands/UndoStack.h>
 #include <mtt/clPipeline/MeshTechniques/UnlightedColorTechnique.h>
 #include <mtt/clPipeline/constants.h>
+#include <mtt/editorLib/Objects/ScalableObject.h>
 #include <mtt/utilities/Abort.h>
 
-#include <Objects/ScalableObject.h>
 #include <Manipulator/TriangleManipulator.h>
 
-TriangleManipulator::TriangleManipulator( ScalableObject& object,
+TriangleManipulator::TriangleManipulator( mtt::ScalableObject& object,
                                           mtt::UndoStack& undoStack) :
   UniformScale3DManipulator(
                           mtt::AutoscaleDrawableModificator::PIXEL_SCALE_MODE),
@@ -69,13 +69,14 @@ void TriangleManipulator::processScale(float scale) noexcept
   try
   {
     using Command = mtt::SetPropertyCommand<
-                                    ScalableObject,
-                                    glm::vec3,
-                                    void (ScalableObject::*)(const glm::vec3&)>;
-    std::unique_ptr<Command> command(new Command( _object,
-                                                  &ScalableObject::setScale,
-                                                  _object.scale(),
-                                                  newScale));
+                              mtt::ScalableObject,
+                              glm::vec3,
+                              void (mtt::ScalableObject::*)(const glm::vec3&)>;
+    std::unique_ptr<Command> command(
+                                    new Command(_object,
+                                                &mtt::ScalableObject::setScale,
+                                                _object.scale(),
+                                                newScale));
     _undoStack.addAndMake(std::move(command));
   }
   catch(std::exception& error)

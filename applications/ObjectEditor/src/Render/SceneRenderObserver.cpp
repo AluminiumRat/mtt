@@ -96,27 +96,27 @@ void SceneRenderObserver::_addObject(mtt::Object& object) noexcept
     EditorCommonData* commonData;
     std::unique_ptr<AbstractObjectRenderObserver> result;
 
-    virtual void visit(AmbientLightObject& object) override
+    virtual void visit(mtt::AmbientLightObject& object) override
     {
       result.reset(new AmbientLightRenderObserver(object, *commonData));
     }
 
-    virtual void visit(BackgroundObject& object) override
+    virtual void visit(mtt::BackgroundObject& object) override
     {
       result.reset(new BackgroundObserver(object, *commonData));
     }
 
-    virtual void visit(DirectLightObject& object) override
+    virtual void visit(mtt::DirectLightObject& object) override
     {
       result.reset(new DirectLightRenderObserver(object, *commonData));
     }
 
-    virtual void visit(EnvironmentModel& object) override
+    virtual void visit(mtt::EnvironmentModel& object) override
     {
       result.reset(new EnvironmentModelRenderObserver(object, *commonData));
     }
 
-    virtual void visit(SkeletonObject& object) override
+    virtual void visit(mtt::SkeletonObject& object) override
     {
       result.reset(new SkeletonRenderObserver(object, *commonData));
     }

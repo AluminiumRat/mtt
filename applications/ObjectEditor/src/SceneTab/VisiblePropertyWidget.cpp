@@ -2,16 +2,16 @@
 
 #include <GeneratedFiles/ui_VisiblePropertyWidget.h>
 
-VisiblePropertyWidget::VisiblePropertyWidget( DisplayedObject& object,
+VisiblePropertyWidget::VisiblePropertyWidget( mtt::DisplayedObject& object,
                                               mtt::UndoStack& undoStack) :
   _ui(new Ui::VisiblePropertyWidget)
 {
   _ui->setupUi(this);
   _visibleConnection.emplace( *_ui->visibleBox,
                               object,
-                              &DisplayedObject::visible,
-                              &DisplayedObject::setVisible,
-                              &DisplayedObject::visibleChanged,
+                              &mtt::DisplayedObject::visible,
+                              &mtt::DisplayedObject::setVisible,
+                              &mtt::DisplayedObject::visibleChanged,
                               undoStack);
 }
 

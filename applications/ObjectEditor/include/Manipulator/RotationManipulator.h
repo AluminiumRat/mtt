@@ -13,7 +13,7 @@ namespace mtt
 class RotationManipulator : public ObjectManipulator
 {
 public:
-  RotationManipulator(RotatableObject& object, mtt::UndoStack& undoStack);
+  RotationManipulator(mtt::RotatableObject& object, mtt::UndoStack& undoStack);
   RotationManipulator(const RotationManipulator&) = delete;
   RotationManipulator& operator = (const RotationManipulator&) = delete;
   virtual ~RotationManipulator() noexcept = default;

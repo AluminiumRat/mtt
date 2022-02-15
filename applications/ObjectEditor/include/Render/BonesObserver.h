@@ -10,11 +10,11 @@ namespace mtt
 {
   class BoneMatricesSetter;
   class MeshExtraData;
+  class SkeletonObject;
 }
 
 class BoneRefBatch;
 class MeshObject;
-class SkeletonObject;
 
 class BonesObserver : public QObject
 {
@@ -31,9 +31,9 @@ public:
 
 private:
   void _onMeshMoved() noexcept;
-  void _setBoneObject(SkeletonObject* boneObject,
+  void _setBoneObject(mtt::SkeletonObject* boneObject,
                       size_t boneIndex) noexcept;
-  void _setBoneMatrix(SkeletonObject* boneObject,
+  void _setBoneMatrix(mtt::SkeletonObject* boneObject,
                       size_t boneIndex) noexcept;
   void _setInverseMatrix( const glm::mat4& newValue,
                           size_t boneIndex,
@@ -47,7 +47,7 @@ private:
 
   struct BoneRecord
   {
-    SkeletonObject* bone = nullptr;
+    mtt::SkeletonObject* bone = nullptr;
     QMetaObject::Connection refConnection;
     QMetaObject::Connection inverseMatrixConnection;
     QMetaObject::Connection transformConnection;

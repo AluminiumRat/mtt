@@ -4,40 +4,39 @@
 
 #include <GeneratedFiles/ui_LightWidget.h>
 
-LightWidget::LightWidget( LightObject& object,
-                                    mtt::UndoStack& undoStack) :
+LightWidget::LightWidget(mtt::LightObject& object, mtt::UndoStack& undoStack) :
   _ui(new Ui::LightWidget)
 {
   _ui->setupUi(this);
 
   _enabledConnection.emplace( *_ui->enabledCheck,
                               object,
-                              &LightObject::enabled,
-                              &LightObject::setEnabled,
-                              &LightObject::enabledChanged,
+                              &mtt::LightObject::enabled,
+                              &mtt::LightObject::setEnabled,
+                              &mtt::LightObject::enabledChanged,
                               undoStack);
 
-  mtt::ColorPropertyWidget<LightObject>* colorWidget =
-                  new mtt::ColorPropertyWidget<LightObject>( 
-                                                    object,
-                                                    &LightObject::color,
-                                                    &LightObject::setColor,
-                                                    &LightObject::colorChanged,
-                                                    undoStack);
+  mtt::ColorPropertyWidget<mtt::LightObject>* colorWidget =
+                  new mtt::ColorPropertyWidget<mtt::LightObject>(
+                                                object,
+                                                &mtt::LightObject::color,
+                                                &mtt::LightObject::setColor,
+                                                &mtt::LightObject::colorChanged,
+                                                undoStack);
   _ui->colorLayout->addWidget(colorWidget, 3);
 
   _powerConnection.emplace( *_ui->powerSpin,
                             object,
-                            &LightObject::baseIlluminance,
-                            &LightObject::setBaseIlluminance,
-                            &LightObject::baseIlluminanceChanged,
+                            &mtt::LightObject::baseIlluminance,
+                            &mtt::LightObject::setBaseIlluminance,
+                            &mtt::LightObject::baseIlluminanceChanged,
                             undoStack);
 
   _distanceConnection.emplace(*_ui->distanceSpin,
                               object,
-                              &LightObject::distance,
-                              &LightObject::setDistance,
-                              &LightObject::distanceChanged,
+                              &mtt::LightObject::distance,
+                              &mtt::LightObject::setDistance,
+                              &mtt::LightObject::distanceChanged,
                               undoStack);
 
   adjustSize();

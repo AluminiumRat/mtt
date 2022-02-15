@@ -6,8 +6,7 @@
 #include <QtWidgets/QWidget>
 
 #include <mtt/application/Widgets/PropertiesWidgets/FloatSpinConnection.h>
-
-#include <Objects/AmbientLightObject.h>
+#include <mtt/editorLib/Objects/AmbientLightObject.h>
 
 namespace mtt
 {
@@ -22,7 +21,7 @@ namespace Ui
 class AmbientLightWidget : public QWidget
 {
 public:
-  AmbientLightWidget( AmbientLightObject& object,
+  AmbientLightWidget( mtt::AmbientLightObject& object,
                       mtt::UndoStack& undoStack);
   AmbientLightWidget(const AmbientLightWidget&) = delete;
   AmbientLightWidget& operator = (const AmbientLightWidget&) = delete;
@@ -30,6 +29,7 @@ public:
 
 private:
   std::unique_ptr<Ui::AmbientLightWidget> _ui;
-  using SaturationConnection = mtt::FloatSpinConnection<AmbientLightObject>;
+  using SaturationConnection =
+                              mtt::FloatSpinConnection<mtt::AmbientLightObject>;
   std::optional<SaturationConnection> _saturationConnection;
 };

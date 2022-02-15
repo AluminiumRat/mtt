@@ -7,32 +7,32 @@ struct ObjectBuilder::ObjectTypeParser : public OEVisitor
 {
   ObjectBuilder::ObjectType type = ObjectBuilder::ObjectType::Object;
 
-  virtual void visit(const AmbientLightObject& object) override
+  virtual void visit(const mtt::AmbientLightObject& object) override
   {
     type = ObjectBuilder::ObjectType::AmbientLight;
   }
 
-  virtual void visit(const AnimationObject& object) override
+  virtual void visit(const mtt::AnimationObject& object) override
   {
     type = ObjectBuilder::ObjectType::Animation;
   }
 
-  virtual void visit(const AnimationTrack& object) override
+  virtual void visit(const mtt::AnimationTrack& object) override
   {
     type = ObjectBuilder::ObjectType::AnimationTrack;
   }
 
-  virtual void visit(const BackgroundObject& object) override
+  virtual void visit(const mtt::BackgroundObject& object) override
   {
     type = ObjectBuilder::ObjectType::Background;
   }
 
-  virtual void visit(const DirectLightObject& object) override
+  virtual void visit(const mtt::DirectLightObject& object) override
   {
     type = ObjectBuilder::ObjectType::DirectLight;
   }
 
-  virtual void visit(const EnvironmentObject& object) override
+  virtual void visit(const mtt::EnvironmentObject& object) override
   {
     type = ObjectBuilder::ObjectType::EnvironmentModel;
   }
@@ -57,7 +57,7 @@ struct ObjectBuilder::ObjectTypeParser : public OEVisitor
     type = ObjectBuilder::ObjectType::Object;
   }
 
-  virtual void visit(const SkeletonObject& object) override
+  virtual void visit(const mtt::SkeletonObject& object) override
   {
     type = ObjectBuilder::ObjectType::Skeleton;
   }
@@ -80,22 +80,22 @@ std::unique_ptr<mtt::Object> ObjectBuilder::_buildObject( ObjectType type,
   switch (type)
   {
     case ObjectType::AmbientLight:
-      return std::make_unique<AmbientLightObject>(name, canBeRenamed, id);
+      return std::make_unique<mtt::AmbientLightObject>(name, canBeRenamed, id);
 
     case ObjectType::Animation:
-      return std::make_unique<AnimationObject>(name, canBeRenamed, id);
+      return std::make_unique<mtt::AnimationObject>(name, canBeRenamed, id);
 
     case ObjectType::AnimationTrack:
-      return std::make_unique<AnimationTrack>(name, canBeRenamed, id);
+      return std::make_unique<mtt::AnimationTrack>(name, canBeRenamed, id);
 
     case ObjectType::Background:
-      return std::make_unique<BackgroundObject>(name, canBeRenamed, id);
+      return std::make_unique<mtt::BackgroundObject>(name, canBeRenamed, id);
 
     case ObjectType::DirectLight:
-      return std::make_unique<DirectLightObject>(name, canBeRenamed, id);
+      return std::make_unique<mtt::DirectLightObject>(name, canBeRenamed, id);
 
     case ObjectType::EnvironmentModel:
-      return std::make_unique<EnvironmentModel>(name, canBeRenamed, id);
+      return std::make_unique<mtt::EnvironmentModel>(name, canBeRenamed, id);
 
     case ObjectType::LOD:
       return std::make_unique<LODObject>(name, canBeRenamed, id);
@@ -110,7 +110,7 @@ std::unique_ptr<mtt::Object> ObjectBuilder::_buildObject( ObjectType type,
       return std::make_unique<mtt::Object>(name, canBeRenamed, id);
 
     case ObjectType::Skeleton:
-      return std::make_unique<SkeletonObject>(name, canBeRenamed, id);
+      return std::make_unique<mtt::SkeletonObject>(name, canBeRenamed, id);
   }
 
   mtt::Abort("ObjectBuilder::_buildObject: unsupported object type");

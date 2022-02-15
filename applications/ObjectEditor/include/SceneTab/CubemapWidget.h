@@ -6,6 +6,7 @@
 
 namespace mtt
 {
+  class CubemapObject;
   class UndoStack;
 }
 
@@ -14,14 +15,12 @@ namespace Ui
   class CubemapWidget;
 }
 
-class CubemapObject;
-
 class CubemapWidget : public QWidget
 {
   Q_OBJECT
 
 public:
-  CubemapWidget(CubemapObject& object, mtt::UndoStack& undoStack);
+  CubemapWidget(mtt::CubemapObject& object, mtt::UndoStack& undoStack);
   CubemapWidget(const CubemapWidget&) = delete;
   CubemapWidget& operator = (const CubemapWidget&) = delete;
   virtual ~CubemapWidget() noexcept;
@@ -36,6 +35,6 @@ private:
 private:
   Ui::CubemapWidget* _ui;
 
-  CubemapObject& _object;
+  mtt::CubemapObject& _object;
   mtt::UndoStack& _undoStack;
 };

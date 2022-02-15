@@ -7,14 +7,17 @@
 
 #include <Render/Object3DRenderObserver.h>
 
-class EnvironmentModel;
+namespace mtt
+{
+  class EnvironmentModel;
+}
 
 class EnvironmentModelRenderObserver : public Object3DRenderObserver
 {
   Q_OBJECT
 
 public:
-  EnvironmentModelRenderObserver( EnvironmentModel& object,
+  EnvironmentModelRenderObserver( mtt::EnvironmentModel& object,
                                   EditorCommonData& commonData);
   EnvironmentModelRenderObserver(
                               const EnvironmentModelRenderObserver&) = delete;
@@ -26,7 +29,7 @@ private:
   void _updateModel() noexcept;
 
 private:
-  EnvironmentModel& _object;
+  mtt::EnvironmentModel& _object;
   std::unique_ptr<mtt::SlaveDrawModel> _drawModel;
 
   std::unique_ptr<mtt::AsyncTaskQueue::TaskStopper> _uploadStopper;

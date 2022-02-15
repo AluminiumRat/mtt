@@ -6,16 +6,16 @@
 #include <mtt/application/EditCommands/AddObjectCommand.h>
 #include <mtt/application/EditCommands/CompositeCommand.h>
 #include <mtt/application/EditCommands/RemoveObjectCommand.h>
+#include <mtt/editorLib/Objects/AmbientLightObject.h>
+#include <mtt/editorLib/Objects/DirectLightObject.h>
+#include <mtt/editorLib/Objects/EnvironmentModel.h>
+#include <mtt/editorLib/Objects/SkeletonGroup.h>
+#include <mtt/editorLib/Objects/SkeletonObject.h>
 
 #include <AsyncTasks/AddAnimationFromFbxTask.h>
 #include <AsyncTasks/AddModelFromFbxTask.h>
-#include <Objects/AmbientLightObject.h>
-#include <Objects/DirectLightObject.h>
-#include <Objects/EnvironmentModel.h>
 #include <Objects/LODObject.h>
 #include <Objects/MaterialObject.h>
-#include <Objects/SkeletonGroup.h>
-#include <Objects/SkeletonObject.h>
 #include <EditMenu.h>
 #include <EditorApplication.h>
 #include <MainWindow.h>
@@ -211,9 +211,9 @@ void EditMenu::_addBone() noexcept
     EditorScene* scene = _commonData.scene();
     if(scene == nullptr) return;
 
-    std::unique_ptr<SkeletonObject> newBone(
-                                          new SkeletonObject(tr("bone"), true));
-    SkeletonObject* bonePtr = newBone.get();
+    std::unique_ptr<mtt::SkeletonObject> newBone(
+                                    new mtt::SkeletonObject(tr("bone"), true));
+    mtt::SkeletonObject* bonePtr = newBone.get();
 
     mtt::Object* target = nullptr;    
     if (_commonData.selectedObjects().size() == 1)
@@ -421,9 +421,9 @@ void EditMenu::_addAmbientLight() noexcept
     EditorScene* scene = _commonData.scene();
     if(scene == nullptr) return;
 
-    std::unique_ptr<AmbientLightObject> newLight(
-                            new AmbientLightObject(tr("Ambient light"), true));
-    AmbientLightObject* lightPtr = newLight.get();
+    std::unique_ptr<mtt::AmbientLightObject> newLight(
+                        new mtt::AmbientLightObject(tr("Ambient light"), true));
+    mtt::AmbientLightObject* lightPtr = newLight.get();
 
     std::unique_ptr<mtt::AddObjectCommand> command(
                         new mtt::AddObjectCommand(std::move(newLight),
@@ -452,9 +452,9 @@ void EditMenu::_addDirectLight() noexcept
     EditorScene* scene = _commonData.scene();
     if(scene == nullptr) return;
 
-    std::unique_ptr<DirectLightObject> newLight(
-                              new DirectLightObject(tr("Direct light"), true));
-    DirectLightObject* lightPtr = newLight.get();
+    std::unique_ptr<mtt::DirectLightObject> newLight(
+                          new mtt::DirectLightObject(tr("Direct light"), true));
+    mtt::DirectLightObject* lightPtr = newLight.get();
 
     std::unique_ptr<mtt::AddObjectCommand> command(
                         new mtt::AddObjectCommand(std::move(newLight),
@@ -490,10 +490,10 @@ void EditMenu::_addEnvironmentModel() noexcept
                                                 tr("Models (*.mmd *.fbx)"));
     if(fileName.isEmpty()) return;
 
-    std::unique_ptr<EnvironmentModel> newModel(
-                                      new EnvironmentModel(tr("Model"), true));
+    std::unique_ptr<mtt::EnvironmentModel> newModel(
+                                  new mtt::EnvironmentModel(tr("Model"), true));
     newModel->setFilename(fileName);
-    EnvironmentModel* modelPtr = newModel.get();
+    mtt::EnvironmentModel* modelPtr = newModel.get();
 
     std::unique_ptr<mtt::AddObjectCommand> command(
                         new mtt::AddObjectCommand(std::move(newModel),

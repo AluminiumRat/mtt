@@ -1,4 +1,5 @@
-#include <Objects/AmbientLightObject.h>
+#include <mtt/editorLib/Objects/AmbientLightObject.h>
+
 #include <Render/AmbientLightRenderObserver.h>
 #include <EditorApplication.h>
 
@@ -8,7 +9,7 @@
 #define CYRCLE_SEGMENTS 32
 
 AmbientLightRenderObserver::AmbientLightRenderObserver(
-                                                AmbientLightObject& object,
+                                                mtt::AmbientLightObject& object,
                                                 EditorCommonData& commonData) :
   AbstractLightRenderObserver(object, commonData, ICON_FILE, ICON_SIZE),
   _lightObject(object),
@@ -35,26 +36,26 @@ AmbientLightRenderObserver::AmbientLightRenderObserver(
     });
 
   connect(&_lightObject,
-          &AmbientLightObject::baseIlluminanceChanged,
+          &mtt::AmbientLightObject::baseIlluminanceChanged,
           this,
           &AmbientLightRenderObserver::_updateIlluminance,
           Qt::DirectConnection);
   connect(&_lightObject,
-          &AmbientLightObject::colorChanged,
+          &mtt::AmbientLightObject::colorChanged,
           this,
           &AmbientLightRenderObserver::_updateIlluminance,
           Qt::DirectConnection);
   _updateIlluminance();
 
   connect(&_lightObject,
-          &AmbientLightObject::distanceChanged,
+          &mtt::AmbientLightObject::distanceChanged,
           this,
           &AmbientLightRenderObserver::_updateDistance,
           Qt::DirectConnection);
   _updateDistance();
 
   connect(&_lightObject,
-          &AmbientLightObject::saturationDistanceChanged,
+          &mtt::AmbientLightObject::saturationDistanceChanged,
           this,
           &AmbientLightRenderObserver::_updateSaturationDistance,
           Qt::DirectConnection);

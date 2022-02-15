@@ -2,8 +2,12 @@
 
 #include <mtt/application/Scene/ObjectItemTreeModel.h>
 
-class AnimationTrack;
-class DisplayedObject;
+namespace mtt
+{
+  class AnimationTrack;
+  class DisplayedObject;
+}
+
 class RootObject;
 
 class EditorObjectsItemModel : public mtt::ObjectItemTreeModel
@@ -29,10 +33,10 @@ protected:
 
 private:
   void _updateVisible(ObjectDescription& description,
-                      DisplayedObject& object) noexcept;
+                      mtt::DisplayedObject& object) noexcept;
 
   void _updateEnabled(ObjectDescription& description,
-                      AnimationTrack& object) noexcept;
+                      mtt::AnimationTrack& object) noexcept;
 
 private:
   RootObject& _root;

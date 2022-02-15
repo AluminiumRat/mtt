@@ -8,11 +8,11 @@
 
 #include <mtt/application/AsyncTasks/AbstractAsyncTask.h>
 #include <mtt/application/DataStream.h>
+#include <mtt/editorLib/Objects/AnimationObject.h>
+#include <mtt/editorLib/Objects/SkeletonObject.h>
 
-#include <Objects/AnimationObject.h>
 #include <Objects/LODObject.h>
 #include <Objects/MaterialObject.h>
-#include <Objects/SkeletonObject.h>
 
 class QFile;
 
@@ -50,8 +50,8 @@ private:
   EditorCommonData& _commonData;
   mtt::UID::ValueType _mixUIDValue;
 
-  std::vector<std::unique_ptr<AnimationObject>> _animations;
+  std::vector<std::unique_ptr<mtt::AnimationObject>> _animations;
   std::vector<std::unique_ptr<LODObject>> _lods;
   std::vector<std::unique_ptr<MaterialObject>> _materials;
-  std::vector<std::unique_ptr<SkeletonObject>> _skeletons;
+  std::vector<std::unique_ptr<mtt::SkeletonObject>> _skeletons;
 };

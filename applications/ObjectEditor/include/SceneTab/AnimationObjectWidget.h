@@ -4,18 +4,22 @@
 
 #include <QtWidgets/QWidget>
 
+namespace mtt
+{
+  class AnimationObject;
+}
+
 namespace Ui
 {
   class AnimationObjectWidget;
 }
 
-class AnimationObject;
 class AnimationPlayer;
 
 class AnimationObjectWidget : public QWidget
 {
 public:
-  AnimationObjectWidget(AnimationObject& object,
+  AnimationObjectWidget(mtt::AnimationObject& object,
                         AnimationPlayer& player);
   AnimationObjectWidget(const AnimationObjectWidget&) = delete;
   AnimationObjectWidget& operator = (const AnimationObjectWidget&) = delete;
@@ -27,6 +31,6 @@ private:
 
 private:
   std::unique_ptr<Ui::AnimationObjectWidget> _ui;
-  AnimationObject& _object;
+  mtt::AnimationObject& _object;
   AnimationPlayer& _player;
 };

@@ -4,7 +4,7 @@
 
 #include <QtWidgets/QWidget>
 
-#include <Objects/RotatableObject.h>
+#include <mtt/editorLib/Objects/RotatableObject.h>
 
 namespace mtt
 {
@@ -19,7 +19,8 @@ namespace Ui
 class RotatableObjectWidget : public QWidget
 {
 public:
-  RotatableObjectWidget(RotatableObject& object, mtt::UndoStack& undoStack);
+  RotatableObjectWidget(mtt::RotatableObject& object,
+                        mtt::UndoStack& undoStack);
   RotatableObjectWidget(const RotatableObjectWidget&) = delete;
   RotatableObjectWidget& operator = (const RotatableObjectWidget&) = delete;
   virtual ~RotatableObjectWidget() noexcept;

@@ -68,7 +68,7 @@ void AddModelFromFbxTask::finalizePart()
     compositeCommand->addSubcommand(std::move(subCommand));
   }
 
-  for(std::unique_ptr<SkeletonObject>& skeleton : _data.skeleton)
+  for(std::unique_ptr<mtt::SkeletonObject>& skeleton : _data.skeleton)
   {
     toSelect.push_back(skeleton.get());
     std::unique_ptr<mtt::AddObjectCommand> subCommand(

@@ -5,17 +5,17 @@
 #include <vector>
 
 #include <mtt/fbx/BaseFbxImporter.h>
+#include <mtt/editorLib/Objects/SkeletonObject.h>
 
 #include <Objects/MaterialObject.h>
 #include <Objects/MeshObject.h>
-#include <Objects/SkeletonObject.h>
 
 class FbxDrawableImporter : public mtt::BaseFbxImporter
 {
 public:
   struct Result
   {
-    std::vector<std::unique_ptr<SkeletonObject>> skeleton;
+    std::vector<std::unique_ptr<mtt::SkeletonObject>> skeleton;
     std::vector<std::unique_ptr<MeshObject>> drawables;
     std::vector<std::unique_ptr<MaterialObject>> materials;
 
@@ -53,9 +53,9 @@ private:
   MaterialOptions _materialOptions;
 
   Result _result;
-  std::vector<SkeletonObject*> _skeletonStack;
+  std::vector<mtt::SkeletonObject*> _skeletonStack;
 
-  using SkeletonMap = std::map<FbxNode*, SkeletonObject*>;
+  using SkeletonMap = std::map<FbxNode*, mtt::SkeletonObject*>;
   SkeletonMap _skeletonMap;
 
   struct BonesLink

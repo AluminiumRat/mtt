@@ -4,9 +4,9 @@
 
 #include <mtt/application/Scene/ObjectLink.h>
 #include <mtt/application/Scene/Object.h>
+#include <mtt/editorLib/Objects/SkeletonObject.h>
 
 #include <Objects/OEVisitorExtension.h>
-#include <Objects/SkeletonObject.h>
 
 class BoneRefObject : public mtt::Object
 {
@@ -31,10 +31,10 @@ public:
   BoneRefObject& operator = (const BoneRefObject&) = delete;
   virtual ~BoneRefObject() noexcept = default;
 
-  inline const mtt::ObjectRef<SkeletonObject>& boneRef() const noexcept;
-  inline SkeletonObject* bone() const noexcept;
+  inline const mtt::ObjectRef<mtt::SkeletonObject>& boneRef() const noexcept;
+  inline mtt::SkeletonObject* bone() const noexcept;
   /// You can use nullptr to remove link
-  void setBone(SkeletonObject* bone);
+  void setBone(mtt::SkeletonObject* bone);
   /// You can use invalid UID to remove link
   void setBoneId(const mtt::UID& id);
 
@@ -42,15 +42,15 @@ public:
   void setBoneInverseMatrix(const glm::mat4& newValue);
 
 signals:
-  void boneRefChanged(SkeletonObject* bone);
+  void boneRefChanged(mtt::SkeletonObject* bone);
   void boneInverseMatrixChanged(const glm::mat4& newValue);
 
 private:
-  void _connectBone(SkeletonObject& bone);
-  void _disconnectBone(SkeletonObject& bone) noexcept;
+  void _connectBone(mtt::SkeletonObject& bone);
+  void _disconnectBone(mtt::SkeletonObject& bone) noexcept;
 
 private:
-  using BoneLink = mtt::ObjectLink< SkeletonObject,
+  using BoneLink = mtt::ObjectLink< mtt::SkeletonObject,
                                     BoneRefObject,
                                     &BoneRefObject::_connectBone,
                                     &BoneRefObject::_disconnectBone>;
@@ -59,13 +59,13 @@ private:
   glm::mat4 _boneInverseMatrix;
 };
 
-inline const mtt::ObjectRef<SkeletonObject>&
+inline const mtt::ObjectRef<mtt::SkeletonObject>&
                                         BoneRefObject::boneRef() const noexcept
 {
   return _link;
 }
 
-inline SkeletonObject* BoneRefObject::bone() const noexcept
+inline mtt::SkeletonObject* BoneRefObject::bone() const noexcept
 {
   return _link.get();
 }

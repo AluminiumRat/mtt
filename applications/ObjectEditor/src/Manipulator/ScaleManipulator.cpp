@@ -1,9 +1,10 @@
 #include <glm/gtx/transform.hpp>
 
-#include <Manipulator/ScaleManipulator.h>
-#include <Objects/ScalableObject.h>
+#include <mtt/editorLib/Objects/ScalableObject.h>
 
-ScaleManipulator::ScaleManipulator( ScalableObject& object,
+#include <Manipulator/ScaleManipulator.h>
+
+ScaleManipulator::ScaleManipulator( mtt::ScalableObject& object,
                                     mtt::UndoStack& undoStack) :
   ObjectManipulator(object),
   _xPlaneManipulator(object, undoStack),

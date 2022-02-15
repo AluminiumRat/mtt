@@ -14,7 +14,7 @@ namespace mtt
 class MoveManipulator : public ObjectManipulator
 {
 public:
-  MoveManipulator(MovableObject& object, mtt::UndoStack& undoStack);
+  MoveManipulator(mtt::MovableObject& object, mtt::UndoStack& undoStack);
   MoveManipulator(const MoveManipulator&) = delete;
   MoveManipulator& operator = (const MoveManipulator&) = delete;
   virtual ~MoveManipulator() noexcept = default;

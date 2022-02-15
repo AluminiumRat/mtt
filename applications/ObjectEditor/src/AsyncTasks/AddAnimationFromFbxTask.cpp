@@ -24,16 +24,17 @@ void AddAnimationFromFbxTask::asyncPart()
   _animation = importer.import(_filename.toUtf8().data());
 }
 
-static SkeletonObject* findSkeleton(const QString& name,
-                                    mtt::Object& searchArea)
+static mtt::SkeletonObject* findSkeleton( const QString& name,
+                                          mtt::Object& searchArea)
 {
-  SkeletonObject* skeleton = qobject_cast<SkeletonObject*>(&searchArea);
+  mtt::SkeletonObject* skeleton =
+                                qobject_cast<mtt::SkeletonObject*>(&searchArea);
   if(skeleton != nullptr && skeleton->name() == name) return skeleton;
   for(size_t childIndex = 0;
       childIndex < searchArea.subobjectNumber();
       childIndex++)
   {
-    SkeletonObject* childSkeleton = findSkeleton(
+    mtt::SkeletonObject* childSkeleton = findSkeleton(
                                               name,
                                               searchArea.subobject(childIndex));
     if(childSkeleton != nullptr) return childSkeleton;
@@ -48,7 +49,7 @@ void AddAnimationFromFbxTask::finalizePart()
   EditorScene* scene = _commonData.scene();
   if (scene == nullptr) return;
 
-  AnimationObject* animationPtr = _animation.get();
+  mtt::AnimationObject* animationPtr = _animation.get();
   if(_animation->childsNumber() == 0)
   {
     throw std::runtime_error("Animation not found in fbx file");
@@ -58,9 +59,10 @@ void AddAnimationFromFbxTask::finalizePart()
       trackIndex < _animation->childsNumber();
       trackIndex++)
   {
-    AnimationTrack& track = _animation->child(trackIndex);
-    SkeletonObject* skeleton = findSkeleton(track.name(),
-                                            scene->root().skeletonGroup());
+    mtt::AnimationTrack& track = _animation->child(trackIndex);
+    mtt::SkeletonObject* skeleton = findSkeleton(
+                                                track.name(),
+                                                scene->root().skeletonGroup());
     if(skeleton != nullptr) track.setSkeleton(skeleton);
   }
 

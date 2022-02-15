@@ -2,7 +2,7 @@
 
 #include <GeneratedFiles/ui_DirectLightWidget.h>
 
-DirectLightWidget::DirectLightWidget( DirectLightObject& object,
+DirectLightWidget::DirectLightWidget( mtt::DirectLightObject& object,
                                       mtt::UndoStack& undoStack) :
   _ui(new Ui::DirectLightWidget)
 {
@@ -10,37 +10,37 @@ DirectLightWidget::DirectLightWidget( DirectLightObject& object,
 
   _shadowsConnection.emplace( *_ui->shadowsCheckbox,
                               object,
-                              &DirectLightObject::shadowsEnabled,
-                              &DirectLightObject::setShadowsEnabled,
-                              &DirectLightObject::shadowsEnabledChanged,
+                              &mtt::DirectLightObject::shadowsEnabled,
+                              &mtt::DirectLightObject::setShadowsEnabled,
+                              &mtt::DirectLightObject::shadowsEnabledChanged,
                               undoStack);
 
   _radiusConnection.emplace(*_ui->radiusSpin,
                             object,
-                            &DirectLightObject::radius,
-                            &DirectLightObject::setRadius,
-                            &DirectLightObject::radiusChanged,
+                            &mtt::DirectLightObject::radius,
+                            &mtt::DirectLightObject::setRadius,
+                            &mtt::DirectLightObject::radiusChanged,
                             undoStack);
 
   _blurConnection.emplace(*_ui->blurSpin,
                           object,
-                          &DirectLightObject::blurSize,
-                          &DirectLightObject::setBlurSize,
-                          &DirectLightObject::blurSizeChanged,
+                          &mtt::DirectLightObject::blurSize,
+                          &mtt::DirectLightObject::setBlurSize,
+                          &mtt::DirectLightObject::blurSizeChanged,
                           undoStack);
 
   _mapSizeConnection.emplace( *_ui->mapSizeSpin,
                               object,
-                              &DirectLightObject::shadowmapSize,
-                              &DirectLightObject::setShadowmapSize,
-                              &DirectLightObject::shadowmapSizeChanged,
+                              &mtt::DirectLightObject::shadowmapSize,
+                              &mtt::DirectLightObject::setShadowmapSize,
+                              &mtt::DirectLightObject::shadowmapSizeChanged,
                               undoStack);
 
   _cascadeSizeConnection.emplace( *_ui->cascadeSizeSpin,
                                   object,
-                                  &DirectLightObject::cascadeSize,
-                                  &DirectLightObject::setCascadeSize,
-                                  &DirectLightObject::cascadeSizeChanged,
+                                  &mtt::DirectLightObject::cascadeSize,
+                                  &mtt::DirectLightObject::setCascadeSize,
+                                  &mtt::DirectLightObject::cascadeSizeChanged,
                                   undoStack);
 }
 

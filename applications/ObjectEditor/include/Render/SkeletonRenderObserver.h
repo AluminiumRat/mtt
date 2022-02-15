@@ -6,14 +6,18 @@
 
 #include <Render/Object3DRenderObserver.h>
 
-class SkeletonObject;
+namespace mtt
+{
+  class SkeletonObject;
+}
 
 class SkeletonRenderObserver : public Object3DRenderObserver
 {
   Q_OBJECT
 
 public:
-  SkeletonRenderObserver(SkeletonObject& object, EditorCommonData& commonData);
+  SkeletonRenderObserver( mtt::SkeletonObject& object,
+                          EditorCommonData& commonData);
   SkeletonRenderObserver(const SkeletonRenderObserver&) = delete;
   SkeletonRenderObserver& operator = (const SkeletonRenderObserver&) = delete;
   virtual ~SkeletonRenderObserver() noexcept = default;

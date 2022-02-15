@@ -11,20 +11,23 @@
 #include <Render/Object3DRenderObserver.h>
 #include <Render/CubemapObserver.h>
 
-class BackgroundObject;
+namespace mtt
+{
+  class BackgroundObject;
+}
 
 class BackgroundObserver : public Object3DRenderObserver
 {
   Q_OBJECT
 
 public:
-  BackgroundObserver( BackgroundObject& object,
+  BackgroundObserver( mtt::BackgroundObject& object,
                       EditorCommonData& commonData);
   BackgroundObserver(const BackgroundObserver&) = delete;
   BackgroundObserver& operator = (const BackgroundObserver&) = delete;
   virtual ~BackgroundObserver() noexcept = default;
 
-  inline BackgroundObject& object() const noexcept;
+  inline mtt::BackgroundObject& object() const noexcept;
 
 protected:
   virtual void updateVisible(bool newVisible) noexcept override;
@@ -39,7 +42,7 @@ private:
   void _updateLuminanceTexture() noexcept;
 
 private:
-  BackgroundObject& _object;
+  mtt::BackgroundObject& _object;
 
   std::shared_ptr<mtt::CubeTexture> _luminanceTexture;
 
@@ -50,7 +53,7 @@ private:
   CubemapObserver _cubemapObserver;
 };
 
-inline BackgroundObject& BackgroundObserver::object() const noexcept
+inline mtt::BackgroundObject& BackgroundObserver::object() const noexcept
 {
   return _object;
 }

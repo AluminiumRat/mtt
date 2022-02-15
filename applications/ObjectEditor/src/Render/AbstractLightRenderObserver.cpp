@@ -2,18 +2,18 @@
 
 #include <mtt/clPipeline/MeshTechniques/InstrumentalCompositeTechnique.h>
 #include <mtt/clPipeline/constants.h>
+#include <mtt/editorLib/Objects/LightObject.h>
 #include <mtt/render/Mesh/UidMeshTechnique.h>
 #include <mtt/render/Pipeline/Buffer.h>
 #include <mtt/render/SceneGraph/CompositeObjectNode.h>
 #include <mtt/utilities/Box.h>
 #include <mtt/utilities/Log.h>
 
-#include <Objects/LightObject.h>
 #include <Render/AbstractLightRenderObserver.h>
 #include <EditorApplication.h>
 
 AbstractLightRenderObserver::AbstractLightRenderObserver(
-                                                LightObject& object,
+                                                mtt::LightObject& object,
                                                 EditorCommonData& commonData,
                                                 const QString& iconFilename,
                                                 float iconSize) :
@@ -58,7 +58,7 @@ AbstractLightRenderObserver::AbstractLightRenderObserver(
   _hullNode.addModificator(selectionModificator());
 
   connect(&_object,
-          &LightObject::enabledChanged,
+          &mtt::LightObject::enabledChanged,
           this,
           &AbstractLightRenderObserver::_updateEnabled,
           Qt::DirectConnection);

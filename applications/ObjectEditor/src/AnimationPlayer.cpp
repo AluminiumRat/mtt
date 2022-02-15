@@ -19,7 +19,7 @@ AnimationPlayer::~AnimationPlayer() noexcept
   if(_currentAnimation != nullptr) stop();
 }
 
-void AnimationPlayer::start(AnimationObject& animation) noexcept
+void AnimationPlayer::start(mtt::AnimationObject& animation) noexcept
 {
   if(_currentAnimation != nullptr) stop();
   
@@ -52,7 +52,7 @@ void AnimationPlayer::stop() noexcept
 
   _playTimer.stop();
   
-  AnimationObject* animation = _currentAnimation;
+  mtt::AnimationObject* animation = _currentAnimation;
   _currentAnimation = nullptr;
   
   try

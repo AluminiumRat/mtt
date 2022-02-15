@@ -6,19 +6,19 @@
 
 #include <GeneratedFiles/ui_RotatableObjectWidget.h>
 
-RotatableObjectWidget::RotatableObjectWidget( RotatableObject& object,
+RotatableObjectWidget::RotatableObjectWidget( mtt::RotatableObject& object,
                                               mtt::UndoStack& undoStack) :
   _ui(new Ui::RotatableObjectWidget)
 {
   _ui->setupUi(this);
 
-  mtt::RotationPropertyWidget<RotatableObject>* rotationWidget =
-              new mtt::RotationPropertyWidget<RotatableObject>(
-                                              object,
-                                              &RotatableObject::rotation,
-                                              &RotatableObject::setRotation,
-                                              &RotatableObject::rotationChanged,
-                                              undoStack);
+  mtt::RotationPropertyWidget<mtt::RotatableObject>* rotationWidget =
+        new mtt::RotationPropertyWidget<mtt::RotatableObject>(
+                                        object,
+                                        &mtt::RotatableObject::rotation,
+                                        &mtt::RotatableObject::setRotation,
+                                        &mtt::RotatableObject::rotationChanged,
+                                        undoStack);
   _ui->rotationLayout->addWidget(rotationWidget, 3);
 
   adjustSize();

@@ -4,9 +4,9 @@
 #include <mtt/application/EditCommands/UndoStack.h>
 #include <mtt/clPipeline/MeshTechniques/UnlightedColorTechnique.h>
 #include <mtt/clPipeline/constants.h>
+#include <mtt/editorLib/Objects/MovableObject.h>
 #include <mtt/utilities/Abort.h>
 
-#include <Objects/MovableObject.h>
 #include <Manipulator/AxisManipulator.h>
 
 #define SIDES_NUMBER 12
@@ -38,7 +38,7 @@ static void addSide(std::vector<glm::vec3>& positions,
   positions.push_back(glm::vec3(startXY, CILINDER_HEIGHT));
 }
 
-AxisManipulator::AxisManipulator( MovableObject& object,
+AxisManipulator::AxisManipulator( mtt::MovableObject& object,
                                   mtt::UndoStack& undoStack) :
   AxisMove3DManipulator(mtt::AutoscaleDrawableModificator::PIXEL_SCALE_MODE),
   _undoStack(undoStack),
@@ -101,13 +101,14 @@ void AxisManipulator::processShift( const glm::vec3& startTouchPoint,
   try
   {
     using Command = mtt::SetPropertyCommand<
-                                    MovableObject,
-                                    glm::vec3,
-                                    void (MovableObject::*)(const glm::vec3&)>;
-    std::unique_ptr<Command> command(new Command( _object,
-                                                  &MovableObject::setPosition,
-                                                  _object.position(),
-                                                  newPosition));
+                                mtt::MovableObject,
+                                glm::vec3,
+                                void (mtt::MovableObject::*)(const glm::vec3&)>;
+    std::unique_ptr<Command> command(
+                                  new Command(_object,
+                                              &mtt::MovableObject::setPosition,
+                                              _object.position(),
+                                              newPosition));
     _undoStack.addAndMake(std::move(command));
   }
   catch(std::exception& error)

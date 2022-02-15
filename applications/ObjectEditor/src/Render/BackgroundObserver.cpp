@@ -1,14 +1,14 @@
 #include <stdexcept>
 
 #include <mtt/application/Application.h>
+#include <mtt/editorLib/Objects/BackgroundObject.h>
 #include <mtt/utilities/Log.h>
 
 #include <AsyncTasks/UploadCubetextureTask.h>
-#include <Objects/BackgroundObject.h>
 #include <Render/BackgroundObserver.h>
 #include <EditorApplication.h>
 
-BackgroundObserver::BackgroundObserver( BackgroundObject& object,
+BackgroundObserver::BackgroundObserver( mtt::BackgroundObject& object,
                                         EditorCommonData& commonData) :
   Object3DRenderObserver(object, commonData),
   _object(object),
@@ -16,38 +16,38 @@ BackgroundObserver::BackgroundObserver( BackgroundObject& object,
   _cubemapObserver(object.cubemap())
 {
   connect(&_object,
-          &BackgroundObject::visibleChanged,
+          &mtt::BackgroundObject::visibleChanged,
           this,
           &BackgroundObserver::_updateLight,
           Qt::DirectConnection);
   connect(&_object,
-          &BackgroundObject::lightEnabledChanged,
+          &mtt::BackgroundObject::lightEnabledChanged,
           this,
           &BackgroundObserver::_updateLight,
           Qt::DirectConnection);
   _updateLight();
 
   connect(&_object,
-          &BackgroundObject::luminanceChanged,
+          &mtt::BackgroundObject::luminanceChanged,
           this,
           &BackgroundObserver::_updateLuminance,
           Qt::DirectConnection);
   connect(&_object,
-          &BackgroundObject::colorChanged,
+          &mtt::BackgroundObject::colorChanged,
           this,
           &BackgroundObserver::_updateLuminance,
           Qt::DirectConnection);
   _updateLuminance();
 
   connect(&_object,
-          &BackgroundObject::dissolutionStartDistanceChanged,
+          &mtt::BackgroundObject::dissolutionStartDistanceChanged,
           this,
           &BackgroundObserver::_updateDissolutionStartDistance,
           Qt::DirectConnection);
   _updateDissolutionStartDistance();
 
   connect(&_object,
-          &BackgroundObject::dissolutionLengthChanged,
+          &mtt::BackgroundObject::dissolutionLengthChanged,
           this,
           &BackgroundObserver::_updateDissolutionLength,
           Qt::DirectConnection);

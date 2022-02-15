@@ -5,12 +5,15 @@
 #include <mtt/application/EditCommands/UndoStack.h>
 #include <mtt/application/Manipulator/PlaneMove3DManipulator.h>
 
-class MovableObject;
+namespace mtt
+{
+  class MovableObject;
+}
 
 class PlaneManipulator : public mtt::PlaneMove3DManipulator
 {
 public:
-  PlaneManipulator(MovableObject& object, mtt::UndoStack& undoStack);
+  PlaneManipulator(mtt::MovableObject& object, mtt::UndoStack& undoStack);
   PlaneManipulator(const PlaneManipulator&) = delete;
   PlaneManipulator& operator = (const PlaneManipulator&) = delete;
   virtual ~PlaneManipulator() noexcept = default;
@@ -25,7 +28,7 @@ protected:
 
 private:
   mtt::UndoStack& _undoStack;
-  MovableObject& _object;
+  mtt::MovableObject& _object;
 
   mtt::UndoStack::GroupLocker _groupCommandLocker;
 

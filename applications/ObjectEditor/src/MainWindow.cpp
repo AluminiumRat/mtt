@@ -3,7 +3,8 @@
 #include <QtWidgets/QDockWidget>
 #include <QtWidgets/QMessageBox>
 
-#include <Objects/DirectLightObject.h>
+#include <mtt/editorLib/Objects/DirectLightObject.h>
+
 #include <EditorApplication.h>
 #include <MainWindow.h>
 
@@ -33,8 +34,8 @@ MainWindow::MainWindow() :
 
   setCentralWidget(&_renderWidget);
 
-  std::unique_ptr<DirectLightObject> directLight(
-                              new DirectLightObject(tr("Direct light"), true));
+  std::unique_ptr<mtt::DirectLightObject> directLight(
+                          new mtt::DirectLightObject(tr("Direct light"), true));
   directLight->setPosition(glm::vec3(0, -2, 4));
   directLight->setRotation(glm::quat(glm::vec3(.5f, 0.f, 0.f)));
 

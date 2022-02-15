@@ -4,7 +4,7 @@
 
 #include <QtCore/QObject>
 
-#include <Objects/AnimationObject.h>
+#include <mtt/editorLib/Objects/AnimationObject.h>
 
 class EditorScene;
 
@@ -13,7 +13,7 @@ class AnimationPlayer : public QObject
   Q_OBJECT
 
 public:
-  using TimeType = AnimationObject::TimeType;
+  using TimeType = mtt::AnimationObject::TimeType;
 
 public:
   AnimationPlayer();
@@ -21,28 +21,28 @@ public:
   AnimationPlayer& operator = (const AnimationPlayer&) = delete;
   virtual ~AnimationPlayer() noexcept;
 
-  inline AnimationObject* currentAnimation() const noexcept;
+  inline mtt::AnimationObject* currentAnimation() const noexcept;
 
 public slots:
-  void start(AnimationObject& animation) noexcept;
+  void start(mtt::AnimationObject& animation) noexcept;
   void stop() noexcept;
 
 signals:
-  void animationStarted(AnimationObject& animation);
-  void animationStopped(AnimationObject& animation);
+  void animationStarted(mtt::AnimationObject& animation);
+  void animationStopped(mtt::AnimationObject& animation);
 
 private:
   void _playNextFrame() noexcept;
 
 private:
-  AnimationObject* _currentAnimation;
+  mtt::AnimationObject* _currentAnimation;
   std::unique_ptr<mtt::AbstractEditCommand> _restoreCommand;
 
   QTimer _playTimer;
   std::chrono::system_clock::time_point _startTime;
 };
 
-inline AnimationObject* AnimationPlayer::currentAnimation() const noexcept
+inline mtt::AnimationObject* AnimationPlayer::currentAnimation() const noexcept
 {
   return _currentAnimation;
 }

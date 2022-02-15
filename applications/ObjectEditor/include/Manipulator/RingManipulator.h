@@ -8,15 +8,14 @@
 
 namespace mtt
 {
+  class RotatableObject;
   class UndoStack;
 }
-
-class RotatableObject;
 
 class RingManipulator : public mtt::RingRotation3DManipulator
 {
 public:
-  RingManipulator(RotatableObject& object, mtt::UndoStack& undoStack);
+  RingManipulator(mtt::RotatableObject& object, mtt::UndoStack& undoStack);
   RingManipulator(const RingManipulator&) = delete;
   RingManipulator& operator = (const RingManipulator&) = delete;
   virtual ~RingManipulator() noexcept = default;
@@ -30,7 +29,7 @@ protected:
 
 private:
   mtt::UndoStack& _undoStack;
-  RotatableObject& _object;
+  mtt::RotatableObject& _object;
 
   mtt::UndoStack::GroupLocker _groupCommandLocker;
 

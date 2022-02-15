@@ -14,10 +14,10 @@
 
 namespace mtt
 {
+  class DisplayedObject;
   class Object;
 }
 
-class DisplayedObject;
 class EditorCommonData;
 
 class AbstractObjectRenderObserver : public QObject
@@ -25,14 +25,14 @@ class AbstractObjectRenderObserver : public QObject
   Q_OBJECT
 
 public:
-  AbstractObjectRenderObserver( DisplayedObject& object,
+  AbstractObjectRenderObserver( mtt::DisplayedObject& object,
                                 EditorCommonData& commonData);
   AbstractObjectRenderObserver(const AbstractObjectRenderObserver&) = delete;
   AbstractObjectRenderObserver& operator =
                                 (const AbstractObjectRenderObserver&) = delete;
   virtual ~AbstractObjectRenderObserver() noexcept = default;
 
-  inline DisplayedObject& object() const noexcept;
+  inline mtt::DisplayedObject& object() const noexcept;
   inline EditorCommonData& commonData() const noexcept;
 
   inline size_t culledDrawablesNumber() const noexcept;
@@ -87,7 +87,7 @@ protected:
   virtual void updateVisible(bool newVisible) noexcept;
 
 private:
-  DisplayedObject& _object;
+  mtt::DisplayedObject& _object;
   EditorCommonData& _commonData;
 
   using CulledDrawables = std::vector<mtt::DrawableNode*>;
@@ -107,7 +107,8 @@ private:
   mtt::UidDrawableModificator _uidSetter;
 };
 
-inline DisplayedObject& AbstractObjectRenderObserver::object() const noexcept
+inline mtt::DisplayedObject&
+                          AbstractObjectRenderObserver::object() const noexcept
 {
   return _object;
 }

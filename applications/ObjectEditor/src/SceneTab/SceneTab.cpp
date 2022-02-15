@@ -92,7 +92,7 @@ struct PropertiesWidgetBuilder : public OEVisitor
   EditorCommonData* editCommonData;
   EditorScene* scene;
 
-  virtual void visit(AmbientLightObject& object) override
+  virtual void visit(mtt::AmbientLightObject& object) override
   {
     OEVisitor::visit(object);
     widgetsLayout->addWidget(
@@ -100,7 +100,7 @@ struct PropertiesWidgetBuilder : public OEVisitor
                                                   editCommonData->undoStack()));
   }
 
-  virtual void visit(AnimationObject& object) override
+  virtual void visit(mtt::AnimationObject& object) override
   {
     OEVisitor::visit(object);
 
@@ -108,7 +108,7 @@ struct PropertiesWidgetBuilder : public OEVisitor
           new AnimationObjectWidget(object, editCommonData->animationPlayer()));
   }
 
-  virtual void visit(AnimationTrack& object) override
+  virtual void visit(mtt::AnimationTrack& object) override
   {
     OEVisitor::visit(object);
     widgetsLayout->addWidget(
@@ -117,7 +117,7 @@ struct PropertiesWidgetBuilder : public OEVisitor
                                                 editCommonData->undoStack()));
   }
 
-  virtual void visit(BackgroundObject& object) override
+  virtual void visit(mtt::BackgroundObject& object) override
   {
     OEVisitor::visit(object);
 
@@ -130,7 +130,7 @@ struct PropertiesWidgetBuilder : public OEVisitor
     OEVisitor::visit(object);
 
     using ReferenceWidget = mtt::ReferencePropertyWidget< BoneRefObject,
-                                                            SkeletonObject>;
+                                                          mtt::SkeletonObject>;
     ReferenceWidget* referenceWidget = new ReferenceWidget(
                                                 object,
                                                 &BoneRefObject::bone,
@@ -141,7 +141,7 @@ struct PropertiesWidgetBuilder : public OEVisitor
     widgetsLayout->addWidget(referenceWidget);
   }
 
-  virtual void visit(CubemapObject& object) override
+  virtual void visit(mtt::CubemapObject& object) override
   {
     OEVisitor::visit(object);
 
@@ -150,7 +150,7 @@ struct PropertiesWidgetBuilder : public OEVisitor
   }
 
 
-  virtual void visit(DirectLightObject& object) override
+  virtual void visit(mtt::DirectLightObject& object) override
   {
     OEVisitor::visit(object);
 
@@ -158,7 +158,7 @@ struct PropertiesWidgetBuilder : public OEVisitor
                     new DirectLightWidget(object, editCommonData->undoStack()));
   }
 
-  virtual void visit(DisplayedObject& object) override
+  virtual void visit(mtt::DisplayedObject& object) override
   {
     OEVisitor::visit(object);
 
@@ -166,7 +166,7 @@ struct PropertiesWidgetBuilder : public OEVisitor
                 new VisiblePropertyWidget(object, editCommonData->undoStack()));
   }
 
-  virtual void visit(EnvironmentModel& object) override
+  virtual void visit(mtt::EnvironmentModel& object) override
   {
     OEVisitor::visit(object);
 
@@ -217,7 +217,7 @@ struct PropertiesWidgetBuilder : public OEVisitor
                                                   editCommonData->undoStack()));
   }
 
-  virtual void visit(LightObject& object) override
+  virtual void visit(mtt::LightObject& object) override
   {
     OEVisitor::visit(object);
 
@@ -225,15 +225,15 @@ struct PropertiesWidgetBuilder : public OEVisitor
                           new LightWidget(object, editCommonData->undoStack()));
   }
 
-  virtual void visit(MovableObject& object) override
+  virtual void visit(mtt::MovableObject& object) override
   {
-    visit(static_cast<Object3D&>(object));
+    visit(static_cast<mtt::Object3D&>(object));
 
     widgetsLayout->addWidget(
                   new MovableObjectWidget(object, editCommonData->undoStack()));
   }
 
-  virtual void visit(RotatableObject& object) override
+  virtual void visit(mtt::RotatableObject& object) override
   {
     OEVisitor::visit(object);
 
@@ -241,7 +241,7 @@ struct PropertiesWidgetBuilder : public OEVisitor
                 new RotatableObjectWidget(object, editCommonData->undoStack()));
   }
 
-  virtual void visit(ScalableObject& object) override
+  virtual void visit(mtt::ScalableObject& object) override
   {
     OEVisitor::visit(object);
 

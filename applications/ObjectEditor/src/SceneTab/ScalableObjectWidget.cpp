@@ -6,19 +6,19 @@
 
 #include <GeneratedFiles/ui_ScalableObjectWidget.h>
 
-ScalableObjectWidget::ScalableObjectWidget( ScalableObject& object,
+ScalableObjectWidget::ScalableObjectWidget( mtt::ScalableObject& object,
                                             mtt::UndoStack& undoStack) :
   _ui(new Ui::ScalableObjectWidget)
 {
   _ui->setupUi(this);
 
-  mtt::Vec3PropertyWidget<ScalableObject>* positionWidget =
-                  new mtt::Vec3PropertyWidget<ScalableObject>(
-                                                  object,
-                                                  &ScalableObject::scale,
-                                                  &ScalableObject::setScale,
-                                                  &ScalableObject::scaleChanged,
-                                                  undoStack);
+  mtt::Vec3PropertyWidget<mtt::ScalableObject>* positionWidget =
+            new mtt::Vec3PropertyWidget<mtt::ScalableObject>(
+                                            object,
+                                            &mtt::ScalableObject::scale,
+                                            &mtt::ScalableObject::setScale,
+                                            &mtt::ScalableObject::scaleChanged,
+                                            undoStack);
   _ui->scaleLayout->addWidget(positionWidget, 3);
 
   adjustSize();

@@ -2,12 +2,12 @@
 
 #include <mtt/application/Scene/ObjectGroup.h>
 #include <mtt/application/Scene/Object.h>
+#include <mtt/editorLib/Objects/AnimationGroup.h>
+#include <mtt/editorLib/Objects/BackgroundObject.h>
+#include <mtt/editorLib/Objects/EnvironmentGroup.h>
+#include <mtt/editorLib/Objects/SkeletonGroup.h>
 
-#include <Objects/AnimationGroup.h>
-#include <Objects/BackgroundObject.h>
-#include <Objects/EnvironmentGroup.h>
 #include <Objects/MaterialsGroup.h>
-#include <Objects/SkeletonGroup.h>
 #include <Objects/GeometryGroup.h>
 
 class RootObject : public mtt::Object
@@ -22,8 +22,8 @@ public:
   RootObject& operator = (const RootObject&) = delete;
   virtual ~RootObject() noexcept = default;
 
-  inline SkeletonGroup& skeletonGroup() noexcept;
-  inline const SkeletonGroup& skeletonGroup() const noexcept;
+  inline mtt::SkeletonGroup& skeletonGroup() noexcept;
+  inline const mtt::SkeletonGroup& skeletonGroup() const noexcept;
 
   inline GeometryGroup& geometryGroup() noexcept;
   inline const GeometryGroup& geometryGroup() const noexcept;
@@ -31,34 +31,34 @@ public:
   inline MaterialsGroup& materialsGroup() noexcept;
   inline const MaterialsGroup& materialsGroup() const noexcept;
 
-  inline AnimationGroup& animationGroup() noexcept;
-  inline const AnimationGroup& animationGroup() const noexcept;
+  inline mtt::AnimationGroup& animationGroup() noexcept;
+  inline const mtt::AnimationGroup& animationGroup() const noexcept;
 
-  inline BackgroundObject& background() noexcept;
-  inline const BackgroundObject& background() const noexcept;
-  void changeBackground(std::unique_ptr<BackgroundObject> newBackground);
+  inline mtt::BackgroundObject& background() noexcept;
+  inline const mtt::BackgroundObject& background() const noexcept;
+  void changeBackground(std::unique_ptr<mtt::BackgroundObject> newBackground);
 
-  inline EnvironmentGroup& environment() noexcept;
-  inline const EnvironmentGroup& environment() const noexcept;
+  inline mtt::EnvironmentGroup& environment() noexcept;
+  inline const mtt::EnvironmentGroup& environment() const noexcept;
 
 signals:
-  void backgroundChanged(BackgroundObject& newBackground);
+  void backgroundChanged(mtt::BackgroundObject& newBackground);
 
 private:
-  SkeletonGroup* _skeletonGroup;
+  mtt::SkeletonGroup* _skeletonGroup;
   GeometryGroup* _geometryGroup;
   MaterialsGroup* _materialsGroup;
-  AnimationGroup* _animationGroup;
-  BackgroundObject* _background;
-  EnvironmentGroup* _environment;
+  mtt::AnimationGroup* _animationGroup;
+  mtt::BackgroundObject* _background;
+  mtt::EnvironmentGroup* _environment;
 };
 
-inline SkeletonGroup& RootObject::skeletonGroup() noexcept
+inline mtt::SkeletonGroup& RootObject::skeletonGroup() noexcept
 {
   return *_skeletonGroup;
 }
 
-inline const SkeletonGroup& RootObject::skeletonGroup() const noexcept
+inline const mtt::SkeletonGroup& RootObject::skeletonGroup() const noexcept
 {
   return *_skeletonGroup;
 }
@@ -83,32 +83,32 @@ inline const MaterialsGroup& RootObject::materialsGroup() const noexcept
   return *_materialsGroup;
 }
 
-inline AnimationGroup& RootObject::animationGroup() noexcept
+inline mtt::AnimationGroup& RootObject::animationGroup() noexcept
 {
   return *_animationGroup;
 }
 
-inline const AnimationGroup& RootObject::animationGroup() const noexcept
+inline const mtt::AnimationGroup& RootObject::animationGroup() const noexcept
 {
   return *_animationGroup;
 }
 
-inline BackgroundObject& RootObject::background() noexcept
+inline mtt::BackgroundObject& RootObject::background() noexcept
 {
   return *_background;
 }
 
-inline const BackgroundObject& RootObject::background() const noexcept
+inline const mtt::BackgroundObject& RootObject::background() const noexcept
 {
   return *_background;
 }
 
-inline EnvironmentGroup& RootObject::environment() noexcept
+inline mtt::EnvironmentGroup& RootObject::environment() noexcept
 {
   return *_environment;
 }
 
-inline const EnvironmentGroup& RootObject::environment() const noexcept
+inline const mtt::EnvironmentGroup& RootObject::environment() const noexcept
 {
   return *_environment;
 }

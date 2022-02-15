@@ -26,23 +26,23 @@ void ObjectSaver::_writeFilename(const QString& filename)
   _stream << _fileDirectory.relativeFilePath(filename);
 }
 
-void ObjectSaver::_writeCubemapData(const CubemapObject& object)
+void ObjectSaver::_writeCubemapData(const mtt::CubemapObject& object)
 {
-  CubemapObject::Textures textures = object.textures();
+  mtt::CubemapObject::Textures textures = object.textures();
   for (const QString& filename : textures)
   {
     _writeFilename(filename);
   }
 }
 
-void ObjectSaver::visit(const AmbientLightObject& object)
+void ObjectSaver::visit(const mtt::AmbientLightObject& object)
 {
   OEVisitor::visit(object);
   _stream << object.saturationDistance();
   _writeCubemapData(object.ambientMap());
 }
 
-void ObjectSaver::visit(const AnimationObject& object)
+void ObjectSaver::visit(const mtt::AnimationObject& object)
 {
   OEVisitor::visit(object);
   uint32_t childNumber = object.childsNumber();
@@ -54,15 +54,15 @@ void ObjectSaver::visit(const AnimationObject& object)
 }
 
 template<typename ValueType>
-void ObjectSaver::_writeKeypoint(
-              mtt::ValueKeypoint<ValueType, AnimationTrack::TimeType> keypoint)
+void ObjectSaver::_writeKeypoint( mtt::ValueKeypoint<ValueType,
+                                  mtt::AnimationTrack::TimeType> keypoint)
 {
   _stream << (uint32_t)keypoint.time().count();
   _stream << keypoint.value();
   _stream << (uint8_t) keypoint.interpolation();
 }
 
-void ObjectSaver::visit(const AnimationTrack& object)
+void ObjectSaver::visit(const mtt::AnimationTrack& object)
 {
   OEVisitor::visit(object);
   _stream << object.enabled();
@@ -94,7 +94,7 @@ void ObjectSaver::visit(const AnimationTrack& object)
   _stream << object.skeletonRef().referencedId();
 }
 
-void ObjectSaver::visit(const BackgroundObject& object)
+void ObjectSaver::visit(const mtt::BackgroundObject& object)
 {
   OEVisitor::visit(object);
   _stream << object.lightEnabled();
@@ -105,7 +105,7 @@ void ObjectSaver::visit(const BackgroundObject& object)
   _writeCubemapData(object.cubemap());
 }
 
-void ObjectSaver::visit(const DirectLightObject& object)
+void ObjectSaver::visit(const mtt::DirectLightObject& object)
 {
   OEVisitor::visit(object);
   _stream << object.radius();
@@ -115,13 +115,13 @@ void ObjectSaver::visit(const DirectLightObject& object)
   _stream << object.blurSize();
 }
 
-void ObjectSaver::visit(const DisplayedObject& object)
+void ObjectSaver::visit(const mtt::DisplayedObject& object)
 {
   OEVisitor::visit(object);
   _stream << object.visible();
 }
 
-void ObjectSaver::visit(const EnvironmentModel& object)
+void ObjectSaver::visit(const mtt::EnvironmentModel& object)
 {
   OEVisitor::visit(object);
   _writeFilename(object.filename());
@@ -133,7 +133,7 @@ void ObjectSaver::visit(const GeometryObject& object)
   _stream << object.skeletonRef().referencedId();
 }
 
-void ObjectSaver::visit(const LightObject& object)
+void ObjectSaver::visit(const mtt::LightObject& object)
 {
   OEVisitor::visit(object);
   _stream << object.enabled();
@@ -159,17 +159,17 @@ void ObjectSaver::visit(const LODObject& object)
 void ObjectSaver::visit(const MaterialObject& object)
 {
   OEVisitor::visit(object);
-    
+
   _stream << object.albedo();
   _writeFilename(object.albedoTexture());
   _stream << object.useAlphaFromAlbedoTexture();
-    
+
   _stream << object.roughness();
   _stream << object.specularStrength();
   _writeFilename(object.specularTexture());
 
   _stream << object.metallic();
-    
+
   _stream << object.opaqueFactor();
   _writeFilename(object.opaqueTexture());
 
@@ -231,7 +231,7 @@ void ObjectSaver::visit(const MeshObject& object)
   _stream << object.materialRef().referencedId();
 }
 
-void ObjectSaver::visit(const MovableObject& object)
+void ObjectSaver::visit(const mtt::MovableObject& object)
 {
   OEVisitor::visit(object);
   _stream << object.position();
@@ -243,19 +243,19 @@ void ObjectSaver::visit(const mtt::Object& object)
   _stream << object.name();
 }
 
-void ObjectSaver::visit(const RotatableObject& object)
+void ObjectSaver::visit(const mtt::RotatableObject& object)
 {
   OEVisitor::visit(object);
   _stream << object.rotation();
 }
 
-void ObjectSaver::visit(const ScalableObject& object)
+void ObjectSaver::visit(const mtt::ScalableObject& object)
 {
   OEVisitor::visit(object);
   _stream << object.scale();
 }
 
-void ObjectSaver::visit(const SkeletonObject& object)
+void ObjectSaver::visit(const mtt::SkeletonObject& object)
 {
   OEVisitor::visit(object);
   uint32_t childNumber = object.childsNumber();

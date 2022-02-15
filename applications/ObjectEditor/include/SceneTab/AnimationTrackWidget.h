@@ -6,8 +6,7 @@
 #include <QtWidgets/QWidget>
 
 #include <mtt/application/Widgets/PropertiesWidgets/BoolCheckboxConnection.h>
-
-#include <Objects/AnimationTrack.h>
+#include <mtt/editorLib/Objects/AnimationTrack.h>
 
 namespace mtt
 {
@@ -22,7 +21,7 @@ namespace Ui
 class AnimationTrackWidget : public QWidget
 {
 public:
-  AnimationTrackWidget( AnimationTrack& object,
+  AnimationTrackWidget( mtt::AnimationTrack& object,
                         mtt::Object& skeletonSelectArea,
                         mtt::UndoStack& undoStack);
   AnimationTrackWidget(const AnimationTrackWidget&) = delete;
@@ -31,7 +30,7 @@ public:
 
 private:
   std::unique_ptr<Ui::AnimationTrackWidget> _ui;
-  using EnabledConnection = mtt::BoolCheckboxConnection<AnimationTrack>;
+  using EnabledConnection = mtt::BoolCheckboxConnection<mtt::AnimationTrack>;
   std::optional<EnabledConnection> _enabledConnection;
 };
 

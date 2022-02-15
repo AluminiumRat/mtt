@@ -10,7 +10,7 @@ GeometryObject::GeometryObject( const QString& name,
 {
 }
 
-void GeometryObject::setSkeleton(SkeletonObject* skeleton)
+void GeometryObject::setSkeleton(mtt::SkeletonObject* skeleton)
 {
   if(skeleton == nullptr) setSkeletonId(mtt::UID());
   else setSkeletonId(skeleton->id());
@@ -36,10 +36,10 @@ void GeometryObject::setSkeletonId(const mtt::UID& id)
   }
 }
 
-void GeometryObject::_connectSkeleton(SkeletonObject& skeleton)
+void GeometryObject::_connectSkeleton(mtt::SkeletonObject& skeleton)
 {
   connect(&skeleton,
-          &SkeletonObject::transformChanged,
+          &mtt::SkeletonObject::transformChanged,
           this,
           &GeometryObject::setCoordSystemTransform,
           Qt::DirectConnection);
@@ -47,10 +47,10 @@ void GeometryObject::_connectSkeleton(SkeletonObject& skeleton)
   emit skeletonRefChanged(&skeleton);
 }
 
-void GeometryObject::_disconnectSkeleton(SkeletonObject& skeleton) noexcept
+void GeometryObject::_disconnectSkeleton(mtt::SkeletonObject& skeleton) noexcept
 {
   disconnect( &skeleton,
-              &SkeletonObject::transformChanged,
+              &mtt::SkeletonObject::transformChanged,
               this,
               &GeometryObject::setCoordSystemTransform);
   setCoordSystemTransform(glm::mat4(1));

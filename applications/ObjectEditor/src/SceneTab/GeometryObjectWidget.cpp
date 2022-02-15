@@ -13,7 +13,7 @@ GeometryObjectWidget::GeometryObjectWidget( GeometryObject& object,
   _ui->setupUi(this);
 
   using ReferenceWidget = mtt::ReferencePropertyWidget< GeometryObject,
-                                                        SkeletonObject>;
+                                                        mtt::SkeletonObject>;
 
   ReferenceWidget* referenceWidget = new ReferenceWidget(
                                           object,

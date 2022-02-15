@@ -13,7 +13,7 @@ namespace mtt
 class ScaleManipulator : public ObjectManipulator
 {
 public:
-  ScaleManipulator(ScalableObject& object, mtt::UndoStack& undoStack);
+  ScaleManipulator(mtt::ScalableObject& object, mtt::UndoStack& undoStack);
   ScaleManipulator(const ScaleManipulator&) = delete;
   ScaleManipulator& operator = (const ScaleManipulator&) = delete;
   virtual ~ScaleManipulator() noexcept = default;

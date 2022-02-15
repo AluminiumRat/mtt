@@ -17,9 +17,8 @@ namespace mtt
   class AreaModificator;
   class CompositeObjectNode;
   class DrawableNode;
+  class LightObject;
 }
-
-class LightObject;
 
 class AbstractLightRenderObserver : public Object3DRenderObserver
 {
@@ -28,7 +27,7 @@ class AbstractLightRenderObserver : public Object3DRenderObserver
 public:
   /// If iconFilename is empty or iconSize <= 0 then no icon node will be
   ///  created
-  AbstractLightRenderObserver(LightObject& object,
+  AbstractLightRenderObserver(mtt::LightObject& object,
                               EditorCommonData& commonData,
                               const QString& iconFilename,
                               float iconSize);
@@ -48,7 +47,7 @@ private:
   void _updateEnabled() noexcept;
 
 private:
-  LightObject& _object;
+  mtt::LightObject& _object;
 
   mtt::CompositeObjectNode* _lightRenderer;
 

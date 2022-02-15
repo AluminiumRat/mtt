@@ -3,12 +3,15 @@
 #include <mtt/application/EditCommands/UndoStack.h>
 #include <mtt/application/Manipulator/UniformScale3DManipulator.h>
 
-class ScalableObject;
+namespace mtt
+{
+  class ScalableObject;
+}
 
 class TriangleManipulator : public mtt::UniformScale3DManipulator
 {
 public:
-  TriangleManipulator(ScalableObject& object, mtt::UndoStack& undoStack);
+  TriangleManipulator(mtt::ScalableObject& object, mtt::UndoStack& undoStack);
   TriangleManipulator(const TriangleManipulator&) = delete;
   TriangleManipulator& operator = (const TriangleManipulator&) = delete;
   virtual ~TriangleManipulator() noexcept = default;
@@ -22,7 +25,7 @@ protected:
 
 private:
   mtt::UndoStack& _undoStack;
-  ScalableObject& _object;
+  mtt::ScalableObject& _object;
 
   mtt::UndoStack::GroupLocker _groupCommandLocker;
 

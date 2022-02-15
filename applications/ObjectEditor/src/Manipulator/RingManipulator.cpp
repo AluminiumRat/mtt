@@ -2,10 +2,10 @@
 #include <mtt/application/EditCommands/UndoStack.h>
 #include <mtt/clPipeline/MeshTechniques/UnlightedColorTechnique.h>
 #include <mtt/clPipeline/constants.h>
+#include <mtt/editorLib/Objects/RotatableObject.h>
 #include <mtt/render/Drawable/AntiscaleDrawableModificator.h>
 #include <mtt/utilities/Abort.h>
 
-#include <Objects/RotatableObject.h>
 #include <Manipulator/RingManipulator.h>
 
 #include <glm/gtc/constants.hpp>
@@ -67,7 +67,7 @@ static void addSector(std::vector<glm::vec3>& positions,
   addSide(positions, startAngle, endAngle, currentAngle, 0);
 }
 
-RingManipulator::RingManipulator( RotatableObject& object,
+RingManipulator::RingManipulator( mtt::RotatableObject& object,
                                   mtt::UndoStack& undoStack) :
   RingRotation3DManipulator(
                           mtt::AutoscaleDrawableModificator::PIXEL_SCALE_MODE),
@@ -133,13 +133,14 @@ void RingManipulator::processRotation(const glm::mat4& rotation) noexcept
   try
   {
     using Command = mtt::SetPropertyCommand<
-                                  RotatableObject,
-                                  glm::quat,
-                                  void (RotatableObject::*)(const glm::quat&)>;
-    std::unique_ptr<Command> command(new Command( _object,
-                                                  &RotatableObject::setRotation,
-                                                  _object.rotation(),
-                                                  newRotation));
+                              mtt::RotatableObject,
+                              glm::quat,
+                              void (mtt::RotatableObject::*)(const glm::quat&)>;
+    std::unique_ptr<Command> command(
+                                new Command(_object,
+                                            &mtt::RotatableObject::setRotation,
+                                            _object.rotation(),
+                                            newRotation));
     _undoStack.addAndMake(std::move(command));
   }
   catch(std::exception& error)

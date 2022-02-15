@@ -1,8 +1,8 @@
 #pragma once
 
+#include <mtt/editorLib/Objects/Object3D.h>
 #include <mtt/render/SceneGraph/Joint.h>
 
-#include <Objects/Object3D.h>
 #include <Render/AbstractObjectRenderObserver.h>
 
 class Object3DRenderObserver : public AbstractObjectRenderObserver
@@ -10,13 +10,13 @@ class Object3DRenderObserver : public AbstractObjectRenderObserver
   Q_OBJECT
 
 public:
-  Object3DRenderObserver(Object3D& object, EditorCommonData& commonData);
+  Object3DRenderObserver(mtt::Object3D& object, EditorCommonData& commonData);
   Object3DRenderObserver(const Object3DRenderObserver&) = delete;
   Object3DRenderObserver& operator =
                                 (const Object3DRenderObserver&) = delete;
   virtual ~Object3DRenderObserver() noexcept = default;
 
-  inline Object3D& object() const noexcept;
+  inline mtt::Object3D& object() const noexcept;
 
 protected:
   inline mtt::Joint& positionJoint() noexcept;
@@ -37,9 +37,9 @@ private:
   mtt::Joint _fullTransformJoint;
 };
 
-inline Object3D& Object3DRenderObserver::object() const noexcept
+inline mtt::Object3D& Object3DRenderObserver::object() const noexcept
 {
-  return static_cast<Object3D&>(AbstractObjectRenderObserver::object());
+  return static_cast<mtt::Object3D&>(AbstractObjectRenderObserver::object());
 }
 
 inline mtt::Joint& Object3DRenderObserver::positionJoint() noexcept

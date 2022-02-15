@@ -26,30 +26,30 @@ private:
   ObjectLoader& operator = (const ObjectLoader&) = delete;
   virtual ~ObjectLoader() noexcept = default;
 
-  virtual void visit(AmbientLightObject& object) override;
-  virtual void visit(AnimationObject& object) override;
-  virtual void visit(AnimationTrack& object) override;
-  virtual void visit(BackgroundObject& object) override;
-  virtual void visit(DirectLightObject& object) override;
-  virtual void visit(DisplayedObject& object) override;
-  virtual void visit(EnvironmentModel& object) override;
+  virtual void visit(mtt::AmbientLightObject& object) override;
+  virtual void visit(mtt::AnimationObject& object) override;
+  virtual void visit(mtt::AnimationTrack& object) override;
+  virtual void visit(mtt::BackgroundObject& object) override;
+  virtual void visit(mtt::DirectLightObject& object) override;
+  virtual void visit(mtt::DisplayedObject& object) override;
+  virtual void visit(mtt::EnvironmentModel& object) override;
   virtual void visit(GeometryObject& object) override;
-  virtual void visit(LightObject& object) override;
+  virtual void visit(mtt::LightObject& object) override;
   virtual void visit(LODObject& object) override;
   virtual void visit(MaterialObject& object) override;
   virtual void visit(MeshObject& object) override;
-  virtual void visit(MovableObject& object) override;
-  virtual void visit(RotatableObject& object) override;
-  virtual void visit(ScalableObject& object) override;
-  virtual void visit(SkeletonObject& object) override;
+  virtual void visit(mtt::MovableObject& object) override;
+  virtual void visit(mtt::RotatableObject& object) override;
+  virtual void visit(mtt::ScalableObject& object) override;
+  virtual void visit(mtt::SkeletonObject& object) override;
 
   QString _loadFilename();
   std::unique_ptr<BoneRefBatch> readBoneRefs();
   void _readGeometry(mtt::CommonMeshGeometry& geometry);
   template<typename ValueType>
-  void _readKeypoint(
-            mtt::ValueKeypoint<ValueType, AnimationTrack::TimeType>& keypoint);
-  void _readCubemapData(CubemapObject& object);
+  void _readKeypoint( mtt::ValueKeypoint<ValueType,
+                      mtt::AnimationTrack::TimeType>& keypoint);
+  void _readCubemapData(mtt::CubemapObject& object);
   mtt::UID _readUID();
 
   static void _loadObjectData(mtt::Object& object,

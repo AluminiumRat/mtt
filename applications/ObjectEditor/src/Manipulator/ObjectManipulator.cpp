@@ -1,14 +1,14 @@
 #include <mtt/render/Drawable/AntiscaleDrawableModificator.h>
+#include <mtt/editorLib/Objects/Object3D.h>
 
-#include <Objects/Object3D.h>
 #include <Manipulator/ObjectManipulator.h>
 
-ObjectManipulator::ObjectManipulator(Object3D& object) :
+ObjectManipulator::ObjectManipulator(mtt::Object3D& object) :
   _object(object),
   _orientation(LOCAL_ORIENTATION)
 {
   connect(&_object,
-          &Object3D::transformChanged,
+          &mtt::Object3D::transformChanged,
           this,
           &ObjectManipulator::_updatePosition,
           Qt::DirectConnection);

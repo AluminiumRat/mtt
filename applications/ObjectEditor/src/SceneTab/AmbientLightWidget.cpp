@@ -3,17 +3,18 @@
 
 #include <GeneratedFiles/ui_AmbientLightWidget.h>
 
-AmbientLightWidget::AmbientLightWidget( AmbientLightObject& object,
+AmbientLightWidget::AmbientLightWidget( mtt::AmbientLightObject& object,
                                         mtt::UndoStack& undoStack) :
   _ui(new Ui::AmbientLightWidget)
 {
   _ui->setupUi(this);
-  _saturationConnection.emplace( *_ui->saturationSpin,
-                                object,
-                                &AmbientLightObject::saturationDistance,
-                                &AmbientLightObject::setSaturationDistance,
-                                &AmbientLightObject::saturationDistanceChanged,
-                                undoStack);
+  _saturationConnection.emplace(
+                            *_ui->saturationSpin,
+                            object,
+                            &mtt::AmbientLightObject::saturationDistance,
+                            &mtt::AmbientLightObject::setSaturationDistance,
+                            &mtt::AmbientLightObject::saturationDistanceChanged,
+                            undoStack);
 
   CubemapWidget* cubemapWidget = new CubemapWidget( object.ambientMap(),
                                                     undoStack);

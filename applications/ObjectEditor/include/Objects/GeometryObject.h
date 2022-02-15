@@ -1,11 +1,12 @@
 #pragma once
 
 #include <mtt/application/Scene/ObjectLink.h>
+#include <mtt/editorLib/Objects/ScalableObject.h>
+#include <mtt/editorLib/Objects/SkeletonObject.h>
 
-#include <Objects/ScalableObject.h>
-#include <Objects/SkeletonObject.h>
+#include <Objects/OEVisitorExtension.h>
 
-class GeometryObject : public ScalableObject
+class GeometryObject : public mtt::ScalableObject
 {
   Q_OBJECT
 
@@ -19,35 +20,36 @@ public:
   GeometryObject& operator = (const GeometryObject&) = delete;
   virtual ~GeometryObject() noexcept = default;
 
-  inline const mtt::ObjectRef<SkeletonObject>& skeletonRef() const noexcept;
-  inline SkeletonObject* skeleton() const noexcept;
+  inline const mtt::ObjectRef<mtt::SkeletonObject>&
+                                                  skeletonRef() const noexcept;
+  inline mtt::SkeletonObject* skeleton() const noexcept;
   /// You can use nullptr to remove link
-  void setSkeleton(SkeletonObject* skeleton);
+  void setSkeleton(mtt::SkeletonObject* skeleton);
   /// You can use invalid UID to remove link
   void setSkeletonId(const mtt::UID& id);
 
 signals:
-  void skeletonRefChanged(SkeletonObject* skeleton);
+  void skeletonRefChanged(mtt::SkeletonObject* skeleton);
 
 private:
-  void _connectSkeleton(SkeletonObject& skeleton);
-  void _disconnectSkeleton(SkeletonObject& skeleton) noexcept;
+  void _connectSkeleton(mtt::SkeletonObject& skeleton);
+  void _disconnectSkeleton(mtt::SkeletonObject& skeleton) noexcept;
 
 private:
-  using SkeletonLink = mtt::ObjectLink< SkeletonObject,
+  using SkeletonLink = mtt::ObjectLink< mtt::SkeletonObject,
                                         GeometryObject,
                                         &GeometryObject::_connectSkeleton,
                                         &GeometryObject::_disconnectSkeleton>;
   SkeletonLink _skeletonLink;
 };
 
-inline const mtt::ObjectRef<SkeletonObject>&
+inline const mtt::ObjectRef<mtt::SkeletonObject>&
                                   GeometryObject::skeletonRef() const noexcept
 {
   return _skeletonLink;
 }
 
-inline SkeletonObject* GeometryObject::skeleton() const noexcept
+inline mtt::SkeletonObject* GeometryObject::skeleton() const noexcept
 {
   return _skeletonLink.get();
 }

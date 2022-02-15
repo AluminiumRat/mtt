@@ -1,13 +1,13 @@
 #include <mtt/application/Application.h>
 #include <mtt/clPipeline/MeshTechniques/InstrumentalCompositeTechnique.h>
 #include <mtt/clPipeline/constants.h>
+#include <mtt/editorLib/Objects/SkeletonObject.h>
 #include <mtt/render/Mesh/UidMeshTechnique.h>
 #include <mtt/render/Pipeline/Buffer.h>
 
-#include <Objects/SkeletonObject.h>
 #include <Render/SkeletonRenderObserver.h>
 
-SkeletonRenderObserver::SkeletonRenderObserver( SkeletonObject& object,
+SkeletonRenderObserver::SkeletonRenderObserver( mtt::SkeletonObject& object,
                                                 EditorCommonData& commonData) :
   Object3DRenderObserver(object, commonData),
   _crossMesh(mtt::Application::instance().displayDevice())

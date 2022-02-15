@@ -1,4 +1,5 @@
-#include <Objects/DirectLightObject.h>
+#include <mtt/editorLib/Objects/DirectLightObject.h>
+
 #include <Render/DirectLightRenderObserver.h>
 #include <EditorApplication.h>
 #include <EditorCommonData.h>
@@ -10,7 +11,7 @@
 #define BODY_SEGMENTS 6
 
 DirectLightRenderObserver::DirectLightRenderObserver(
-                                                DirectLightObject& object,
+                                                mtt::DirectLightObject& object,
                                                 EditorCommonData& commonData) :
   AbstractLightRenderObserver(object, commonData, ICON_FILE, ICON_SIZE),
   _lightObject(object),
@@ -19,54 +20,54 @@ DirectLightRenderObserver::DirectLightRenderObserver(
   setLightObject(_light);
 
   connect(&_lightObject,
-          &DirectLightObject::baseIlluminanceChanged,
+          &mtt::DirectLightObject::baseIlluminanceChanged,
           this,
           &DirectLightRenderObserver::_updateIlluminance,
           Qt::DirectConnection);
   connect(&_lightObject,
-          &DirectLightObject::colorChanged,
+          &mtt::DirectLightObject::colorChanged,
           this,
           &DirectLightRenderObserver::_updateIlluminance,
           Qt::DirectConnection);
   _updateIlluminance();
 
   connect(&_lightObject,
-          &DirectLightObject::distanceChanged,
+          &mtt::DirectLightObject::distanceChanged,
           this,
           &DirectLightRenderObserver::_updateDistance,
           Qt::DirectConnection);
   _updateDistance();
 
   connect(&_lightObject,
-          &DirectLightObject::radiusChanged,
+          &mtt::DirectLightObject::radiusChanged,
           this,
           &DirectLightRenderObserver::_updateRadius,
           Qt::DirectConnection);
   _updateRadius();
 
   connect(&_lightObject,
-          &DirectLightObject::shadowsEnabledChanged,
+          &mtt::DirectLightObject::shadowsEnabledChanged,
           this,
           &DirectLightRenderObserver::_updateShadowsEnabled,
           Qt::DirectConnection);
   _updateShadowsEnabled();
 
   connect(&_lightObject,
-          &DirectLightObject::shadowmapSizeChanged,
+          &mtt::DirectLightObject::shadowmapSizeChanged,
           this,
           &DirectLightRenderObserver::_updateShadowMapSize,
           Qt::DirectConnection);
   _updateShadowMapSize();
 
   connect(&_lightObject,
-          &DirectLightObject::cascadeSizeChanged,
+          &mtt::DirectLightObject::cascadeSizeChanged,
           this,
           &DirectLightRenderObserver::_updateCascadeSize,
           Qt::DirectConnection);
   _updateCascadeSize();
 
   connect(&_lightObject,
-          &DirectLightObject::blurSizeChanged,
+          &mtt::DirectLightObject::blurSizeChanged,
           this,
           &DirectLightRenderObserver::_updateBlur,
           Qt::DirectConnection);

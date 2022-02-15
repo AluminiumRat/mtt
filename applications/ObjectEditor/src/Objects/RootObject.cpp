@@ -16,8 +16,8 @@ RootObject::RootObject( const QString& name,
   _environment(nullptr)
 {
   mtt::UID skeletonId(id().mixedUID(3437741750129319833ull));
-  std::unique_ptr<SkeletonGroup> skeletonGroup(new SkeletonGroup(
-                                                                tr("Skeleton"),
+  std::unique_ptr<mtt::SkeletonGroup> skeletonGroup(
+                                        new mtt::SkeletonGroup( tr("Skeleton"),
                                                                 false,
                                                                 skeletonId));
   _skeletonGroup = skeletonGroup.get();
@@ -40,25 +40,25 @@ RootObject::RootObject( const QString& name,
   addSubobject(std::move(materialsGroup));
 
   mtt::UID animationId(id().mixedUID(6931950026981487474ull));
-  std::unique_ptr<AnimationGroup> animationGroup(
-                                          new AnimationGroup( tr("Animations"),
+  std::unique_ptr<mtt::AnimationGroup> animationGroup(
+                                      new mtt::AnimationGroup(tr("Animations"),
                                                               false,
                                                               animationId));
   _animationGroup = animationGroup.get();
   addSubobject(std::move(animationGroup));
 
   mtt::UID backgroundId(id().mixedUID(1096043266422623895ull));
-  std::unique_ptr<BackgroundObject> background(
-                                        new BackgroundObject( tr(" Background"),
-                                                              false,
-                                                              backgroundId));
+  std::unique_ptr<mtt::BackgroundObject> background(
+                                  new mtt::BackgroundObject(tr(" Background"),
+                                                            false,
+                                                            backgroundId));
   _background = background.get();
   _background->setColor(glm::vec3(.3f, .5f, .7f));
   addSubobject(std::move(background));
 
   mtt::UID environmentId(id().mixedUID(5000232373494366922ull));
-  std::unique_ptr<EnvironmentGroup>
-              environmentGroup(new EnvironmentGroup(tr(" Environment objects"),
+  std::unique_ptr<mtt::EnvironmentGroup> environmentGroup(
+                          new mtt::EnvironmentGroup(tr(" Environment objects"),
                                                     false,
                                                     environmentId));
   _environment = environmentGroup.get();
@@ -66,13 +66,13 @@ RootObject::RootObject( const QString& name,
 }
 
 void RootObject::changeBackground(
-                                std::unique_ptr<BackgroundObject> newBackground)
+                          std::unique_ptr<mtt::BackgroundObject> newBackground)
 {
   if(newBackground == nullptr) mtt::Abort("RootObject::changeBackground: newBackground is nullpt.");
 
   std::unique_ptr<mtt::Object> oldBackgraund = removeSubobject( *_background,
                                                                 false);
-  BackgroundObject* newBackgroundPtr = newBackground.get();
+  mtt::BackgroundObject* newBackgroundPtr = newBackground.get();
   try
   {
     addSubobject(std::move(newBackground));

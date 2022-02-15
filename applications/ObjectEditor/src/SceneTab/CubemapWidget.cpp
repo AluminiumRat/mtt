@@ -6,14 +6,14 @@
 
 #include <mtt/application/EditCommands/SetPropertyCommand.h>
 #include <mtt/application/EditCommands/UndoStack.h>
+#include <mtt/editorLib/Objects/CubemapObject.h>
 #include <mtt/utilities/Log.h>
 
-#include <Objects/CubemapObject.h>
 #include <SceneTab/CubemapWidget.h>
 
 #include <GeneratedFiles/ui_CubemapWidget.h>
 
-CubemapWidget::CubemapWidget( CubemapObject& object,
+CubemapWidget::CubemapWidget( mtt::CubemapObject& object,
                               mtt::UndoStack& undoStack) :
   _ui(new Ui::CubemapWidget),
   _object(object),
@@ -22,7 +22,7 @@ CubemapWidget::CubemapWidget( CubemapObject& object,
   _ui->setupUi(this);
 
   connect(&object,
-          &CubemapObject::texturesChanged,
+          &mtt::CubemapObject::texturesChanged,
           this,
           &CubemapWidget::_updateWidget,
           Qt::DirectConnection);
@@ -55,22 +55,23 @@ QString CubemapWidget::prepareName(const QString& fullName) noexcept
 
 void CubemapWidget::_updateWidget() noexcept
 {
-  QString sideTexture = _object.sideTexture(CubemapObject::SIDE_X_POSITIVE);
+  QString sideTexture = _object.sideTexture(
+                                          mtt::CubemapObject::SIDE_X_POSITIVE);
   _ui->pXFileLabel->setText(prepareName(sideTexture));
 
-  sideTexture = _object.sideTexture(CubemapObject::SIDE_X_NEGATIVE);
+  sideTexture = _object.sideTexture(mtt::CubemapObject::SIDE_X_NEGATIVE);
   _ui->nXFileLabel->setText(prepareName(sideTexture));
 
-  sideTexture = _object.sideTexture(CubemapObject::SIDE_Y_POSITIVE);
+  sideTexture = _object.sideTexture(mtt::CubemapObject::SIDE_Y_POSITIVE);
   _ui->pYFileLabel->setText(prepareName(sideTexture));
 
-  sideTexture = _object.sideTexture(CubemapObject::SIDE_Y_NEGATIVE);
+  sideTexture = _object.sideTexture(mtt::CubemapObject::SIDE_Y_NEGATIVE);
   _ui->nYFileLabel->setText(prepareName(sideTexture));
 
-  sideTexture = _object.sideTexture(CubemapObject::SIDE_Z_NEGATIVE);
+  sideTexture = _object.sideTexture(mtt::CubemapObject::SIDE_Z_NEGATIVE);
   _ui->nZFileLabel->setText(prepareName(sideTexture));
 
-  sideTexture = _object.sideTexture(CubemapObject::SIDE_Z_POSITIVE);
+  sideTexture = _object.sideTexture(mtt::CubemapObject::SIDE_Z_POSITIVE);
   _ui->pZFileLabel->setText(prepareName(sideTexture));
 }
 
@@ -116,19 +117,21 @@ void CubemapWidget::_setTextures(const QStringList& texturesList)
 {
   try
   {
-    CubemapObject::Textures textures;
+    mtt::CubemapObject::Textures textures;
     for(int i = 0; i < 6; i++) textures[i] = texturesList[i];
 
     if(textures == _object.textures()) return;
 
     using Command = mtt::SetPropertyCommand<
-                        CubemapObject,
-                        CubemapObject::Textures,
-                        void(CubemapObject::*)(const CubemapObject::Textures&)>;
-    std::unique_ptr<Command> command(new Command( _object,
-                                                  &CubemapObject::setTextures,
-                                                  _object.textures(),
-                                                  textures));
+                                      mtt::CubemapObject,
+                                      mtt::CubemapObject::Textures,
+                                      void(mtt::CubemapObject::*)(
+                                          const mtt::CubemapObject::Textures&)>;
+    std::unique_ptr<Command> command(
+                                  new Command(_object,
+                                              &mtt::CubemapObject::setTextures,
+                                              _object.textures(),
+                                              textures));
     _undoStack.addAndMake(std::move(command));
   }
   catch(std::exception& error)

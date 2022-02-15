@@ -48,25 +48,25 @@ void LoadEnvironmentTask::asyncPart()
 
   _checkHead();
 
-  _background = ObjectLoader::loadObject<BackgroundObject>( false,
-                                                            *_stream,
-                                                            _fileDirectory,
-                                                            _mixUIDValue);
+  _background = ObjectLoader::loadObject<mtt::BackgroundObject>(false,
+                                                                *_stream,
+                                                                _fileDirectory,
+                                                                _mixUIDValue);
 
   uint32_t objectsNumber = _stream->readUint32();
   for (; objectsNumber != 0; objectsNumber--)
   {
     _objects.push_back(
-      ObjectLoader::loadObject<EnvironmentObject>(true,
-                                                  *_stream,
-                                                  _fileDirectory,
-                                                  _mixUIDValue));
+      ObjectLoader::loadObject<mtt::EnvironmentObject>( true,
+                                                        *_stream,
+                                                        _fileDirectory,
+                                                        _mixUIDValue));
   }
 }
 
 void LoadEnvironmentTask::_clearScene() noexcept
 {
-  EnvironmentGroup& environment = _scene.root().environment();
+  mtt::EnvironmentGroup& environment = _scene.root().environment();
   while (environment.childsNumber() != 0)
   {
     environment.removeChild(environment.child(environment.childsNumber() -1),
@@ -82,7 +82,7 @@ void LoadEnvironmentTask::finalizePart()
 
   try
   {
-    for (std::unique_ptr<EnvironmentObject>& object : _objects)
+    for (std::unique_ptr<mtt::EnvironmentObject>& object : _objects)
     {
       _scene.root().environment().addChild(std::move(object));
     }

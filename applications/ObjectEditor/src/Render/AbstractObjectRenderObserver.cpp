@@ -1,13 +1,13 @@
 #include <algorithm>
 
+#include <mtt/editorLib/Objects/DisplayedObject.h>
 #include <mtt/utilities/Log.h>
 
-#include <Objects/DisplayedObject.h>
 #include <Render/AbstractObjectRenderObserver.h>
 #include <EditorCommonData.h>
 
 AbstractObjectRenderObserver::AbstractObjectRenderObserver(
-                                                DisplayedObject& object,
+                                                mtt::DisplayedObject& object,
                                                 EditorCommonData& commonData) :
   _object(object),
   _commonData(commonData)
@@ -15,7 +15,7 @@ AbstractObjectRenderObserver::AbstractObjectRenderObserver(
   _uidSetter.setUid(object.id());
 
   connect(&_object,
-          &Object3D::completeVisibleChanged,
+          &mtt::Object3D::completeVisibleChanged,
           this,
           &AbstractObjectRenderObserver::updateVisible,
           Qt::DirectConnection);

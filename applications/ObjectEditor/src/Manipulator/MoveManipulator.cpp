@@ -1,9 +1,10 @@
 #include <glm/gtx/transform.hpp>
 
-#include <Manipulator/MoveManipulator.h>
-#include <Objects/MovableObject.h>
+#include <mtt/editorLib/Objects/MovableObject.h>
 
-MoveManipulator::MoveManipulator( MovableObject& object,
+#include <Manipulator/MoveManipulator.h>
+
+MoveManipulator::MoveManipulator( mtt::MovableObject& object,
                                   mtt::UndoStack& undoStack) :
   ObjectManipulator(object),
   _xAxisManipulator(object, undoStack),

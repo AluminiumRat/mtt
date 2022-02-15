@@ -1,9 +1,10 @@
 #include <glm/gtx/transform.hpp>
 
-#include <Manipulator/RotationManipulator.h>
-#include <Objects/RotatableObject.h>
+#include <mtt/editorLib/Objects/RotatableObject.h>
 
-RotationManipulator::RotationManipulator( RotatableObject& object,
+#include <Manipulator/RotationManipulator.h>
+
+RotationManipulator::RotationManipulator( mtt::RotatableObject& object,
                                           mtt::UndoStack& undoStack) :
   ObjectManipulator(object),
   _xManipulator(object, undoStack),

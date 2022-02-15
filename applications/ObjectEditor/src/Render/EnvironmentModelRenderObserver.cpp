@@ -1,20 +1,20 @@
 #include <stdexcept>
 
+#include <mtt/editorLib/Objects/EnvironmentModel.h>
 #include <mtt/utilities/Log.h>
 
 #include <AsyncTasks/LoadEnvironmentModelTask.h>
-#include <Objects/EnvironmentModel.h>
 #include <Render/EnvironmentModelRenderObserver.h>
 #include <EditorApplication.h>
 
 EnvironmentModelRenderObserver::EnvironmentModelRenderObserver(
-                                                EnvironmentModel& object,
+                                                mtt::EnvironmentModel& object,
                                                 EditorCommonData& commonData) :
   Object3DRenderObserver(object, commonData),
   _object(object)
 {
   connect(&_object,
-          &EnvironmentModel::filenameChanged,
+          &mtt::EnvironmentModel::filenameChanged,
           this,
           &EnvironmentModelRenderObserver::_updateModel,
           Qt::DirectConnection);

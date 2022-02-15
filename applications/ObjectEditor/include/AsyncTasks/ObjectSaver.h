@@ -26,31 +26,31 @@ private:
   ObjectSaver& operator = (const ObjectSaver&) = delete;
   virtual ~ObjectSaver() noexcept = default;
 
-  virtual void visit(const AmbientLightObject& object) override;
-  virtual void visit(const AnimationObject& object) override;
-  virtual void visit(const AnimationTrack& object) override;
-  virtual void visit(const BackgroundObject& object) override;
-  virtual void visit(const DirectLightObject& object) override;
-  virtual void visit(const DisplayedObject& object) override;
-  virtual void visit(const EnvironmentModel& object) override;
+  virtual void visit(const mtt::AmbientLightObject& object) override;
+  virtual void visit(const mtt::AnimationObject& object) override;
+  virtual void visit(const mtt::AnimationTrack& object) override;
+  virtual void visit(const mtt::BackgroundObject& object) override;
+  virtual void visit(const mtt::DirectLightObject& object) override;
+  virtual void visit(const mtt::DisplayedObject& object) override;
+  virtual void visit(const mtt::EnvironmentModel& object) override;
   virtual void visit(const GeometryObject& object) override;
-  virtual void visit(const LightObject& object) override;
+  virtual void visit(const mtt::LightObject& object) override;
   virtual void visit(const LODObject& object) override;
   virtual void visit(const MaterialObject& object) override;
   virtual void visit(const MeshObject& object) override;
-  virtual void visit(const MovableObject& object) override;
+  virtual void visit(const mtt::MovableObject& object) override;
   virtual void visit(const mtt::Object& object) override;
-  virtual void visit(const RotatableObject& object) override;
-  virtual void visit(const ScalableObject& object) override;
-  virtual void visit(const SkeletonObject& object) override;
+  virtual void visit(const mtt::RotatableObject& object) override;
+  virtual void visit(const mtt::ScalableObject& object) override;
+  virtual void visit(const mtt::SkeletonObject& object) override;
 
   void _saveGeometry(const mtt::CommonMeshGeometry& geometry);
   void _saveBoneRefs(const BoneRefBatch& refs);
   void _writeFilename(const QString& filename);
   template<typename ValueType>
-  void _writeKeypoint(
-              mtt::ValueKeypoint<ValueType, AnimationTrack::TimeType> keypoint);
-  void _writeCubemapData(const CubemapObject& object);
+  void _writeKeypoint(mtt::ValueKeypoint<ValueType,
+                      mtt::AnimationTrack::TimeType> keypoint);
+  void _writeCubemapData(const mtt::CubemapObject& object);
 
 private:
   mtt::DataStream& _stream;

@@ -1,8 +1,9 @@
+#include <mtt/editorLib/Objects/MovableObject.h>
+#include <mtt/editorLib/Objects/RotatableObject.h>
+#include <mtt/editorLib/Objects/ScalableObject.h>
+
 #include <Manipulator/EditorManipulatorController.h>
 #include <RenderWidget/EditorRenderWidget.h>
-#include <Objects/MovableObject.h>
-#include <Objects/RotatableObject.h>
-#include <Objects/ScalableObject.h>
 #include <EditorCommonData.h>
 
 EditorManipulatorController::EditorManipulatorController(
@@ -36,22 +37,22 @@ void EditorManipulatorController::_updateManipulator()
 
   if(_commonData.selectedObjects().size() == 1)
   {
-    MovableObject* movable =
-                qobject_cast<MovableObject*>(_commonData.selectedObjects()[0]);
+    mtt::MovableObject* movable =
+            qobject_cast<mtt::MovableObject*>(_commonData.selectedObjects()[0]);
     if(movable != nullptr)
     {
       _moveManipulator.emplace(*movable, _commonData.undoStack());
     }
 
-    RotatableObject* rotatable =
-              qobject_cast<RotatableObject*>(_commonData.selectedObjects()[0]);
+    mtt::RotatableObject* rotatable =
+          qobject_cast<mtt::RotatableObject*>(_commonData.selectedObjects()[0]);
     if(rotatable != nullptr)
     {
       _rotationManipulator.emplace(*rotatable, _commonData.undoStack());
     }
 
-    ScalableObject* scalable =
-              qobject_cast<ScalableObject*>(_commonData.selectedObjects()[0]);
+    mtt::ScalableObject* scalable =
+          qobject_cast<mtt::ScalableObject*>(_commonData.selectedObjects()[0]);
     if(scalable != nullptr)
     {
       _scaleManipulator.emplace(*scalable, _commonData.undoStack());
