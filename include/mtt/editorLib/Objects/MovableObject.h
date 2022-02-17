@@ -9,7 +9,10 @@ namespace mtt
   class MovableObject : public RotatableObject
   {
     Q_OBJECT
-    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension)
+    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension,
+                            visitMovableObject,
+                            visitConstMovableObject,
+                            RotatableObject)
 
     Q_PROPERTY( glm::vec3 position
                 READ position

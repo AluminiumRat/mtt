@@ -12,6 +12,11 @@ class BoneRefObject : public mtt::Object
 {
   Q_OBJECT
 
+  DEFINE_EXTENSION_ACCEPT(OEVisitorExtension,
+                          visitBoneRefObject,
+                          visitConstBoneRefObject,
+                          mtt::Object)
+
   Q_PROPERTY( glm::mat4 boneInverseMatrix
               READ boneInverseMatrix
               WRITE setBoneInverseMatrix
@@ -20,8 +25,6 @@ class BoneRefObject : public mtt::Object
               SCRIPTABLE false
               STORED true
               USER false)
-
-  DEFINE_EXTENSION_ACCEPT(OEVisitorExtension)
 
 public:
   BoneRefObject(const QString& name,

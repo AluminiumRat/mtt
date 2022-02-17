@@ -15,37 +15,39 @@ public:
   OEVisitorT& operator = (const OEVisitorT&) = delete;
   virtual ~OEVisitorT() noexcept = default;
 
-  inline virtual void visit(const BoneRefBatch& object) override;
-  inline virtual void visit(BoneRefBatch& object) override;
+  inline virtual void visitConstBoneRefBatch(
+                                          const BoneRefBatch& object) override;
+  inline virtual void visitBoneRefBatch(BoneRefBatch& object) override;
 
-  inline virtual void visit(const BoneRefObject& object) override;
-  inline virtual void visit(BoneRefObject& object) override;
+  inline virtual void visitConstBoneRefObject(
+                                          const BoneRefObject& object) override;
+  inline virtual void visitBoneRefObject(BoneRefObject& object) override;
 
-  inline virtual void visit(const GeometryGroup& object) override;
-  inline virtual void visit(GeometryGroup& object) override;
+  inline virtual void visitConstGeometryGroup(
+                                          const GeometryGroup& object) override;
+  inline virtual void visitGeometryGroup(GeometryGroup& object) override;
 
-  inline virtual void visit(const GeometryObject& object) override;
-  inline virtual void visit(GeometryObject& object) override;
+  inline virtual void visitConstGeometryObject(
+                                        const GeometryObject& object) override;
+  inline virtual void visitGeometryObject(GeometryObject& object) override;
 
-  inline virtual void visit(const LODObject& object) override;
-  inline virtual void visit(LODObject& object) override;
+  inline virtual void visitConstLODObject(
+                                              const LODObject& object) override;
+  inline virtual void visitLODObject(LODObject& object) override;
 
-  inline virtual void visit(const MaterialObject& object) override;
-  inline virtual void visit(MaterialObject& object) override;
+  inline virtual void visitConstMaterialObject(
+                                        const MaterialObject& object) override;
+  inline virtual void visitMaterialObject(MaterialObject& object) override;
 
-  inline virtual void visit(const MaterialsGroup& object) override;
-  inline virtual void visit(MaterialsGroup& object) override;
+  inline virtual void visitConstMaterialsGroup(
+                                        const MaterialsGroup& object) override;
+  inline virtual void visitMaterialsGroup(MaterialsGroup& object) override;
 
-  inline virtual void visit(const MeshObject& object) override;
-  inline virtual void visit(MeshObject& object) override;
+  inline virtual void visitConstMeshObject(const MeshObject& object) override;
+  inline virtual void visitMeshObject(MeshObject& object) override;
 
-  inline virtual void visit(const RootObject& object) override;
-  inline virtual void visit(RootObject& object) override;
-
-  template<typename ObjectClass>
-  inline void visit(ObjectClass& objectRef);
-  template<typename ObjectClass>
-  inline void visit(const ObjectClass& objectRef);
+  inline virtual void visitConstRootObject(const RootObject& object) override;
+  inline virtual void visitRootObject(RootObject& object) override;
 
 protected:
   inline virtual void* getExtension(
@@ -72,141 +74,120 @@ inline OEVisitorT<BaseVisitor>::OEVisitorT(Args&&... args) :
 }
 
 template <typename BaseVisitor>
-inline void OEVisitorT<BaseVisitor>::visit(const BoneRefBatch& object)
+inline void OEVisitorT<BaseVisitor>::visitConstBoneRefBatch(
+                                                    const BoneRefBatch& object)
 {
-  BaseVisitor* baseVisitor = this;
-  baseVisitor->visit(static_cast<const mtt::Object&>(object));
+  static_cast<BaseVisitor*>(this)->visitConstObject(object);
 }
 
 template <typename BaseVisitor>
-inline void OEVisitorT<BaseVisitor>::visit(BoneRefBatch& object)
+inline void OEVisitorT<BaseVisitor>::visitBoneRefBatch(BoneRefBatch& object)
 {
-  BaseVisitor* baseVisitor = this;
-  baseVisitor->visit(static_cast<mtt::Object&>(object));
+  static_cast<BaseVisitor*>(this)->visitObject(object);
 }
 
 template <typename BaseVisitor>
-inline void OEVisitorT<BaseVisitor>::visit(const BoneRefObject& object)
+inline void OEVisitorT<BaseVisitor>::visitConstBoneRefObject(
+                                                    const BoneRefObject& object)
 {
-  BaseVisitor* baseVisitor = this;
-  baseVisitor->visit(static_cast<const mtt::Object&>(object));
+  static_cast<BaseVisitor*>(this)->visitConstObject(object);
 }
 
 template <typename BaseVisitor>
-inline void OEVisitorT<BaseVisitor>::visit(BoneRefObject& object)
+inline void OEVisitorT<BaseVisitor>::visitBoneRefObject(BoneRefObject& object)
 {
-  BaseVisitor* baseVisitor = this;
-  baseVisitor->visit(static_cast<mtt::Object&>(object));
+  static_cast<BaseVisitor*>(this)->visitObject(object);
 }
 
 template <typename BaseVisitor>
-inline void OEVisitorT<BaseVisitor>::visit(const GeometryGroup& object)
+inline void OEVisitorT<BaseVisitor>::visitConstGeometryGroup(
+                                                    const GeometryGroup& object)
 {
-  BaseVisitor* baseVisitor = this;
-  baseVisitor->visit(static_cast<const mtt::DisplayedObject&>(object));
+  static_cast<BaseVisitor*>(this)->visitConstDisplayedObject(object);
 }
 
 template <typename BaseVisitor>
-inline void OEVisitorT<BaseVisitor>::visit(GeometryGroup& object)
+inline void OEVisitorT<BaseVisitor>::visitGeometryGroup(GeometryGroup& object)
 {
-  BaseVisitor* baseVisitor = this;
-  baseVisitor->visit(static_cast<mtt::DisplayedObject&>(object));
+  static_cast<BaseVisitor*>(this)->visitDisplayedObject(object);
 }
 
 template <typename BaseVisitor>
-inline void OEVisitorT<BaseVisitor>::visit(const GeometryObject& object)
+inline void OEVisitorT<BaseVisitor>::visitConstGeometryObject(
+                                                  const GeometryObject& object)
 {
-  BaseVisitor* baseVisitor = this;
-  baseVisitor->visit(static_cast<const mtt::ScalableObject&>(object));
+  static_cast<BaseVisitor*>(this)->visitConstScalableObject(object);
 }
 
 template <typename BaseVisitor>
-inline void OEVisitorT<BaseVisitor>::visit(GeometryObject& object)
+inline void OEVisitorT<BaseVisitor>::visitGeometryObject(GeometryObject& object)
 {
-  BaseVisitor* baseVisitor = this;
-  baseVisitor->visit(static_cast<mtt::ScalableObject&>(object));
+  static_cast<BaseVisitor*>(this)->visitScalableObject(object);
 }
 
 template <typename BaseVisitor>
-inline void OEVisitorT<BaseVisitor>::visit(const LODObject& object)
+inline void OEVisitorT<BaseVisitor>::visitConstLODObject(
+                                                      const LODObject& object)
 {
-  BaseVisitor* baseVisitor = this;
-  baseVisitor->visit(static_cast<const mtt::DisplayedObject&>(object));
+  static_cast<BaseVisitor*>(this)->visitConstDisplayedObject(object);
 }
 
 template <typename BaseVisitor>
-inline void OEVisitorT<BaseVisitor>::visit(LODObject& object)
+inline void OEVisitorT<BaseVisitor>::visitLODObject(LODObject& object)
 {
-  BaseVisitor* baseVisitor = this;
-  baseVisitor->visit(static_cast<mtt::DisplayedObject&>(object));
+  static_cast<BaseVisitor*>(this)->visitDisplayedObject(object);
 }
 
 template <typename BaseVisitor>
-inline void OEVisitorT<BaseVisitor>::visit(const MaterialObject& object)
+inline void OEVisitorT<BaseVisitor>::visitConstMaterialObject(
+                                                  const MaterialObject& object)
 {
-  BaseVisitor* baseVisitor = this;
-  baseVisitor->visit(static_cast<const mtt::Object&>(object));
+  static_cast<BaseVisitor*>(this)->visitConstObject(object);
 }
 
 template <typename BaseVisitor>
-inline void OEVisitorT<BaseVisitor>::visit(MaterialObject& object)
+inline void OEVisitorT<BaseVisitor>::visitMaterialObject(MaterialObject& object)
 {
-  BaseVisitor* baseVisitor = this;
-  baseVisitor->visit(static_cast<mtt::Object&>(object));
+  static_cast<BaseVisitor*>(this)->visitObject(object);
 }
 
 template <typename BaseVisitor>
-inline void OEVisitorT<BaseVisitor>::visit(MaterialsGroup& object)
+inline void OEVisitorT<BaseVisitor>::visitMaterialsGroup(MaterialsGroup& object)
 {
-  BaseVisitor* baseVisitor = this;
-  baseVisitor->visit(static_cast<mtt::Object&>(object));
+  static_cast<BaseVisitor*>(this)->visitObject(object);
 }
 
 template <typename BaseVisitor>
-inline void OEVisitorT<BaseVisitor>::visit(const MaterialsGroup& object)
+inline void OEVisitorT<BaseVisitor>::visitConstMaterialsGroup(
+                                                  const MaterialsGroup& object)
 {
-  BaseVisitor* baseVisitor = this;
-  baseVisitor->visit(static_cast<const mtt::Object&>(object));
+  static_cast<BaseVisitor*>(this)->visitConstObject(object);
 }
 
 template <typename BaseVisitor>
-inline void OEVisitorT<BaseVisitor>::visit(const MeshObject& object)
+inline void OEVisitorT<BaseVisitor>::visitConstMeshObject(
+                                                      const MeshObject& object)
 {
-  visit(static_cast<const GeometryObject&>(object));
+  visitConstGeometryObject(object);
 }
 
 template <typename BaseVisitor>
-inline void OEVisitorT<BaseVisitor>::visit(MeshObject& object)
+inline void OEVisitorT<BaseVisitor>::visitMeshObject(MeshObject& object)
 {
-  visit(static_cast<GeometryObject&>(object));
+  visitGeometryObject(object);
 }
 
 template <typename BaseVisitor>
-inline void OEVisitorT<BaseVisitor>::visit(const RootObject& object)
+inline void OEVisitorT<BaseVisitor>::visitConstRootObject(
+                                                      const RootObject& object)
 {
-  BaseVisitor* baseVisitor = this;
-  baseVisitor->visit(static_cast<const mtt::Object&>(object));
+  static_cast<BaseVisitor*>(this)->visitConstObject(object);
 }
 
 template <typename BaseVisitor>
-inline void OEVisitorT<BaseVisitor>::visit(RootObject& object)
+inline void OEVisitorT<BaseVisitor>::visitRootObject(RootObject& object)
 {
-  BaseVisitor* baseVisitor = this;
-  baseVisitor->visit(static_cast<mtt::Object&>(object));
-}
-
-template <typename BaseVisitor>
-template<typename ObjectClass>
-inline void OEVisitorT<BaseVisitor>::visit(ObjectClass& objectRef)
-{
-  BaseVisitor::visit(objectRef);
-}
-
-template <typename BaseVisitor>
-template<typename ObjectClass>
-inline void OEVisitorT<BaseVisitor>::visit(const ObjectClass& objectRef)
-{
-  BaseVisitor::visit(objectRef);
+  static_cast<BaseVisitor*>(this)->visitObject(object);
 }
 
 template <typename BaseVisitor>

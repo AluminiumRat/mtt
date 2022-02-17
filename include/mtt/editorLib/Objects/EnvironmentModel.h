@@ -7,7 +7,10 @@ namespace mtt
   class EnvironmentModel : public EnvironmentObject
   {
     Q_OBJECT
-    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension)
+    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension,
+                            visitEnvironmentModel,
+                            visitConstEnvironmentModel,
+                            EnvironmentObject)
 
     Q_PROPERTY( QString filename
                 READ filename

@@ -2,7 +2,6 @@
 
 #include <mtt/application/EditCommands/SetPropertyCommand.h>
 #include <mtt/application/EditCommands/UndoStack.h>
-#include <mtt/application/Scene/object_cast.h>
 #include <mtt/application/Scene/Object.h>
 #include <mtt/application/Widgets/PropertiesWidgets/ReferenceWidget.h>
 #include <mtt/application/Widgets/SelectObjectsDialog.h>

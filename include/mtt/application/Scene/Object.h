@@ -7,30 +7,33 @@
 #include <mtt/application/Scene/ObjectVisitor.h>
 #include <mtt/utilities/UID.h>
 
-#define DEFINE_VISITOR_ACCEPT                                               \
+#define DEFINE_VISITOR_ACCEPT(VisitMethod, ConstVisitMethod)                \
 protected:                                                                  \
   inline virtual void accept(ObjectVisitor& visitor) override               \
   {                                                                         \
-    visitor.visit(*this);                                                   \
+    visitor.VisitMethod(*this);                                             \
   }                                                                         \
   inline virtual void accept(ObjectVisitor& visitor) const override         \
   {                                                                         \
-    visitor.visit(*this);                                                   \
+    visitor.ConstVisitMethod(*this);                                        \
   }
 
-#define DEFINE_EXTENSION_ACCEPT(ExtensionClass)                             \
+#define DEFINE_EXTENSION_ACCEPT(ExtensionClass,                             \
+                                VisitMethod,                                \
+                                ConstVisitMethod,                           \
+                                ParentClass)                                \
 protected:                                                                  \
   inline virtual void accept(mtt::ObjectVisitor& visitor) override          \
   {                                                                         \
     ExtensionClass* extension = visitor.getExtension<ExtensionClass>();     \
-    if(extension != nullptr) extension->visit(*this);                       \
-    else visitor.visit(*this);                                              \
+    if(extension != nullptr) extension->VisitMethod(*this);                 \
+    else ParentClass::accept(visitor);                                      \
   }                                                                         \
   inline virtual void accept(mtt::ObjectVisitor& visitor) const override    \
   {                                                                         \
     ExtensionClass* extension = visitor.getExtension<ExtensionClass>();     \
-    if(extension != nullptr) extension->visit(*this);                       \
-    else visitor.visit(*this);                                              \
+    if(extension != nullptr) extension->ConstVisitMethod(*this);            \
+    else ParentClass::accept(visitor);                                      \
   }
 
 namespace mtt

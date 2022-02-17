@@ -9,7 +9,10 @@ namespace mtt
   class AmbientLightObject : public LightObject
   {
     Q_OBJECT
-    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension)
+    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension,
+                            visitAmbientLightObject,
+                            visitConstAmbientLightObject,
+                            LightObject)
 
     Q_PROPERTY( float saturationDistance
                 READ saturationDistance

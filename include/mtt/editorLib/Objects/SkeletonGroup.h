@@ -9,7 +9,10 @@ namespace mtt
                                             SkeletonObject>
   {
     Q_OBJECT
-    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension)
+    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension,
+                            visitSkeletonGroup,
+                            visitConstSkeletonGroup,
+                            DisplayedObject)
 
   public:
     SkeletonGroup(const QString& name,

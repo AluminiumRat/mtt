@@ -10,7 +10,10 @@ class GeometryObject : public mtt::ScalableObject
 {
   Q_OBJECT
 
-  DEFINE_EXTENSION_ACCEPT(OEVisitorExtension)
+  DEFINE_EXTENSION_ACCEPT(OEVisitorExtension,
+                          visitGeometryObject,
+                          visitConstGeometryObject,
+                          mtt::ScalableObject)
 
 public:
   GeometryObject( const QString& name,

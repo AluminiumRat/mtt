@@ -31,16 +31,16 @@ void ObjectLoader::_readCubemapData(mtt::CubemapObject& object)
   object.setTextures(textures);
 }
 
-void ObjectLoader::visit(mtt::AmbientLightObject& object)
+void ObjectLoader::visitAmbientLightObject(mtt::AmbientLightObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitAmbientLightObject(object);
   object.setSaturationDistance(_stream.readFloat());
   _readCubemapData(object.ambientMap());
 }
 
-void ObjectLoader::visit(mtt::AnimationObject& object)
+void ObjectLoader::visitAnimationObject(mtt::AnimationObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitAnimationObject(object);
   uint32_t childNumber = _stream.readUint32();
   for (; childNumber != 0; childNumber--)
   {
@@ -72,9 +72,9 @@ mtt::UID ObjectLoader::_readUID()
   return _stream.readUID().mixedUID(_mixUIDValue);
 }
 
-void ObjectLoader::visit(mtt::AnimationTrack& object)
+void ObjectLoader::visitAnimationTrack(mtt::AnimationTrack& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitAnimationTrack(object);
   object.setEnabled(_stream.readBool());
 
   uint16_t keypointsNumber = _stream.readUint16();
@@ -107,9 +107,9 @@ void ObjectLoader::visit(mtt::AnimationTrack& object)
   object.setSkeletonId(_readUID());
 }
 
-void ObjectLoader::visit(mtt::BackgroundObject& object)
+void ObjectLoader::visitBackgroundObject(mtt::BackgroundObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitBackgroundObject(object);
   object.setLightEnabled(_stream.readBool());
   object.setLuminance(_stream.readFloat());
   object.setColor(_stream.readVec3());
@@ -118,9 +118,9 @@ void ObjectLoader::visit(mtt::BackgroundObject& object)
   _readCubemapData(object.cubemap());
 }
 
-void ObjectLoader::visit(mtt::DirectLightObject& object)
+void ObjectLoader::visitDirectLightObject(mtt::DirectLightObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitDirectLightObject(object);
   object.setRadius(_stream.readFloat());
   object.setShadowsEnabled(_stream.readBool());
   object.setShadowmapSize(_stream.readUint16());
@@ -128,36 +128,36 @@ void ObjectLoader::visit(mtt::DirectLightObject& object)
   object.setBlurSize(_stream.readFloat());
 }
 
-void ObjectLoader::visit(mtt::DisplayedObject& object)
+void ObjectLoader::visitDisplayedObject(mtt::DisplayedObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitDisplayedObject(object);
   object.setVisible(_stream.readBool());
 }
 
-void ObjectLoader::visit(mtt::EnvironmentModel& object)
+void ObjectLoader::visitEnvironmentModel(mtt::EnvironmentModel& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitEnvironmentModel(object);
   object.setFilename(_loadFilename());
 }
 
-void ObjectLoader::visit(GeometryObject& object)
+void ObjectLoader::visitGeometryObject(GeometryObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitGeometryObject(object);
   object.setSkeletonId(_readUID());
 }
 
-void ObjectLoader::visit(mtt::LightObject& object)
+void ObjectLoader::visitLightObject(mtt::LightObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitLightObject(object);
   object.setEnabled(_stream.readBool());
   object.setDistance(_stream.readFloat());
   object.setColor(_stream.readVec3());
   object.setBaseIlluminance(_stream.readFloat());
 }
 
-void ObjectLoader::visit(LODObject& object)
+void ObjectLoader::visitLODObject(LODObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitLODObject(object);
   object.setMinMppx(_stream.readFloat());
   object.setMaxMppx(_stream.readFloat());
 
@@ -171,9 +171,9 @@ void ObjectLoader::visit(LODObject& object)
   }
 }
 
-void ObjectLoader::visit(MaterialObject& object)
+void ObjectLoader::visitMaterialObject(MaterialObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitMaterialObject(object);
 
   object.setAlbedo(_stream.readVec3());
   object.setAlbedoTexture(_loadFilename());
@@ -246,9 +246,9 @@ std::unique_ptr<BoneRefBatch> ObjectLoader::readBoneRefs()
                                       false);
 }
 
-void ObjectLoader::visit(MeshObject& object)
+void ObjectLoader::visitMeshObject(MeshObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitMeshObject(object);
 
   mtt::CommonMeshGeometry geometry;
   _readGeometry(geometry);
@@ -257,27 +257,27 @@ void ObjectLoader::visit(MeshObject& object)
   object.setMaterialId(_readUID());
 }
 
-void ObjectLoader::visit(mtt::MovableObject& object)
+void ObjectLoader::visitMovableObject(mtt::MovableObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitMovableObject(object);
   object.setPosition(_stream.readVec3());
 }
 
-void ObjectLoader::visit(mtt::RotatableObject& object)
+void ObjectLoader::visitRotatableObject(mtt::RotatableObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitRotatableObject(object);
   object.setRotation(_stream.readQuat());
 }
 
-void ObjectLoader::visit(mtt::ScalableObject& object)
+void ObjectLoader::visitScalableObject(mtt::ScalableObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitScalableObject(object);
   object.setScale(_stream.readVec3());
 }
 
-void ObjectLoader::visit(mtt::SkeletonObject& object)
+void ObjectLoader::visitSkeletonObject(mtt::SkeletonObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitSkeletonObject(object);
   uint32_t childsNumber = _stream.readUint32();
   for (; childsNumber != 0; childsNumber--)
   {

@@ -8,7 +8,7 @@ namespace mtt
   {
     Q_OBJECT
 
-    DEFINE_VISITOR_ACCEPT
+    DEFINE_VISITOR_ACCEPT(visitObjectGroup, visitConstObjectGroup)
 
   public:
     ObjectGroup(const QString& name, bool canBeRenamed, const UID& id = UID());

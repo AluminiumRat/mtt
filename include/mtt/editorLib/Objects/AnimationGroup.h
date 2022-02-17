@@ -9,7 +9,10 @@ namespace mtt
   {
     Q_OBJECT
 
-    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension)
+    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension,
+                            visitAnimationGroup,
+                            visitConstAnimationGroup,
+                            Object)
 
   public:
     explicit AnimationGroup(const QString& name,

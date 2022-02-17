@@ -35,12 +35,12 @@ Object::~Object() noexcept
 
 void Object::accept(ObjectVisitor& visitor)
 {
-  visitor.visit(*this);
+  visitor.visitObject(*this);
 }
 
 void Object::accept(ObjectVisitor& visitor) const
 {
-  visitor.visit(*this);
+  visitor.visitConstObject(*this);
 }
 
 void Object::_setScene(Scene* newScene)

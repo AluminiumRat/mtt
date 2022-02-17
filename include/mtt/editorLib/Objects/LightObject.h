@@ -9,7 +9,10 @@ namespace mtt
   class LightObject : public EnvironmentObject
   {
     Q_OBJECT
-    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension)
+    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension,
+                            visitLightObject,
+                            visitConstLightObject,
+                            EnvironmentObject)
 
     Q_PROPERTY( bool enabled
                 READ enabled

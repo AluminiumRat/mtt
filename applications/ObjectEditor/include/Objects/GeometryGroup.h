@@ -9,7 +9,10 @@ class GeometryGroup : public mtt::SpecialGroup< mtt::DisplayedObject,
 {
   Q_OBJECT
 
-  DEFINE_EXTENSION_ACCEPT(OEVisitorExtension)
+  DEFINE_EXTENSION_ACCEPT(OEVisitorExtension,
+                          visitGeometryGroup,
+                          visitConstGeometryGroup,
+                          mtt::DisplayedObject)
 
 public:
   GeometryGroup(const QString& name,

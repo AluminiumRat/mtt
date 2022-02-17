@@ -26,23 +26,34 @@ private:
   ObjectSaver& operator = (const ObjectSaver&) = delete;
   virtual ~ObjectSaver() noexcept = default;
 
-  virtual void visit(const mtt::AmbientLightObject& object) override;
-  virtual void visit(const mtt::AnimationObject& object) override;
-  virtual void visit(const mtt::AnimationTrack& object) override;
-  virtual void visit(const mtt::BackgroundObject& object) override;
-  virtual void visit(const mtt::DirectLightObject& object) override;
-  virtual void visit(const mtt::DisplayedObject& object) override;
-  virtual void visit(const mtt::EnvironmentModel& object) override;
-  virtual void visit(const GeometryObject& object) override;
-  virtual void visit(const mtt::LightObject& object) override;
-  virtual void visit(const LODObject& object) override;
-  virtual void visit(const MaterialObject& object) override;
-  virtual void visit(const MeshObject& object) override;
-  virtual void visit(const mtt::MovableObject& object) override;
-  virtual void visit(const mtt::Object& object) override;
-  virtual void visit(const mtt::RotatableObject& object) override;
-  virtual void visit(const mtt::ScalableObject& object) override;
-  virtual void visit(const mtt::SkeletonObject& object) override;
+  virtual void visitConstAmbientLightObject(
+                                const mtt::AmbientLightObject& object) override;
+  virtual void visitConstAnimationObject(
+                                  const mtt::AnimationObject& object) override;
+  virtual void visitConstAnimationTrack(
+                                    const mtt::AnimationTrack& object) override;
+  virtual void visitConstBackgroundObject(
+                                  const mtt::BackgroundObject& object) override;
+  virtual void visitConstDirectLightObject(
+                                const mtt::DirectLightObject& object) override;
+  virtual void visitConstDisplayedObject(
+                                  const mtt::DisplayedObject& object) override;
+  virtual void visitConstEnvironmentModel(
+                                  const mtt::EnvironmentModel& object) override;
+  virtual void visitConstGeometryObject(const GeometryObject& object) override;
+  virtual void visitConstLightObject(const mtt::LightObject& object) override;
+  virtual void visitConstLODObject(const LODObject& object) override;
+  virtual void visitConstMaterialObject(const MaterialObject& object) override;
+  virtual void visitConstMeshObject(const MeshObject& object) override;
+  virtual void visitConstMovableObject(
+                                    const mtt::MovableObject& object) override;
+  virtual void visitConstObject(const mtt::Object& object) override;
+  virtual void visitConstRotatableObject(
+                                  const mtt::RotatableObject& object) override;
+  virtual void visitConstScalableObject(
+                                  const mtt::ScalableObject& object) override;
+  virtual void visitConstSkeletonObject(
+                                    const mtt::SkeletonObject& object) override;
 
   void _saveGeometry(const mtt::CommonMeshGeometry& geometry);
   void _saveBoneRefs(const BoneRefBatch& refs);

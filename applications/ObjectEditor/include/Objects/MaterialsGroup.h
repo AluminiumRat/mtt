@@ -9,7 +9,10 @@ class MaterialsGroup : public mtt::SpecialGroup<mtt::Object,
 {
   Q_OBJECT
 
-  DEFINE_EXTENSION_ACCEPT(OEVisitorExtension)
+  DEFINE_EXTENSION_ACCEPT(OEVisitorExtension,
+                          visitMaterialsGroup,
+                          visitConstMaterialsGroup,
+                          mtt::Object)
 
 public:
   inline MaterialsGroup(const QString& name,

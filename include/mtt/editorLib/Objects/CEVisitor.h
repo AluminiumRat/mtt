@@ -16,64 +16,82 @@ namespace mtt
     CEVisitorT& operator = (const CEVisitorT&) = delete;
     virtual ~CEVisitorT() noexcept = default;
 
-    inline virtual void visit(const AmbientLightObject& object) override;
-    inline virtual void visit(AmbientLightObject& object) override;
+    inline virtual void visitConstAmbientLightObject(
+                                    const AmbientLightObject& object) override;
+    inline virtual void visitAmbientLightObject(
+                                          AmbientLightObject& object) override;
 
-    inline virtual void visit(const AnimationGroup& object) override;
-    inline virtual void visit(AnimationGroup& object) override;
+    inline virtual void visitConstAnimationGroup(
+                                        const AnimationGroup& object) override;
+    inline virtual void visitAnimationGroup(AnimationGroup& object) override;
 
-    inline virtual void visit(const AnimationObject& object) override;
-    inline virtual void visit(AnimationObject& object) override;
+    inline virtual void visitConstAnimationObject(
+                                        const AnimationObject& object) override;
+    inline virtual void visitAnimationObject(AnimationObject& object) override;
 
-    inline virtual void visit(const AnimationTrack& object) override;
-    inline virtual void visit(AnimationTrack& object) override;
+    inline virtual void visitConstAnimationTrack(
+                                        const AnimationTrack& object) override;
+    inline virtual void visitAnimationTrack(AnimationTrack& object) override;
 
-    inline virtual void visit(const BackgroundObject& object) override;
-    inline virtual void visit(BackgroundObject& object) override;
+    inline virtual void visitConstBackgroundObject(
+                                      const BackgroundObject& object) override;
+    inline virtual void visitBackgroundObject(
+                                            BackgroundObject& object) override;
 
-    inline virtual void visit(const CubemapObject& object) override;
-    inline virtual void visit(CubemapObject& object) override;
+    inline virtual void visitConstCubemapObject(
+                                          const CubemapObject& object) override;
+    inline virtual void visitCubemapObject(CubemapObject& object) override;
 
-    inline virtual void visit(const DirectLightObject& object) override;
-    inline virtual void visit(DirectLightObject& object) override;
+    inline virtual void visitConstDirectLightObject(
+                                      const DirectLightObject& object) override;
+    inline virtual void visitDirectLightObject(
+                                            DirectLightObject& object) override;
 
-    inline virtual void visit(const DisplayedObject& object) override;
-    inline virtual void visit(DisplayedObject& object) override;
+    inline virtual void visitConstDisplayedObject(
+                                        const DisplayedObject& object) override;
+    inline virtual void visitDisplayedObject(DisplayedObject& object) override;
 
-    inline virtual void visit(const EnvironmentGroup& object) override;
-    inline virtual void visit(EnvironmentGroup& object) override;
+    inline virtual void visitConstEnvironmentGroup(
+                                      const EnvironmentGroup& object) override;
+    inline virtual void visitEnvironmentGroup(
+                                            EnvironmentGroup& object) override;
 
-    inline virtual void visit(const EnvironmentModel& object) override;
-    inline virtual void visit(EnvironmentModel& object) override;
+    inline virtual void visitConstEnvironmentModel(
+                                      const EnvironmentModel& object) override;
+    inline virtual void visitEnvironmentModel(
+                                            EnvironmentModel& object) override;
 
-    inline virtual void visit(const EnvironmentObject& object) override;
-    inline virtual void visit(EnvironmentObject& object) override;
+    inline virtual void visitConstEnvironmentObject(
+                                      const EnvironmentObject& object) override;
+    inline virtual void visitEnvironmentObject(
+                                            EnvironmentObject& object) override;
 
-    inline virtual void visit(const LightObject& object) override;
-    inline virtual void visit(LightObject& object) override;
+    inline virtual void visitConstLightObject(
+                                            const LightObject& object) override;
+    inline virtual void visitLightObject(LightObject& object) override;
 
-    inline virtual void visit(const MovableObject& object) override;
-    inline virtual void visit(MovableObject& object) override;
+    inline virtual void visitConstMovableObject(
+                                          const MovableObject& object) override;
+    inline virtual void visitMovableObject(MovableObject& object) override;
 
-    inline virtual void visit(const Object3D& object) override;
-    inline virtual void visit(Object3D& object) override;
+    inline virtual void visitConstObject3D(const Object3D& object) override;
+    inline virtual void visitObject3D(Object3D& object) override;
 
-    inline virtual void visit(const RotatableObject& object) override;
-    inline virtual void visit(RotatableObject& object) override;
+    inline virtual void visitConstRotatableObject(
+                                        const RotatableObject& object) override;
+    inline virtual void visitRotatableObject(RotatableObject& object) override;
 
-    inline virtual void visit(const ScalableObject& object) override;
-    inline virtual void visit(ScalableObject& object) override;
+    inline virtual void visitConstScalableObject(
+                                        const ScalableObject& object) override;
+    inline virtual void visitScalableObject(ScalableObject& object) override;
 
-    inline virtual void visit(const SkeletonGroup& object) override;
-    inline virtual void visit(SkeletonGroup& object) override;
+    inline virtual void visitConstSkeletonGroup(
+                                          const SkeletonGroup& object) override;
+    inline virtual void visitSkeletonGroup(SkeletonGroup& object) override;
 
-    inline virtual void visit(const SkeletonObject& object) override;
-    inline virtual void visit(SkeletonObject& object) override;
-
-    template<typename ObjectClass>
-    inline void visit(ObjectClass& objectRef);
-    template<typename ObjectClass>
-    inline void visit(const ObjectClass& objectRef);
+    inline virtual void visitConstSkeletonObject(
+                                        const SkeletonObject& object) override;
+    inline virtual void visitSkeletonObject(SkeletonObject& object) override;
 
   protected:
     inline virtual void* getExtension(
@@ -112,243 +130,251 @@ namespace mtt
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(const AnimationGroup& object)
+  inline void CEVisitorT<BaseVisitor>::visitConstAnimationGroup(
+                                                  const AnimationGroup& object)
   {
-    BaseVisitor* baseVisitor = this;
-    baseVisitor->visit(static_cast<const Object&>(object));
+    static_cast<BaseVisitor*>(this)->visitConstObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(AnimationGroup& object)
+  inline void CEVisitorT<BaseVisitor>::visitAnimationGroup(
+                                                        AnimationGroup& object)
   {
-    BaseVisitor* baseVisitor = this;
-    baseVisitor->visit(static_cast<Object&>(object));
+    static_cast<BaseVisitor*>(this)->visitObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(const AnimationObject& object)
+  inline void CEVisitorT<BaseVisitor>::visitConstAnimationObject(
+                                                  const AnimationObject& object)
   {
-    BaseVisitor* baseVisitor = this;
-    baseVisitor->visit(static_cast<const Object&>(object));
+    static_cast<BaseVisitor*>(this)->visitConstObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(AnimationObject& object)
+  inline void CEVisitorT<BaseVisitor>::visitAnimationObject(
+                                                        AnimationObject& object)
   {
-    BaseVisitor* baseVisitor = this;
-    baseVisitor->visit(static_cast<Object&>(object));
+    static_cast<BaseVisitor*>(this)->visitObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(const AnimationTrack& object)
+  inline void CEVisitorT<BaseVisitor>::visitConstAnimationTrack(
+                                                  const AnimationTrack& object)
   {
-    BaseVisitor* baseVisitor = this;
-    baseVisitor->visit(static_cast<const Object&>(object));
+    static_cast<BaseVisitor*>(this)->visitConstObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(AnimationTrack& object)
+  inline void CEVisitorT<BaseVisitor>::visitAnimationTrack(
+                                                        AnimationTrack& object)
   {
-    BaseVisitor* baseVisitor = this;
-    baseVisitor->visit(static_cast<Object&>(object));
+    static_cast<BaseVisitor*>(this)->visitObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(AmbientLightObject& object)
+  inline void CEVisitorT<BaseVisitor>::visitAmbientLightObject(
+                                                    AmbientLightObject& object)
   {
-    visit(static_cast<LightObject&>(object));
+    visitLightObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(const AmbientLightObject& object)
+  inline void CEVisitorT<BaseVisitor>::visitConstAmbientLightObject(
+                                              const AmbientLightObject& object)
   {
-    visit(static_cast<const LightObject&>(object));
+    visitConstLightObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(const BackgroundObject& object)
+  inline void CEVisitorT<BaseVisitor>::visitConstBackgroundObject(
+                                                const BackgroundObject& object)
   {
-    visit(static_cast<const RotatableObject&>(object));
+    visitConstRotatableObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(BackgroundObject& object)
+  inline void CEVisitorT<BaseVisitor>::visitBackgroundObject(
+                                                      BackgroundObject& object)
   {
-    visit(static_cast<RotatableObject&>(object));
+    visitRotatableObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(const CubemapObject& object)
+  inline void CEVisitorT<BaseVisitor>::visitConstCubemapObject(
+                                                    const CubemapObject& object)
   {
-    BaseVisitor* baseVisitor = this;
-    baseVisitor->visit(static_cast<const Object&>(object));
+    static_cast<BaseVisitor*>(this)->visitConstObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(CubemapObject& object)
+  inline void CEVisitorT<BaseVisitor>::visitCubemapObject(CubemapObject& object)
   {
-    BaseVisitor* baseVisitor = this;
-    baseVisitor->visit(static_cast<Object&>(object));
+    static_cast<BaseVisitor*>(this)->visitObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(DirectLightObject& object)
+  inline void CEVisitorT<BaseVisitor>::visitDirectLightObject(
+                                                      DirectLightObject& object)
   {
-    visit(static_cast<LightObject&>(object));
+    visitLightObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(const DirectLightObject& object)
+  inline void CEVisitorT<BaseVisitor>::visitConstDirectLightObject(
+                                                const DirectLightObject& object)
   {
-    visit(static_cast<const LightObject&>(object));
+    visitConstLightObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(const DisplayedObject& object)
+  inline void CEVisitorT<BaseVisitor>::visitConstDisplayedObject(
+                                                  const DisplayedObject& object)
   {
-    BaseVisitor* baseVisitor = this;
-    baseVisitor->visit(static_cast<const Object&>(object));
+    static_cast<BaseVisitor*>(this)->visitConstObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(DisplayedObject& object)
+  inline void CEVisitorT<BaseVisitor>::visitDisplayedObject(
+                                                        DisplayedObject& object)
   {
-    BaseVisitor* baseVisitor = this;
-    baseVisitor->visit(static_cast<Object&>(object));
+    static_cast<BaseVisitor*>(this)->visitObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(const EnvironmentGroup& object)
+  inline void CEVisitorT<BaseVisitor>::visitConstEnvironmentGroup(
+                                                const EnvironmentGroup& object)
   {
-    visit(static_cast<const DisplayedObject&>(object));
+    visitConstDisplayedObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(EnvironmentGroup& object)
+  inline void CEVisitorT<BaseVisitor>::visitEnvironmentGroup(
+                                                      EnvironmentGroup& object)
   {
-    visit(static_cast<DisplayedObject&>(object));
+    visitDisplayedObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(const EnvironmentModel& object)
+  inline void CEVisitorT<BaseVisitor>::visitConstEnvironmentModel(
+                                                const EnvironmentModel& object)
   {
-    visit(static_cast<const EnvironmentObject&>(object));
+    visitConstEnvironmentObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(EnvironmentModel& object)
+  inline void CEVisitorT<BaseVisitor>::visitEnvironmentModel(
+                                                      EnvironmentModel& object)
   {
-    visit(static_cast<EnvironmentObject&>(object));
+    visitEnvironmentObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(const EnvironmentObject& object)
+  inline void CEVisitorT<BaseVisitor>::visitConstEnvironmentObject(
+                                                const EnvironmentObject& object)
   {
-    visit(static_cast<const MovableObject&>(object));
+    visitConstMovableObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(EnvironmentObject& object)
+  inline void CEVisitorT<BaseVisitor>::visitEnvironmentObject(
+                                                      EnvironmentObject& object)
   {
-    visit(static_cast<MovableObject&>(object));
+    visitMovableObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(LightObject& object)
+  inline void CEVisitorT<BaseVisitor>::visitLightObject(LightObject& object)
   {
-    visit(static_cast<EnvironmentObject&>(object));
+    visitEnvironmentObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(const LightObject& object)
+  inline void CEVisitorT<BaseVisitor>::visitConstLightObject(
+                                                      const LightObject& object)
   {
-    visit(static_cast<const EnvironmentObject&>(object));
+    visitConstEnvironmentObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(const MovableObject& object)
+  inline void CEVisitorT<BaseVisitor>::visitConstMovableObject(
+                                                    const MovableObject& object)
   {
-    visit(static_cast<const RotatableObject&>(object));
+    visitConstRotatableObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(MovableObject& object)
+  inline void CEVisitorT<BaseVisitor>::visitMovableObject(
+                                                          MovableObject& object)
   {
-    visit(static_cast<RotatableObject&>(object));
+    visitRotatableObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(const Object3D& object)
+  inline void CEVisitorT<BaseVisitor>::visitConstObject3D(
+                                                        const Object3D& object)
   {
-    visit(static_cast<const DisplayedObject&>(object));
+    visitConstDisplayedObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(Object3D& object)
+  inline void CEVisitorT<BaseVisitor>::visitObject3D(Object3D& object)
   {
-    visit(static_cast<DisplayedObject&>(object));
+    visitDisplayedObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(const RotatableObject& object)
+  inline void CEVisitorT<BaseVisitor>::visitConstRotatableObject(
+                                                  const RotatableObject& object)
   {
-    visit(static_cast<const Object3D&>(object));
+    visitConstObject3D(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(RotatableObject& object)
+  inline void CEVisitorT<BaseVisitor>::visitRotatableObject(
+                                                        RotatableObject& object)
   {
-    visit(static_cast<Object3D&>(object));
+    visitObject3D(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(const ScalableObject& object)
+  inline void CEVisitorT<BaseVisitor>::visitConstScalableObject
+                                                  (const ScalableObject& object)
   {
-    visit(static_cast<const MovableObject&>(object));
+    visitConstMovableObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(ScalableObject& object)
+  inline void CEVisitorT<BaseVisitor>::visitScalableObject(
+                                                        ScalableObject& object)
   {
-    visit(static_cast<MovableObject&>(object));
+    visitMovableObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(const SkeletonGroup& object)
+  inline void CEVisitorT<BaseVisitor>::visitConstSkeletonGroup(
+                                                    const SkeletonGroup& object)
   {
-    visit(static_cast<const DisplayedObject&>(object));
+    visitConstDisplayedObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(SkeletonGroup& object)
+  inline void CEVisitorT<BaseVisitor>::visitSkeletonGroup(SkeletonGroup& object)
   {
-    visit(static_cast<DisplayedObject&>(object));
+    visitDisplayedObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(const SkeletonObject& object)
+  inline void CEVisitorT<BaseVisitor>::visitConstSkeletonObject(
+                                                  const SkeletonObject& object)
   {
-    visit(static_cast<const ScalableObject&>(object));
+    visitConstScalableObject(object);
   }
 
   template <typename BaseVisitor>
-  inline void CEVisitorT<BaseVisitor>::visit(SkeletonObject& object)
+  inline void CEVisitorT<BaseVisitor>::visitSkeletonObject(
+                                                        SkeletonObject& object)
   {
-    visit(static_cast<ScalableObject&>(object));
-  }
-
-  template <typename BaseVisitor>
-  template<typename ObjectClass>
-  inline void CEVisitorT<BaseVisitor>::visit(ObjectClass& objectRef)
-  {
-    BaseVisitor::visit(objectRef);
-  }
-
-  template <typename BaseVisitor>
-  template<typename ObjectClass>
-  inline void CEVisitorT<BaseVisitor>::visit(const ObjectClass& objectRef)
-  {
-    BaseVisitor::visit(objectRef);
+    visitScalableObject(object);
   }
 
   template <typename BaseVisitor>

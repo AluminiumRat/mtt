@@ -8,7 +8,10 @@ namespace mtt
   class DisplayedObject : public Object
   {
     Q_OBJECT
-    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension)
+    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension,
+                            visitDisplayedObject,
+                            visitConstDisplayedObject,
+                            Object)
 
     Q_PROPERTY( bool visible
                 READ visible

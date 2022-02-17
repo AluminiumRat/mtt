@@ -26,22 +26,23 @@ private:
   ObjectLoader& operator = (const ObjectLoader&) = delete;
   virtual ~ObjectLoader() noexcept = default;
 
-  virtual void visit(mtt::AmbientLightObject& object) override;
-  virtual void visit(mtt::AnimationObject& object) override;
-  virtual void visit(mtt::AnimationTrack& object) override;
-  virtual void visit(mtt::BackgroundObject& object) override;
-  virtual void visit(mtt::DirectLightObject& object) override;
-  virtual void visit(mtt::DisplayedObject& object) override;
-  virtual void visit(mtt::EnvironmentModel& object) override;
-  virtual void visit(GeometryObject& object) override;
-  virtual void visit(mtt::LightObject& object) override;
-  virtual void visit(LODObject& object) override;
-  virtual void visit(MaterialObject& object) override;
-  virtual void visit(MeshObject& object) override;
-  virtual void visit(mtt::MovableObject& object) override;
-  virtual void visit(mtt::RotatableObject& object) override;
-  virtual void visit(mtt::ScalableObject& object) override;
-  virtual void visit(mtt::SkeletonObject& object) override;
+  virtual void visitAmbientLightObject(
+                                      mtt::AmbientLightObject& object) override;
+  virtual void visitAnimationObject(mtt::AnimationObject& object) override;
+  virtual void visitAnimationTrack(mtt::AnimationTrack& object) override;
+  virtual void visitBackgroundObject(mtt::BackgroundObject& object) override;
+  virtual void visitDirectLightObject(mtt::DirectLightObject& object) override;
+  virtual void visitDisplayedObject(mtt::DisplayedObject& object) override;
+  virtual void visitEnvironmentModel(mtt::EnvironmentModel& object) override;
+  virtual void visitGeometryObject(GeometryObject& object) override;
+  virtual void visitLightObject(mtt::LightObject& object) override;
+  virtual void visitLODObject(LODObject& object) override;
+  virtual void visitMaterialObject(MaterialObject& object) override;
+  virtual void visitMeshObject(MeshObject& object) override;
+  virtual void visitMovableObject(mtt::MovableObject& object) override;
+  virtual void visitRotatableObject(mtt::RotatableObject& object) override;
+  virtual void visitScalableObject(mtt::ScalableObject& object) override;
+  virtual void visitSkeletonObject(mtt::SkeletonObject& object) override;
 
   QString _loadFilename();
   std::unique_ptr<BoneRefBatch> readBoneRefs();

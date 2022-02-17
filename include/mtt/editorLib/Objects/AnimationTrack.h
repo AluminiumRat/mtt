@@ -17,6 +17,11 @@ namespace mtt
   {
     Q_OBJECT
 
+    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension,
+                            visitAnimationTrack,
+                            visitConstAnimationTrack,
+                            Object)
+
     Q_PROPERTY( bool enabled
                 READ enabled
                 WRITE setEnabled
@@ -26,8 +31,6 @@ namespace mtt
                 SCRIPTABLE true
                 STORED true
                 USER false)
-
-    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension)
 
   public:
     using TimeType = Application::TimeType;

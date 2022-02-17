@@ -25,15 +25,14 @@ namespace mtt
     template<typename ExtensionClass>
     inline ExtensionClass* getExtension() noexcept;
 
+    virtual void visitConstObjectGroup(const ObjectGroup& object);
+    virtual void visitObjectGroup(ObjectGroup& object);
+
+    virtual void visitConstObject(const Object& object);
+    virtual void visitObject(Object& object);
+
   protected:
     inline virtual void* getExtension(ExtensionID id) noexcept;
-
-  public:
-    virtual void visit(const ObjectGroup& object);
-    virtual void visit(ObjectGroup& object);
-
-    virtual void visit(const Object& object);
-    virtual void visit(Object& object);
   };
 
   template<typename ExtensionClass>

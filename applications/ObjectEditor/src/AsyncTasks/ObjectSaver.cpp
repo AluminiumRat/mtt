@@ -35,16 +35,17 @@ void ObjectSaver::_writeCubemapData(const mtt::CubemapObject& object)
   }
 }
 
-void ObjectSaver::visit(const mtt::AmbientLightObject& object)
+void ObjectSaver::visitConstAmbientLightObject(
+                                          const mtt::AmbientLightObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitConstAmbientLightObject(object);
   _stream << object.saturationDistance();
   _writeCubemapData(object.ambientMap());
 }
 
-void ObjectSaver::visit(const mtt::AnimationObject& object)
+void ObjectSaver::visitConstAnimationObject(const mtt::AnimationObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitConstAnimationObject(object);
   uint32_t childNumber = object.childsNumber();
   _stream << childNumber;
   for (uint32_t childIndex = 0; childIndex < childNumber; childIndex++)
@@ -62,9 +63,9 @@ void ObjectSaver::_writeKeypoint( mtt::ValueKeypoint<ValueType,
   _stream << (uint8_t) keypoint.interpolation();
 }
 
-void ObjectSaver::visit(const mtt::AnimationTrack& object)
+void ObjectSaver::visitConstAnimationTrack(const mtt::AnimationTrack& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitConstAnimationTrack(object);
   _stream << object.enabled();
 
   _stream <<(uint16_t)object.positionKeypointNumber();
@@ -94,9 +95,10 @@ void ObjectSaver::visit(const mtt::AnimationTrack& object)
   _stream << object.skeletonRef().referencedId();
 }
 
-void ObjectSaver::visit(const mtt::BackgroundObject& object)
+void ObjectSaver::visitConstBackgroundObject(
+                                            const mtt::BackgroundObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitConstBackgroundObject(object);
   _stream << object.lightEnabled();
   _stream << object.luminance();
   _stream << object.color();
@@ -105,9 +107,10 @@ void ObjectSaver::visit(const mtt::BackgroundObject& object)
   _writeCubemapData(object.cubemap());
 }
 
-void ObjectSaver::visit(const mtt::DirectLightObject& object)
+void ObjectSaver::visitConstDirectLightObject(
+                                          const mtt::DirectLightObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitConstDirectLightObject(object);
   _stream << object.radius();
   _stream << object.shadowsEnabled();
   _stream << (uint16_t)object.shadowmapSize();
@@ -115,36 +118,37 @@ void ObjectSaver::visit(const mtt::DirectLightObject& object)
   _stream << object.blurSize();
 }
 
-void ObjectSaver::visit(const mtt::DisplayedObject& object)
+void ObjectSaver::visitConstDisplayedObject(const mtt::DisplayedObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitConstDisplayedObject(object);
   _stream << object.visible();
 }
 
-void ObjectSaver::visit(const mtt::EnvironmentModel& object)
+void ObjectSaver::visitConstEnvironmentModel(
+                                            const mtt::EnvironmentModel& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitConstEnvironmentModel(object);
   _writeFilename(object.filename());
 }
 
-void ObjectSaver::visit(const GeometryObject& object)
+void ObjectSaver::visitConstGeometryObject(const GeometryObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitConstGeometryObject(object);
   _stream << object.skeletonRef().referencedId();
 }
 
-void ObjectSaver::visit(const mtt::LightObject& object)
+void ObjectSaver::visitConstLightObject(const mtt::LightObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitConstLightObject(object);
   _stream << object.enabled();
   _stream << object.distance();
   _stream << object.color();
   _stream << object.baseIlluminance();
 }
 
-void ObjectSaver::visit(const LODObject& object)
+void ObjectSaver::visitConstLODObject(const LODObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitConstLODObject(object);
   _stream << object.minMppx();
   _stream << object.maxMppx();
 
@@ -156,9 +160,9 @@ void ObjectSaver::visit(const LODObject& object)
   }
 }
 
-void ObjectSaver::visit(const MaterialObject& object)
+void ObjectSaver::visitConstMaterialObject(const MaterialObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitConstMaterialObject(object);
 
   _stream << object.albedo();
   _writeFilename(object.albedoTexture());
@@ -221,9 +225,9 @@ void ObjectSaver::_saveBoneRefs(const BoneRefBatch& refs)
   }
 }
 
-void ObjectSaver::visit(const MeshObject& object)
+void ObjectSaver::visitConstMeshObject(const MeshObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitConstMeshObject(object);
 
   const mtt::CommonMeshGeometry& geometry = object.geometry();
   _saveGeometry(geometry);
@@ -231,33 +235,33 @@ void ObjectSaver::visit(const MeshObject& object)
   _stream << object.materialRef().referencedId();
 }
 
-void ObjectSaver::visit(const mtt::MovableObject& object)
+void ObjectSaver::visitConstMovableObject(const mtt::MovableObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitConstMovableObject(object);
   _stream << object.position();
 }
 
-void ObjectSaver::visit(const mtt::Object& object)
+void ObjectSaver::visitConstObject(const mtt::Object& object)
 {
   _stream << object.id();
   _stream << object.name();
 }
 
-void ObjectSaver::visit(const mtt::RotatableObject& object)
+void ObjectSaver::visitConstRotatableObject(const mtt::RotatableObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitConstRotatableObject(object);
   _stream << object.rotation();
 }
 
-void ObjectSaver::visit(const mtt::ScalableObject& object)
+void ObjectSaver::visitConstScalableObject(const mtt::ScalableObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitConstScalableObject(object);
   _stream << object.scale();
 }
 
-void ObjectSaver::visit(const mtt::SkeletonObject& object)
+void ObjectSaver::visitConstSkeletonObject(const mtt::SkeletonObject& object)
 {
-  OEVisitor::visit(object);
+  OEVisitor::visitConstSkeletonObject(object);
   uint32_t childNumber = object.childsNumber();
   _stream << childNumber;
   for (uint32_t childIndex = 0; childIndex < childNumber; childIndex++)

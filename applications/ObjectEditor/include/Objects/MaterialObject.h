@@ -9,6 +9,11 @@ class MaterialObject : public mtt::Object
 {
   Q_OBJECT
 
+  DEFINE_EXTENSION_ACCEPT(OEVisitorExtension,
+                          visitMaterialObject,
+                          visitConstMaterialObject,
+                          mtt::Object)
+
   Q_PROPERTY( glm::vec3 albedo
               READ albedo
               WRITE setAlbedo
@@ -158,8 +163,6 @@ class MaterialObject : public mtt::Object
               SCRIPTABLE true
               STORED true
               USER false)
-
-  DEFINE_EXTENSION_ACCEPT(OEVisitorExtension)
 
 public:
   MaterialObject( const QString& name,

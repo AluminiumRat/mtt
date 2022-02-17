@@ -12,8 +12,10 @@ namespace mtt
   class Object3D : public DisplayedObject
   {
     Q_OBJECT
-    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension)
-
+    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension,
+                            visitObject3D,
+                            visitConstObject3D,
+                            DisplayedObject)
   public:
     Object3D( const QString& name,
               bool canBeRenamed,

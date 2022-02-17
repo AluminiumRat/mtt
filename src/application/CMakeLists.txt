@@ -79,7 +79,6 @@ set(HEADERS
     "../../include/mtt/application/ResourceManager/Texture2DLibrary.h"
 
     "../../include/mtt/application/Scene/Object.h"
-    "../../include/mtt/application/Scene/object_cast.h"
     "../../include/mtt/application/Scene/ObjectGroup.h"
     "../../include/mtt/application/Scene/ObjectItemListModel.h"
     "../../include/mtt/application/Scene/ObjectItemTreeModel.h"

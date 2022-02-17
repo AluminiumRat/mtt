@@ -9,7 +9,10 @@ namespace mtt
   class ScalableObject : public MovableObject
   {
     Q_OBJECT
-    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension)
+    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension,
+                            visitScalableObject,
+                            visitConstScalableObject,
+                            MovableObject)
 
     Q_PROPERTY( glm::vec3 scale
                 READ scale

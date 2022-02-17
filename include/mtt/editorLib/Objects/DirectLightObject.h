@@ -7,7 +7,10 @@ namespace mtt
   class DirectLightObject : public LightObject
   {
     Q_OBJECT
-    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension)
+    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension,
+                            visitDirectLightObject,
+                            visitConstDirectLightObject,
+                            LightObject)
 
     Q_PROPERTY( float radius
                 READ radius

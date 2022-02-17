@@ -1,8 +1,6 @@
-#include <mtt/application/Scene/object_cast.h>
 #include <mtt/editorLib/Objects/AnimationTrack.h>
 #include <mtt/editorLib/Objects/DisplayedObject.h>
 
-#include <Objects/OEVisitor.h>
 #include <Objects/RootObject.h>
 #include <SceneTab/EditorObjectsItemModel.h>
 

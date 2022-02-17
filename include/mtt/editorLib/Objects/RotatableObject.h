@@ -9,7 +9,10 @@ namespace mtt
   class RotatableObject : public Object3D
   {
     Q_OBJECT
-    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension)
+    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension,
+                            visitRotatableObject,
+                            visitConstRotatableObject,
+                            Object3D)
 
     Q_PROPERTY( glm::quat rotation
                 READ rotation

@@ -7,7 +7,10 @@ namespace mtt
   class EnvironmentObject : public MovableObject
   {
     Q_OBJECT
-    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension)
+    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension,
+                            visitEnvironmentObject,
+                            visitConstEnvironmentObject,
+                            MovableObject)
 
   public:
     EnvironmentObject(const QString& name,

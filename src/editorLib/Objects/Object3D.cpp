@@ -1,7 +1,5 @@
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <mtt/application/Scene/object_cast.h>
-#include <mtt/editorLib/Objects/CEVisitor.h>
 #include <mtt/editorLib/Objects/Object3D.h>
 
 using namespace mtt;
@@ -41,7 +39,7 @@ void Object3D::_updateChildsTransform() noexcept
         childIndex++)
   {
     Object& child = subobject(childIndex);
-    Object3D* child3D = object_cast<Object3D, CEVisitor>(child);
+    Object3D* child3D = qobject_cast<Object3D*>(&child);
     if (child3D != nullptr)
     {
       child3D->setCoordSystemTransform(localToWorldTransform());
@@ -51,7 +49,7 @@ void Object3D::_updateChildsTransform() noexcept
 
 void Object3D::onSubobjectAdded(Object& object) noexcept
 {
-  Object3D* child3D = object_cast<Object3D, CEVisitor>(object);
+  Object3D* child3D = qobject_cast<Object3D*>(&object);
   if (child3D != nullptr)
   {
     child3D->setCoordSystemTransform(localToWorldTransform());
@@ -62,7 +60,7 @@ void Object3D::onSubobjectAdded(Object& object) noexcept
 
 void Object3D::onSubobjectRemoved(Object& object) noexcept
 {
-  Object3D* child3D = object_cast<Object3D, CEVisitor>(object);
+  Object3D* child3D = qobject_cast<Object3D*>(&object);
   if (child3D != nullptr) child3D->setCoordSystemTransform(glm::mat4(1));
 
   DisplayedObject::onSubobjectRemoved(object);

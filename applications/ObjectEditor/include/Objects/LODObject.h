@@ -12,6 +12,11 @@ class LODObject : public mtt::SpecialGroup< mtt::DisplayedObject,
 {
   Q_OBJECT
 
+  DEFINE_EXTENSION_ACCEPT(OEVisitorExtension,
+                          visitLODObject,
+                          visitConstLODObject,
+                          mtt::DisplayedObject)
+
   Q_PROPERTY( float minMppx
               READ minMppx
               WRITE setMinMppx
@@ -31,8 +36,6 @@ class LODObject : public mtt::SpecialGroup< mtt::DisplayedObject,
               SCRIPTABLE true
               STORED true
               USER false)
-
-  DEFINE_EXTENSION_ACCEPT(OEVisitorExtension)
 
 public:
   LODObject(const QString& name,

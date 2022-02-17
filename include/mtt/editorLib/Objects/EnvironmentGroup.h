@@ -9,7 +9,10 @@ namespace mtt
                                                 EnvironmentObject>
   {
     Q_OBJECT
-    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension)
+    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension,
+                            visitEnvironmentGroup,
+                            visitConstEnvironmentGroup,
+                            DisplayedObject)
 
   public:
     EnvironmentGroup( const QString& name,

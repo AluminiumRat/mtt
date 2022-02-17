@@ -1,6 +1,4 @@
-#include <mtt/application/Scene/object_cast.h>
 #include <mtt/editorLib/Objects/DisplayedObject.h>
-#include <mtt/editorLib/Objects/CEVisitor.h>
 
 using namespace mtt;
 
@@ -40,8 +38,7 @@ void DisplayedObject::_updateCompleteVisible() noexcept
       childIndex++)
   {
     Object& child = subobject(childIndex);
-    DisplayedObject* displayedChild =
-                                object_cast<DisplayedObject, CEVisitor>(child);
+    DisplayedObject* displayedChild = qobject_cast<DisplayedObject*>(&child);
     if(displayedChild != nullptr) displayedChild->setParentVisible(newValue);
   }
 
@@ -50,8 +47,7 @@ void DisplayedObject::_updateCompleteVisible() noexcept
 
 void DisplayedObject::onSubobjectAdded(Object& object) noexcept
 {
-  DisplayedObject* displayedChild =
-                                object_cast<DisplayedObject, CEVisitor>(object);
+  DisplayedObject* displayedChild = qobject_cast<DisplayedObject*>(&object);
   if(displayedChild != nullptr)
   {
     displayedChild->setParentVisible(completeVisible());
@@ -62,8 +58,7 @@ void DisplayedObject::onSubobjectAdded(Object& object) noexcept
 
 void DisplayedObject::onSubobjectRemoved(Object& object) noexcept
 {
-  DisplayedObject* displayedChild =
-                                object_cast<DisplayedObject, CEVisitor>(object);
+  DisplayedObject* displayedChild = qobject_cast<DisplayedObject*>(&object);
   if (displayedChild != nullptr) displayedChild->setParentVisible(true);
 
   Object::onSubobjectRemoved(object);

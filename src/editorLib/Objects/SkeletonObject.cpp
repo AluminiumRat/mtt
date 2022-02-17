@@ -1,5 +1,3 @@
-#include <mtt/application/Scene/object_cast.h>
-#include <mtt/editorLib/Objects/CEVisitor.h>
 #include <mtt/editorLib/Objects/SkeletonObject.h>
 #include <mtt/utilities/static_cast_unique_ptr.h>
 
@@ -34,15 +32,14 @@ std::unique_ptr<SkeletonObject> SkeletonObject::removeChild(
 bool SkeletonObject::subobjectCanBeAdded(const Object& subobject) const noexcept
 {
   const SkeletonObject* skeleton =
-                        object_cast<const SkeletonObject, CEVisitor>(subobject);
+                                qobject_cast<const SkeletonObject*>(&subobject);
   return skeleton != nullptr;
 }
 
 std::unique_ptr<Object> SkeletonObject::tryAddSubobject(
                                                 std::unique_ptr<Object> object)
 {
-  SkeletonObject* skeleton =
-                          object_cast<SkeletonObject, CEVisitor>(object.get());
+  SkeletonObject* skeleton = qobject_cast<SkeletonObject*>(object.get());
   if(skeleton == nullptr) return std::move(object);
   addChild(static_cast_unique_ptr<SkeletonObject>(std::move(object)));
   return nullptr;
@@ -52,7 +49,7 @@ bool SkeletonObject::subobjectCanBeRemoved(
                                         const Object& subobject) const noexcept
 {
   const SkeletonObject* skeleton =
-                        object_cast<const SkeletonObject, CEVisitor>(subobject);
+                                qobject_cast<const SkeletonObject*>(&subobject);
   return skeleton != nullptr;
 }
 
@@ -60,7 +57,7 @@ std::unique_ptr<Object> SkeletonObject::tryRemoveSubobject(
                                                   Object& subobject,
                                                   bool removeFromScene) noexcept
 {
-  SkeletonObject* skeleton = object_cast<SkeletonObject, CEVisitor>(subobject);
+  SkeletonObject* skeleton = qobject_cast<SkeletonObject*>(&subobject);
   if(skeleton == nullptr) return nullptr;
   return removeChild(static_cast<SkeletonObject&>(subobject), removeFromScene);
 }

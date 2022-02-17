@@ -11,7 +11,10 @@ class BoneRefBatch : public mtt::Object
 {
   Q_OBJECT
 
-  DEFINE_EXTENSION_ACCEPT(OEVisitorExtension)
+  DEFINE_EXTENSION_ACCEPT(OEVisitorExtension,
+                          visitBoneRefBatch,
+                          visitConstBoneRefBatch,
+                          mtt::Object)
 
 public:
   BoneRefBatch( std::vector<std::unique_ptr<BoneRefObject>>&& refs,

@@ -22,22 +22,20 @@ void ObjectVisitor::process(Object& object)
   object.accept(*this);
 }
 
-void ObjectVisitor::visit(const Object& object)
+void ObjectVisitor::visitConstObject(const Object& object)
 {
 }
 
-void ObjectVisitor::visit(Object& object)
+void ObjectVisitor::visitObject(Object& object)
 {
 }
 
-#define DEFINE_VISIT(ObjectClass, ParentClass)                                \
-void ObjectVisitor::visit(const ObjectClass& object)                          \
-{                                                                             \
-  visit(static_cast<const ParentClass&>(object));                             \
-}                                                                             \
-void ObjectVisitor::visit(ObjectClass& object)                                \
-{                                                                             \
-  visit(static_cast<ParentClass&>(object));                                   \
+void ObjectVisitor::visitConstObjectGroup(const ObjectGroup& object)
+{
+  visitConstObject(object);
 }
 
-DEFINE_VISIT(ObjectGroup, Object);
+void ObjectVisitor::visitObjectGroup(ObjectGroup& object)
+{
+  visitObject(object);
+}

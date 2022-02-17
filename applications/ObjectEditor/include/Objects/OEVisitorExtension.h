@@ -18,30 +18,30 @@ public:
   static mtt::ObjectVisitor::ExtensionID extensionID;
 
 public:
-  virtual void visit(const BoneRefBatch& object) = 0;
-  virtual void visit(BoneRefBatch& object) = 0;
+  virtual void visitConstBoneRefBatch(const BoneRefBatch& object) = 0;
+  virtual void visitBoneRefBatch(BoneRefBatch& object) = 0;
 
-  virtual void visit(const BoneRefObject& object) = 0;
-  virtual void visit(BoneRefObject& object) = 0;
+  virtual void visitConstBoneRefObject(const BoneRefObject& object) = 0;
+  virtual void visitBoneRefObject(BoneRefObject& object) = 0;
 
-  virtual void visit(const GeometryGroup& object) = 0;
-  virtual void visit(GeometryGroup& object) = 0;
+  virtual void visitConstGeometryGroup(const GeometryGroup& object) = 0;
+  virtual void visitGeometryGroup(GeometryGroup& object) = 0;
 
-  virtual void visit(const GeometryObject& object) = 0;
-  virtual void visit(GeometryObject& object) = 0;
+  virtual void visitConstGeometryObject(const GeometryObject& object) = 0;
+  virtual void visitGeometryObject(GeometryObject& object) = 0;
 
-  virtual void visit(const LODObject& object) = 0;
-  virtual void visit(LODObject& object) = 0;
+  virtual void visitConstLODObject(const LODObject& object) = 0;
+  virtual void visitLODObject(LODObject& object) = 0;
 
-  virtual void visit(const MaterialObject& object) = 0;
-  virtual void visit(MaterialObject& object) = 0;
+  virtual void visitConstMaterialObject(const MaterialObject& object) = 0;
+  virtual void visitMaterialObject(MaterialObject& object) = 0;
 
-  virtual void visit(const MaterialsGroup& object) = 0;
-  virtual void visit(MaterialsGroup& object) = 0;
+  virtual void visitConstMaterialsGroup(const MaterialsGroup& object) = 0;
+  virtual void visitMaterialsGroup(MaterialsGroup& object) = 0;
 
-  virtual void visit(const MeshObject& object) = 0;
-  virtual void visit(MeshObject& object) = 0;
+  virtual void visitConstMeshObject(const MeshObject& object) = 0;
+  virtual void visitMeshObject(MeshObject& object) = 0;
 
-  virtual void visit(const RootObject& object) = 0;
-  virtual void visit(RootObject& object) = 0;
+  virtual void visitConstRootObject(const RootObject& object) = 0;
+  virtual void visitRootObject(RootObject& object) = 0;
 };

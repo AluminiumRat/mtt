@@ -10,7 +10,10 @@ namespace mtt
   class CubemapObject : public Object
   {
     Q_OBJECT
-    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension)
+    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension,
+                            visitCubemapObject,
+                            visitConstCubemapObject,
+                            Object)
 
     Q_PROPERTY( std::array<QString, 6> textures
                 READ textures

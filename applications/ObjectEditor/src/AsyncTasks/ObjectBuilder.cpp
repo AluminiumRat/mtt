@@ -7,57 +7,64 @@ struct ObjectBuilder::ObjectTypeParser : public OEVisitor
 {
   ObjectBuilder::ObjectType type = ObjectBuilder::ObjectType::Object;
 
-  virtual void visit(const mtt::AmbientLightObject& object) override
+  virtual void visitConstAmbientLightObject(
+                                const mtt::AmbientLightObject& object) override
   {
     type = ObjectBuilder::ObjectType::AmbientLight;
   }
 
-  virtual void visit(const mtt::AnimationObject& object) override
+  virtual void visitConstAnimationObject(
+                                    const mtt::AnimationObject& object) override
   {
     type = ObjectBuilder::ObjectType::Animation;
   }
 
-  virtual void visit(const mtt::AnimationTrack& object) override
+  virtual void visitConstAnimationTrack(
+                                    const mtt::AnimationTrack& object) override
   {
     type = ObjectBuilder::ObjectType::AnimationTrack;
   }
 
-  virtual void visit(const mtt::BackgroundObject& object) override
+  virtual void visitConstBackgroundObject(
+                                  const mtt::BackgroundObject& object) override
   {
     type = ObjectBuilder::ObjectType::Background;
   }
 
-  virtual void visit(const mtt::DirectLightObject& object) override
+  virtual void visitConstDirectLightObject(
+                                  const mtt::DirectLightObject& object) override
   {
     type = ObjectBuilder::ObjectType::DirectLight;
   }
 
-  virtual void visit(const mtt::EnvironmentObject& object) override
+  virtual void visitConstEnvironmentObject(
+                                  const mtt::EnvironmentObject& object) override
   {
     type = ObjectBuilder::ObjectType::EnvironmentModel;
   }
 
-  virtual void visit(const LODObject& object) override
+  virtual void visitConstLODObject(const LODObject& object) override
   {
     type = ObjectBuilder::ObjectType::LOD;
   }
 
-  virtual void visit(const MaterialObject& object) override
+  virtual void visitConstMaterialObject(const MaterialObject& object) override
   {
     type = ObjectBuilder::ObjectType::Material;
   }
 
-  virtual void visit(const MeshObject& object) override
+  virtual void visitConstMeshObject(const MeshObject& object) override
   {
     type = ObjectBuilder::ObjectType::Mesh;
   }
 
-  virtual void visit(const mtt::Object& object) override
+  virtual void visitConstObject(const mtt::Object& object) override
   {
     type = ObjectBuilder::ObjectType::Object;
   }
 
-  virtual void visit(const mtt::SkeletonObject& object) override
+  virtual void visitConstSkeletonObject(
+                                    const mtt::SkeletonObject& object) override
   {
     type = ObjectBuilder::ObjectType::Skeleton;
   }

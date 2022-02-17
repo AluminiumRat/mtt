@@ -7,7 +7,10 @@ namespace mtt
   class SkeletonObject : public ScalableObject
   {
     Q_OBJECT
-    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension)
+    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension,
+                            visitSkeletonObject,
+                            visitConstSkeletonObject,
+                            ScalableObject)
 
   public:
     SkeletonObject( const QString& name,

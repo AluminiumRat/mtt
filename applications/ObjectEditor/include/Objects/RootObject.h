@@ -14,6 +14,11 @@ class RootObject : public mtt::Object
 {
   Q_OBJECT
 
+  DEFINE_EXTENSION_ACCEPT(OEVisitorExtension,
+                          visitRootObject,
+                          visitConstRootObject,
+                          mtt::Object)
+
 public:
   RootObject( const QString& name,
               bool canBeRenamed,

@@ -11,7 +11,10 @@ namespace mtt
   class BackgroundObject : public RotatableObject
   {
     Q_OBJECT
-    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension)
+    DEFINE_EXTENSION_ACCEPT(CEVisitorExtension,
+                            visitBackgroundObject,
+                            visitConstBackgroundObject,
+                            RotatableObject)
 
     Q_PROPERTY( bool lightEnabled
                 READ lightEnabled

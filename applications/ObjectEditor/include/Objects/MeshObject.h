@@ -11,7 +11,10 @@ class MeshObject : public GeometryObject
 {
   Q_OBJECT
 
-  DEFINE_EXTENSION_ACCEPT(OEVisitorExtension)
+  DEFINE_EXTENSION_ACCEPT(OEVisitorExtension,
+                          visitMeshObject,
+                          visitConstMeshObject,
+                          GeometryObject)
 
 public:
   MeshObject( const QString& name,
