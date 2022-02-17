@@ -1,9 +1,10 @@
-#include <AnimationPlayer.h>
+#include <mtt/editorLib/AnimationPlayer.h>
+
 #include <EditorUndoStack.h>
 
 #define STACK_SIZE 20
 
-EditorUndoStack::EditorUndoStack(AnimationPlayer& animationPlayer) :
+EditorUndoStack::EditorUndoStack(mtt::AnimationPlayer& animationPlayer) :
   UndoStack(STACK_SIZE),
   _animationPlayer(animationPlayer)
 {

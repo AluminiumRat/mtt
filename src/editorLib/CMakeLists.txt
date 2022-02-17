@@ -59,10 +59,41 @@ set(HEADERS
     "../../include/mtt/editorLib/Objects/ScalableObject.h"
     "../../include/mtt/editorLib/Objects/SkeletonGroup.h"
     "../../include/mtt/editorLib/Objects/SkeletonObject.h"
+
+    "../../include/mtt/editorLib/SceneTab/AmbientLightWidget.h"
+    "../../include/mtt/editorLib/SceneTab/AnimationObjectWidget.h"
+    "../../include/mtt/editorLib/SceneTab/AnimationTrackWidget.h"
+    "../../include/mtt/editorLib/SceneTab/BackgroundWidget.h"
+    "../../include/mtt/editorLib/SceneTab/CubemapWidget.h"
+    "../../include/mtt/editorLib/SceneTab/DirectLightWidget.h"
+    "../../include/mtt/editorLib/SceneTab/EditorObjectsItemModel.h"
+    "../../include/mtt/editorLib/SceneTab/EnvironmentModelWidget.h"
+    "../../include/mtt/editorLib/SceneTab/LightWidget.h"
+    "../../include/mtt/editorLib/SceneTab/MovableObjectWidget.h"
+    "../../include/mtt/editorLib/SceneTab/PropertiesWidgetFactory.h"
+    "../../include/mtt/editorLib/SceneTab/RotatableObjectWidget.h"
+    "../../include/mtt/editorLib/SceneTab/ScalableObjectWidget.h"
+    "../../include/mtt/editorLib/SceneTab/SceneTab.h"
+    "../../include/mtt/editorLib/SceneTab/SceneTreeView.h"
+    "../../include/mtt/editorLib/SceneTab/VisiblePropertyWidget.h"
+
+    "../../include/mtt/editorLib/AnimationPlayer.h"
     )
 
 set(UI_FILES
-    ""
+    "SceneTab/AmbientLightWidget.ui"
+    "SceneTab/AnimationObjectWidget.ui"
+    "SceneTab/AnimationTrackWidget.ui"
+    "SceneTab/BackgroundWidget.ui"
+    "SceneTab/CubemapWidget.ui"
+    "SceneTab/DirectLightWidget.ui"
+    "SceneTab/EnvironmentModelWidget.ui"
+    "SceneTab/LightWidget.ui"
+    "SceneTab/MovableObjectWidget.ui"
+    "SceneTab/RotatableObjectWidget.ui"
+    "SceneTab/ScalableObjectWidget.ui"
+    "SceneTab/SceneTab.ui"
+    "SceneTab/VisiblePropertyWidget.ui"
     )
 
 set(SOURCES
@@ -85,6 +116,25 @@ set(SOURCES
     "Objects/ScalableObject.cpp"
     "Objects/SkeletonGroup.cpp"
     "Objects/SkeletonObject.cpp"
+
+    "SceneTab/AmbientLightWidget.cpp"
+    "SceneTab/AnimationObjectWidget.cpp"
+    "SceneTab/AnimationTrackWidget.cpp"
+    "SceneTab/BackgroundWidget.cpp"
+    "SceneTab/CubemapWidget.cpp"
+    "SceneTab/DirectLightWidget.cpp"
+    "SceneTab/EditorObjectsItemModel.cpp"
+    "SceneTab/EnvironmentModelWidget.cpp"
+    "SceneTab/LightWidget.cpp"
+    "SceneTab/MovableObjectWidget.cpp"
+    "SceneTab/PropertiesWidgetFactory.cpp"
+    "SceneTab/RotatableObjectWidget.cpp"
+    "SceneTab/ScalableObjectWidget.cpp"
+    "SceneTab/SceneTab.cpp"
+    "SceneTab/SceneTreeView.cpp"
+    "SceneTab/VisiblePropertyWidget.cpp"
+
+    "AnimationPlayer.cpp"
     )
 
 add_library(editorLib

@@ -2,8 +2,8 @@
 #include <mtt/application/Widgets/PropertiesWidgets/FloatPropertyLinearSlider.h>
 #include <mtt/application/Widgets/PropertiesWidgets/FloatPropertyProgressiveSlider.h>
 #include <mtt/application/Widgets/PropertiesWidgets/FloatPropertySpin.h>
+#include <mtt/application/Widgets/PropertiesWidgets/FilenamePropertyWidget.h>
 
-#include <SceneTab/FilenamePropertyWidget.h>
 #include <SceneTab/MaterialWidget.h>
 
 #include <GeneratedFiles/ui_MaterialWidget.h>
@@ -31,7 +31,7 @@ MaterialWidget::MaterialWidget( MaterialObject& object,
                                                 undoStack);
   _ui->albedoColorLayout->addWidget(albedoColorWidget, 3);
 
-  using TextureWidget = FilenamePropertyWidget<MaterialObject>;
+  using TextureWidget = mtt::FilenamePropertyWidget<MaterialObject>;
   TextureWidget* albedoTextureWidget =
                 new TextureWidget(object,
                                   &MaterialObject::albedoTexture,

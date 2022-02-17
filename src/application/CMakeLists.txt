@@ -94,6 +94,7 @@ set(HEADERS
     "../../include/mtt/application/Widgets/PropertiesWidgets/BoolPropertyWidget.h"
     "../../include/mtt/application/Widgets/PropertiesWidgets/ColorPropertyWidget.h"
     "../../include/mtt/application/Widgets/PropertiesWidgets/ColorWidget.h"
+    "../../include/mtt/application/Widgets/PropertiesWidgets/FilenamePropertyWidget.h"
     "../../include/mtt/application/Widgets/PropertiesWidgets/FloatPropertyLinearSlider.h"
     "../../include/mtt/application/Widgets/PropertiesWidgets/FloatPropertyProgressiveSlider.h"
     "../../include/mtt/application/Widgets/PropertiesWidgets/FloatPropertySpin.h"

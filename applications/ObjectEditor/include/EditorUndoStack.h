@@ -2,12 +2,15 @@
 
 #include <mtt/application/EditCommands/UndoStack.h>
 
-class AnimationPlayer;
+namespace mtt
+{
+  class AnimationPlayer;
+}
 
 class EditorUndoStack : public mtt::UndoStack
 {
 public:
-  explicit EditorUndoStack(AnimationPlayer& animationPlayer);
+  explicit EditorUndoStack(mtt::AnimationPlayer& animationPlayer);
   EditorUndoStack(const EditorUndoStack&) = delete;
   EditorUndoStack& operator = (const EditorUndoStack&) = delete;
   virtual ~EditorUndoStack() noexcept = default;
@@ -19,5 +22,5 @@ public:
   virtual void clear() noexcept override;
 
 private:
-  AnimationPlayer& _animationPlayer;
+  mtt::AnimationPlayer& _animationPlayer;
 };
