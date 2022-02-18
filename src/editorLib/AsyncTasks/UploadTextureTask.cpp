@@ -1,12 +1,13 @@
 #include <QtCore/QObject>
 
+#include <mtt/editorLib/AsyncTasks/UploadTextureTask.h>
+#include <mtt/editorLib/EditorApplication.h>
 #include <mtt/render/Mesh/MeshExtraData.h>
 
-#include <mtt/editorLib/EditorApplication.h>
-#include <AsyncTasks/UploadTextureTask.h>
+using namespace mtt;
 
 UploadTextureTask::UploadTextureTask( const QString& filename,
-                                      mtt::MeshExtraData& dstData,
+                                      MeshExtraData& dstData,
                                       const char* samplerName) :
   AbstractAsyncTask(QObject::tr("Upload texture"),
                     AbstractAsyncTask::INDEPENDENT,
@@ -21,14 +22,13 @@ void UploadTextureTask::asyncPart()
 {
   if(_filename.isEmpty()) return;
 
-  mtt::Texture2DLibrary& textureLibrary =
-    mtt::EditorApplication::instance().textureLibrary;
-  mtt::LogicalDevice& device = mtt::Application::instance().displayDevice();
-  std::shared_ptr<mtt::Texture2D> texture = textureLibrary.load(_filename,
-                                                                device,
-                                                                true);
-  _sampler.reset(new mtt::Sampler(mtt::PipelineResource::STATIC,
-                                  device));
+  Texture2DLibrary& textureLibrary =
+                                  EditorApplication::instance().textureLibrary;
+  LogicalDevice& device = Application::instance().displayDevice();
+  std::shared_ptr<Texture2D> texture = textureLibrary.load( _filename,
+                                                            device,
+                                                            true);
+  _sampler.reset(new Sampler(PipelineResource::STATIC, device));
   _sampler->setAttachedTexture(texture);
 }
 

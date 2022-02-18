@@ -1,10 +1,10 @@
 #include <stdexcept>
 
+#include <mtt/editorLib/AsyncTasks/UploadTextureTask.h>
 #include <mtt/editorLib/EditorApplication.h>
 #include <mtt/render/Mesh/MeshExtraData.h>
 #include <mtt/utilities/Log.h>
 
-#include <AsyncTasks/UploadTextureTask.h>
 #include <Render/MaterialObserver.h>
 
 MaterialObserver::MaterialObserver( MaterialObject& material,
@@ -114,8 +114,8 @@ void MaterialObserver::_updateTexture(const QString& filename,
     if(filename.isEmpty()) _extraData.removeSampler(samplerName);
     else
     {
-      std::unique_ptr<UploadTextureTask> task;
-      task.reset(new UploadTextureTask(filename, _extraData, samplerName));
+      std::unique_ptr<mtt::UploadTextureTask> task;
+      task.reset(new mtt::UploadTextureTask(filename, _extraData, samplerName));
       mtt::AsyncTaskQueue& queue =
                             mtt::EditorApplication::instance().asyncTaskQueue;
       stopper = queue.addTaskWithStopper(std::move(task));

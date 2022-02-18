@@ -45,6 +45,9 @@ add_definitions(${Qt5Core_DEFINITIONS}
 
 set(HEADERS
     "../../include/mtt/editorLib/AsyncTasks/AddAnimationFromFbxTask.h"
+    "../../include/mtt/editorLib/AsyncTasks/LoadEnvironmentModelTask.h"
+    "../../include/mtt/editorLib/AsyncTasks/UploadCubetextureTask.h"
+    "../../include/mtt/editorLib/AsyncTasks/UploadTextureTask.h"
 
     "../../include/mtt/editorLib/Manipulator/AxisManipulator.h"
     "../../include/mtt/editorLib/Manipulator/EditorManipulatorController.h"
@@ -118,6 +121,9 @@ set(UI_FILES
 
 set(SOURCES
     "AsyncTasks/AddAnimationFromFbxTask.cpp"
+    "AsyncTasks/LoadEnvironmentModelTask.cpp"
+    "AsyncTasks/UploadCubetextureTask.cpp"
+    "AsyncTasks/UploadTextureTask.cpp"
 
     "Manipulator/AxisManipulator.cpp"
     "Manipulator/EditorManipulatorController.cpp"

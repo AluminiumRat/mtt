@@ -47,7 +47,6 @@ set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 
 set(HEADERS
     "include/AsyncTasks/AddModelFromFbxTask.h"
-    "include/AsyncTasks/LoadEnvironmentModelTask.h"
     "include/AsyncTasks/LoadEnvironmentTask.h"
     "include/AsyncTasks/LoadModelTask.h"
     "include/AsyncTasks/ObjectBuilder.h"
@@ -55,8 +54,6 @@ set(HEADERS
     "include/AsyncTasks/ObjectSaver.h"
     "include/AsyncTasks/SaveEnvironmentTask.h"
     "include/AsyncTasks/SaveModelTask.h"
-    "include/AsyncTasks/UploadCubetextureTask.h"
-    "include/AsyncTasks/UploadTextureTask.h"
 
     "include/Objects/BoneRefBatch.h"
     "include/Objects/BoneRefObject.h"
@@ -108,7 +105,6 @@ set(HEADERS
 
 set(SOURCES
     "src/AsyncTasks/AddModelFromFbxTask.cpp"
-    "src/AsyncTasks/LoadEnvironmentModelTask.cpp"
     "src/AsyncTasks/LoadEnvironmentTask.cpp"
     "src/AsyncTasks/LoadModelTask.cpp"
     "src/AsyncTasks/ObjectBuilder.cpp"
@@ -116,8 +112,6 @@ set(SOURCES
     "src/AsyncTasks/ObjectSaver.cpp"
     "src/AsyncTasks/SaveEnvironmentTask.cpp"
     "src/AsyncTasks/SaveModelTask.cpp"
-    "src/AsyncTasks/UploadCubetextureTask.cpp"
-    "src/AsyncTasks/UploadTextureTask.cpp"
 
     "src/Objects/BoneRefBatch.cpp"
     "src/Objects/BoneRefObject.cpp"

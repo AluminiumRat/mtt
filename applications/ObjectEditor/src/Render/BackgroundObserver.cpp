@@ -4,7 +4,6 @@
 #include <mtt/editorLib/Objects/BackgroundObject.h>
 #include <mtt/utilities/Log.h>
 
-#include <AsyncTasks/UploadCubetextureTask.h>
 #include <Render/BackgroundObserver.h>
 
 BackgroundObserver::BackgroundObserver( mtt::BackgroundObject& object,

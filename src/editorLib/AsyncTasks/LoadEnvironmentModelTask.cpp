@@ -3,10 +3,11 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QObject>
 
+#include <mtt/editorLib/AsyncTasks/LoadEnvironmentModelTask.h>
 #include <mtt/editorLib/EditorApplication.h>
 #include <mtt/utilities/Abort.h>
 
-#include <AsyncTasks/LoadEnvironmentModelTask.h>
+using namespace mtt;
 
 LoadEnvironmentModelTask::LoadEnvironmentModelTask( const QString& filename,
                                                     const Callback& callback) :
@@ -16,28 +17,26 @@ LoadEnvironmentModelTask::LoadEnvironmentModelTask( const QString& filename,
   _filename(filename),
   _callback(callback)
 {
-  if(!_callback) mtt::Abort("LoadEnvironmentModelTask::LoadEnvironmentModelTask: callback is empty");
+  if(!_callback) Abort("LoadEnvironmentModelTask::LoadEnvironmentModelTask: callback is empty");
 }
 
 void LoadEnvironmentModelTask::asyncPart()
 {
-  mtt::LogicalDevice& device = mtt::EditorApplication::instance().displayDevice();
+  LogicalDevice& device = EditorApplication::instance().displayDevice();
 
   QFileInfo fileInfo(_filename);
   QString extension = fileInfo.suffix();
 
   if(extension == "mmd")
   {
-    mtt::MMDModelLibrary& library =
-      mtt::EditorApplication::instance().mmdModelLibrary;
+    MMDModelLibrary& library = EditorApplication::instance().mmdModelLibrary;
     _model = library.load(_filename, device);
   }
   else if (extension == "fbx")
   {
-    mtt::FbxModelLibrary& library =
-      mtt::EditorApplication::instance().fbxModelLibrary;
+    FbxModelLibrary& library = EditorApplication::instance().fbxModelLibrary;
     _model = library.load(_filename,
-                          mtt::BaseFbxImporter::blenderMaterialOptions,
+                          BaseFbxImporter::blenderMaterialOptions,
                           device);
   }
   else throw std::runtime_error("Model file type is not supported");
