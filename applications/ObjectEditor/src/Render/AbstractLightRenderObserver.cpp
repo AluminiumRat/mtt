@@ -3,6 +3,7 @@
 #include <mtt/clPipeline/MeshTechniques/InstrumentalCompositeTechnique.h>
 #include <mtt/clPipeline/constants.h>
 #include <mtt/editorLib/Objects/LightObject.h>
+#include <mtt/editorLib/EditorApplication.h>
 #include <mtt/render/Mesh/UidMeshTechnique.h>
 #include <mtt/render/Pipeline/Buffer.h>
 #include <mtt/render/SceneGraph/CompositeObjectNode.h>
@@ -10,7 +11,6 @@
 #include <mtt/utilities/Log.h>
 
 #include <Render/AbstractLightRenderObserver.h>
-#include <EditorApplication.h>
 
 AbstractLightRenderObserver::AbstractLightRenderObserver(
                                                 mtt::LightObject& object,
@@ -20,7 +20,7 @@ AbstractLightRenderObserver::AbstractLightRenderObserver(
   Object3DRenderObserver(object, commonData),
   _object(object),
   _lightRenderer(nullptr),
-  _hullMesh(EditorApplication::instance().displayDevice())
+  _hullMesh(mtt::EditorApplication::instance().displayDevice())
 {
   if (!iconFilename.isEmpty() && iconSize > 0)
   {
@@ -120,10 +120,11 @@ void AbstractLightRenderObserver::setHullGeometry(
     for(const glm::vec3& point : newGeometry) boundingBox.extend(point);
     _hullNode.setLocalBoundSphere(boundingBox.buildBoundingSphere());
 
-    mtt::LogicalDevice& device = EditorApplication::instance().displayDevice();
+    mtt::LogicalDevice& device =
+                            mtt::EditorApplication::instance().displayDevice();
     std::shared_ptr<mtt::Buffer> positionsBuffer(
-                                    new mtt::Buffer(device,
-                                                    mtt::Buffer::VERTEX_BUFFER));
+                                  new mtt::Buffer(device,
+                                                  mtt::Buffer::VERTEX_BUFFER));
     positionsBuffer->setData( newGeometry.data(),
                               newGeometry.size() * sizeof(glm::vec3));
     _hullMesh.setPositionBuffer(positionsBuffer);

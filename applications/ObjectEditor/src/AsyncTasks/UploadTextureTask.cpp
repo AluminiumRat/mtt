@@ -2,8 +2,8 @@
 
 #include <mtt/render/Mesh/MeshExtraData.h>
 
+#include <mtt/editorLib/EditorApplication.h>
 #include <AsyncTasks/UploadTextureTask.h>
-#include <EditorApplication.h>
 
 UploadTextureTask::UploadTextureTask( const QString& filename,
                                       mtt::MeshExtraData& dstData,
@@ -22,7 +22,7 @@ void UploadTextureTask::asyncPart()
   if(_filename.isEmpty()) return;
 
   mtt::Texture2DLibrary& textureLibrary =
-                                  EditorApplication::instance().textureLibrary;
+    mtt::EditorApplication::instance().textureLibrary;
   mtt::LogicalDevice& device = mtt::Application::instance().displayDevice();
   std::shared_ptr<mtt::Texture2D> texture = textureLibrary.load(_filename,
                                                                 device,

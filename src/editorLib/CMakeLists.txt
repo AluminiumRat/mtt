@@ -95,6 +95,7 @@ set(HEADERS
     "../../include/mtt/editorLib/SceneTab/VisiblePropertyWidget.h"
 
     "../../include/mtt/editorLib/AnimationPlayer.h"
+    "../../include/mtt/editorLib/EditorApplication.h"
     "../../include/mtt/editorLib/EditorUndoStack.h"
     "../../include/mtt/editorLib/FbxAnimationImporter.h"
     )
@@ -166,6 +167,7 @@ set(SOURCES
     "SceneTab/VisiblePropertyWidget.cpp"
 
     "AnimationPlayer.cpp"
+    "EditorApplication.cpp"
     "EditorUndoStack.cpp"
     "FbxAnimationImporter.cpp"
     )

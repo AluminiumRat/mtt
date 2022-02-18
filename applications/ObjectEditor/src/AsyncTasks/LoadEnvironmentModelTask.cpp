@@ -3,10 +3,10 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QObject>
 
+#include <mtt/editorLib/EditorApplication.h>
 #include <mtt/utilities/Abort.h>
 
 #include <AsyncTasks/LoadEnvironmentModelTask.h>
-#include <EditorApplication.h>
 
 LoadEnvironmentModelTask::LoadEnvironmentModelTask( const QString& filename,
                                                     const Callback& callback) :
@@ -21,7 +21,7 @@ LoadEnvironmentModelTask::LoadEnvironmentModelTask( const QString& filename,
 
 void LoadEnvironmentModelTask::asyncPart()
 {
-  mtt::LogicalDevice& device = EditorApplication::instance().displayDevice();
+  mtt::LogicalDevice& device = mtt::EditorApplication::instance().displayDevice();
 
   QFileInfo fileInfo(_filename);
   QString extension = fileInfo.suffix();
@@ -29,13 +29,13 @@ void LoadEnvironmentModelTask::asyncPart()
   if(extension == "mmd")
   {
     mtt::MMDModelLibrary& library =
-                                EditorApplication::instance().mmdModelLibrary;
+      mtt::EditorApplication::instance().mmdModelLibrary;
     _model = library.load(_filename, device);
   }
   else if (extension == "fbx")
   {
     mtt::FbxModelLibrary& library =
-                                  EditorApplication::instance().fbxModelLibrary;
+      mtt::EditorApplication::instance().fbxModelLibrary;
     _model = library.load(_filename,
                           mtt::BaseFbxImporter::blenderMaterialOptions,
                           device);

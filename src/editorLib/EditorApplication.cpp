@@ -1,8 +1,9 @@
 #include <memory>
 
 #include <mtt/clPipeline/MeshTechniques/ModelTechniquesFactory.h>
+#include <mtt/editorLib/EditorApplication.h>
 
-#include <EditorApplication.h>
+using namespace mtt;
 
 #ifdef NDEBUG
   static const bool enableValidation = false;

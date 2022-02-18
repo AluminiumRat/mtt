@@ -1,7 +1,7 @@
 #include <mtt/editorLib/Objects/AmbientLightObject.h>
+#include <mtt/editorLib/EditorApplication.h>
 
 #include <Render/AmbientLightRenderObserver.h>
-#include <EditorApplication.h>
 
 #define ICON_FILE ":/ObjectEditor/ambientLight.png"
 #define ICON_SIZE 32
@@ -13,7 +13,7 @@ AmbientLightRenderObserver::AmbientLightRenderObserver(
                                                 EditorCommonData& commonData) :
   AbstractLightRenderObserver(object, commonData, ICON_FILE, ICON_SIZE),
   _lightObject(object),
-  _light(true, true, false, EditorApplication::instance().displayDevice()),
+  _light(true, true, false, mtt::EditorApplication::instance().displayDevice()),
   _cubemapObserver(_lightObject.ambientMap())
 {
   setLightObject(_light);

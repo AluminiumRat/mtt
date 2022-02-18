@@ -1,12 +1,12 @@
 #include <stdexcept>
 
 #include <mtt/editorLib/Objects/CubemapObject.h>
+#include <mtt/editorLib/EditorApplication.h>
 #include <mtt/render/Pipeline/CubeTexture.h>
 #include <mtt/utilities/Log.h>
 
 #include <AsyncTasks/UploadCubetextureTask.h>
 #include <Render/CubemapObserver.h>
-#include <EditorApplication.h>
 
 CubemapObserver::CubemapObserver(mtt::CubemapObject& object) :
   _object(object)
@@ -44,7 +44,8 @@ void CubemapObserver::_updateTexture() noexcept
     std::unique_ptr<UploadCubetextureTask> task;
     task.reset(new UploadCubetextureTask( filenames,
                                           std::move(Callback(_callback))));
-    mtt::AsyncTaskQueue& queue = EditorApplication::instance().asyncTaskQueue;
+    mtt::AsyncTaskQueue& queue =
+                            mtt::EditorApplication::instance().asyncTaskQueue;
     _uploadStopper = queue.addTaskWithStopper(std::move(task));
   }
   catch (std::exception& error)

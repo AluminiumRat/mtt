@@ -1,7 +1,7 @@
 #include <mtt/editorLib/Objects/DirectLightObject.h>
+#include <mtt/editorLib/EditorApplication.h>
 
 #include <Render/DirectLightRenderObserver.h>
-#include <EditorApplication.h>
 #include <EditorCommonData.h>
 
 #define ICON_FILE ":/ObjectEditor/directLight.png"
@@ -15,7 +15,7 @@ DirectLightRenderObserver::DirectLightRenderObserver(
                                                 EditorCommonData& commonData) :
   AbstractLightRenderObserver(object, commonData, ICON_FILE, ICON_SIZE),
   _lightObject(object),
-  _light(true, true, EditorApplication::instance().displayDevice())
+  _light(true, true, mtt::EditorApplication::instance().displayDevice())
 {
   setLightObject(_light);
 
@@ -180,7 +180,7 @@ void DirectLightRenderObserver::_updateShadowsEnabled() noexcept
     try
     {
       mtt::LogicalDevice& device =
-                                  EditorApplication::instance().displayDevice();
+                            mtt::EditorApplication::instance().displayDevice();
       _shadowMapProvider.reset(new mtt::clPipeline::ShadowMapProvider(
                                                           2,
                                                           glm::uvec2(256, 256),

@@ -1,11 +1,12 @@
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMessageBox>
 
+#include <mtt/editorLib/EditorApplication.h>
+
 #include <AsyncTasks/LoadEnvironmentTask.h>
 #include <AsyncTasks/LoadModelTask.h>
 #include <AsyncTasks/SaveEnvironmentTask.h>
 #include <AsyncTasks/SaveModelTask.h>
-#include <EditorApplication.h>
 #include <EditorCommonData.h>
 #include <FileMenu.h>
 #include <MainWindow.h>
@@ -97,7 +98,7 @@ void FileMenu::_saveModelToFile(const QString& file) noexcept
     task.reset(new SaveModelTask( *_commonData.scene(),
                                   file,
                                   _commonData));
-    EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
+    mtt::EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
   }
   catch (...)
   {
@@ -125,7 +126,7 @@ void FileMenu::_loadModel() noexcept
     task.reset(new LoadModelTask( *_commonData.scene(),
                                   fileName,
                                   _commonData));
-    EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
+    mtt::EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
   }
   catch (...)
   {
@@ -170,7 +171,7 @@ void FileMenu::_saveEnvironmentToFile(const QString& file) noexcept
     task.reset(new SaveEnvironmentTask( *_commonData.scene(),
                                         file,
                                         _commonData));
-    EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
+    mtt::EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
   }
   catch (...)
   {
@@ -200,7 +201,7 @@ void FileMenu::_loadEnvironment() noexcept
     task.reset(new LoadEnvironmentTask( *_commonData.scene(),
                                         fileName,
                                         _commonData));
-    EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
+    mtt::EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
   }
   catch (...)
   {

@@ -98,7 +98,6 @@ set(HEADERS
     "include/SceneTab/VertexDataWidget.h"
 
     "include/EditMenu.h"
-    "include/EditorApplication.h"
     "include/EditorCommonData.h"
     "include/EditorScene.h"
     "include/FbxDrawableImporter.h"
@@ -158,7 +157,6 @@ set(SOURCES
     "src/SceneTab/VertexDataWidget.cpp"
 
     "src/EditMenu.cpp"
-    "src/EditorApplication.cpp"
     "src/EditorCommonData.cpp"
     "src/EditorScene.cpp"
     "src/FbxDrawableImporter.cpp"

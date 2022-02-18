@@ -1,13 +1,13 @@
 #include <mtt/clPipeline/MeshTechniques/InstrumentalCompositeTechnique.h>
 #include <mtt/clPipeline/constants.h>
+#include <mtt/editorLib/EditorApplication.h>
 #include <mtt/render/Mesh/UidMeshTechnique.h>
 
 #include <Render/IconDrawableNode.h>
-#include <EditorApplication.h>
 
 IconDrawableNode::IconDrawableNode( const QString& imageFilename,
                                     float iconSize) noexcept :
-  _iconMesh(EditorApplication::instance().displayDevice())
+  _iconMesh(mtt::EditorApplication::instance().displayDevice())
 {
   _iconMesh.setTechnique(
               mtt::clPipeline::colorFrameType,
@@ -21,7 +21,7 @@ IconDrawableNode::IconDrawableNode( const QString& imageFilename,
                                             true,
                                             true));
 
-  EditorApplication& application = EditorApplication::instance();
+  mtt::EditorApplication& application = mtt::EditorApplication::instance();
   mtt::LogicalDevice& device = application.displayDevice();
 
   float halfsize = iconSize / 2;

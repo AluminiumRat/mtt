@@ -6,7 +6,6 @@
 
 #include <AsyncTasks/UploadCubetextureTask.h>
 #include <Render/BackgroundObserver.h>
-#include <EditorApplication.h>
 
 BackgroundObserver::BackgroundObserver( mtt::BackgroundObject& object,
                                         EditorCommonData& commonData) :

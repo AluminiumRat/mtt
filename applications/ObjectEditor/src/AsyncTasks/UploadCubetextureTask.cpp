@@ -2,10 +2,10 @@
 
 #include <QtCore/QObject>
 
+#include <mtt/editorLib/EditorApplication.h>
 #include <mtt/render/Pipeline/CubeTexture.h>
 
 #include <AsyncTasks/UploadCubetextureTask.h>
-#include <EditorApplication.h>
 
 UploadCubetextureTask::UploadCubetextureTask(
                                         const std::array<QString, 6>& filenames,
@@ -21,7 +21,7 @@ UploadCubetextureTask::UploadCubetextureTask(
 void UploadCubetextureTask::asyncPart()
 {
   mtt::CubeTextureLibrary& textureLibrary =
-                              EditorApplication::instance().cubeTextureLibrary;
+    mtt::EditorApplication::instance().cubeTextureLibrary;
   mtt::LogicalDevice& device = mtt::Application::instance().displayDevice();
   _texture = textureLibrary.load(_filenames, device, true);
 }

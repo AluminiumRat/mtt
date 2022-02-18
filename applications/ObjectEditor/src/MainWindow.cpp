@@ -4,8 +4,8 @@
 #include <QtWidgets/QMessageBox>
 
 #include <mtt/editorLib/Objects/DirectLightObject.h>
+#include <mtt/editorLib/EditorApplication.h>
 
-#include <EditorApplication.h>
 #include <MainWindow.h>
 
 #include <GeneratedFiles/ui_MainWindow.h>
@@ -18,7 +18,7 @@ MainWindow::MainWindow() :
   _fileMenu(*this, *_ui, _commonEditData),
   _editMenu(*this, *_ui, _commonEditData),
   _manipulatorMenu(*this, _renderWidget.manipulatorController(), *_ui),
-  _asyncTaskDialog(EditorApplication::instance().asyncTaskQueue)
+  _asyncTaskDialog(mtt::EditorApplication::instance().asyncTaskQueue)
 {
   _ui->setupUi(this);
 
@@ -49,24 +49,24 @@ MainWindow::MainWindow() :
 
   _asyncTaskDialog.setModal(true);
 
-  connect(&EditorApplication::instance().asyncTaskQueue,
+  connect(&mtt::EditorApplication::instance().asyncTaskQueue,
           &mtt::AsyncTaskQueue::taskStarted,
           this,
           &MainWindow::_showAsyncTaskDialog,
           Qt::DirectConnection);
 
-  connect(&EditorApplication::instance().asyncTaskQueue,
+  connect(&mtt::EditorApplication::instance().asyncTaskQueue,
           &mtt::AsyncTaskQueue::taskFinished,
           this,
           &MainWindow::_checkAsyncTaskDialog,
           Qt::DirectConnection);
 
-  connect(&EditorApplication::instance().asyncTaskQueue,
+  connect(&mtt::EditorApplication::instance().asyncTaskQueue,
           &mtt::AsyncTaskQueue::warningEmitted,
           this,
           &MainWindow::_processWarning);
 
-  connect(&EditorApplication::instance().asyncTaskQueue,
+  connect(&mtt::EditorApplication::instance().asyncTaskQueue,
           &mtt::AsyncTaskQueue::errorEmitted,
           this,
           &MainWindow::_processError);
@@ -94,7 +94,7 @@ void MainWindow::_showAsyncTaskDialog(mtt::AbstractAsyncTask& task)
 void MainWindow::_checkAsyncTaskDialog()
 {
   mtt::AsyncTaskQueue::Counters counters =
-                        EditorApplication::instance().asyncTaskQueue.counters();
+                  mtt::EditorApplication::instance().asyncTaskQueue.counters();
   if(counters.explicitFinishedInChunk == counters.explicitInChunk)
   {
     _asyncTaskDialog.hide();

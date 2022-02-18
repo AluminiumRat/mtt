@@ -12,12 +12,12 @@
 #include <mtt/editorLib/Objects/EnvironmentModel.h>
 #include <mtt/editorLib/Objects/SkeletonGroup.h>
 #include <mtt/editorLib/Objects/SkeletonObject.h>
+#include <mtt/editorLib/EditorApplication.h>
 
 #include <AsyncTasks/AddModelFromFbxTask.h>
 #include <Objects/LODObject.h>
 #include <Objects/MaterialObject.h>
 #include <EditMenu.h>
-#include <EditorApplication.h>
 #include <MainWindow.h>
 
 #include <GeneratedFiles/ui_MainWindow.h>
@@ -323,7 +323,7 @@ void EditMenu::_addModelFromBlender() noexcept
                                   fileName,
                                   mtt::BaseFbxImporter::blenderMaterialOptions,
                                   _commonData));
-    EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
+    mtt::EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
   }
   catch(std::exception& error)
   {
@@ -355,7 +355,7 @@ void EditMenu::_addModelFrom3DMax() noexcept
                                       fileName,
                                       mtt::BaseFbxImporter::maxMaterialOptions,
                                       _commonData));
-    EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
+    mtt::EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
   }
   catch (...)
   {
@@ -381,7 +381,7 @@ void EditMenu::_addModelFromObj() noexcept
                                       fileName,
                                       mtt::BaseFbxImporter::maxMaterialOptions,
                                       _commonData));
-    EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
+    mtt::EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
   }
   catch (...)
   {
@@ -410,7 +410,7 @@ void EditMenu::_addAnimationFromFbx() noexcept
                                                 scene->root().animationGroup(),
                                                 &scene->root().skeletonGroup(),
                                                 _commonData));
-    EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
+    mtt::EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
   }
   catch (...)
   {

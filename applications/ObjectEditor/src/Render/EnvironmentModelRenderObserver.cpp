@@ -1,11 +1,11 @@
 #include <stdexcept>
 
 #include <mtt/editorLib/Objects/EnvironmentModel.h>
+#include <mtt/editorLib/EditorApplication.h>
 #include <mtt/utilities/Log.h>
 
 #include <AsyncTasks/LoadEnvironmentModelTask.h>
 #include <Render/EnvironmentModelRenderObserver.h>
-#include <EditorApplication.h>
 
 EnvironmentModelRenderObserver::EnvironmentModelRenderObserver(
                                                 mtt::EnvironmentModel& object,
@@ -58,7 +58,7 @@ void EnvironmentModelRenderObserver::_updateModel() noexcept
       std::unique_ptr<LoadEnvironmentModelTask> task(
                               new LoadEnvironmentModelTask(filename, callback));
       mtt::AsyncTaskQueue& queue =
-                                  EditorApplication::instance().asyncTaskQueue;
+                              mtt::EditorApplication::instance().asyncTaskQueue;
       _uploadStopper = queue.addTaskWithStopper(std::move(task));
     }
     catch(std::exception& error)
