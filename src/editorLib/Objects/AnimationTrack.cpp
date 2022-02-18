@@ -96,10 +96,21 @@ std::unique_ptr<mtt::AbstractEditCommand>
                                               skeletonObject->rotation(),
                                               skeletonObject->rotation()));
 
+  using ScaleSetter = void (mtt::SkeletonObject::*)(const glm::vec3&);
+  using ScaleCommand = mtt::SetPropertyCommand< mtt::SkeletonObject,
+                                                glm::vec3,
+                                                ScaleSetter>;
+  std::unique_ptr<ScaleCommand> scaleCommand(
+                              new ScaleCommand( *skeletonObject,
+                                                &mtt::SkeletonObject::setScale,
+                                                skeletonObject->scale(),
+                                                skeletonObject->scale()));
+
   std::unique_ptr<mtt::CompositeCommand> resultCommand(
                                                   new mtt::CompositeCommand());
   resultCommand->addSubcommand(std::move(positionCommand));
   resultCommand->addSubcommand(std::move(rotationCommand));
+  resultCommand->addSubcommand(std::move(scaleCommand));
   return std::move(resultCommand);
 }
 
