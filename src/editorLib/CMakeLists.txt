@@ -44,6 +44,8 @@ add_definitions(${Qt5Core_DEFINITIONS}
                 )
 
 set(HEADERS
+    "../../include/mtt/editorLib/AsyncTasks/AddAnimationFromFbxTask.h"
+
     "../../include/mtt/editorLib/Manipulator/AxisManipulator.h"
     "../../include/mtt/editorLib/Manipulator/EditorManipulatorController.h"
     "../../include/mtt/editorLib/Manipulator/MoveManipulator.h"
@@ -94,6 +96,7 @@ set(HEADERS
 
     "../../include/mtt/editorLib/AnimationPlayer.h"
     "../../include/mtt/editorLib/EditorUndoStack.h"
+    "../../include/mtt/editorLib/FbxAnimationImporter.h"
     )
 
 set(UI_FILES
@@ -113,6 +116,8 @@ set(UI_FILES
     )
 
 set(SOURCES
+    "AsyncTasks/AddAnimationFromFbxTask.cpp"
+
     "Manipulator/AxisManipulator.cpp"
     "Manipulator/EditorManipulatorController.cpp"
     "Manipulator/MoveManipulator.cpp"
@@ -162,6 +167,7 @@ set(SOURCES
 
     "AnimationPlayer.cpp"
     "EditorUndoStack.cpp"
+    "FbxAnimationImporter.cpp"
     )
 
 add_library(editorLib

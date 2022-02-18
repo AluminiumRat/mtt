@@ -6,13 +6,13 @@
 #include <mtt/application/EditCommands/AddObjectCommand.h>
 #include <mtt/application/EditCommands/CompositeCommand.h>
 #include <mtt/application/EditCommands/RemoveObjectCommand.h>
+#include <mtt/editorLib/AsyncTasks/AddAnimationFromFbxTask.h>
 #include <mtt/editorLib/Objects/AmbientLightObject.h>
 #include <mtt/editorLib/Objects/DirectLightObject.h>
 #include <mtt/editorLib/Objects/EnvironmentModel.h>
 #include <mtt/editorLib/Objects/SkeletonGroup.h>
 #include <mtt/editorLib/Objects/SkeletonObject.h>
 
-#include <AsyncTasks/AddAnimationFromFbxTask.h>
 #include <AsyncTasks/AddModelFromFbxTask.h>
 #include <Objects/LODObject.h>
 #include <Objects/MaterialObject.h>
@@ -404,8 +404,12 @@ void EditMenu::_addAnimationFromFbx() noexcept
                                                     tr("fbx (*.fbx)"));
     if(fileName.isEmpty()) return;
 
-    std::unique_ptr<AddAnimationFromFbxTask> task(
-                            new AddAnimationFromFbxTask(fileName, _commonData));
+    std::unique_ptr<mtt::AddAnimationFromFbxTask> task(
+                                  new mtt::AddAnimationFromFbxTask(
+                                                fileName,
+                                                scene->root().animationGroup(),
+                                                &scene->root().skeletonGroup(),
+                                                _commonData));
     EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
   }
   catch (...)

@@ -10,8 +10,7 @@ namespace mtt
   class AddObjectCommand : public AbstractEditCommand
   {
   public:
-    AddObjectCommand(std::unique_ptr<Object> object,
-                            Object& group);
+    AddObjectCommand(std::unique_ptr<Object> object, Object& group);
     AddObjectCommand(const AddObjectCommand&) = delete;
     AddObjectCommand& operator = (const AddObjectCommand&) = delete;
     virtual ~AddObjectCommand() noexcept = default;

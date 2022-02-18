@@ -46,7 +46,6 @@ add_definitions(${Qt5Core_DEFINITIONS}
 set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 
 set(HEADERS
-    "include/AsyncTasks/AddAnimationFromFbxTask.h"
     "include/AsyncTasks/AddModelFromFbxTask.h"
     "include/AsyncTasks/LoadEnvironmentModelTask.h"
     "include/AsyncTasks/LoadEnvironmentTask.h"
@@ -102,7 +101,6 @@ set(HEADERS
     "include/EditorApplication.h"
     "include/EditorCommonData.h"
     "include/EditorScene.h"
-    "include/FbxAnimationImporter.h"
     "include/FbxDrawableImporter.h"
     "include/FileMenu.h"
     "include/MainWindow.h"
@@ -110,7 +108,6 @@ set(HEADERS
     )
 
 set(SOURCES
-    "src/AsyncTasks/AddAnimationFromFbxTask.cpp"
     "src/AsyncTasks/AddModelFromFbxTask.cpp"
     "src/AsyncTasks/LoadEnvironmentModelTask.cpp"
     "src/AsyncTasks/LoadEnvironmentTask.cpp"
@@ -164,7 +161,6 @@ set(SOURCES
     "src/EditorApplication.cpp"
     "src/EditorCommonData.cpp"
     "src/EditorScene.cpp"
-    "src/FbxAnimationImporter.cpp"
     "src/FbxDrawableImporter.cpp"
     "src/FileMenu.cpp"
     "src/MainWindow.cpp"

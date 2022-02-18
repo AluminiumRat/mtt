@@ -3,9 +3,10 @@
 
 #include <QtCore/QFileInfo>
 
+#include <mtt/editorLib/FbxAnimationImporter.h>
 #include <mtt/utilities/Abort.h>
 
-#include <FbxAnimationImporter.h>
+using namespace mtt;
 
 FbxAnimationImporter::FbxAnimationImporter() :
   _baseLayer(nullptr)
