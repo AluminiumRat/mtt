@@ -14,6 +14,11 @@ find_path(GLM_PATH
           HINTS "$ENV{GLM_PATH}"
           REQUIRED)
 
+find_path(VKMEMALLOC_PATH
+          vk_mem_alloc.h
+          HINTS "$ENV{VKMEMALLOC_PATH}"
+          REQUIRED)
+
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 

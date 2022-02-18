@@ -26,6 +26,11 @@ find_package(Shaderc REQUIRED)
 
 find_package(FbxSDK REQUIRED)
 
+find_path(VKMEMALLOC_PATH
+          vk_mem_alloc.h
+          HINTS "$ENV{VKMEMALLOC_PATH}"
+          REQUIRED)
+
 include_directories("../../include"
                     ${GLM_PATH}
                     ${Vulkan_INCLUDE_DIRS}
@@ -39,6 +44,16 @@ add_definitions(${Qt5Core_DEFINITIONS}
                 )
 
 set(HEADERS
+    "../../include/mtt/editorLib/Manipulator/AxisManipulator.h"
+    "../../include/mtt/editorLib/Manipulator/EditorManipulatorController.h"
+    "../../include/mtt/editorLib/Manipulator/MoveManipulator.h"
+    "../../include/mtt/editorLib/Manipulator/ObjectManipulator.h"
+    "../../include/mtt/editorLib/Manipulator/PlaneManipulator.h"
+    "../../include/mtt/editorLib/Manipulator/RingManipulator.h"
+    "../../include/mtt/editorLib/Manipulator/RotationManipulator.h"
+    "../../include/mtt/editorLib/Manipulator/ScaleManipulator.h"
+    "../../include/mtt/editorLib/Manipulator/TriangleManipulator.h"
+
     "../../include/mtt/editorLib/Objects/AmbientLightObject.h"
     "../../include/mtt/editorLib/Objects/AnimationGroup.h"
     "../../include/mtt/editorLib/Objects/AnimationObject.h"
@@ -98,6 +113,16 @@ set(UI_FILES
     )
 
 set(SOURCES
+    "Manipulator/AxisManipulator.cpp"
+    "Manipulator/EditorManipulatorController.cpp"
+    "Manipulator/MoveManipulator.cpp"
+    "Manipulator/ObjectManipulator.cpp"
+    "Manipulator/PlaneManipulator.cpp"
+    "Manipulator/RingManipulator.cpp"
+    "Manipulator/RotationManipulator.cpp"
+    "Manipulator/ScaleManipulator.cpp"
+    "Manipulator/TriangleManipulator.cpp"
+
     "Objects/AmbientLightObject.cpp"
     "Objects/AnimationGroup.cpp"
     "Objects/AnimationObject.cpp"

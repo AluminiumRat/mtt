@@ -1,22 +1,21 @@
+#include <mtt/application/CommonEditData.h>
+#include <mtt/editorLib/Manipulator/EditorManipulatorController.h>
 #include <mtt/editorLib/Objects/MovableObject.h>
 #include <mtt/editorLib/Objects/RotatableObject.h>
 #include <mtt/editorLib/Objects/ScalableObject.h>
 
-#include <Manipulator/EditorManipulatorController.h>
-#include <RenderWidget/EditorRenderWidget.h>
-#include <EditorCommonData.h>
+using namespace mtt;
 
 EditorManipulatorController::EditorManipulatorController(
-                                                EditorRenderWidget& widget,
-                                                EditorCommonData& commonData) :
+                                                RenderWidget& widget,
+                                                CommonEditData& commonData) :
   ManipulatorController(widget),
-  _widget(widget),
   _commonData(commonData),
   _currentManipulator(MOVE_MANIPULATOR),
   _orientation(ObjectManipulator::LOCAL_ORIENTATION)
 {
   connect(&commonData,
-          &EditorCommonData::selectedObjectsChanged,
+          &CommonEditData::selectedObjectsChanged,
           this,
           &EditorManipulatorController::_updateManipulator,
           Qt::DirectConnection);
@@ -37,22 +36,22 @@ void EditorManipulatorController::_updateManipulator()
 
   if(_commonData.selectedObjects().size() == 1)
   {
-    mtt::MovableObject* movable =
-            qobject_cast<mtt::MovableObject*>(_commonData.selectedObjects()[0]);
+    MovableObject* movable =
+                qobject_cast<MovableObject*>(_commonData.selectedObjects()[0]);
     if(movable != nullptr)
     {
       _moveManipulator.emplace(*movable, _commonData.undoStack());
     }
 
-    mtt::RotatableObject* rotatable =
-          qobject_cast<mtt::RotatableObject*>(_commonData.selectedObjects()[0]);
+    RotatableObject* rotatable =
+              qobject_cast<RotatableObject*>(_commonData.selectedObjects()[0]);
     if(rotatable != nullptr)
     {
       _rotationManipulator.emplace(*rotatable, _commonData.undoStack());
     }
 
-    mtt::ScalableObject* scalable =
-          qobject_cast<mtt::ScalableObject*>(_commonData.selectedObjects()[0]);
+    ScalableObject* scalable =
+                qobject_cast<ScalableObject*>(_commonData.selectedObjects()[0]);
     if(scalable != nullptr)
     {
       _scaleManipulator.emplace(*scalable, _commonData.undoStack());

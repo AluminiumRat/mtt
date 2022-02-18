@@ -10,7 +10,7 @@
 #include <GeneratedFiles/ui_MainWindow.h>
 
 ManipulatorMenu::ManipulatorMenu( MainWindow& window,
-                                  EditorManipulatorController& controller,
+                                  mtt::EditorManipulatorController& controller,
                                   Ui_MainWindow& ui) :
   _window(window),
   _controller(controller),
@@ -22,7 +22,7 @@ ManipulatorMenu::ManipulatorMenu( MainWindow& window,
 void ManipulatorMenu::setupUI()
 {
   connect(&_controller,
-          &EditorManipulatorController::currentManipulatorChanged,
+          &mtt::EditorManipulatorController::currentManipulatorChanged,
           this,
           &ManipulatorMenu::_updateMenuFromManipulatorType,
           Qt::DirectConnection);
@@ -47,7 +47,7 @@ void ManipulatorMenu::setupUI()
           Qt::DirectConnection);
 
   connect(&_controller,
-          &EditorManipulatorController::orientationChanged,
+          &mtt::EditorManipulatorController::orientationChanged,
           this,
           &ManipulatorMenu::_updateMenuFromOrientation,
           Qt::DirectConnection);
@@ -73,7 +73,7 @@ void ManipulatorMenu::_setMoveManipulator() noexcept
   _ui.actionSetMoveManipulator->setChecked(true);
   _ui.actionSetRotationManipulator->setChecked(false);
   _ui.actionSetScaleManipulator->setChecked(false);
-  _setManipulatorType(EditorManipulatorController::MOVE_MANIPULATOR);
+  _setManipulatorType(mtt::EditorManipulatorController::MOVE_MANIPULATOR);
 }
 
 void ManipulatorMenu::_setRotationManipulator() noexcept
@@ -83,7 +83,7 @@ void ManipulatorMenu::_setRotationManipulator() noexcept
   _ui.actionSetMoveManipulator->setChecked(false);
   _ui.actionSetRotationManipulator->setChecked(true);
   _ui.actionSetScaleManipulator->setChecked(false);
-  _setManipulatorType(EditorManipulatorController::ROTATION_MANIPULATOR);
+  _setManipulatorType(mtt::EditorManipulatorController::ROTATION_MANIPULATOR);
 }
 
 void ManipulatorMenu::_setScaleManipulator() noexcept
@@ -93,11 +93,11 @@ void ManipulatorMenu::_setScaleManipulator() noexcept
   _ui.actionSetMoveManipulator->setChecked(false);
   _ui.actionSetRotationManipulator->setChecked(false);
   _ui.actionSetScaleManipulator->setChecked(true);
-  _setManipulatorType(EditorManipulatorController::SCALE_MANIPULATOR);
+  _setManipulatorType(mtt::EditorManipulatorController::SCALE_MANIPULATOR);
 }
 
 void ManipulatorMenu::_setManipulatorType(
-                    EditorManipulatorController::ManipulatorType type) noexcept
+              mtt::EditorManipulatorController::ManipulatorType type) noexcept
 {
   try
   {
@@ -120,13 +120,13 @@ void ManipulatorMenu::_updateMenuFromManipulatorType() noexcept
 
   _ui.actionSetMoveManipulator->setChecked(
                   _controller.currentManipulator() ==
-                                EditorManipulatorController::MOVE_MANIPULATOR);
+                            mtt::EditorManipulatorController::MOVE_MANIPULATOR);
   _ui.actionSetRotationManipulator->setChecked(
                   _controller.currentManipulator() ==
-                            EditorManipulatorController::ROTATION_MANIPULATOR);
+                        mtt::EditorManipulatorController::ROTATION_MANIPULATOR);
   _ui.actionSetScaleManipulator->setChecked(
                   _controller.currentManipulator() ==
-                                EditorManipulatorController::SCALE_MANIPULATOR);
+                          mtt::EditorManipulatorController::SCALE_MANIPULATOR);
 }
 
 void ManipulatorMenu::_setLocalOrientation() noexcept
@@ -136,7 +136,7 @@ void ManipulatorMenu::_setLocalOrientation() noexcept
 
   _ui.actionSetLocalOrientation->setChecked(true);
   _ui.actionSetGlobalOrientation->setChecked(false);
-  _controller.setOrientation(ObjectManipulator::LOCAL_ORIENTATION);
+  _controller.setOrientation(mtt::ObjectManipulator::LOCAL_ORIENTATION);
 }
 
 void ManipulatorMenu::_setGlobalOrientation() noexcept
@@ -146,7 +146,7 @@ void ManipulatorMenu::_setGlobalOrientation() noexcept
 
   _ui.actionSetLocalOrientation->setChecked(false);
   _ui.actionSetGlobalOrientation->setChecked(true);
-  _controller.setOrientation(ObjectManipulator::GLOBAL_ORIENTATION);
+  _controller.setOrientation(mtt::ObjectManipulator::GLOBAL_ORIENTATION);
 }
 
 void ManipulatorMenu::_updateMenuFromOrientation() noexcept
@@ -156,8 +156,8 @@ void ManipulatorMenu::_updateMenuFromOrientation() noexcept
 
   _ui.actionSetLocalOrientation->setChecked(
                           _controller.orientation() ==
-                                        ObjectManipulator::LOCAL_ORIENTATION);
+                                    mtt::ObjectManipulator::LOCAL_ORIENTATION);
   _ui.actionSetGlobalOrientation->setChecked(
                           _controller.orientation() ==
-                                        ObjectManipulator::GLOBAL_ORIENTATION);
+                                    mtt::ObjectManipulator::GLOBAL_ORIENTATION);
 }

@@ -1,20 +1,21 @@
+#include <glm/gtc/constants.hpp>
+#include <glm/gtx/transform.hpp>
+
 #include <mtt/application/EditCommands/SetPropertyCommand.h>
 #include <mtt/application/EditCommands/UndoStack.h>
 #include <mtt/clPipeline/MeshTechniques/UnlightedColorTechnique.h>
 #include <mtt/clPipeline/constants.h>
+#include <mtt/editorLib/Manipulator/RingManipulator.h>
 #include <mtt/editorLib/Objects/RotatableObject.h>
 #include <mtt/render/Drawable/AntiscaleDrawableModificator.h>
 #include <mtt/utilities/Abort.h>
-
-#include <Manipulator/RingManipulator.h>
-
-#include <glm/gtc/constants.hpp>
-#include <glm/gtx/transform.hpp>
 
 #define SECTORS_NUMBER 64
 #define SIDES_NUMBER 12
 #define RING_RADIUS 80.f
 #define LINE_RADIUS 5.f
+
+using namespace mtt;
 
 static void addSide(std::vector<glm::vec3>& positions,
                     float sectorStartAngle,
@@ -67,10 +68,9 @@ static void addSector(std::vector<glm::vec3>& positions,
   addSide(positions, startAngle, endAngle, currentAngle, 0);
 }
 
-RingManipulator::RingManipulator( mtt::RotatableObject& object,
-                                  mtt::UndoStack& undoStack) :
-  RingRotation3DManipulator(
-                          mtt::AutoscaleDrawableModificator::PIXEL_SCALE_MODE),
+RingManipulator::RingManipulator( RotatableObject& object,
+                                  UndoStack& undoStack) :
+  RingRotation3DManipulator(AutoscaleDrawableModificator::PIXEL_SCALE_MODE),
   _undoStack(undoStack),
   _object(object)
 {
@@ -88,8 +88,8 @@ RingManipulator::RingManipulator( mtt::RotatableObject& object,
   addSector(positions, currentAngle, 0);
 
   setGeometry(positions);
-  setTechnique( mtt::clPipeline::colorFrameType,
-                std::make_unique<mtt::clPipeline::UnlightedColorTechnique>(
+  setTechnique( clPipeline::colorFrameType,
+                std::make_unique<clPipeline::UnlightedColorTechnique>(
                                           false,
                                           false,
                                           VK_COMPARE_OP_ALWAYS,
@@ -113,7 +113,7 @@ std::optional<glm::vec3> RingManipulator::tryActivate(
     }
     catch(...)
     {
-      mtt::Abort("RingManipulator::tryActivate: unable to lock undo group");
+      Abort("RingManipulator::tryActivate: unable to lock undo group");
     }
   }
 
@@ -125,31 +125,30 @@ void RingManipulator::processRotation(const glm::mat4& rotation) noexcept
   glm::mat4 rotationInLocal =
                           _startWorldToObject * rotation * _startObjectToWorld;
   rotationInLocal =
-          mtt::AntiscaleDrawableModificator::getCutedTransform(rotationInLocal);
+              AntiscaleDrawableModificator::getCutedTransform(rotationInLocal);
 
   glm::quat newRotation(rotationInLocal * _startRotation);
   if(_object.rotation() == newRotation) return;
 
   try
   {
-    using Command = mtt::SetPropertyCommand<
-                              mtt::RotatableObject,
-                              glm::quat,
-                              void (mtt::RotatableObject::*)(const glm::quat&)>;
-    std::unique_ptr<Command> command(
-                                new Command(_object,
-                                            &mtt::RotatableObject::setRotation,
-                                            _object.rotation(),
-                                            newRotation));
+    using Command = SetPropertyCommand<
+                                  RotatableObject,
+                                  glm::quat,
+                                  void (RotatableObject::*)(const glm::quat&)>;
+    std::unique_ptr<Command> command( new Command(_object,
+                                                  &RotatableObject::setRotation,
+                                                  _object.rotation(),
+                                                  newRotation));
     _undoStack.addAndMake(std::move(command));
   }
   catch(std::exception& error)
   {
-    mtt::Log() << "RingManipulator::processRotation: " << error.what();
+    Log() << "RingManipulator::processRotation: " << error.what();
   }
   catch(...)
   {
-    mtt::Log() << "RingManipulator::processRotation: unknown error";
+    Log() << "RingManipulator::processRotation: unknown error";
   }
 }
 

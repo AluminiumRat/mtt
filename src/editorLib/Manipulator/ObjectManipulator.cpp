@@ -1,14 +1,15 @@
 #include <mtt/render/Drawable/AntiscaleDrawableModificator.h>
+#include <mtt/editorLib/Manipulator/ObjectManipulator.h>
 #include <mtt/editorLib/Objects/Object3D.h>
 
-#include <Manipulator/ObjectManipulator.h>
+using namespace mtt;
 
-ObjectManipulator::ObjectManipulator(mtt::Object3D& object) :
+ObjectManipulator::ObjectManipulator(Object3D& object) :
   _object(object),
   _orientation(LOCAL_ORIENTATION)
 {
   connect(&_object,
-          &mtt::Object3D::transformChanged,
+          &Object3D::transformChanged,
           this,
           &ObjectManipulator::_updatePosition,
           Qt::DirectConnection);
@@ -20,7 +21,7 @@ void ObjectManipulator::_updatePosition() noexcept
   if(_orientation == LOCAL_ORIENTATION)
   {
     glm::mat4 newTransform =
-            mtt::AntiscaleDrawableModificator::getCutedTransform(
+            AntiscaleDrawableModificator::getCutedTransform(
                                               _object.localToWorldTransform());
     node().setTransformMatrix(newTransform);
   }

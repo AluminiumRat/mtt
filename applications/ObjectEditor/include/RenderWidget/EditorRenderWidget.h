@@ -4,9 +4,8 @@
 #include <mtt/application/Widgets/RenderWidget/RenderWidget.h>
 #include <mtt/application/Widgets/RenderWidget/ClickSelectHandler.h>
 #include <mtt/clPipeline/ColorFrameBuilder.h>
+#include <mtt/editorLib/Manipulator/EditorManipulatorController.h>
 #include <mtt/render/SceneGraph/CameraNode.h>
-
-#include <Manipulator/EditorManipulatorController.h>
 
 class EditorCommonData;
 
@@ -23,8 +22,8 @@ public:
   inline mtt::OrbitalCameraController& cameraController() noexcept;
   inline const mtt::OrbitalCameraController& cameraController() const noexcept;
 
-  inline EditorManipulatorController& manipulatorController() noexcept;
-  inline const EditorManipulatorController&
+  inline mtt::EditorManipulatorController& manipulatorController() noexcept;
+  inline const mtt::EditorManipulatorController&
                                         manipulatorController() const noexcept;
 
 protected:
@@ -45,7 +44,7 @@ private:
   EditorCommonData& _commonData;
   mtt::CameraNode _camera;
   mtt::OrbitalCameraController _cameraController;
-  EditorManipulatorController _manipulatorController;
+  mtt::EditorManipulatorController _manipulatorController;
   mtt::ClickSelectHandler _clickSelectHandler;
 };
 
@@ -61,13 +60,13 @@ inline const mtt::OrbitalCameraController&
   return _cameraController;
 }
 
-inline EditorManipulatorController&
+inline mtt::EditorManipulatorController&
                             EditorRenderWidget::manipulatorController() noexcept
 {
   return _manipulatorController;
 }
 
-inline const EditorManipulatorController&
+inline const mtt::EditorManipulatorController&
                       EditorRenderWidget::manipulatorController() const noexcept
 {
   return _manipulatorController;

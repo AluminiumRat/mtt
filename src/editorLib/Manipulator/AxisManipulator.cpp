@@ -4,14 +4,15 @@
 #include <mtt/application/EditCommands/UndoStack.h>
 #include <mtt/clPipeline/MeshTechniques/UnlightedColorTechnique.h>
 #include <mtt/clPipeline/constants.h>
+#include <mtt/editorLib/Manipulator/AxisManipulator.h>
 #include <mtt/editorLib/Objects/MovableObject.h>
 #include <mtt/utilities/Abort.h>
-
-#include <Manipulator/AxisManipulator.h>
 
 #define SIDES_NUMBER 12
 #define CILINDER_RADIUS 5.f
 #define CILINDER_HEIGHT 100.f
+
+using namespace mtt;
 
 static void addSide(std::vector<glm::vec3>& positions,
                     float startAngle,
@@ -38,9 +39,8 @@ static void addSide(std::vector<glm::vec3>& positions,
   positions.push_back(glm::vec3(startXY, CILINDER_HEIGHT));
 }
 
-AxisManipulator::AxisManipulator( mtt::MovableObject& object,
-                                  mtt::UndoStack& undoStack) :
-  AxisMove3DManipulator(mtt::AutoscaleDrawableModificator::PIXEL_SCALE_MODE),
+AxisManipulator::AxisManipulator(MovableObject& object, UndoStack& undoStack) :
+  AxisMove3DManipulator(AutoscaleDrawableModificator::PIXEL_SCALE_MODE),
   _undoStack(undoStack),
   _object(object)
 {
@@ -59,8 +59,8 @@ AxisManipulator::AxisManipulator( mtt::MovableObject& object,
 
   setGeometry(positions);
 
-  setTechnique( mtt::clPipeline::colorFrameType,
-                std::make_unique<mtt::clPipeline::UnlightedColorTechnique>(
+  setTechnique( clPipeline::colorFrameType,
+                std::make_unique<clPipeline::UnlightedColorTechnique>(
                                           false,
                                           false,
                                           VK_COMPARE_OP_ALWAYS,
@@ -83,7 +83,7 @@ std::optional<glm::vec3> AxisManipulator::tryActivate(
     }
     catch(...)
     {
-      mtt::Abort("AxisManipulator::tryActivate: unable to lock undo group");
+      Abort("AxisManipulator::tryActivate: unable to lock undo group");
     }
   }
 
@@ -100,24 +100,23 @@ void AxisManipulator::processShift( const glm::vec3& startTouchPoint,
 
   try
   {
-    using Command = mtt::SetPropertyCommand<
-                                mtt::MovableObject,
-                                glm::vec3,
-                                void (mtt::MovableObject::*)(const glm::vec3&)>;
-    std::unique_ptr<Command> command(
-                                  new Command(_object,
-                                              &mtt::MovableObject::setPosition,
-                                              _object.position(),
-                                              newPosition));
+    using Command = SetPropertyCommand<
+                                    MovableObject,
+                                    glm::vec3,
+                                    void (MovableObject::*)(const glm::vec3&)>;
+    std::unique_ptr<Command> command( new Command(_object,
+                                                  &MovableObject::setPosition,
+                                                  _object.position(),
+                                                  newPosition));
     _undoStack.addAndMake(std::move(command));
   }
   catch(std::exception& error)
   {
-    mtt::Log() << "AxisManipulator::processShift: " << error.what();
+    Log() << "AxisManipulator::processShift: " << error.what();
   }
   catch(...)
   {
-    mtt::Log() << "AxisManipulator::processShift: unknown error";
+    Log() << "AxisManipulator::processShift: unknown error";
   }
 }
 

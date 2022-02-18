@@ -1,14 +1,17 @@
 #include <glm/gtx/transform.hpp>
 
-#include <mtt/editorLib/Objects/ScalableObject.h>
+#include <mtt/editorLib/Manipulator/MoveManipulator.h>
+#include <mtt/editorLib/Objects/MovableObject.h>
 
-#include <Manipulator/ScaleManipulator.h>
+using namespace mtt;
 
-ScaleManipulator::ScaleManipulator( mtt::ScalableObject& object,
-                                    mtt::UndoStack& undoStack) :
+MoveManipulator::MoveManipulator(MovableObject& object, UndoStack& undoStack) :
   ObjectManipulator(object),
+  _xAxisManipulator(object, undoStack),
   _xPlaneManipulator(object, undoStack),
+  _yAxisManipulator(object, undoStack),
   _yPlaneManipulator(object, undoStack),
+  _zAxisManipulator(object, undoStack),
   _zPlaneManipulator(object, undoStack)
 {
   glm::mat4 xManipulatorTransform = glm::rotate(glm::radians(90.f),
@@ -17,6 +20,11 @@ ScaleManipulator::ScaleManipulator( mtt::ScalableObject& object,
                 glm::rotate(glm::radians(90.f), glm::vec3(0, 1, 0)) *
                                                           xManipulatorTransform;
   _xManipulatorJoint.setJointMatrix(xManipulatorTransform);
+  _xAxisManipulator.setUnselectedColor(xUnselectedColor);
+  _xAxisManipulator.setHighlihtedColor(xHighlihtedColor);
+  _xAxisManipulator.setActivatedColor(xActivatedColor);
+  _xManipulatorJoint.addChild(_xAxisManipulator.node());
+  registerSubmanipulator(_xAxisManipulator, _xManipulatorJoint);
 
   _xPlaneManipulator.setUnselectedColor(xUnselectedColor);
   _xPlaneManipulator.setHighlihtedColor(xHighlihtedColor);
@@ -30,12 +38,22 @@ ScaleManipulator::ScaleManipulator( mtt::ScalableObject& object,
               glm::rotate(glm::radians(-90.f), glm::vec3(1, 0, 0)) *
                                                           yManipulatorTransform;
   _yManipulatorJoint.setJointMatrix(yManipulatorTransform);
+  _yAxisManipulator.setUnselectedColor(yUnselectedColor);
+  _yAxisManipulator.setHighlihtedColor(yHighlihtedColor);
+  _yAxisManipulator.setActivatedColor(yActivatedColor);
+  _yManipulatorJoint.addChild(_yAxisManipulator.node());
+  registerSubmanipulator(_yAxisManipulator, _yManipulatorJoint);
 
   _yPlaneManipulator.setUnselectedColor(yUnselectedColor);
   _yPlaneManipulator.setHighlihtedColor(yHighlihtedColor);
   _yPlaneManipulator.setActivatedColor(yActivatedColor);
   _yManipulatorJoint.addChild(_yPlaneManipulator.node());
   registerSubmanipulator(_yPlaneManipulator, _yManipulatorJoint);
+
+  _zAxisManipulator.setUnselectedColor(zUnselectedColor);
+  _zAxisManipulator.setHighlihtedColor(zHighlihtedColor);
+  _zAxisManipulator.setActivatedColor(zActivatedColor);
+  registerSubmanipulator(_zAxisManipulator, _zAxisManipulator.node());
 
   _zPlaneManipulator.setUnselectedColor(zUnselectedColor);
   _zPlaneManipulator.setHighlihtedColor(zHighlihtedColor);

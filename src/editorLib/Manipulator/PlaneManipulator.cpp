@@ -2,14 +2,15 @@
 #include <mtt/application/EditCommands/UndoStack.h>
 #include <mtt/clPipeline/MeshTechniques/UnlightedColorTechnique.h>
 #include <mtt/clPipeline/constants.h>
+#include <mtt/editorLib/Manipulator/PlaneManipulator.h>
 #include <mtt/editorLib/Objects/MovableObject.h>
 #include <mtt/utilities/Abort.h>
 
-#include <Manipulator/PlaneManipulator.h>
+using namespace mtt;
 
-PlaneManipulator::PlaneManipulator( mtt::MovableObject& object,
-                                    mtt::UndoStack& undoStack) :
-  PlaneMove3DManipulator(mtt::AutoscaleDrawableModificator::PIXEL_SCALE_MODE),
+PlaneManipulator::PlaneManipulator( MovableObject& object,
+                                    UndoStack& undoStack) :
+  PlaneMove3DManipulator(AutoscaleDrawableModificator::PIXEL_SCALE_MODE),
   _undoStack(undoStack),
   _object(object)
 {
@@ -39,8 +40,8 @@ PlaneManipulator::PlaneManipulator( mtt::MovableObject& object,
 
   setGeometry(positions);
 
-  setTechnique( mtt::clPipeline::colorFrameType,
-                std::make_unique<mtt::clPipeline::UnlightedColorTechnique>(
+  setTechnique( clPipeline::colorFrameType,
+                std::make_unique<clPipeline::UnlightedColorTechnique>(
                                           false,
                                           false,
                                           VK_COMPARE_OP_ALWAYS,
@@ -63,14 +64,14 @@ std::optional<glm::vec3> PlaneManipulator::tryActivate(
     }
     catch(...)
     {
-      mtt::Abort("PlaneManipulator::tryActivate: unable to lock undo group");
+      Abort("PlaneManipulator::tryActivate: unable to lock undo group");
     }
   }
 
   return intersecPoint;
 }
 
-void PlaneManipulator::processShift( const glm::vec3& startTouchPoint,
+void PlaneManipulator::processShift(const glm::vec3& startTouchPoint,
                                     const glm::vec3& shiftedPoint) noexcept
 {
   glm::vec3 shiftInWorld = shiftedPoint - startTouchPoint;
@@ -80,24 +81,23 @@ void PlaneManipulator::processShift( const glm::vec3& startTouchPoint,
 
   try
   {
-    using Command = mtt::SetPropertyCommand<
-                                mtt::MovableObject,
+    using Command = SetPropertyCommand<
+                                MovableObject,
                                 glm::vec3,
-                                void (mtt::MovableObject::*)(const glm::vec3&)>;
-    std::unique_ptr<Command> command(
-                                  new Command(_object,
-                                              &mtt::MovableObject::setPosition,
-                                              _object.position(),
-                                              newPosition));
+                                void (MovableObject::*)(const glm::vec3&)>;
+    std::unique_ptr<Command> command( new Command(_object,
+                                                  &MovableObject::setPosition,
+                                                  _object.position(),
+                                                  newPosition));
     _undoStack.addAndMake(std::move(command));
   }
   catch(std::exception& error)
   {
-    mtt::Log() << "PlaneManipulator::processShift: " << error.what();
+    Log() << "PlaneManipulator::processShift: " << error.what();
   }
   catch(...)
   {
-    mtt::Log() << "PlaneManipulator::processShift: unknown error";
+    Log() << "PlaneManipulator::processShift: unknown error";
   }
 }
 

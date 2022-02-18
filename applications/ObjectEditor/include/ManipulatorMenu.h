@@ -2,7 +2,7 @@
 
 #include <QtCore/QObject>
 
-#include <Manipulator/EditorManipulatorController.h>
+#include <mtt/editorLib/Manipulator/EditorManipulatorController.h>
 
 class MainWindow;
 
@@ -14,7 +14,7 @@ class ManipulatorMenu : public QObject
 
 public:
   ManipulatorMenu(MainWindow& window,
-                  EditorManipulatorController& controller,
+                  mtt::EditorManipulatorController& controller,
                   Ui_MainWindow& ui);
   ManipulatorMenu(const ManipulatorMenu&) = delete;
   ManipulatorMenu& operator = (const ManipulatorMenu&) = delete;
@@ -27,7 +27,7 @@ private:
   void _setRotationManipulator() noexcept;
   void _setScaleManipulator() noexcept;
   void _setManipulatorType(
-                  EditorManipulatorController::ManipulatorType type) noexcept;
+              mtt::EditorManipulatorController::ManipulatorType type) noexcept;
   void _updateMenuFromManipulatorType() noexcept;
 
   void _setLocalOrientation() noexcept;
@@ -36,7 +36,7 @@ private:
 
 private:
   MainWindow& _window;
-  EditorManipulatorController& _controller;
+  mtt::EditorManipulatorController& _controller;
   Ui_MainWindow& _ui;
   bool _skipUpdate;
 };

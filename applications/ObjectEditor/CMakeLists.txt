@@ -24,6 +24,11 @@ find_path(GLM_PATH
           HINTS "$ENV{GLM_PATH}"
           REQUIRED)
 
+find_path(VKMEMALLOC_PATH
+          vk_mem_alloc.h
+          HINTS "$ENV{VKMEMALLOC_PATH}"
+          REQUIRED)
+
 find_package(FbxSDK REQUIRED)
 
 include_directories("include/"
@@ -53,16 +58,6 @@ set(HEADERS
     "include/AsyncTasks/SaveModelTask.h"
     "include/AsyncTasks/UploadCubetextureTask.h"
     "include/AsyncTasks/UploadTextureTask.h"
-
-    "include/Manipulator/AxisManipulator.h"
-    "include/Manipulator/EditorManipulatorController.h"
-    "include/Manipulator/MoveManipulator.h"
-    "include/Manipulator/ObjectManipulator.h"
-    "include/Manipulator/PlaneManipulator.h"
-    "include/Manipulator/RingManipulator.h"
-    "include/Manipulator/RotationManipulator.h"
-    "include/Manipulator/ScaleManipulator.h"
-    "include/Manipulator/TriangleManipulator.h"
 
     "include/Objects/BoneRefBatch.h"
     "include/Objects/BoneRefObject.h"
@@ -127,16 +122,6 @@ set(SOURCES
     "src/AsyncTasks/SaveModelTask.cpp"
     "src/AsyncTasks/UploadCubetextureTask.cpp"
     "src/AsyncTasks/UploadTextureTask.cpp"
-
-    "src/Manipulator/AxisManipulator.cpp"
-    "src/Manipulator/EditorManipulatorController.cpp"
-    "src/Manipulator/MoveManipulator.cpp"
-    "src/Manipulator/ObjectManipulator.cpp"
-    "src/Manipulator/PlaneManipulator.cpp"
-    "src/Manipulator/RingManipulator.cpp"
-    "src/Manipulator/RotationManipulator.cpp"
-    "src/Manipulator/ScaleManipulator.cpp"
-    "src/Manipulator/TriangleManipulator.cpp"
 
     "src/Objects/BoneRefBatch.cpp"
     "src/Objects/BoneRefObject.cpp"
