@@ -5,9 +5,9 @@
 #include <mtt/application/CommonEditData.h>
 #include <mtt/render/RenderScene.h>
 #include <mtt/editorLib/AnimationPlayer.h>
+#include <mtt/editorLib/EditorUndoStack.h>
 
 #include <EditorScene.h>
-#include <EditorUndoStack.h>
 
 class EditorCommonData : public mtt::CommonEditData
 {
@@ -43,7 +43,7 @@ signals:
 
 private:
   mtt::AnimationPlayer _animationPlayer;
-  EditorUndoStack _undoStack;
+  mtt::EditorUndoStack _undoStack;
   mtt::RenderScene _renderScene;
   QString _modelFilename;
   QString _environmentFilename;

@@ -1,17 +1,17 @@
 #include <mtt/editorLib/AnimationPlayer.h>
+#include <mtt/editorLib/EditorUndoStack.h>
 
-#include <EditorUndoStack.h>
+using namespace mtt;
 
 #define STACK_SIZE 20
 
-EditorUndoStack::EditorUndoStack(mtt::AnimationPlayer& animationPlayer) :
+EditorUndoStack::EditorUndoStack(AnimationPlayer& animationPlayer) :
   UndoStack(STACK_SIZE),
   _animationPlayer(animationPlayer)
 {
 }
 
-void EditorUndoStack::addAndMake(
-                              std::unique_ptr<mtt::AbstractEditCommand> command)
+void EditorUndoStack::addAndMake(std::unique_ptr<AbstractEditCommand> command)
 {
   _animationPlayer.stop();
   UndoStack::addAndMake(std::move(command));

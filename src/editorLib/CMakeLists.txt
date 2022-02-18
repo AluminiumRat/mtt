@@ -78,6 +78,7 @@ set(HEADERS
     "../../include/mtt/editorLib/SceneTab/VisiblePropertyWidget.h"
 
     "../../include/mtt/editorLib/AnimationPlayer.h"
+    "../../include/mtt/editorLib/EditorUndoStack.h"
     )
 
 set(UI_FILES
@@ -135,6 +136,7 @@ set(SOURCES
     "SceneTab/VisiblePropertyWidget.cpp"
 
     "AnimationPlayer.cpp"
+    "EditorUndoStack.cpp"
     )
 
 add_library(editorLib
