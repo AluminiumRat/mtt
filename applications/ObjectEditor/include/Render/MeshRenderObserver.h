@@ -2,22 +2,22 @@
 
 #include <optional>
 
+#include <mtt/editorLib/Render/Object3DRenderObserver.h>
 #include <mtt/render/Drawable/BoneMatricesSetter.h>
 #include <mtt/render/Mesh/Mesh.h>
 #include <mtt/render/SceneGraph/SimpleDrawableNode.h>
 
 #include <Render/BonesObserver.h>
 #include <Render/MaterialObserver.h>
-#include <Render/Object3DRenderObserver.h>
 
 class MeshObject;
 
-class MeshRenderObserver : public Object3DRenderObserver
+class MeshRenderObserver : public mtt::Object3DRenderObserver
 {
   Q_OBJECT
 
 public:
-  MeshRenderObserver(MeshObject& object, EditorCommonData& commonData);
+  MeshRenderObserver(MeshObject& object, mtt::CommonEditData& commonData);
   MeshRenderObserver(const MeshRenderObserver&) = delete;
   MeshRenderObserver& operator = (const MeshRenderObserver&) = delete;
   virtual ~MeshRenderObserver() noexcept = default;

@@ -16,7 +16,7 @@
 #include <Render/MeshRenderObserver.h>
 
 MeshRenderObserver::MeshRenderObserver( MeshObject& object,
-                                        EditorCommonData& commonData) :
+                                        mtt::CommonEditData& commonData) :
   Object3DRenderObserver(object, commonData),
   _object(object),
   _mesh(mtt::Application::instance().displayDevice())

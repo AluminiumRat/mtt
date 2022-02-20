@@ -2,57 +2,58 @@
 
 #include <mtt/application/Application.h>
 #include <mtt/editorLib/Objects/BackgroundObject.h>
+#include <mtt/editorLib/Render/BackgroundObserver.h>
 #include <mtt/utilities/Log.h>
 
-#include <Render/BackgroundObserver.h>
+using namespace mtt;
 
-BackgroundObserver::BackgroundObserver( mtt::BackgroundObject& object,
-                                        EditorCommonData& commonData) :
+BackgroundObserver::BackgroundObserver( BackgroundObject& object,
+                                        CommonEditData& commonData) :
   Object3DRenderObserver(object, commonData),
   _object(object),
-  _backgroundRenderer(mtt::Application::instance().displayDevice()),
+  _backgroundRenderer(Application::instance().displayDevice()),
   _cubemapObserver(object.cubemap())
 {
   connect(&_object,
-          &mtt::BackgroundObject::visibleChanged,
+          &BackgroundObject::visibleChanged,
           this,
           &BackgroundObserver::_updateLight,
           Qt::DirectConnection);
   connect(&_object,
-          &mtt::BackgroundObject::lightEnabledChanged,
+          &BackgroundObject::lightEnabledChanged,
           this,
           &BackgroundObserver::_updateLight,
           Qt::DirectConnection);
   _updateLight();
 
   connect(&_object,
-          &mtt::BackgroundObject::luminanceChanged,
+          &BackgroundObject::luminanceChanged,
           this,
           &BackgroundObserver::_updateLuminance,
           Qt::DirectConnection);
   connect(&_object,
-          &mtt::BackgroundObject::colorChanged,
+          &BackgroundObject::colorChanged,
           this,
           &BackgroundObserver::_updateLuminance,
           Qt::DirectConnection);
   _updateLuminance();
 
   connect(&_object,
-          &mtt::BackgroundObject::dissolutionStartDistanceChanged,
+          &BackgroundObject::dissolutionStartDistanceChanged,
           this,
           &BackgroundObserver::_updateDissolutionStartDistance,
           Qt::DirectConnection);
   _updateDissolutionStartDistance();
 
   connect(&_object,
-          &mtt::BackgroundObject::dissolutionLengthChanged,
+          &BackgroundObject::dissolutionLengthChanged,
           this,
           &BackgroundObserver::_updateDissolutionLength,
           Qt::DirectConnection);
   _updateDissolutionLength();
 
   _cubemapObserver.setCallback(
-    [&](std::shared_ptr<mtt::CubeTexture> texture)
+    [&](std::shared_ptr<CubeTexture> texture)
     {
       _luminanceTexture = texture;
       _updateLuminanceTexture();
@@ -78,11 +79,11 @@ void BackgroundObserver::_updateBackgroundVisible() noexcept
   }
   catch (std::exception& error)
   {
-    mtt::Log() << "BackgroundObserver::_updateAreaModificator: unable to update area modificator: " << error.what();
+    Log() << "BackgroundObserver::_updateAreaModificator: unable to update area modificator: " << error.what();
   }
   catch (...)
   {
-    mtt::Log() << "BackgroundObserver::_updateAreaModificator: unable to update area modificator: unknown error";
+    Log() << "BackgroundObserver::_updateAreaModificator: unable to update area modificator: unknown error";
   }
 }
 
@@ -94,11 +95,10 @@ void BackgroundObserver::_updateLuminanceTexture() noexcept
   {
     try
     {
-      std::shared_ptr<mtt::CubeTexture> diffuseLuminanceMap;
+      std::shared_ptr<CubeTexture> diffuseLuminanceMap;
       if(_luminanceTexture != nullptr)
       {
-        diffuseLuminanceMap.reset(
-                            new mtt::CubeTexture(_luminanceTexture->device()));
+        diffuseLuminanceMap.reset(new CubeTexture(_luminanceTexture->device()));
         uint32_t luminanceMapExtent = std::min( _luminanceTexture->sideExtent(),
                                                 uint32_t(16));
         diffuseLuminanceMap->buildDiffuseLuminanceMap(_luminanceTexture,
@@ -109,11 +109,11 @@ void BackgroundObserver::_updateLuminanceTexture() noexcept
     }
     catch (std::exception& error)
     {
-      mtt::Log() << "BackgroundObserver::_updateLuminanceTexture: " << error.what();
+      Log() << "BackgroundObserver::_updateLuminanceTexture: " << error.what();
     }
     catch (...)
     {
-      mtt::Log() << "BackgroundObserver::_updateLuminanceTexture: unknown error";
+      Log() << "BackgroundObserver::_updateLuminanceTexture: unknown error";
     }
   }
 }
@@ -139,7 +139,7 @@ void BackgroundObserver::_updateLight() noexcept
       _light.emplace( true,
                       true,
                       true,
-                      mtt::Application::instance().displayDevice());
+                      Application::instance().displayDevice());
 
       positionRotateJoint().addChild(_light.value());
       registerCompositeObject(_light.value());
@@ -150,12 +150,12 @@ void BackgroundObserver::_updateLight() noexcept
     catch(std::exception& error)
     {
       _removeLight();
-      mtt::Log() << "BackgroundObserver::_updateLightDrawable: " << error.what();
+      Log() << "BackgroundObserver::_updateLightDrawable: " << error.what();
     }
     catch(...)
     {
       _removeLight();
-      mtt::Log() << "BackgroundObserver::_updateLightDrawable: unknown error";
+      Log() << "BackgroundObserver::_updateLightDrawable: unknown error";
     }
   }
 }

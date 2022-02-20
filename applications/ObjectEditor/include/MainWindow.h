@@ -1,12 +1,15 @@
 #pragma once
 
+#include <optional>
+
 #include <QtWidgets/QMainWindow>
 
 #include <mtt/application/Widgets/AsyncTaskDialog/AsyncTaskDialog.h>
 #include <mtt/application/Widgets/StatisticWidget.h>
+#include <mtt/editorLib/Render/SceneRenderObserver.h>
 
-#include <Render/SceneRenderObserver.h>
 #include <RenderWidget/EditorRenderWidget.h>
+#include <Render/RenderObserverFactory.h>
 #include <SceneTab/SceneTab.h>
 #include <EditMenu.h>
 #include <EditorCommonData.h>
@@ -26,6 +29,7 @@ public:
   virtual ~MainWindow() noexcept;
 
 private:
+  void _updateSceneRenderObserver() noexcept;
   void _showAsyncTaskDialog(mtt::AbstractAsyncTask& task);
   void _checkAsyncTaskDialog();
   void _processWarning( mtt::AbstractAsyncTask& task,
@@ -38,7 +42,9 @@ private:
   Ui_MainWindow* _ui;
 
   EditorCommonData _commonEditData;
-  SceneRenderObserver _sceneRenderObserver;
+
+  RenderObserverFactory _observerFactory;
+  std::optional<mtt::SceneRenderObserver> _sceneRenderObserver;
 
   SceneTab _sceneTab;
   EditorRenderWidget _renderWidget;

@@ -1,8 +1,8 @@
+#include <mtt/application/CommonEditData.h>
 #include <mtt/editorLib/Objects/DirectLightObject.h>
+#include <mtt/editorLib/Render/DirectLightRenderObserver.h>
 #include <mtt/editorLib/EditorApplication.h>
-
-#include <Render/DirectLightRenderObserver.h>
-#include <EditorCommonData.h>
+#include <mtt/render/RenderScene.h>
 
 #define ICON_FILE ":/ObjectEditor/directLight.png"
 #define ICON_SIZE 32
@@ -10,64 +10,68 @@
 #define CAP_SEGMENTS 32
 #define BODY_SEGMENTS 6
 
+using namespace mtt;
+
 DirectLightRenderObserver::DirectLightRenderObserver(
-                                                mtt::DirectLightObject& object,
-                                                EditorCommonData& commonData) :
+                                                    DirectLightObject& object,
+                                                    CommonEditData& commonData,
+                                                    RenderScene& renderScene) :
   AbstractLightRenderObserver(object, commonData, ICON_FILE, ICON_SIZE),
   _lightObject(object),
-  _light(true, true, mtt::EditorApplication::instance().displayDevice())
+  _light(true, true, EditorApplication::instance().displayDevice()),
+  _renderScene(renderScene)
 {
   setLightObject(_light);
 
   connect(&_lightObject,
-          &mtt::DirectLightObject::baseIlluminanceChanged,
+          &DirectLightObject::baseIlluminanceChanged,
           this,
           &DirectLightRenderObserver::_updateIlluminance,
           Qt::DirectConnection);
   connect(&_lightObject,
-          &mtt::DirectLightObject::colorChanged,
+          &DirectLightObject::colorChanged,
           this,
           &DirectLightRenderObserver::_updateIlluminance,
           Qt::DirectConnection);
   _updateIlluminance();
 
   connect(&_lightObject,
-          &mtt::DirectLightObject::distanceChanged,
+          &DirectLightObject::distanceChanged,
           this,
           &DirectLightRenderObserver::_updateDistance,
           Qt::DirectConnection);
   _updateDistance();
 
   connect(&_lightObject,
-          &mtt::DirectLightObject::radiusChanged,
+          &DirectLightObject::radiusChanged,
           this,
           &DirectLightRenderObserver::_updateRadius,
           Qt::DirectConnection);
   _updateRadius();
 
   connect(&_lightObject,
-          &mtt::DirectLightObject::shadowsEnabledChanged,
+          &DirectLightObject::shadowsEnabledChanged,
           this,
           &DirectLightRenderObserver::_updateShadowsEnabled,
           Qt::DirectConnection);
   _updateShadowsEnabled();
 
   connect(&_lightObject,
-          &mtt::DirectLightObject::shadowmapSizeChanged,
+          &DirectLightObject::shadowmapSizeChanged,
           this,
           &DirectLightRenderObserver::_updateShadowMapSize,
           Qt::DirectConnection);
   _updateShadowMapSize();
 
   connect(&_lightObject,
-          &mtt::DirectLightObject::cascadeSizeChanged,
+          &DirectLightObject::cascadeSizeChanged,
           this,
           &DirectLightRenderObserver::_updateCascadeSize,
           Qt::DirectConnection);
   _updateCascadeSize();
 
   connect(&_lightObject,
-          &mtt::DirectLightObject::blurSizeChanged,
+          &DirectLightObject::blurSizeChanged,
           this,
           &DirectLightRenderObserver::_updateBlur,
           Qt::DirectConnection);
@@ -153,11 +157,11 @@ void DirectLightRenderObserver::_updateCylinderMesh() noexcept
   }
   catch (std::exception& error)
   {
-    mtt::Log() << "DirectLightRenderObserver::_updateCylinderMesh: unable to update cylinder mesh: " << error.what();
+    Log() << "DirectLightRenderObserver::_updateCylinderMesh: unable to update cylinder mesh: " << error.what();
   }
   catch (...)
   {
-    mtt::Log() << "DirectLightRenderObserver::_updateCylinderMesh: unable to update cylinder mesh: unknown error.";
+    Log() << "DirectLightRenderObserver::_updateCylinderMesh: unable to update cylinder mesh: unknown error.";
   }
 }
 
@@ -179,29 +183,27 @@ void DirectLightRenderObserver::_updateShadowsEnabled() noexcept
   {
     try
     {
-      mtt::LogicalDevice& device =
-                            mtt::EditorApplication::instance().displayDevice();
-      _shadowMapProvider.reset(new mtt::clPipeline::ShadowMapProvider(
+      LogicalDevice& device = EditorApplication::instance().displayDevice();
+      _shadowMapProvider.reset(new clPipeline::ShadowMapProvider(
                                                           2,
                                                           glm::uvec2(256, 256),
                                                           device));
 
       _light.setShadowMapProvider(_shadowMapProvider.get());
       positionRotateJoint().addChild(_shadowMapProvider->camera());
-      _shadowMapProvider->setTargetField(
-                                      &commonData().renderScene().culledData());
+      _shadowMapProvider->setTargetField(&_renderScene.culledData());
       _updateDepthCamera();
       _updateShadowMapSize();
     }
     catch (std::exception& error)
     {
       _removeShadowmapProvider();
-      mtt::Log() << "DirectLightRenderObserver::_updateShadowsEnabled: unable to update shadow map provider: " << error.what();
+      Log() << "DirectLightRenderObserver::_updateShadowsEnabled: unable to update shadow map provider: " << error.what();
     }
     catch (...)
     {
       _removeShadowmapProvider();
-      mtt::Log() << "DirectLightRenderObserver::_updateShadowsEnabled: unable to update shadow map provider: unknown error.";
+      Log() << "DirectLightRenderObserver::_updateShadowsEnabled: unable to update shadow map provider: unknown error.";
     }
   }
 

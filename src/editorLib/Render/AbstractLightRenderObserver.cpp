@@ -2,6 +2,7 @@
 
 #include <mtt/clPipeline/MeshTechniques/InstrumentalCompositeTechnique.h>
 #include <mtt/clPipeline/constants.h>
+#include <mtt/editorLib/Render/AbstractLightRenderObserver.h>
 #include <mtt/editorLib/Objects/LightObject.h>
 #include <mtt/editorLib/EditorApplication.h>
 #include <mtt/render/Mesh/UidMeshTechnique.h>
@@ -10,17 +11,17 @@
 #include <mtt/utilities/Box.h>
 #include <mtt/utilities/Log.h>
 
-#include <Render/AbstractLightRenderObserver.h>
+using namespace mtt;
 
 AbstractLightRenderObserver::AbstractLightRenderObserver(
-                                                mtt::LightObject& object,
-                                                EditorCommonData& commonData,
-                                                const QString& iconFilename,
-                                                float iconSize) :
+                                                    LightObject& object,
+                                                    CommonEditData& commonData,
+                                                    const QString& iconFilename,
+                                                    float iconSize) :
   Object3DRenderObserver(object, commonData),
   _object(object),
   _lightRenderer(nullptr),
-  _hullMesh(mtt::EditorApplication::instance().displayDevice())
+  _hullMesh(EditorApplication::instance().displayDevice())
 {
   if (!iconFilename.isEmpty() && iconSize > 0)
   {
@@ -33,24 +34,24 @@ AbstractLightRenderObserver::AbstractLightRenderObserver(
   }
 
   _hullMesh.setTechnique(
-        mtt::clPipeline::colorFrameType,
-        std::make_unique<mtt::clPipeline::InstrumentalCompositeTechnique>(
+        clPipeline::colorFrameType,
+        std::make_unique<clPipeline::InstrumentalCompositeTechnique>(
                                                 VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
                                                 true,
                                                 true));
-  _hullMesh.setTechnique( mtt::clPipeline::uidFrameType,
-                          std::make_unique<mtt::UidMeshTechnique>(
+  _hullMesh.setTechnique( clPipeline::uidFrameType,
+                          std::make_unique<UidMeshTechnique>(
                                                 VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
                                                 true,
                                                 true));
 
-  mtt::SurfaceMaterialData materialData;
+  SurfaceMaterialData materialData;
   materialData.albedo = glm::vec3(.7f, .7f, .4f);
   materialData.roughness = 1;
   materialData.specularStrength = 1;
   _hullMesh.extraData().setSurfaceMaterialData(materialData);
 
-  _hullNode.setDrawable(&_hullMesh, mtt::Sphere());
+  _hullNode.setDrawable(&_hullMesh, Sphere());
   registerCulledDrawable(_hullNode);
   positionRotateJoint().addChild(_hullNode);
   _hullNode.addModificator(visibleFilter());
@@ -58,15 +59,14 @@ AbstractLightRenderObserver::AbstractLightRenderObserver(
   _hullNode.addModificator(selectionModificator());
 
   connect(&_object,
-          &mtt::LightObject::enabledChanged,
+          &LightObject::enabledChanged,
           this,
           &AbstractLightRenderObserver::_updateEnabled,
           Qt::DirectConnection);
   _updateEnabled();
 }
 
-void AbstractLightRenderObserver::setLightObject(
-                                                mtt::CompositeObjectNode& light)
+void AbstractLightRenderObserver::setLightObject(CompositeObjectNode& light)
 {
   _clearLightRenderer();
 
@@ -102,11 +102,11 @@ void AbstractLightRenderObserver::_updateEnabled() noexcept
     }
     catch (std::exception& error)
     {
-      mtt::Log() << "AbstractLightRenderObserver::_updateEnabled: " << error.what();
+      Log() << "AbstractLightRenderObserver::_updateEnabled: " << error.what();
     }
     catch (...)
     {
-      mtt::Log() << "AbstractLightRenderObserver::_updateEnabled: unable to register area modificator";
+      Log() << "AbstractLightRenderObserver::_updateEnabled: unable to register area modificator";
     }
   }
 }
@@ -116,15 +116,13 @@ void AbstractLightRenderObserver::setHullGeometry(
 {
   try
   {
-    mtt::Box boundingBox;
+    Box boundingBox;
     for(const glm::vec3& point : newGeometry) boundingBox.extend(point);
     _hullNode.setLocalBoundSphere(boundingBox.buildBoundingSphere());
 
-    mtt::LogicalDevice& device =
-                            mtt::EditorApplication::instance().displayDevice();
-    std::shared_ptr<mtt::Buffer> positionsBuffer(
-                                  new mtt::Buffer(device,
-                                                  mtt::Buffer::VERTEX_BUFFER));
+    LogicalDevice& device = EditorApplication::instance().displayDevice();
+    std::shared_ptr<Buffer> positionsBuffer(new Buffer(device,
+                                            Buffer::VERTEX_BUFFER));
     positionsBuffer->setData( newGeometry.data(),
                               newGeometry.size() * sizeof(glm::vec3));
     _hullMesh.setPositionBuffer(positionsBuffer);
@@ -133,7 +131,7 @@ void AbstractLightRenderObserver::setHullGeometry(
   }
   catch (...)
   {
-    _hullNode.setLocalBoundSphere(mtt::Sphere());
+    _hullNode.setLocalBoundSphere(Sphere());
     _hullMesh.setVerticesNumber(0);
   }
 }

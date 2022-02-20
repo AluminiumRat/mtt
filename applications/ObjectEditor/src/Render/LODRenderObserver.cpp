@@ -6,7 +6,7 @@
 #include <mtt/utilities/Log.h>
 
 LODRenderObserver::LODRenderObserver( LODObject& object,
-                                      EditorCommonData& commonData) :
+                                      mtt::CommonEditData& commonData) :
   AbstractObjectRenderObserver(object, commonData),
   _object(object)
 {

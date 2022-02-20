@@ -2,19 +2,20 @@
 
 #include <mtt/editorLib/AsyncTasks/LoadEnvironmentModelTask.h>
 #include <mtt/editorLib/Objects/EnvironmentModel.h>
+#include <mtt/editorLib/Render/EnvironmentModelRenderObserver.h>
 #include <mtt/editorLib/EditorApplication.h>
 #include <mtt/utilities/Log.h>
 
-#include <Render/EnvironmentModelRenderObserver.h>
+using namespace mtt;
 
 EnvironmentModelRenderObserver::EnvironmentModelRenderObserver(
-                                                mtt::EnvironmentModel& object,
-                                                EditorCommonData& commonData) :
+                                                  EnvironmentModel& object,
+                                                  CommonEditData& commonData) :
   Object3DRenderObserver(object, commonData),
   _object(object)
 {
   connect(&_object,
-          &mtt::EnvironmentModel::filenameChanged,
+          &EnvironmentModel::filenameChanged,
           this,
           &EnvironmentModelRenderObserver::_updateModel,
           Qt::DirectConnection);
@@ -35,7 +36,7 @@ void EnvironmentModelRenderObserver::_updateModel() noexcept
   {
     try
     {
-      auto callback = [&](std::unique_ptr<mtt::SlaveDrawModel> model)
+      auto callback = [&](std::unique_ptr<SlaveDrawModel> model)
       {
         try
         {
@@ -55,19 +56,18 @@ void EnvironmentModelRenderObserver::_updateModel() noexcept
         }
       };
 
-      std::unique_ptr<mtt::LoadEnvironmentModelTask> task(
-                        new mtt::LoadEnvironmentModelTask(filename, callback));
-      mtt::AsyncTaskQueue& queue =
-                              mtt::EditorApplication::instance().asyncTaskQueue;
+      std::unique_ptr<LoadEnvironmentModelTask> task(
+                              new LoadEnvironmentModelTask(filename, callback));
+      AsyncTaskQueue& queue = EditorApplication::instance().asyncTaskQueue;
       _uploadStopper = queue.addTaskWithStopper(std::move(task));
     }
     catch(std::exception& error)
     {
-      mtt::Log() << "Unable to load model: " << error.what();
+      Log() << "Unable to load model: " << error.what();
     }
     catch (...)
     {
-      mtt::Log() << "Unable to load model: unknown error";
+      Log() << "Unable to load model: unknown error";
     }
   }
 }

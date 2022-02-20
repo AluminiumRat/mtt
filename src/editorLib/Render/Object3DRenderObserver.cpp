@@ -1,12 +1,14 @@
+#include <mtt/editorLib/Render/Object3DRenderObserver.h>
 #include <mtt/render/Drawable/AntiscaleDrawableModificator.h>
-#include <Render/Object3DRenderObserver.h>
 
-Object3DRenderObserver::Object3DRenderObserver( mtt::Object3D& object,
-                                                EditorCommonData& commonData) :
+using namespace mtt;
+
+Object3DRenderObserver::Object3DRenderObserver( Object3D& object,
+                                                CommonEditData& commonData) :
   AbstractObjectRenderObserver(object, commonData)
 {
   connect(&object,
-          &mtt::Object3D::transformChanged,
+          &Object3D::transformChanged,
           this,
           &Object3DRenderObserver::_setObjectTransform,
           Qt::DirectConnection);
@@ -21,7 +23,7 @@ void Object3DRenderObserver::_setObjectTransform(
   _positionJoint.setJointMatrix(positionTransform);
 
   _positionRotateJoint.setJointMatrix(
-              mtt::AntiscaleDrawableModificator::getCutedTransform(transform));
+                    AntiscaleDrawableModificator::getCutedTransform(transform));
 
   _fullTransformJoint.setJointMatrix(transform);
 }

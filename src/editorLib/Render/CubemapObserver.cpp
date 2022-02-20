@@ -2,17 +2,18 @@
 
 #include <mtt/editorLib/AsyncTasks/UploadCubetextureTask.h>
 #include <mtt/editorLib/Objects/CubemapObject.h>
+#include <mtt/editorLib/Render/CubemapObserver.h>
 #include <mtt/editorLib/EditorApplication.h>
 #include <mtt/render/Pipeline/CubeTexture.h>
 #include <mtt/utilities/Log.h>
 
-#include <Render/CubemapObserver.h>
+using namespace mtt;
 
-CubemapObserver::CubemapObserver(mtt::CubemapObject& object) :
+CubemapObserver::CubemapObserver(CubemapObject& object) :
   _object(object)
 {
   connect(&_object,
-          &mtt::CubemapObject::texturesChanged,
+          &CubemapObject::texturesChanged,
           this,
           &CubemapObserver::_updateTexture,
           Qt::DirectConnection);
@@ -41,19 +42,18 @@ void CubemapObserver::_updateTexture() noexcept
       return;
     }
 
-    std::unique_ptr<mtt::UploadCubetextureTask> task;
-    task.reset(new mtt::UploadCubetextureTask(filenames,
-                                              std::move(Callback(_callback))));
-    mtt::AsyncTaskQueue& queue =
-                            mtt::EditorApplication::instance().asyncTaskQueue;
+    std::unique_ptr<UploadCubetextureTask> task;
+    task.reset(new UploadCubetextureTask( filenames,
+                                          std::move(Callback(_callback))));
+    AsyncTaskQueue& queue = EditorApplication::instance().asyncTaskQueue;
     _uploadStopper = queue.addTaskWithStopper(std::move(task));
   }
   catch (std::exception& error)
   {
-    mtt::Log() << "CubemapObserver::_updateTexture: " << error.what();
+    Log() << "CubemapObserver::_updateTexture: " << error.what();
   }
   catch (...)
   {
-    mtt::Log() << "CubemapObserver::_updateTexture: unknown error.";
+    Log() << "CubemapObserver::_updateTexture: unknown error.";
   }
 }

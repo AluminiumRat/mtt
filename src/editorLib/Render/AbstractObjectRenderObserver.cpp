@@ -1,28 +1,29 @@
 #include <algorithm>
 
+#include <mtt/application/CommonEditData.h>
 #include <mtt/editorLib/Objects/DisplayedObject.h>
+#include <mtt/editorLib/Render/AbstractObjectRenderObserver.h>
 #include <mtt/utilities/Log.h>
 
-#include <Render/AbstractObjectRenderObserver.h>
-#include <EditorCommonData.h>
+using namespace mtt;
 
 AbstractObjectRenderObserver::AbstractObjectRenderObserver(
-                                                mtt::DisplayedObject& object,
-                                                EditorCommonData& commonData) :
+                                                  DisplayedObject& object,
+                                                  CommonEditData& commonData) :
   _object(object),
   _commonData(commonData)
 {
   _uidSetter.setUid(object.id());
 
   connect(&_object,
-          &mtt::Object3D::completeVisibleChanged,
+          &DisplayedObject::completeVisibleChanged,
           this,
           &AbstractObjectRenderObserver::updateVisible,
           Qt::DirectConnection);
   updateVisible(_object.completeVisible());
 
   connect(&_commonData,
-          &EditorCommonData::selectedObjectsChanged,
+          &CommonEditData::selectedObjectsChanged,
           this,
           &AbstractObjectRenderObserver::updateSelected,
           Qt::DirectConnection);
@@ -30,13 +31,13 @@ AbstractObjectRenderObserver::AbstractObjectRenderObserver(
 }
 
 void AbstractObjectRenderObserver::registerCulledDrawable(
-                                                    mtt::DrawableNode& drawable)
+                                                        DrawableNode& drawable)
 {
   if(std::find( _culledDrawables.begin(),
                 _culledDrawables.end(),
                 &drawable) != _culledDrawables.end())
   {
-    mtt::Log() << "AbstractObjectRenderObserver::registerCulledDrawable: drawable is already registered.";
+    Log() << "AbstractObjectRenderObserver::registerCulledDrawable: drawable is already registered.";
     return;
   }
 
@@ -45,14 +46,14 @@ void AbstractObjectRenderObserver::registerCulledDrawable(
 }
 
 void AbstractObjectRenderObserver::unregisterCulledDrawable(
-                                          mtt::DrawableNode& drawable) noexcept
+                                              DrawableNode& drawable) noexcept
 {
   CulledDrawables::iterator iDrawable = std::find(_culledDrawables.begin(),
                                                   _culledDrawables.end(),
                                                   &drawable);
   if(iDrawable == _culledDrawables.end())
   {
-    mtt::Log() << "AbstractObjectRenderObserver::unregisterCulledDrawable: drawable is not registered.";
+    Log() << "AbstractObjectRenderObserver::unregisterCulledDrawable: drawable is not registered.";
     return;
   }
 
@@ -60,14 +61,13 @@ void AbstractObjectRenderObserver::unregisterCulledDrawable(
   emit culledDrawableUnregistered(drawable);
 }
 
-void AbstractObjectRenderObserver::registerUnculledDrawable(
-                                                        mtt::Drawable& drawable)
+void AbstractObjectRenderObserver::registerUnculledDrawable(Drawable& drawable)
 {
   if(std::find( _unculledDrawables.begin(),
                 _unculledDrawables.end(),
                 &drawable) != _unculledDrawables.end())
   {
-    mtt::Log() << "AbstractObjectRenderObserver::registerUnculledDrawable: drawable is already registered.";
+    Log() << "AbstractObjectRenderObserver::registerUnculledDrawable: drawable is already registered.";
     return;
   }
 
@@ -76,14 +76,14 @@ void AbstractObjectRenderObserver::registerUnculledDrawable(
 }
 
 void AbstractObjectRenderObserver::unregisterUnculledDrawable(
-                                              mtt::Drawable& drawable) noexcept
+                                                  Drawable& drawable) noexcept
 {
   UnculledDrawables::iterator iDrawable = std::find(_unculledDrawables.begin(),
                                                     _unculledDrawables.end(),
                                                     &drawable);
   if(iDrawable == _unculledDrawables.end())
   {
-    mtt::Log() << "AbstractObjectRenderObserver::unregisterUnculledDrawable: drawable is not registered.";
+    Log() << "AbstractObjectRenderObserver::unregisterUnculledDrawable: drawable is not registered.";
     return;
   }
 
@@ -92,13 +92,13 @@ void AbstractObjectRenderObserver::unregisterUnculledDrawable(
 }
 
 void AbstractObjectRenderObserver::registerAreaModificator(
-                                              mtt::AreaModificator& modificator)
+                                                  AreaModificator& modificator)
 {
   if(std::find( _areaModificators.begin(),
                 _areaModificators.end(),
                 &modificator) != _areaModificators.end())
   {
-    mtt::Log() << "AbstractObjectRenderObserver::registerAreaModificator: modificator is already registered.";
+    Log() << "AbstractObjectRenderObserver::registerAreaModificator: modificator is already registered.";
     return;
   }
 
@@ -107,14 +107,14 @@ void AbstractObjectRenderObserver::registerAreaModificator(
 }
 
 void AbstractObjectRenderObserver::unregisterAreaModificator(
-                                    mtt::AreaModificator& modificator) noexcept
+                                        AreaModificator& modificator) noexcept
 {
   AreaModificators::iterator iModificator = std::find(_areaModificators.begin(),
                                                       _areaModificators.end(),
                                                       &modificator);
   if(iModificator == _areaModificators.end())
   {
-    mtt::Log() << "AbstractObjectRenderObserver::unregisterAreaModificator: modificator is not registered.";
+    Log() << "AbstractObjectRenderObserver::unregisterAreaModificator: modificator is not registered.";
     return;
   }
 
@@ -123,13 +123,13 @@ void AbstractObjectRenderObserver::unregisterAreaModificator(
 }
 
 void AbstractObjectRenderObserver::registerCompositeObject(
-                                          mtt::CompositeRenderObject& theObject)
+                                              CompositeRenderObject& theObject)
 {
   if(std::find( _compositeObjects.begin(),
                 _compositeObjects.end(),
                 &theObject) != _compositeObjects.end())
   {
-    mtt::Log() << "AbstractObjectRenderObserver::registerCompositeObject: object is already registered.";
+    Log() << "AbstractObjectRenderObserver::registerCompositeObject: object is already registered.";
     return;
   }
 
@@ -138,14 +138,14 @@ void AbstractObjectRenderObserver::registerCompositeObject(
 }
 
 void AbstractObjectRenderObserver::unregisterCompositeObject(
-                                mtt::CompositeRenderObject& theObject) noexcept
+                                    CompositeRenderObject& theObject) noexcept
 {
   CompositeObjects::iterator iObject = std::find( _compositeObjects.begin(),
                                                   _compositeObjects.end(),
                                                   &theObject);
   if(iObject == _compositeObjects.end())
   {
-    mtt::Log() << "AbstractObjectRenderObserver::unregisterCompositeObject: object is not registered.";
+    Log() << "AbstractObjectRenderObserver::unregisterCompositeObject: object is not registered.";
     return;
   }
 
@@ -154,9 +154,9 @@ void AbstractObjectRenderObserver::unregisterCompositeObject(
 }
 
 void AbstractObjectRenderObserver::updateSelected(
-                              const std::vector<mtt::Object*>& objects) noexcept
+                                  const std::vector<Object*>& objects) noexcept
 {
-  for(mtt::Object* object : objects)
+  for(Object* object : objects)
   {
     if(object == &_object)
     {

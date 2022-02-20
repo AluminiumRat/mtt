@@ -2,26 +2,27 @@
 #include <mtt/clPipeline/MeshTechniques/InstrumentalCompositeTechnique.h>
 #include <mtt/clPipeline/constants.h>
 #include <mtt/editorLib/Objects/SkeletonObject.h>
+#include <mtt/editorLib/Render/SkeletonRenderObserver.h>
 #include <mtt/render/Mesh/UidMeshTechnique.h>
 #include <mtt/render/Pipeline/Buffer.h>
 
-#include <Render/SkeletonRenderObserver.h>
+using namespace mtt;
 
-SkeletonRenderObserver::SkeletonRenderObserver( mtt::SkeletonObject& object,
-                                                EditorCommonData& commonData) :
+SkeletonRenderObserver::SkeletonRenderObserver( SkeletonObject& object,
+                                                CommonEditData& commonData) :
   Object3DRenderObserver(object, commonData),
-  _crossMesh(mtt::Application::instance().displayDevice())
+  _crossMesh(Application::instance().displayDevice())
 {
-  mtt::LogicalDevice& device = mtt::Application::instance().displayDevice();
+  LogicalDevice& device = Application::instance().displayDevice();
 
   _crossMesh.setTechnique(
-              mtt::clPipeline::colorFrameType,
-              std::make_unique<mtt::clPipeline::InstrumentalCompositeTechnique>(
+              clPipeline::colorFrameType,
+              std::make_unique<clPipeline::InstrumentalCompositeTechnique>(
                                                 VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
                                                 false,
                                                 false));
-  _crossMesh.setTechnique(mtt::clPipeline::uidFrameType,
-                          std::make_unique<mtt::UidMeshTechnique>(
+  _crossMesh.setTechnique(clPipeline::uidFrameType,
+                          std::make_unique<UidMeshTechnique>(
                                                 VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
                                                 false,
                                                 false));
@@ -32,20 +33,19 @@ SkeletonRenderObserver::SkeletonRenderObserver( mtt::SkeletonObject& object,
                                 {  0.f,  50.f,   0.f},
                                 {  0.f,   0.f, -50.f},
                                 {  0.0f,  0.f,  50.f}};
-  std::shared_ptr<mtt::Buffer> linePositionsBuffer(
-                                  new mtt::Buffer(device,
-                                                  mtt::Buffer::VERTEX_BUFFER));
+  std::shared_ptr<Buffer> linePositionsBuffer(
+                                    new Buffer(device, Buffer::VERTEX_BUFFER));
   linePositionsBuffer->setData(linePositions, sizeof(linePositions));
   _crossMesh.setPositionBuffer(linePositionsBuffer);
   _crossMesh.setVerticesNumber(6);
 
-  mtt::SurfaceMaterialData materialData;
+  SurfaceMaterialData materialData;
   materialData.albedo = glm::vec3(.7f, .7f, 0.f);
   materialData.roughness = 1;
   materialData.specularStrength = 1;
   _crossMesh.extraData().setSurfaceMaterialData(materialData);
 
-  _drawableNode.setDrawable(&_crossMesh, mtt::Sphere());
+  _drawableNode.setDrawable(&_crossMesh, Sphere());
   _drawableNode.addModificator(_autoscale);
 
   registerUnculledDrawable(_drawableNode);

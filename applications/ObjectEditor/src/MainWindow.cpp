@@ -5,6 +5,7 @@
 
 #include <mtt/editorLib/Objects/DirectLightObject.h>
 #include <mtt/editorLib/EditorApplication.h>
+#include <mtt/utilities/Log.h>
 
 #include <MainWindow.h>
 
@@ -12,7 +13,7 @@
 
 MainWindow::MainWindow() :
   _ui(new Ui_MainWindow),
-  _sceneRenderObserver(_commonEditData),
+  _observerFactory(_commonEditData),
   _sceneTab(_commonEditData),
   _renderWidget(_commonEditData),
   _fileMenu(*this, *_ui, _commonEditData),
@@ -21,6 +22,13 @@ MainWindow::MainWindow() :
   _asyncTaskDialog(mtt::EditorApplication::instance().asyncTaskQueue)
 {
   _ui->setupUi(this);
+
+  connect(&_commonEditData,
+          &EditorCommonData::sceneChanged,
+          this,
+          &MainWindow::_updateSceneRenderObserver,
+          Qt::DirectConnection);
+  _updateSceneRenderObserver();
 
   std::unique_ptr<QDockWidget> dockWidget(new QDockWidget(this));
   QDockWidget* dock = dockWidget.get();
@@ -81,6 +89,27 @@ MainWindow::MainWindow() :
 MainWindow::~MainWindow() noexcept
 {
   delete _ui;
+}
+
+void MainWindow::_updateSceneRenderObserver() noexcept
+{
+  _sceneRenderObserver.reset();
+  if(_commonEditData.scene() == nullptr) return;
+
+  try
+  {
+    _sceneRenderObserver.emplace( *_commonEditData.scene(),
+                                  _commonEditData.renderScene(),
+                                  _observerFactory);
+  }
+  catch (std::exception& error)
+  {
+    mtt::Log() << "MainWindow::_updateSceneRenderObserver: unable to update scene observer: " << error.what();
+  }
+  catch (...)
+  {
+    mtt::Log() << "MainWindow::_updateSceneRenderObserver: unable to update scene observer: unknown error";
+  }
 }
 
 void MainWindow::_showAsyncTaskDialog(mtt::AbstractAsyncTask& task)

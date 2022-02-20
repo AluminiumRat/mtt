@@ -3,22 +3,22 @@
 #include <memory>
 #include <vector>
 
+#include <mtt/editorLib/Render/AbstractObjectRenderObserver.h>
 #include <mtt/render/Drawable/LODDrawableFilter.h>
 #include <mtt/render/Drawable/DrawableList.h>
 #include <mtt/render/SceneGraph/CombinedDrawableNode.h>
 
-#include <Render/AbstractObjectRenderObserver.h>
 #include <Render/MeshRenderObserver.h>
 
 class LODObject;
 class MeshObject;
 
-class LODRenderObserver : public AbstractObjectRenderObserver
+class LODRenderObserver : public mtt::AbstractObjectRenderObserver
 {
   Q_OBJECT
 
 public:
-  LODRenderObserver(LODObject& object, EditorCommonData& commonData);
+  LODRenderObserver(LODObject& object, mtt::CommonEditData& commonData);
   LODRenderObserver(const LODRenderObserver&) = delete;
   LODRenderObserver& operator = (const LODRenderObserver&) = delete;
   virtual ~LODRenderObserver() noexcept = default;
