@@ -1,29 +1,12 @@
 #pragma once
 
-#include <string>
-
-#include <QtCore/QDir>
-#include <QtCore/QString>
-
-#include <mtt/application/AsyncTasks/AbstractAsyncTask.h>
-#include <mtt/application/DataStream.h>
-
-namespace mtt
-{
-  class Object;
-}
-
-class QFile;
+#include <mtt/editorLib/AsyncTasks/SaveEnvironmentTask.h>
 
 class EditorCommonData;
 class EditorScene;
 
-class SaveEnvironmentTask : public mtt::AbstractAsyncTask
+class SaveEnvironmentTask : public mtt::SaveEnvironmentTask
 {
-public:
-  static const inline std::string fileHead = "OEEnvironmentFile";
-  static constexpr uint32_t fileVersion = 0;
-
 public:
   SaveEnvironmentTask(const EditorScene& scene,
                       const QString& filename,
@@ -33,17 +16,8 @@ public:
   virtual ~SaveEnvironmentTask() noexcept = default;
 
 protected:
-  virtual void asyncPart() override;
   virtual void finalizePart() override;
 
 private:
-  void _writeHead();
-
-private:
-  const EditorScene& _scene;
-  QString _filename;
-  QFile* _file;
-  mtt::DataStream* _stream;
-  QDir _fileDirectory;
   EditorCommonData& _commonData;
 };

@@ -3,15 +3,16 @@
 #include <QtCore/QFile>
 
 #include <AsyncTasks/LoadModelTask.h>
-#include <AsyncTasks/ObjectLoader.h>
 #include <AsyncTasks/SaveModelTask.h>
+#include <Objects/MMDObjectFactory.h>
+#include <Objects/ObjectLoader.h>
 #include <EditorCommonData.h>
 #include <EditorScene.h>
 
 LoadModelTask::LoadModelTask( EditorScene& scene,
                               const QString& filename,
                               EditorCommonData& commonData) :
-  AbstractAsyncTask(QCoreApplication::tr("Load"),
+  AbstractAsyncTask(QCoreApplication::tr("Loading"),
                     mtt::AbstractAsyncTask::DEPENDENT,
                     mtt::AbstractAsyncTask::EXPLICIT),
   _scene(scene),
@@ -37,52 +38,66 @@ void LoadModelTask::_checkHead()
 
 void LoadModelTask::_loadMaterials()
 {
+  ObjectLoader loader;
+  MMDObjectFactory factory;
+
   uint32_t materialsNumber = _stream->readUint32();
   for (; materialsNumber != 0; materialsNumber--)
   {
-    _materials.push_back(
-                    ObjectLoader::loadObject<MaterialObject>( true,
-                                                              *_stream,
-                                                              _fileDirectory,
-                                                              _mixUIDValue));
+    _materials.push_back(loader.loadObject<MaterialObject>( true,
+                                                            *_stream,
+                                                            _fileDirectory,
+                                                            _mixUIDValue,
+                                                            factory));
   }
 }
 
 void LoadModelTask::_loadSkeletons()
 {
+  ObjectLoader loader;
+  MMDObjectFactory factory;
+
   uint32_t skeletonsNumber = _stream->readUint32();
   for (; skeletonsNumber != 0; skeletonsNumber--)
   {
-    _skeletons.push_back(
-                  ObjectLoader::loadObject<mtt::SkeletonObject>(true,
+    _skeletons.push_back(loader.loadObject<mtt::SkeletonObject>(true,
                                                                 *_stream,
                                                                 _fileDirectory,
-                                                                _mixUIDValue));
+                                                                _mixUIDValue,
+                                                                factory));
   }
 }
 
 void LoadModelTask::_loadGeometry()
 {
+  ObjectLoader loader;
+  MMDObjectFactory factory;
+
   uint32_t lodsNumber = _stream->readUint32();
   for (; lodsNumber != 0; lodsNumber--)
   {
-    _lods.push_back(ObjectLoader::loadObject<LODObject>(true,
-                                                        *_stream,
-                                                        _fileDirectory,
-                                                        _mixUIDValue));
+    _lods.push_back(loader.loadObject<LODObject>( true,
+                                                  *_stream,
+                                                  _fileDirectory,
+                                                  _mixUIDValue,
+                                                  factory));
   }
 }
 
 void LoadModelTask::_loadAnimations()
 {
+  ObjectLoader loader;
+  MMDObjectFactory factory;
+
   uint32_t animationsNumber = _stream->readUint32();
   for (; animationsNumber != 0; animationsNumber--)
   {
     _animations.push_back(
-              ObjectLoader::loadObject<mtt::AnimationObject>( true,
-                                                              *_stream,
-                                                              _fileDirectory,
-                                                              _mixUIDValue));
+                        loader.loadObject<mtt::AnimationObject>( true,
+                                                                *_stream,
+                                                                _fileDirectory,
+                                                                _mixUIDValue,
+                                                                factory));
   }
 }
 

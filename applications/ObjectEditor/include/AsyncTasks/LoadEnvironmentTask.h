@@ -1,22 +1,11 @@
 #pragma once
 
-#include <memory>
-#include <vector>
-
-#include <QtCore/QDir>
-#include <QtCore/QString>
-
-#include <mtt/application/AsyncTasks/AbstractAsyncTask.h>
-#include <mtt/application/DataStream.h>
-#include <mtt/editorLib/Objects/BackgroundObject.h>
-#include <mtt/editorLib/Objects/EnvironmentObject.h>
-
-class QFile;
+#include <mtt/editorLib/AsyncTasks/LoadEnvironmentTask.h>
 
 class EditorCommonData;
 class EditorScene;
 
-class LoadEnvironmentTask : public mtt::AbstractAsyncTask
+class LoadEnvironmentTask : public mtt::LoadEnvironmentTask
 {
 public:
   LoadEnvironmentTask(EditorScene& scene,
@@ -27,22 +16,14 @@ public:
   virtual ~LoadEnvironmentTask() noexcept = default;
 
 protected:
-  virtual void asyncPart() override;
-  virtual void finalizePart() override;
+  virtual void mergeToScene(
+      std::unique_ptr<mtt::BackgroundObject> newBackground,
+      std::vector<std::unique_ptr<mtt::EnvironmentObject>> newObjects) override;
 
 private:
-  void _checkHead();
   void _clearScene() noexcept;
 
 private:
   EditorScene& _scene;
-  QString _filename;
-  QFile* _file;
-  mtt::DataStream* _stream;
-  QDir _fileDirectory;
   EditorCommonData& _commonData;
-  mtt::UID::ValueType _mixUIDValue;
-
-  std::unique_ptr<mtt::BackgroundObject> _background;
-  std::vector<std::unique_ptr<mtt::EnvironmentObject>> _objects;
 };

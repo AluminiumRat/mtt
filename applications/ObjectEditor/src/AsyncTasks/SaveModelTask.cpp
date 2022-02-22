@@ -4,8 +4,9 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QFile>
 
-#include <AsyncTasks/ObjectSaver.h>
 #include <AsyncTasks/SaveModelTask.h>
+#include <Objects/ObjectSaver.h>
+#include <Objects/MMDObjectFactory.h>
 #include <EditorCommonData.h>
 #include <EditorScene.h>
 
@@ -51,58 +52,73 @@ void SaveModelTask::_writeHead()
 
 void SaveModelTask::_writeMaterials()
 {
+  ObjectSaver saver;
+  MMDObjectFactory factory;
+
   uint32_t materialsNumber = _scene.root().materialsGroup().childsNumber();
   *_stream << materialsNumber;
   for(uint32_t materialIndex = 0;
       materialIndex < materialsNumber;
       materialIndex++)
   {
-    ObjectSaver::saveObject(_scene.root().materialsGroup().child(materialIndex),
-                            *_stream,
-                            _fileDirectory);
+    saver.saveObject( _scene.root().materialsGroup().child(materialIndex),
+                      *_stream,
+                      _fileDirectory,
+                      factory);
   }
 }
 
 void SaveModelTask::_writeSkeletons()
 {
+  ObjectSaver saver;
+  MMDObjectFactory factory;
+
   uint32_t skeletonsNumber = _scene.root().skeletonGroup().childsNumber();
   *_stream << skeletonsNumber;
   for(uint32_t skeletonIndex = 0;
       skeletonIndex < skeletonsNumber;
       skeletonIndex++)
   {
-    ObjectSaver::saveObject(_scene.root().skeletonGroup().child(skeletonIndex),
-                            *_stream,
-                            _fileDirectory);
+    saver.saveObject( _scene.root().skeletonGroup().child(skeletonIndex),
+                      *_stream,
+                      _fileDirectory,
+                      factory);
   }
 }
 
 void SaveModelTask::_writeGeometry()
 {
+  ObjectSaver saver;
+  MMDObjectFactory factory;
+
   uint32_t lodsNumber = _scene.root().geometryGroup().childsNumber();
   *_stream << lodsNumber;
   for(uint32_t lodIndex = 0;
       lodIndex < lodsNumber;
       lodIndex++)
   {
-    ObjectSaver::saveObject(_scene.root().geometryGroup().child(lodIndex),
-                            *_stream,
-                            _fileDirectory);
+    saver.saveObject( _scene.root().geometryGroup().child(lodIndex),
+                      *_stream,
+                      _fileDirectory,
+                      factory);
   }
 }
 
 void SaveModelTask::_writeAnimations()
 {
+  ObjectSaver saver;
+  MMDObjectFactory factory;
+
   uint32_t animationsNumber = _scene.root().animationGroup().childsNumber();
   *_stream << animationsNumber;
   for(uint32_t animationIndex = 0;
       animationIndex < animationsNumber;
       animationIndex++)
   {
-    ObjectSaver::saveObject(
-                          _scene.root().animationGroup().child(animationIndex),
-                          *_stream,
-                          _fileDirectory);
+    saver.saveObject( _scene.root().animationGroup().child(animationIndex),
+                      *_stream,
+                      _fileDirectory,
+                      factory);
   }
 }
 

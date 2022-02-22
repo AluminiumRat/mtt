@@ -1,67 +1,14 @@
-#include <QtCore/QCoreApplication>
-#include <QtCore/QFileInfo>
-#include <QtCore/QFile>
-
 #include <AsyncTasks/LoadEnvironmentTask.h>
-#include <AsyncTasks/ObjectLoader.h>
-#include <AsyncTasks/SaveEnvironmentTask.h>
 #include <EditorCommonData.h>
 #include <EditorScene.h>
 
 LoadEnvironmentTask::LoadEnvironmentTask( EditorScene& scene,
-                              const QString& filename,
-                              EditorCommonData& commonData) :
-  AbstractAsyncTask(QCoreApplication::tr("Load"),
-                    mtt::AbstractAsyncTask::DEPENDENT,
-                    mtt::AbstractAsyncTask::EXPLICIT),
+                                          const QString& filename,
+                                          EditorCommonData& commonData) :
+  mtt::LoadEnvironmentTask(filename),
   _scene(scene),
-  _filename(filename),
-  _file(nullptr),
-  _fileDirectory(QFileInfo(_filename).dir()),
-  _stream(nullptr),
-  _commonData(commonData),
-  _mixUIDValue(mtt::UID::randomValue())
+  _commonData(commonData)
 {
-}
-
-void LoadEnvironmentTask::_checkHead()
-{
-  std::string head;
-  head.resize(SaveEnvironmentTask::fileHead.size());
-  _file->read(head.data(), head.size());
-  if(head != SaveEnvironmentTask::fileHead) throw std::runtime_error("Invalid mmd file header");
-  uint32_t fileVersion;
-  *_stream >> fileVersion;
-  if(fileVersion > SaveEnvironmentTask::fileVersion) throw std::runtime_error("Unsupported version of enm file");
-}
-
-void LoadEnvironmentTask::asyncPart()
-{
-  if(!_fileDirectory.exists()) throw std::runtime_error("The file directory does not exist");
-
-  QFile file(_filename);
-  if(!file.open(QFile::ReadOnly)) throw std::runtime_error("Unable to open model file");
-  _file = &file;
-
-  mtt::DataStream stream(&file);
-  _stream = &stream;
-
-  _checkHead();
-
-  _background = ObjectLoader::loadObject<mtt::BackgroundObject>(false,
-                                                                *_stream,
-                                                                _fileDirectory,
-                                                                _mixUIDValue);
-
-  uint32_t objectsNumber = _stream->readUint32();
-  for (; objectsNumber != 0; objectsNumber--)
-  {
-    _objects.push_back(
-      ObjectLoader::loadObject<mtt::EnvironmentObject>( true,
-                                                        *_stream,
-                                                        _fileDirectory,
-                                                        _mixUIDValue));
-  }
 }
 
 void LoadEnvironmentTask::_clearScene() noexcept
@@ -74,22 +21,24 @@ void LoadEnvironmentTask::_clearScene() noexcept
   }
 }
 
-void LoadEnvironmentTask::finalizePart()
+void LoadEnvironmentTask::mergeToScene(
+                std::unique_ptr<mtt::BackgroundObject> newBackground,
+                std::vector<std::unique_ptr<mtt::EnvironmentObject>> newObjects)
 {
   _commonData.undoStack().clear();
-  _commonData.setModelFilename("");
+  _commonData.setEnvironmentFilename("");
   _clearScene();
 
   try
   {
-    for (std::unique_ptr<mtt::EnvironmentObject>& object : _objects)
+    for (std::unique_ptr<mtt::EnvironmentObject>& object : newObjects)
     {
       _scene.root().environment().addChild(std::move(object));
     }
 
-    _scene.root().changeBackground(std::move(_background));
+    _scene.root().changeBackground(std::move(newBackground));
 
-    _commonData.setEnvironmentFilename(_filename);
+    _commonData.setEnvironmentFilename(filename());
   }
   catch (...)
   {

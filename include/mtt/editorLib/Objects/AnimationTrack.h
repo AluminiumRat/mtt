@@ -1,7 +1,11 @@
 #pragma once
 
+#include <glm/gtc/quaternion.hpp>
+#include <glm/vec3.hpp>
+
 #include <memory>
 
+#include <mtt/animation/ValueKeypoint.h>
 #include <mtt/animation/KeypointsAnimatedTransform.h>
 #include <mtt/application/EditCommands/AbstractEditCommand.h>
 #include <mtt/application/Scene/ObjectLink.h>
