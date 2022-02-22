@@ -6,9 +6,9 @@
 
 #include <mtt/application/Widgets/AsyncTaskDialog/AsyncTaskDialog.h>
 #include <mtt/application/Widgets/StatisticWidget.h>
+#include <mtt/editorLib/Render/EditorRenderWidget.h>
 #include <mtt/editorLib/Render/SceneRenderObserver.h>
 
-#include <RenderWidget/EditorRenderWidget.h>
 #include <Render/RenderObserverFactory.h>
 #include <SceneTab/SceneTab.h>
 #include <EditMenu.h>
@@ -47,7 +47,7 @@ private:
   std::optional<mtt::SceneRenderObserver> _sceneRenderObserver;
 
   SceneTab _sceneTab;
-  EditorRenderWidget _renderWidget;
+  mtt::EditorRenderWidget _renderWidget;
 
   FileMenu _fileMenu;
   EditMenu _editMenu;

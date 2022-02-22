@@ -68,13 +68,10 @@ set(HEADERS
     "include/Objects/RootObject.h"
 
     "include/Render/BonesObserver.h"
-    "include/Render/EditorRenderAction.h"
     "include/Render/LODRenderObserver.h"
     "include/Render/MaterialObserver.h"
     "include/Render/MeshRenderObserver.h"
     "include/Render/RenderObserverFactory.h"
-
-    "include/RenderWidget/EditorRenderWidget.h"
 
     "include/SceneTab/GeometryObjectWidget.h"
     "include/SceneTab/LODObjectWidget.h"
@@ -114,13 +111,10 @@ set(SOURCES
     "src/Objects/RootObject.cpp"
 
     "src/Render/BonesObserver.cpp"
-    "src/Render/EditorRenderAction.cpp"
     "src/Render/LODRenderObserver.cpp"
     "src/Render/MaterialObserver.cpp"
     "src/Render/MeshRenderObserver.cpp"
     "src/Render/RenderObserverFactory.cpp"
-
-    "src/RenderWidget/EditorRenderWidget.cpp"
 
     "src/SceneTab/GeometryObjectWidget.cpp"
     "src/SceneTab/LODObjectWidget.cpp"

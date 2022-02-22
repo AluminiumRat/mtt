@@ -15,7 +15,7 @@ MainWindow::MainWindow() :
   _ui(new Ui_MainWindow),
   _observerFactory(_commonEditData),
   _sceneTab(_commonEditData),
-  _renderWidget(_commonEditData),
+  _renderWidget(_commonEditData.renderScene(), _commonEditData),
   _fileMenu(*this, *_ui, _commonEditData),
   _editMenu(*this, *_ui, _commonEditData),
   _manipulatorMenu(*this, _renderWidget.manipulatorController(), *_ui),

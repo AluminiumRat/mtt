@@ -1,12 +1,13 @@
 #include <QtWidgets/QWidget>
 
+#include <mtt/editorLib/Render/EditorRenderAction.h>
 #include <mtt/render/SceneGraph/CameraNode.h>
 
-#include <Render/EditorRenderAction.h>
+using namespace mtt;
 
-EditorRenderAction::EditorRenderAction( mtt::AbstractSceneRenderer& renderer,
-                                        mtt::RenderScene& scene,
-                                        mtt::CameraNode& camera,
+EditorRenderAction::EditorRenderAction( AbstractSceneRenderer& renderer,
+                                        RenderScene& scene,
+                                        CameraNode& camera,
                                         const QWidget& target) :
   RenderSceneAction(renderer, scene, camera, nullptr),
   _target(target)
