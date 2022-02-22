@@ -45,5 +45,6 @@ EditorApplication::EditorApplication(int& argc, char** argv) :
                                           VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST),
                   textureLibrary)
 {
+  Q_INIT_RESOURCE(editorLibResources);
   _instance = this;
 }

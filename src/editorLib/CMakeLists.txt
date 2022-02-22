@@ -220,11 +220,15 @@ set(SOURCES
     "FbxAnimationImporter.cpp"
     )
 
+set(QRC_FILES
+    "resources/editorLibResources.qrc"
+    )
+
 add_library(editorLib
             ${HEADERS}
             ${SOURCES}
             ${UI_FILES}
-            )
+            ${QRC_FILES})
 
 target_link_libraries(editorLib
                       Qt5::Core

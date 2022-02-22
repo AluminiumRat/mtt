@@ -7,7 +7,7 @@
 using namespace mtt;
 
 IconDrawableNode::IconDrawableNode( const QString& imageFilename,
-                                    float iconSize) noexcept :
+                                    float iconSize) :
   _iconMesh(EditorApplication::instance().displayDevice())
 {
   _iconMesh.setTechnique(

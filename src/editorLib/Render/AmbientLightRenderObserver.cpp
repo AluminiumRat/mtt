@@ -2,7 +2,7 @@
 #include <mtt/editorLib/Render/AmbientLightRenderObserver.h>
 #include <mtt/editorLib/EditorApplication.h>
 
-#define ICON_FILE ":/ObjectEditor/ambientLight.png"
+#define ICON_FILE ":/editorLib/ambientLight.png"
 #define ICON_SIZE 32
 
 #define CYRCLE_SEGMENTS 32

@@ -4,7 +4,7 @@
 #include <mtt/editorLib/EditorApplication.h>
 #include <mtt/render/RenderScene.h>
 
-#define ICON_FILE ":/ObjectEditor/directLight.png"
+#define ICON_FILE ":/editorLib/directLight.png"
 #define ICON_SIZE 32
 
 #define CAP_SEGMENTS 32

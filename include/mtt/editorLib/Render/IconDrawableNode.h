@@ -13,7 +13,7 @@ namespace mtt
   {
   public:
     /// iconSize in pixels
-    IconDrawableNode(const QString& imageFilename, float iconSize) noexcept;
+    IconDrawableNode(const QString& imageFilename, float iconSize);
     IconDrawableNode(const IconDrawableNode&) = delete;
     IconDrawableNode& operator = (const IconDrawableNode&) = delete;
     virtual ~IconDrawableNode() noexcept = default;

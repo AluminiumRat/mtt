@@ -142,15 +142,10 @@ set(UI_FILES
     "src/MainWindow.ui"
     )
 
-set(QRC_FILES
-    "resources/resources.qrc"
-    )
-
 add_executable (ObjectEditor
                 ${HEADERS}
                 ${SOURCES}
-                ${UI_FILES}
-                ${QRC_FILES})
+                ${UI_FILES})
 
 target_link_libraries(ObjectEditor
                       ${Vulkan_LIBRARIES}
