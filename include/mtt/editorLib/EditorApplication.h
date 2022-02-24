@@ -14,7 +14,10 @@ namespace mtt
   class EditorApplication : public Application
   {
   public:
-    EditorApplication(int& argc, char** argv);
+    EditorApplication(int& argc,
+                      char** argv,
+                      const char* applicationName,
+                      const RenderLibInstance::Version& applicationVersion);
     EditorApplication(const EditorApplication&) = delete;
     EditorApplication& operator = (const EditorApplication&) = delete;
     virtual ~EditorApplication() noexcept = default;

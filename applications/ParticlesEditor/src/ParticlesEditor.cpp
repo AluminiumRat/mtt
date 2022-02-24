@@ -4,7 +4,10 @@
 
 int main(int argc, char* argv[])
 {
-  mtt::EditorApplication application(argc, argv);
+  mtt::EditorApplication application( argc,
+                                      argv,
+                                      "Mtt particles editor",
+                                      { 0, 0, 0 });
 
   MainWindow mainWindow;
   mainWindow.show();

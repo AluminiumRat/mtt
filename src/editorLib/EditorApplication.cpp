@@ -20,11 +20,15 @@ static VkPhysicalDeviceFeatures deviceFeatures()
 
 EditorApplication* EditorApplication::_instance = nullptr;
 
-EditorApplication::EditorApplication(int& argc, char** argv) :
+EditorApplication::EditorApplication(
+                        int& argc,
+                        char** argv,
+                        const char* applicationName,
+                        const RenderLibInstance::Version& applicationVersion) :
   Application(argc,
               argv,
-              "Mtt object editor",
-              { 0, 0, 0 },
+              applicationName,
+              applicationVersion,
               VK_API_VERSION_1_2,
               deviceFeatures(),
               enableValidation),
