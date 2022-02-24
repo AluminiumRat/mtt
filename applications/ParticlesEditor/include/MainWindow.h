@@ -8,8 +8,8 @@
 #include <mtt/application/Widgets/StatisticWidget.h>
 #include <mtt/editorLib/Render/EditorRenderWidget.h>
 #include <mtt/editorLib/Render/SceneRenderObserver.h>
-#include <mtt/editorLib/Render/RenderObserverFactory.h>
 
+#include <Render/RenderObserverFactory.h>
 #include <SceneTab/SceneTab.h>
 #include <EditorCommonData.h>
 
@@ -40,7 +40,7 @@ private:
 
   EditorCommonData _commonEditData;
 
-  mtt::RenderObserverFactory _observerFactory;
+  RenderObserverFactory _observerFactory;
   std::optional<mtt::SceneRenderObserver> _sceneRenderObserver;
 
   SceneTab _sceneTab;

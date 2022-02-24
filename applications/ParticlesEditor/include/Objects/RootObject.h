@@ -7,14 +7,17 @@
 #include <mtt/editorLib/Objects/EnvironmentGroup.h>
 #include <mtt/editorLib/Objects/SkeletonGroup.h>
 
+#include <Objects/ParticleField.h>
+#include <Objects/PEVisitorExtension.h>
+
 class RootObject : public mtt::Object
 {
   Q_OBJECT
 
-  //DEFINE_EXTENSION_ACCEPT(OEVisitorExtension,
-  //                        visitRootObject,
-  //                        visitConstRootObject,
-  //                        mtt::Object)
+  DEFINE_EXTENSION_ACCEPT(PEVisitorExtension,
+                          visitRootObject,
+                          visitConstRootObject,
+                          mtt::Object)
 
 public:
   RootObject( const QString& name,
@@ -37,6 +40,9 @@ public:
   inline mtt::EnvironmentGroup& environment() noexcept;
   inline const mtt::EnvironmentGroup& environment() const noexcept;
 
+  inline ParticleField& particleField() noexcept;
+  inline const ParticleField& particleField() const noexcept;
+
 signals:
   void backgroundChanged(mtt::BackgroundObject& newBackground);
 
@@ -45,6 +51,7 @@ private:
   mtt::AnimationGroup* _animationGroup;
   mtt::BackgroundObject* _background;
   mtt::EnvironmentGroup* _environment;
+  ParticleField* _particleField;
 };
 
 inline mtt::SkeletonGroup& RootObject::skeletonGroup() noexcept
@@ -85,4 +92,14 @@ inline mtt::EnvironmentGroup& RootObject::environment() noexcept
 inline const mtt::EnvironmentGroup& RootObject::environment() const noexcept
 {
   return *_environment;
+}
+
+inline ParticleField& RootObject::particleField() noexcept
+{
+  return *_particleField;
+}
+
+inline const ParticleField& RootObject::particleField() const noexcept
+{
+  return *_particleField;
 }

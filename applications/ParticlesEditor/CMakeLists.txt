@@ -46,8 +46,16 @@ add_definitions(${Qt5Core_DEFINITIONS}
 set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 
 set(HEADERS
+    "include/Objects/ParticleField.h"
+    "include/Objects/PEVisitor.h"
+    "include/Objects/PEVisitorExtension.h"
     "include/Objects/RootObject.h"
 
+    "include/Render/FieldRenderObserver.h"
+    "include/Render/RenderObserverFactory.h"
+
+    "include/SceneTab/ParticleFieldWidget.h"
+    "include/SceneTab/PropertiesWidgetFactory.h"
     "include/SceneTab/SceneTab.h"
 
     "include/EditorCommonData.h"
@@ -56,8 +64,15 @@ set(HEADERS
     )
 
 set(SOURCES
+    "src/Objects/ParticleField.cpp"
+    "src/Objects/PEVisitorExtension.cpp"
     "src/Objects/RootObject.cpp"
 
+    "src/Render/FieldRenderObserver.cpp"
+    "src/Render/RenderObserverFactory.cpp"
+
+    "src/SceneTab/ParticleFieldWidget.cpp"
+    "src/SceneTab/PropertiesWidgetFactory.cpp"
     "src/SceneTab/SceneTab.cpp"
 
     "src/EditorCommonData.cpp"
@@ -67,6 +82,7 @@ set(SOURCES
     )
 
 set(UI_FILES
+    "src/SceneTab/ParticleFieldWidget.ui"
     "src/MainWindow.ui"
     )
 

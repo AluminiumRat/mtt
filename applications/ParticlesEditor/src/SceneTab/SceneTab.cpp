@@ -1,5 +1,6 @@
 #include <mtt/utilities/Abort.h>
 
+#include <SceneTab/PropertiesWidgetFactory.h>
 #include <SceneTab/SceneTab.h>
 #include <EditorCommonData.h>
 #include <EditorScene.h>
@@ -26,5 +27,6 @@ std::unique_ptr<mtt::PropertiesWidgetFactory>
                     SceneTab::createWidgetsFactory(QVBoxLayout& widgetsLayout)
 {
   if(_commonEditData.scene() == nullptr) mtt::Abort("SceneTab::createWidgetsFactory: current scene is null.");
-  return mtt::SceneTab::createWidgetsFactory(widgetsLayout);
+  return std::make_unique<PropertiesWidgetFactory>( widgetsLayout,
+                                                    _commonEditData);
 }

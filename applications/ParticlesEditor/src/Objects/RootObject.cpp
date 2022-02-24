@@ -45,6 +45,13 @@ RootObject::RootObject( const QString& name,
                                                     environmentId));
   _environment = environmentGroup.get();
   addSubobject(std::move(environmentGroup));
+
+  mtt::UID fieldId(id().mixedUID(11264425345735994719ull));
+  std::unique_ptr<ParticleField> field(new ParticleField( tr("Field"),
+                                                          false,
+                                                          fieldId));
+  _particleField = field.get();
+  addSubobject(std::move(field));
 }
 
 void RootObject::changeBackground(
