@@ -52,6 +52,7 @@ set(HEADERS
     "include/Objects/RootObject.h"
 
     "include/Render/FieldRenderObserver.h"
+    "include/Render/ParticlesDrawable.h"
     "include/Render/RenderObserverFactory.h"
 
     "include/SceneTab/ParticleFieldWidget.h"
@@ -69,6 +70,7 @@ set(SOURCES
     "src/Objects/RootObject.cpp"
 
     "src/Render/FieldRenderObserver.cpp"
+    "src/Render/ParticlesDrawable.cpp"
     "src/Render/RenderObserverFactory.cpp"
 
     "src/SceneTab/ParticleFieldWidget.cpp"

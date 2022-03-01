@@ -41,15 +41,34 @@ FieldRenderObserver::FieldRenderObserver( ParticleField& object,
   _boxNode.addModificator(uidSetter());
   _boxNode.addModificator(selectionModificator());
 
+  _particlesNode.setDrawable(&_particlesDrawable, mtt::Sphere());
+  registerCulledDrawable(_particlesNode);
+  positionRotateJoint().addChild(_particlesNode);
+  _particlesNode.addModificator(visibleFilter());
+  _particlesNode.addModificator(uidSetter());
+  _particlesNode.addModificator(selectionModificator());
+
   connect(&_field,
           &ParticleField::sizeChanged,
           this,
-          &FieldRenderObserver::_updateBox,
+          &FieldRenderObserver::_updateSize,
           Qt::DirectConnection);
-  _updateBox();
+  _updateSize();
+
+  connect(&_field,
+          &ParticleField::cleared,
+          this,
+          &FieldRenderObserver::_updateParticles,
+          Qt::DirectConnection);
+  connect(&_field,
+          &ParticleField::simulationStepFinished,
+          this,
+          &FieldRenderObserver::_updateParticles,
+          Qt::DirectConnection);
+  _updateParticles();
 }
 
-void FieldRenderObserver::_updateBox() noexcept
+void FieldRenderObserver::_updateSize() noexcept
 {
   glm::vec3 size = _field.size();
   glm::vec3 halfSize = size / 2.f;
@@ -112,6 +131,31 @@ void FieldRenderObserver::_updateBox() noexcept
     mtt::Log() << "FieldRenderObserver::_updateBox: unknown error";
   }
 
-  float radius = glm::length(size) / 2;
-  _boxNode.setLocalBoundSphere(mtt::Sphere(glm::vec3(0.f), radius));
+  mtt::Sphere boundSphere(glm::vec3(0.f), glm::length(size) / 2.f);
+  _boxNode.setLocalBoundSphere(boundSphere);
+  _particlesNode.setLocalBoundSphere(boundSphere);
+}
+
+void FieldRenderObserver::_updateParticles() noexcept
+{
+  std::vector<glm::vec4> positions;
+  std::vector<glm::vec4> sizeRotation;
+  std::vector<glm::vec4> colorTransparency;
+
+  for (ParticleField::ParticleIndex index : _field.workIndices())
+  {
+    ParticleField::ParticleData particle = _field.particlesData()[index];
+    positions.push_back(glm::vec4(particle.position, 1.f));
+    sizeRotation.push_back(glm::vec4( particle.size,
+                                      particle.rotation,
+                                      0.f,
+                                      0.f));
+    colorTransparency.push_back(glm::vec4(particle.color * particle.brightness,
+                                          particle.transparency));
+  }
+
+  _particlesDrawable.setData( positions.size(),
+                              positions.data(),
+                              sizeRotation.data(),
+                              colorTransparency.data());
 }

@@ -25,8 +25,9 @@ public:
   virtual ~ParticleFieldWidget() noexcept;
 
 private:
-  void emitParticles() noexcept;
-  void stepSimulation() noexcept;
+  void _clear() noexcept;
+  void _emitParticles() noexcept;
+  void _stepSimulation() noexcept;
 
 private:
   std::unique_ptr<Ui::ParticleFieldWidget> _ui;

@@ -4,24 +4,30 @@
 #include <mtt/render/Mesh/Mesh.h>
 #include <mtt/render/SceneGraph/SimpleDrawableNode.h>
 
+#include <Render/ParticlesDrawable.h>
+
 class ParticleField;
 
 class FieldRenderObserver : public mtt::Object3DRenderObserver
 {
   Q_OBJECT
 
-  public:
-    FieldRenderObserver(ParticleField& object, mtt::CommonEditData& commonData);
-    FieldRenderObserver(const FieldRenderObserver&) = delete;
-    FieldRenderObserver& operator = (const FieldRenderObserver&) = delete;
-    virtual ~FieldRenderObserver() noexcept = default;
+public:
+  FieldRenderObserver(ParticleField& object, mtt::CommonEditData& commonData);
+  FieldRenderObserver(const FieldRenderObserver&) = delete;
+  FieldRenderObserver& operator = (const FieldRenderObserver&) = delete;
+  virtual ~FieldRenderObserver() noexcept = default;
 
-  private:
-    void _updateBox() noexcept;
+private:
+  void _updateSize() noexcept;
+  void _updateParticles() noexcept;
 
-  private:
-    ParticleField& _field;
+private:
+  ParticleField& _field;
 
-    mtt::Mesh _boxMesh;
-    mtt::SimpleDrawableNode _boxNode;
+  mtt::Mesh _boxMesh;
+  mtt::SimpleDrawableNode _boxNode;
+
+  ParticlesDrawable _particlesDrawable;
+  mtt::SimpleDrawableNode _particlesNode;
 };

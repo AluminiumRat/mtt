@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>285</width>
-    <height>83</height>
+    <height>102</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,7 +27,7 @@
     <number>0</number>
    </property>
    <property name="bottomMargin">
-    <number>10</number>
+    <number>0</number>
    </property>
    <item>
     <layout class="QHBoxLayout" name="sizeLayout">
@@ -48,6 +48,13 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QPushButton" name="clearButton">
+     <property name="text">
+      <string>Clear</string>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QPushButton" name="emitButton">

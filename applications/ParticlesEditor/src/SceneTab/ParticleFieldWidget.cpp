@@ -28,16 +28,22 @@ ParticleFieldWidget::ParticleFieldWidget( ParticleField& object,
   sizeWidget->zSpin().setSingleStep(.1);
   _ui->sizeLayout->addWidget(sizeWidget, 3);
 
+  connect(_ui->clearButton,
+          &QPushButton::pressed,
+          this,
+          &ParticleFieldWidget::_clear,
+          Qt::DirectConnection);
+
   connect(_ui->emitButton,
           &QPushButton::pressed,
           this,
-          &ParticleFieldWidget::emitParticles,
+          &ParticleFieldWidget::_emitParticles,
           Qt::DirectConnection);
 
   connect(_ui->stepButton,
           &QPushButton::pressed,
           this,
-          &ParticleFieldWidget::stepSimulation,
+          &ParticleFieldWidget::_stepSimulation,
           Qt::DirectConnection);
 
   adjustSize();
@@ -45,14 +51,19 @@ ParticleFieldWidget::ParticleFieldWidget( ParticleField& object,
 
 ParticleFieldWidget::~ParticleFieldWidget() noexcept = default;
 
-void ParticleFieldWidget::emitParticles() noexcept
+void ParticleFieldWidget::_clear() noexcept
+{
+  _field.clear();
+}
+
+void ParticleFieldWidget::_emitParticles() noexcept
 {
   std::default_random_engine randomEngine;
   std::uniform_real_distribution<float> symmetricalDistribution(-1.f, 1.f);
   std::uniform_real_distribution<float> displacedDistribution(0.f, 1.f);
-  std::uniform_int_distribution<int> timeDistribution(100, 1000);
+  std::uniform_int_distribution<int> timeDistribution(300, 5000);
 
-  for (size_t i = 0; i < 10; i++)
+  for (size_t i = 0; i < 20; i++)
   {
     ParticleField::ParticleData newParticle;
     newParticle.typeIndex = 0;
@@ -69,7 +80,7 @@ void ParticleFieldWidget::emitParticles() noexcept
     newParticle.color = glm::vec3(displacedDistribution(randomEngine),
                                   displacedDistribution(randomEngine),
                                   displacedDistribution(randomEngine));
-    newParticle.brightness = displacedDistribution(randomEngine);
+    newParticle.brightness = .5f + .5f * displacedDistribution(randomEngine);
     newParticle.transparency = 1.f - newParticle.brightness;
     newParticle.textureIndex = 0;
     newParticle.currentTime = ParticleField::TimeType(0);
@@ -80,7 +91,7 @@ void ParticleFieldWidget::emitParticles() noexcept
   }
 }
 
-void ParticleFieldWidget::stepSimulation() noexcept
+void ParticleFieldWidget::_stepSimulation() noexcept
 {
   _field.simulationStep(std::chrono::duration_cast<ParticleField::TimeType>(
                                               std::chrono::milliseconds(100)));
