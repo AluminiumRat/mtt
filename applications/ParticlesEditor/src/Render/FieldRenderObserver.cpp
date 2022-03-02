@@ -7,6 +7,7 @@
 #include <mtt/render/Pipeline/Buffer.h>
 #include <mtt/utilities/Log.h>
 
+#include <AsyncTasks/UploadParticleTexturesTask.h>
 #include <Objects/ParticleField.h>
 #include <Render/FieldRenderObserver.h>
 
@@ -66,6 +67,13 @@ FieldRenderObserver::FieldRenderObserver( ParticleField& object,
           &FieldRenderObserver::_updateParticles,
           Qt::DirectConnection);
   _updateParticles();
+
+  connect(&_field,
+          &ParticleField::textureFilesChanged,
+          this,
+          &FieldRenderObserver::_updateTextures,
+          Qt::DirectConnection);
+  _updateTextures();
 }
 
 void FieldRenderObserver::_updateSize() noexcept
@@ -140,7 +148,8 @@ void FieldRenderObserver::_updateParticles() noexcept
 {
   std::vector<glm::vec4> positions;
   std::vector<glm::vec4> sizeRotation;
-  std::vector<glm::vec4> colorTransparency;
+  std::vector<glm::vec4> color;
+  std::vector<uint32_t> textureIndices;
 
   for (ParticleField::ParticleIndex index : _field.workIndices())
   {
@@ -150,12 +159,41 @@ void FieldRenderObserver::_updateParticles() noexcept
                                       particle.rotation,
                                       0.f,
                                       0.f));
-    colorTransparency.push_back(glm::vec4(particle.color * particle.brightness,
-                                          particle.transparency));
+    color.push_back(glm::vec4(particle.color * particle.brightness,
+                              particle.opacity));
+    textureIndices.push_back(particle.textureIndex);
   }
 
   _particlesDrawable.setData( positions.size(),
                               positions.data(),
                               sizeRotation.data(),
-                              colorTransparency.data());
+                              color.data(),
+                              textureIndices.data());
+}
+
+void FieldRenderObserver::_updateTextures() noexcept
+{
+  try
+  {
+    if (_field.textureFiles().empty())
+    {
+      _particlesDrawable.setParticleTextures({});
+      return;
+    }
+
+    std::unique_ptr<UploadParticleTexturesTask> task;
+    task.reset(new UploadParticleTexturesTask(_field.textureFiles(),
+                                              _particlesDrawable));
+    mtt::AsyncTaskQueue& queue =
+                              mtt::EditorApplication::instance().asyncTaskQueue;
+    _uploadTextureStopper = queue.addTaskWithStopper(std::move(task));
+  }
+  catch (std::exception& error)
+  {
+    mtt::Log() << "FieldRenderObserver::_updateTextures: " << error.what();
+  }
+  catch (...)
+  {
+    mtt::Log() << "FieldRenderObserver::_updateTextures: unknown error.";
+  }
 }

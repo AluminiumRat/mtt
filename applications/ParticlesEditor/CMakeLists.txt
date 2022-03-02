@@ -46,6 +46,8 @@ add_definitions(${Qt5Core_DEFINITIONS}
 set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 
 set(HEADERS
+    "include/AsyncTasks/UploadParticleTexturesTask.h"
+
     "include/Objects/ParticleField.h"
     "include/Objects/PEVisitor.h"
     "include/Objects/PEVisitorExtension.h"
@@ -65,6 +67,8 @@ set(HEADERS
     )
 
 set(SOURCES
+    "src/AsyncTasks/UploadParticleTexturesTask.cpp"
+
     "src/Objects/ParticleField.cpp"
     "src/Objects/PEVisitorExtension.cpp"
     "src/Objects/RootObject.cpp"

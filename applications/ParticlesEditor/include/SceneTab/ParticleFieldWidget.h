@@ -28,9 +28,17 @@ private:
   void _clear() noexcept;
   void _emitParticles() noexcept;
   void _stepSimulation() noexcept;
+  void _updateTextures() noexcept;
+  void _setTextureFiles(const std::vector<QString>& files);
+  void _addTexture() noexcept;
+  void _removeTexture() noexcept;
+  void _moveTextureUp() noexcept;
+  void _moveTextureDown() noexcept;
 
 private:
   std::unique_ptr<Ui::ParticleFieldWidget> _ui;
 
   ParticleField& _field;
+
+  mtt::UndoStack& _undoStack;
 };

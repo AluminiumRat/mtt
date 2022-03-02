@@ -35,6 +35,22 @@ void ParticleField::addParticle(const ParticleData& particle)
   _newParticles.push_back(particle);
 }
 
+void ParticleField::setTextureFiles(const std::vector<QString>& newFiles)
+{
+  _textureFiles.clear();
+  try
+  {
+    _textureFiles = newFiles;
+  }
+  catch (...)
+  {
+    emit textureFilesChanged(_textureFiles);
+    throw;
+  }
+
+  emit textureFilesChanged(_textureFiles);
+}
+
 void ParticleField::simulationStep(TimeType delta)
 {
   emit simulationStepStarted();

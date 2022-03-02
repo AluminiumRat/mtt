@@ -3,6 +3,7 @@
 #include <mtt/editorLib/Render/Object3DRenderObserver.h>
 #include <mtt/render/Mesh/Mesh.h>
 #include <mtt/render/SceneGraph/SimpleDrawableNode.h>
+#include <mtt/application/AsyncTasks/AsyncTaskQueue.h>
 
 #include <Render/ParticlesDrawable.h>
 
@@ -21,6 +22,7 @@ public:
 private:
   void _updateSize() noexcept;
   void _updateParticles() noexcept;
+  void _updateTextures() noexcept;
 
 private:
   ParticleField& _field;
@@ -30,4 +32,6 @@ private:
 
   ParticlesDrawable _particlesDrawable;
   mtt::SimpleDrawableNode _particlesNode;
+
+  std::unique_ptr<mtt::AsyncTaskQueue::TaskStopper> _uploadTextureStopper;
 };

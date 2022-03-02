@@ -26,6 +26,12 @@ layout( set = staticSet,
   vec4 data[4096];
 } colors;
 
+layout( set = staticSet,
+        binding = textureIndicesBinding) uniform TextureIndices
+{
+  uvec4 data[4096];
+} textureIndices;
+
 const vec2 shifts[6] = {vec2(-.5f,  .5f),
                         vec2( .5f,  .5f),
                         vec2( .5f, -.5f),
@@ -42,6 +48,7 @@ const vec2 texCoords[6] = { vec2( 0.f, 0.f),
 
 layout(location = 0) out vec4 outColor;
 layout(location = 1) out vec2 outTexCoords;
+layout(location = 2) out flat uint textureIndex;
 
 void main()
 {
@@ -64,4 +71,6 @@ void main()
 
   outColor = colors.data[dataIndex];
   outTexCoords = texCoords[cornerIndex];
+
+  textureIndex = textureIndices.data[dataIndex / 4][dataIndex % 4];
 }

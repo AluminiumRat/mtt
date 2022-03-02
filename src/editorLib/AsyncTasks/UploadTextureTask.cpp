@@ -9,7 +9,7 @@ using namespace mtt;
 UploadTextureTask::UploadTextureTask( const QString& filename,
                                       MeshExtraData& dstData,
                                       const char* samplerName) :
-  AbstractAsyncTask(QObject::tr("Upload texture"),
+  AbstractAsyncTask(QObject::tr("Texture loading"),
                     AbstractAsyncTask::INDEPENDENT,
                     AbstractAsyncTask::SILENT),
   _filename(filename),

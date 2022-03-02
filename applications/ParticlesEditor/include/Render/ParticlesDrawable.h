@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <optional>
 
 #include <glm/vec4.hpp>
@@ -8,6 +9,8 @@
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
 #include <mtt/render/Pipeline/Buffer.h>
 #include <mtt/render/Pipeline/GraphicsPipeline.h>
+#include <mtt/render/Pipeline/Sampler.h>
+#include <mtt/render/Pipeline/Texture2D.h>
 #include <mtt/render/Pipeline/VolatileUniform.h>
 
 namespace mtt
@@ -26,12 +29,16 @@ public:
   /// w component of position should be 1.f
   /// x component of sizeRotation is diameter of particle, y component of
   /// sizeRotation is rotation of particle in radians
-  /// rgb components of colorTransparency is premultipled color, a component
-  /// is transparency
+  /// colorData contains premultipled rgba color value with opacity
+  /// If particlesNumber != 0 then all pointers must not be nullptr
   void setData( size_t particlesNumber,
                 glm::vec4* positionData,
                 glm::vec4* sizeRotationData,
-                glm::vec4* colorTransparencyData);
+                glm::vec4* colorData,
+                uint32_t* textureIndexData);
+
+  void setParticleTextures(
+                  const std::vector<std::shared_ptr<mtt::Texture2D>>& textures);
 
 protected:
   virtual void buildDrawActions(mtt::DrawPlanBuildInfo& buildInfo) override;
@@ -58,8 +65,11 @@ private:
 private:
   mtt::Buffer _positionBuffer;
   mtt::Buffer _sizeRotationBuffer;
-  mtt::Buffer _colorTransparencyBuffer;
+  mtt::Buffer _colorBuffer;
+  mtt::Buffer _textureIndexBuffer;
   size_t _particlesNumber;
+
+  std::optional<mtt::Sampler> _sampler;
 
   DrawTechnique _colorTechnique;
 };

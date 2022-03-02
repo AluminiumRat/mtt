@@ -28,6 +28,16 @@ class ParticleField : public mtt::MovableObject
               STORED true
               USER false)
 
+  Q_PROPERTY( std::vector<QString> textureFiles
+              READ textureFiles
+              WRITE setTextureFiles
+              RESET resetTextureFiles
+              NOTIFY textureFilesChanged
+              DESIGNABLE true
+              SCRIPTABLE true
+              STORED true
+              USER false)
+
 public:
   using TimeType = mtt::Application::TimeType;
 
@@ -43,7 +53,7 @@ public:
     float rotationSpeed;
     glm::vec3 color;
     float brightness;
-    float transparency;
+    float opacity;
     uint8_t textureIndex;
     TimeType currentTime;
     TimeType maxTime;
@@ -67,14 +77,18 @@ public:
   /// Does not add particle at once, but adds it to the queue. The particle will
   /// be added before next simulation step.
   void addParticle(const ParticleData& particle);
-
-  void simulationStep(TimeType delta);
-
   /// Remove all particles
   void clear() noexcept;
 
+  inline const std::vector<QString>& textureFiles() const noexcept;
+  void setTextureFiles(const std::vector<QString>& newFiles);
+  inline void resetTextureFiles();
+
+  void simulationStep(TimeType delta);
+
 signals:
   void sizeChanged(const glm::vec3& newValue);
+  void textureFilesChanged(const std::vector<QString>& newValue);
   void cleared();
   void simulationStepStarted();
   /// First step of simulation
@@ -99,6 +113,8 @@ private:
   std::vector<ParticleIndex> _freeIndices;
   std::vector<ParticleData> _particlesData;
   std::vector<ParticleData> _newParticles;
+
+  std::vector<QString> _textureFiles;
 };
 
 inline const glm::vec3& ParticleField::size() const noexcept
@@ -109,6 +125,16 @@ inline const glm::vec3& ParticleField::size() const noexcept
 inline void ParticleField::resetSize()
 {
   setSize(glm::vec3(10.f, 10.f, 10.f));
+}
+
+inline const std::vector<QString>& ParticleField::textureFiles() const noexcept
+{
+  return _textureFiles;
+}
+
+inline void ParticleField::resetTextureFiles()
+{
+  setTextureFiles(std::vector<QString>());
 }
 
 inline const std::vector<ParticleField::ParticleIndex>&

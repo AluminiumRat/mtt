@@ -3,6 +3,7 @@
 #include <mtt/render/DrawPlan/DrawMeshAction.h>
 #include <mtt/render/Pipeline/ShaderModule.h>
 #include <mtt/render/RenderPass/GeneralRenderPass.h>
+#include <mtt/utilities/Abort.h>
 
 #include <Render/ParticlesDrawable.h>
 
@@ -49,12 +50,26 @@ void ParticlesDrawable::DrawTechnique::_rebuildPipeline(
                             VK_SHADER_STAGE_VERTEX_BIT);
 
     _pipeline->addResource( "colorsBufferBinding",
-                            _parent._colorTransparencyBuffer,
+                            _parent._colorBuffer,
+                            VK_SHADER_STAGE_VERTEX_BIT);
+
+    _pipeline->addResource( "textureIndicesBinding",
+                            _parent._textureIndexBuffer,
                             VK_SHADER_STAGE_VERTEX_BIT);
 
     _pipeline->addResource( mtt::DrawMatrices::bindingName,
                             _matricesUniform,
                             VK_SHADER_STAGE_VERTEX_BIT);
+
+    if (_parent._sampler.has_value())
+    {
+      _pipeline->addResource( "colorSamplerBinding",
+                              _parent._sampler.value(),
+                              VK_SHADER_STAGE_FRAGMENT_BIT);
+      _pipeline->setDefine("COLOR_SAMPLER_ENABLED");
+      _pipeline->setDefine( "TEXTURES_NUMBER",
+                            std::to_string(_parent._sampler->arraySize()));
+    }
 
     _pipeline->setTopology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
   }
@@ -99,8 +114,10 @@ ParticlesDrawable::ParticlesDrawable() :
                   mtt::Buffer::UNIFORM_BUFFER),
   _sizeRotationBuffer(mtt::Application::instance().displayDevice(),
                       mtt::Buffer::UNIFORM_BUFFER),
-  _colorTransparencyBuffer( mtt::Application::instance().displayDevice(),
-                            mtt::Buffer::UNIFORM_BUFFER),
+  _colorBuffer( mtt::Application::instance().displayDevice(),
+                mtt::Buffer::UNIFORM_BUFFER),
+  _textureIndexBuffer(mtt::Application::instance().displayDevice(),
+                      mtt::Buffer::UNIFORM_BUFFER),
   _particlesNumber(0),
   _colorTechnique(*this)
 {
@@ -109,7 +126,8 @@ ParticlesDrawable::ParticlesDrawable() :
 void ParticlesDrawable::setData(size_t particlesNumber,
                                 glm::vec4* positionData,
                                 glm::vec4* sizeRotationData,
-                                glm::vec4* colorTransparencyData)
+                                glm::vec4* colorData,
+                                uint32_t* textureIndexData)
 {
   _particlesNumber = 0;
   if(particlesNumber == 0) return;
@@ -117,10 +135,40 @@ void ParticlesDrawable::setData(size_t particlesNumber,
   _positionBuffer.setData(positionData, particlesNumber * sizeof(glm::vec4));
   _sizeRotationBuffer.setData(sizeRotationData,
                               particlesNumber * sizeof(glm::vec4));
-  _colorTransparencyBuffer.setData( colorTransparencyData,
-                                    particlesNumber * sizeof(glm::vec4));
+  _colorBuffer.setData( colorData,
+                        particlesNumber * sizeof(glm::vec4));
+  _textureIndexBuffer.setData(textureIndexData,
+                              particlesNumber * sizeof(uint32_t));
 
   _particlesNumber = particlesNumber;
+}
+
+void ParticlesDrawable::setParticleTextures(
+                  const std::vector<std::shared_ptr<mtt::Texture2D>>& textures)
+{
+  _colorTechnique.resetPipeline();
+  _sampler.reset();
+
+  if(textures.empty()) return;
+
+  try
+  {
+    _sampler.emplace( textures.size(),
+                      mtt::PipelineResource::STATIC,
+                      mtt::Application::instance().displayDevice());
+    for ( size_t textureIndex = 0;
+          textureIndex < textures.size();
+          textureIndex++)
+    {
+      if(textures[textureIndex] == nullptr) mtt::Abort("ParticlesDrawable::setParticleTextures: textures array contain nullptr");
+      _sampler->setAttachedTexture(textures[textureIndex], textureIndex);
+    }
+  }
+  catch (...)
+  {
+    _sampler.reset();
+    throw;
+  }
 }
 
 void ParticlesDrawable::buildDrawActions(mtt::DrawPlanBuildInfo& buildInfo)
