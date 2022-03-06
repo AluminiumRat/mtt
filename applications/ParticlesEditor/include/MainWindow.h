@@ -11,7 +11,10 @@
 
 #include <Render/RenderObserverFactory.h>
 #include <SceneTab/SceneTab.h>
+#include <EditMenu.h>
 #include <EditorCommonData.h>
+#include <FileMenu.h>
+#include <ManipulatorMenu.h>
 
 class Ui_MainWindow;
 
@@ -45,6 +48,11 @@ private:
 
   SceneTab _sceneTab;
   mtt::EditorRenderWidget _renderWidget;
+
+  FileMenu _fileMenu;
+  EditMenu _editMenu;
+  ManipulatorMenu _manipulatorMenu;
+
   mtt::AsyncTaskDialog _asyncTaskDialog;
   mtt::StatisticWidget _statisticWidget;
 };

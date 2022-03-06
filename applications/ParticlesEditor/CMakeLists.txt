@@ -46,6 +46,7 @@ add_definitions(${Qt5Core_DEFINITIONS}
 set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 
 set(HEADERS
+    "include/AsyncTasks/LoadEnvironmentTask.h"
     "include/AsyncTasks/UploadParticleTexturesTask.h"
 
     "include/Objects/ParticleField.h"
@@ -61,12 +62,16 @@ set(HEADERS
     "include/SceneTab/PropertiesWidgetFactory.h"
     "include/SceneTab/SceneTab.h"
 
+    "include/EditMenu.h"
     "include/EditorCommonData.h"
     "include/EditorScene.h"
+    "include/FileMenu.h"
     "include/MainWindow.h"
+    "include/ManipulatorMenu.h"
     )
 
 set(SOURCES
+    "src/AsyncTasks/LoadEnvironmentTask.cpp"
     "src/AsyncTasks/UploadParticleTexturesTask.cpp"
 
     "src/Objects/ParticleField.cpp"
@@ -81,9 +86,12 @@ set(SOURCES
     "src/SceneTab/PropertiesWidgetFactory.cpp"
     "src/SceneTab/SceneTab.cpp"
 
+    "src/EditMenu.cpp"
     "src/EditorCommonData.cpp"
     "src/EditorScene.cpp"
+    "src/FileMenu.cpp"
     "src/MainWindow.cpp"
+    "src/ManipulatorMenu.cpp"
     "src/ParticlesEditor.cpp"
     )
 

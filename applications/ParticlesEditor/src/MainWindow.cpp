@@ -16,6 +16,9 @@ MainWindow::MainWindow() :
   _observerFactory(_commonEditData),
   _sceneTab(_commonEditData),
   _renderWidget(_commonEditData.renderScene(), _commonEditData),
+  _fileMenu(*this, *_ui, _commonEditData),
+  _editMenu(*this, *_ui, _commonEditData),
+  _manipulatorMenu(*this, _renderWidget.manipulatorController(), *_ui),
   _asyncTaskDialog(mtt::EditorApplication::instance().asyncTaskQueue)
 {
   _ui->setupUi(this);
@@ -47,6 +50,10 @@ MainWindow::MainWindow() :
   std::unique_ptr<EditorScene> scene(new EditorScene);
   scene->root().environment().addChild(std::move(directLight));
   _commonEditData.setScene(std::move(scene));
+
+  _fileMenu.setupUI();
+  _editMenu.setupUI();
+  _manipulatorMenu.setupUI();
 
   _asyncTaskDialog.setModal(true);
 

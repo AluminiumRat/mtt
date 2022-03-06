@@ -23,7 +23,7 @@ void ParticlesDrawable::DrawTechnique::_rebuildPipeline(
   _pipeline.emplace(renderPass, mtt::clPipeline::forwardLightStage);
   try
   {
-    _pipeline->setDepthTestEnable(false);
+    _pipeline->setDepthTestEnable(true);
     _pipeline->setDepthWriteEnable(false);
     _pipeline->setDepthCompareOp(VK_COMPARE_OP_GREATER_OR_EQUAL);
 
