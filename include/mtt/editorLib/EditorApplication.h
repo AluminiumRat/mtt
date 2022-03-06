@@ -17,7 +17,8 @@ namespace mtt
     EditorApplication(int& argc,
                       char** argv,
                       const char* applicationName,
-                      const RenderLibInstance::Version& applicationVersion);
+                      const RenderLibInstance::Version& applicationVersion,
+                      const VkPhysicalDeviceFeatures& displayDeviceFeatures);
     EditorApplication(const EditorApplication&) = delete;
     EditorApplication& operator = (const EditorApplication&) = delete;
     virtual ~EditorApplication() noexcept = default;

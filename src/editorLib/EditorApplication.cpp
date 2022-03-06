@@ -11,26 +11,20 @@ using namespace mtt;
   static const bool enableValidation = true;
 #endif
 
-static VkPhysicalDeviceFeatures deviceFeatures()
-{
-  VkPhysicalDeviceFeatures features{};
-  features.samplerAnisotropy = VK_TRUE;
-  return features;
-}
-
 EditorApplication* EditorApplication::_instance = nullptr;
 
 EditorApplication::EditorApplication(
                         int& argc,
                         char** argv,
                         const char* applicationName,
-                        const RenderLibInstance::Version& applicationVersion) :
+                        const RenderLibInstance::Version& applicationVersion,
+                        const VkPhysicalDeviceFeatures& displayDeviceFeatures) :
   Application(argc,
               argv,
               applicationName,
               applicationVersion,
               VK_API_VERSION_1_2,
-              deviceFeatures(),
+              displayDeviceFeatures,
               enableValidation),
   mmdModelLibrary(std::make_unique<mtt::clPipeline::ModelTechniquesFactory>(
                                           true,

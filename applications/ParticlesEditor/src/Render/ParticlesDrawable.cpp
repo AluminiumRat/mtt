@@ -34,6 +34,13 @@ void ParticlesDrawable::DrawTechnique::_rebuildPipeline(
     vertexShader->newFragment().loadFromFile("particles.vert");
     _pipeline->addShader(std::move(vertexShader));
 
+    std::unique_ptr<mtt::ShaderModule> geometryShader(
+                                      new mtt::ShaderModule(
+                                            mtt::ShaderModule::GEOMETRY_SHADER,
+                                            renderPass.device()));
+    geometryShader->newFragment().loadFromFile("particles.geom");
+    _pipeline->addShader(std::move(geometryShader));
+
     std::unique_ptr<mtt::ShaderModule> fragmentShader(
                                       new mtt::ShaderModule(
                                             mtt::ShaderModule::FRAGMENT_SHADER,
@@ -59,7 +66,8 @@ void ParticlesDrawable::DrawTechnique::_rebuildPipeline(
 
     _pipeline->addResource( mtt::DrawMatrices::bindingName,
                             _matricesUniform,
-                            VK_SHADER_STAGE_VERTEX_BIT);
+                            VK_SHADER_STAGE_VERTEX_BIT |
+                              VK_SHADER_STAGE_GEOMETRY_BIT);
 
     if (_parent._sampler.has_value())
     {
@@ -71,7 +79,7 @@ void ParticlesDrawable::DrawTechnique::_rebuildPipeline(
                             std::to_string(_parent._sampler->arraySize()));
     }
 
-    _pipeline->setTopology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+    _pipeline->setTopology(VK_PRIMITIVE_TOPOLOGY_POINT_LIST);
   }
   catch (...)
   {
@@ -96,7 +104,7 @@ void ParticlesDrawable::DrawTechnique::buildDrawActions(
         buildInfo.currentFramePlan->getBin(mtt::clPipeline::forwardLightStage);
   if (renderBin == nullptr) mtt::Abort("ParticlesDrawable::DrawTechnique::buildDrawActions: render bin is not supported.");
 
-  uint32_t vertNumber = _parent._particlesNumber * 6;
+  uint32_t vertNumber = _parent._particlesNumber;
 
   using DrawAction = mtt::DrawMeshAction< MatricesUniform,
                                           mtt::DrawMatrices>;
