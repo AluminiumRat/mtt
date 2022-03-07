@@ -128,6 +128,17 @@ namespace mtt
     /// applied).
     /// Can be used to calculate render priority.
     inline float normalizedDistance(const glm::vec3& point) const noexcept;
+
+    /// Calculate render priority to order "Near objects will be rendered first"
+    /// "point" is in the local coordinate system(no drawing matrices are
+    /// applied).
+    inline float getPriorityNearFirstOrder(
+                                        const glm::vec3& point) const noexcept;
+    /// Calculate render priority to order "Far objects will be rendered first"
+    /// "point" is in the local coordinate system(no drawing matrices are
+    /// applied).
+    inline float getPriorityFarFirstOrder(
+                                        const glm::vec3& point) const noexcept;
   };
 
   inline float ViewInfo::distanceToPoint(const glm::vec3& point) const noexcept
@@ -196,5 +207,19 @@ namespace mtt
                                           const glm::vec3& point) const noexcept
   {
     return currentViewInfo.normalizedDistance(viewSpacePoint(point));
+  }
+
+  inline float DrawPlanBuildInfo::getPriorityNearFirstOrder(
+                                          const glm::vec3& point) const noexcept
+  {
+    float distance = normalizedDistance(point);
+    return 2.f - distance;
+  }
+
+  inline float DrawPlanBuildInfo::getPriorityFarFirstOrder(
+                                          const glm::vec3& point) const noexcept
+  {
+    float distance = normalizedDistance(point);
+    return distance;
   }
 }

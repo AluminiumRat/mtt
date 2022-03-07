@@ -114,14 +114,15 @@ void ParticlesDrawable::DrawTechnique::buildDrawActions(
                                   _makeIndices(buildInfo, renderPass->device());
   uint32_t pointsNumber = _parent._particlesNumber;
 
-  renderBin->createAction<DrawParticleAction>(0,
-                                              *_pipeline,
-                                              buildInfo.viewport,
-                                              buildInfo.scissor,
-                                              pointsNumber,
-                                              *indices,
-                                              _matricesUniform,
-                                              buildInfo.drawMatrices);
+  renderBin->createAction<DrawParticleAction>(
+                              buildInfo.getPriorityFarFirstOrder(glm::vec3(0)),
+                              *_pipeline,
+                              buildInfo.viewport,
+                              buildInfo.scissor,
+                              pointsNumber,
+                              *indices,
+                              _matricesUniform,
+                              buildInfo.drawMatrices);
 }
 
 mtt::Ref<mtt::PlainBuffer> ParticlesDrawable::DrawTechnique::_makeIndices(

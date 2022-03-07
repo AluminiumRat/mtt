@@ -314,11 +314,13 @@ namespace mtt
 
     float priority;
     if(_priorityOrder == CUSTOM_ORDER) priority = getCustomPriority(buildInfo);
+    else if (_priorityOrder == NEAR_FIRST_ORDER)
+    {
+      priority = buildInfo.getPriorityNearFirstOrder(glm::vec3(0));
+    }
     else
     {
-      float distance = buildInfo.normalizedDistance(glm::vec3(0));
-      priority = _priorityOrder == NEAR_FIRST_ORDER ? 2.f - distance :
-                                                      distance;
+      priority = buildInfo.getPriorityFarFirstOrder(glm::vec3(0));
     }
     
     DrawBin* renderBin = buildInfo.currentFramePlan->getBin(_stage);
