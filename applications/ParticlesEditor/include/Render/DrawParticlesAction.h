@@ -31,5 +31,5 @@ private:
   uint32_t _pointsNumber;
   mtt::Ref<mtt::PlainBuffer> _indicesBuffer;
   mtt::VolatileUniform<mtt::DrawMatrices>& _matricesUniform;
-  const mtt::DrawMatrices& _drawMatrices;
+  mtt::DrawMatrices _drawMatrices;
 };
