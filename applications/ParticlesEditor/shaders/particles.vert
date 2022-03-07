@@ -1,5 +1,10 @@
 //particles.vert
 
+layout(location = positionLocation) in vec3 inPosition;
+layout(location = sizeRotationLocation) in vec2 inSizeRotation;
+layout(location = colorLocation) in vec4 inColor;
+layout(location = textureIndexLocation) in uint inTextureIndex;
+
 layout( set = volatileSet,
         binding = drawMatricesBinding) uniform DrawMatrices
 {
@@ -8,41 +13,14 @@ layout( set = volatileSet,
   mat4 projectionMatrix;
 } drawMatrices;
 
-layout( set = staticSet,
-        binding = positionsBufferBinding) uniform Positions
-{
-  vec4 data[4096];
-} positions;
-
-layout( set = staticSet,
-        binding = sizeRotationBufferBinding) uniform SizeRotation
-{
-  vec4 data[4096];
-} sizeRotation;
-
-layout( set = staticSet,
-        binding = colorsBufferBinding) uniform Colors
-{
-  vec4 data[4096];
-} colors;
-
-layout( set = staticSet,
-        binding = textureIndicesBinding) uniform TextureIndices
-{
-  uvec4 data[4096];
-} textureIndices;
-
-
 layout(location = 0) out vec2 outSizeRotation;
 layout(location = 1) out vec4 outColor;
 layout(location = 2) out flat uint outTextureIndex;
 
 void main()
 {
-  vec4 position = positions.data[gl_VertexIndex];
-  gl_Position = drawMatrices.localToViewMatrix * position;
-
-  outSizeRotation = sizeRotation.data[gl_VertexIndex].xy;
-  outColor = colors.data[gl_VertexIndex];
-  outTextureIndex = textureIndices.data[gl_VertexIndex / 4][gl_VertexIndex % 4];
+  gl_Position = drawMatrices.localToViewMatrix * vec4(inPosition, 1.f);
+  outSizeRotation = inSizeRotation;
+  outColor = inColor;
+  outTextureIndex = inTextureIndex;
 }

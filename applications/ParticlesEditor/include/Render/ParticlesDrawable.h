@@ -26,14 +26,13 @@ public:
   ParticlesDrawable& operator = (const ParticlesDrawable&) = delete;
   virtual ~ParticlesDrawable() = default;
 
-  /// w component of position should be 1.f
-  /// x component of sizeRotation is diameter of particle, y component of
-  /// sizeRotation is rotation of particle in radians
+  /// x component of sizeRotation is diameter of particle,
+  /// y component of sizeRotation is rotation of particle in radians
   /// colorData contains premultipled rgba color value with opacity
   /// If particlesNumber != 0 then all pointers must not be nullptr
   void setData( size_t particlesNumber,
-                glm::vec4* positionData,
-                glm::vec4* sizeRotationData,
+                glm::vec3* positionData,
+                glm::vec2* sizeRotationData,
                 glm::vec4* colorData,
                 uint32_t* textureIndexData);
 

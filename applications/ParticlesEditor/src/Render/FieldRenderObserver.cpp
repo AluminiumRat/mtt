@@ -146,19 +146,16 @@ void FieldRenderObserver::_updateSize() noexcept
 
 void FieldRenderObserver::_updateParticles() noexcept
 {
-  std::vector<glm::vec4> positions;
-  std::vector<glm::vec4> sizeRotation;
+  std::vector<glm::vec3> positions;
+  std::vector<glm::vec2> sizeRotation;
   std::vector<glm::vec4> color;
   std::vector<uint32_t> textureIndices;
 
   for (ParticleField::ParticleIndex index : _field.workIndices())
   {
     ParticleField::ParticleData particle = _field.particlesData()[index];
-    positions.push_back(glm::vec4(particle.position, 1.f));
-    sizeRotation.push_back(glm::vec4( particle.size,
-                                      particle.rotation,
-                                      0.f,
-                                      0.f));
+    positions.push_back(particle.position);
+    sizeRotation.push_back(glm::vec2(particle.size, particle.rotation));
     color.push_back(glm::vec4(particle.color * particle.brightness,
                               particle.opacity));
     textureIndices.push_back(particle.textureIndex);

@@ -48,21 +48,25 @@ void ParticlesDrawable::DrawTechnique::_rebuildPipeline(
     fragmentShader->newFragment().loadFromFile("particles.frag");
     _pipeline->addShader(std::move(fragmentShader));
 
-    _pipeline->addResource( "positionsBufferBinding",
-                            _parent._positionBuffer,
-                            VK_SHADER_STAGE_VERTEX_BIT);
+    mtt::VertexAttribute& positionAtribute =
+                            _pipeline->getOrCreateAttribute("positionLocation");
+    positionAtribute.adjustDataType(mtt::VertexAttribute::FLOAT_VEC3_TYPE);
+    positionAtribute.attachBuffer(&_parent._positionBuffer);
 
-    _pipeline->addResource( "sizeRotationBufferBinding",
-                            _parent._sizeRotationBuffer,
-                            VK_SHADER_STAGE_VERTEX_BIT);
+    mtt::VertexAttribute& sizeRotationAtribute =
+                        _pipeline->getOrCreateAttribute("sizeRotationLocation");
+    sizeRotationAtribute.adjustDataType(mtt::VertexAttribute::FLOAT_VEC2_TYPE);
+    sizeRotationAtribute.attachBuffer(&_parent._sizeRotationBuffer);
 
-    _pipeline->addResource( "colorsBufferBinding",
-                            _parent._colorBuffer,
-                            VK_SHADER_STAGE_VERTEX_BIT);
+    mtt::VertexAttribute& colorAtribute =
+                              _pipeline->getOrCreateAttribute("colorLocation");
+    colorAtribute.adjustDataType(mtt::VertexAttribute::FLOAT_VEC4_TYPE);
+    colorAtribute.attachBuffer(&_parent._colorBuffer);
 
-    _pipeline->addResource( "textureIndicesBinding",
-                            _parent._textureIndexBuffer,
-                            VK_SHADER_STAGE_VERTEX_BIT);
+    mtt::VertexAttribute& textureIndexAtribute =
+                        _pipeline->getOrCreateAttribute("textureIndexLocation");
+    textureIndexAtribute.adjustDataType(mtt::VertexAttribute::UINT32_TYPE);
+    textureIndexAtribute.attachBuffer(&_parent._textureIndexBuffer);
 
     _pipeline->addResource( mtt::DrawMatrices::bindingName,
                             _matricesUniform,
@@ -119,30 +123,30 @@ void ParticlesDrawable::DrawTechnique::buildDrawActions(
 
 ParticlesDrawable::ParticlesDrawable() :
   _positionBuffer(mtt::Application::instance().displayDevice(),
-                  mtt::Buffer::UNIFORM_BUFFER),
+                  mtt::Buffer::VERTEX_BUFFER),
   _sizeRotationBuffer(mtt::Application::instance().displayDevice(),
-                      mtt::Buffer::UNIFORM_BUFFER),
+                      mtt::Buffer::VERTEX_BUFFER),
   _colorBuffer( mtt::Application::instance().displayDevice(),
-                mtt::Buffer::UNIFORM_BUFFER),
+                mtt::Buffer::VERTEX_BUFFER),
   _textureIndexBuffer(mtt::Application::instance().displayDevice(),
-                      mtt::Buffer::UNIFORM_BUFFER),
+                      mtt::Buffer::VERTEX_BUFFER),
   _particlesNumber(0),
   _colorTechnique(*this)
 {
 }
 
 void ParticlesDrawable::setData(size_t particlesNumber,
-                                glm::vec4* positionData,
-                                glm::vec4* sizeRotationData,
+                                glm::vec3* positionData,
+                                glm::vec2* sizeRotationData,
                                 glm::vec4* colorData,
                                 uint32_t* textureIndexData)
 {
   _particlesNumber = 0;
   if(particlesNumber == 0) return;
 
-  _positionBuffer.setData(positionData, particlesNumber * sizeof(glm::vec4));
+  _positionBuffer.setData(positionData, particlesNumber * sizeof(glm::vec3));
   _sizeRotationBuffer.setData(sizeRotationData,
-                              particlesNumber * sizeof(glm::vec4));
+                              particlesNumber * sizeof(glm::vec2));
   _colorBuffer.setData( colorData,
                         particlesNumber * sizeof(glm::vec4));
   _textureIndexBuffer.setData(textureIndexData,
