@@ -85,7 +85,6 @@ PlainBuffer::PlainBuffer( LogicalDevice& device,
   _device(device),
   _handle(VK_NULL_HANDLE),
   _size(size),
-  _usage(usage),
   _allocation(VK_NULL_HANDLE)
 {
   try
@@ -93,11 +92,48 @@ PlainBuffer::PlainBuffer( LogicalDevice& device,
     VkBufferCreateInfo bufferInfo{};
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
     bufferInfo.size = _size;
-    bufferInfo.usage = getUsageFlags(_usage);
+    bufferInfo.usage = getUsageFlags(usage);
     bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
     VmaAllocationCreateInfo allocCreateInfo{};
     allocCreateInfo.usage = getMemoryUsage(usage);
+
+    if(vmaCreateBuffer( _device.allocator(),
+                        &bufferInfo,
+                        &allocCreateInfo,
+                        &_handle,
+                        &_allocation,
+                        nullptr) != VK_SUCCESS)
+    {
+      throw std::runtime_error("Failed to create vertex buffer.");
+    }
+  }
+  catch(...)
+  {
+    _cleanup();
+    throw;
+  }
+}
+
+PlainBuffer::PlainBuffer( LogicalDevice& device,
+                          size_t size,
+                          VmaMemoryUsage memoryUsage,
+                          VkBufferUsageFlags bufferUsageFlags) :
+  _device(device),
+  _handle(VK_NULL_HANDLE),
+  _size(size),
+  _allocation(VK_NULL_HANDLE)
+{
+  try
+  {
+    VkBufferCreateInfo bufferInfo{};
+    bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    bufferInfo.size = _size;
+    bufferInfo.usage = bufferUsageFlags;
+    bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+    VmaAllocationCreateInfo allocCreateInfo{};
+    allocCreateInfo.usage = memoryUsage;
 
     if(vmaCreateBuffer( _device.allocator(),
                         &bufferInfo,

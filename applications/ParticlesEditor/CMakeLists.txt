@@ -54,6 +54,7 @@ set(HEADERS
     "include/Objects/PEVisitorExtension.h"
     "include/Objects/RootObject.h"
 
+    "include/Render/DrawParticlesAction.h"
     "include/Render/FieldRenderObserver.h"
     "include/Render/ParticlesDrawable.h"
     "include/Render/RenderObserverFactory.h"
@@ -78,6 +79,7 @@ set(SOURCES
     "src/Objects/PEVisitorExtension.cpp"
     "src/Objects/RootObject.cpp"
 
+    "src/Render/DrawParticlesAction.cpp"
     "src/Render/FieldRenderObserver.cpp"
     "src/Render/ParticlesDrawable.cpp"
     "src/Render/RenderObserverFactory.cpp"

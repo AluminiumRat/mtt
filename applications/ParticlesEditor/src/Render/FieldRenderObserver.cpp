@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <stdexcept>
 
 #include <mtt/clPipeline/MeshTechniques/InstrumentalCompositeTechnique.h>
@@ -5,7 +6,7 @@
 #include <mtt/editorLib/EditorApplication.h>
 #include <mtt/render/Mesh/UidMeshTechnique.h>
 #include <mtt/render/Pipeline/Buffer.h>
-#include <mtt/utilities/Log.h>
+#include <mtt/utilities/Abort.h>
 
 #include <AsyncTasks/UploadParticleTexturesTask.h>
 #include <Objects/ParticleField.h>
@@ -161,11 +162,10 @@ void FieldRenderObserver::_updateParticles() noexcept
     textureIndices.push_back(particle.textureIndex);
   }
 
-  _particlesDrawable.setData( positions.size(),
-                              positions.data(),
-                              sizeRotation.data(),
-                              color.data(),
-                              textureIndices.data());
+  _particlesDrawable.setData( positions,
+                              sizeRotation,
+                              color,
+                              textureIndices);
 }
 
 void FieldRenderObserver::_updateTextures() noexcept

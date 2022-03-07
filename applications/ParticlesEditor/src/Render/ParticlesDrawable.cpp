@@ -5,6 +5,7 @@
 #include <mtt/render/RenderPass/GeneralRenderPass.h>
 #include <mtt/utilities/Abort.h>
 
+#include <Render/DrawParticlesAction.h>
 #include <Render/ParticlesDrawable.h>
 
 ParticlesDrawable::DrawTechnique::DrawTechnique(ParticlesDrawable& parent) :
@@ -84,6 +85,7 @@ void ParticlesDrawable::DrawTechnique::_rebuildPipeline(
     }
 
     _pipeline->setTopology(VK_PRIMITIVE_TOPOLOGY_POINT_LIST);
+    _pipeline->indices().setType(VK_INDEX_TYPE_UINT16);
   }
   catch (...)
   {
@@ -108,17 +110,54 @@ void ParticlesDrawable::DrawTechnique::buildDrawActions(
         buildInfo.currentFramePlan->getBin(mtt::clPipeline::forwardLightStage);
   if (renderBin == nullptr) mtt::Abort("ParticlesDrawable::DrawTechnique::buildDrawActions: render bin is not supported.");
 
-  uint32_t vertNumber = _parent._particlesNumber;
+  mtt::Ref<mtt::PlainBuffer> indices =
+                                  _makeIndices(buildInfo, renderPass->device());
+  uint32_t pointsNumber = _parent._particlesNumber;
 
-  using DrawAction = mtt::DrawMeshAction< MatricesUniform,
-                                          mtt::DrawMatrices>;
-  renderBin->createAction<DrawAction>(0,
-                                      *_pipeline,
-                                      buildInfo.viewport,
-                                      buildInfo.scissor,
-                                      vertNumber,
-                                      _matricesUniform,
-                                      buildInfo.drawMatrices);
+  renderBin->createAction<DrawParticleAction>(0,
+                                              *_pipeline,
+                                              buildInfo.viewport,
+                                              buildInfo.scissor,
+                                              pointsNumber,
+                                              *indices,
+                                              _matricesUniform,
+                                              buildInfo.drawMatrices);
+}
+
+mtt::Ref<mtt::PlainBuffer> ParticlesDrawable::DrawTechnique::_makeIndices(
+                                  const mtt::DrawPlanBuildInfo& buildInfo,
+                                  mtt::LogicalDevice& device) const
+{
+  std::vector<float> distances;
+  distances.reserve(_parent._positionsData.size());
+  for (const glm::vec3& position : _parent._positionsData)
+  {
+    distances.push_back(buildInfo.distanceToPoint(position));
+  }
+
+  std::vector<uint16_t> indicesData;
+  indicesData.reserve(_parent._positionsData.size());
+  for(uint16_t i = 0; i < _parent._positionsData.size(); i++)
+  {
+    indicesData.push_back(i);
+  }
+
+  std::sort(indicesData.begin(),
+            indicesData.end(),
+            [&](uint16_t firstIndex, uint16_t secondIndex) -> bool
+            {
+              return distances[firstIndex] > distances[secondIndex];
+            });
+
+  mtt::Ref<mtt::PlainBuffer> indexBuffer(new mtt::PlainBuffer(
+                                          device,
+                                          indicesData.size() * sizeof(uint16_t),
+                                          VMA_MEMORY_USAGE_CPU_TO_GPU,
+                                          VK_BUFFER_USAGE_INDEX_BUFFER_BIT));
+  indexBuffer->uploadData(indicesData.data(),
+                          0,
+                          indicesData.size() * sizeof(uint16_t));
+  return indexBuffer;
 }
 
 ParticlesDrawable::ParticlesDrawable() :
@@ -135,22 +174,30 @@ ParticlesDrawable::ParticlesDrawable() :
 {
 }
 
-void ParticlesDrawable::setData(size_t particlesNumber,
-                                glm::vec3* positionData,
-                                glm::vec2* sizeRotationData,
-                                glm::vec4* colorData,
-                                uint32_t* textureIndexData)
+void ParticlesDrawable::setData(std::vector<glm::vec3> positionData,
+                                std::vector<glm::vec2> sizeRotationData,
+                                std::vector<glm::vec4> colorData,
+                                std::vector<uint32_t> textureIndexData)
 {
+  if( positionData.size() != sizeRotationData.size() ||
+      positionData.size() != colorData.size() ||
+      positionData.size() != textureIndexData.size()) mtt::Abort("ParticlesDrawable::setData: data vectors have different sizes");
+
   _particlesNumber = 0;
+
+  size_t particlesNumber = positionData.size();
   if(particlesNumber == 0) return;
 
-  _positionBuffer.setData(positionData, particlesNumber * sizeof(glm::vec3));
-  _sizeRotationBuffer.setData(sizeRotationData,
+  _positionBuffer.setData(positionData.data(),
+                          particlesNumber * sizeof(glm::vec3));
+  _sizeRotationBuffer.setData(sizeRotationData.data(),
                               particlesNumber * sizeof(glm::vec2));
-  _colorBuffer.setData( colorData,
+  _colorBuffer.setData( colorData.data(),
                         particlesNumber * sizeof(glm::vec4));
-  _textureIndexBuffer.setData(textureIndexData,
+  _textureIndexBuffer.setData(textureIndexData.data(),
                               particlesNumber * sizeof(uint32_t));
+
+  _positionsData = positionData;
 
   _particlesNumber = particlesNumber;
 }

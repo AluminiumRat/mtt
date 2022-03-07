@@ -29,7 +29,8 @@ namespace mtt
 
     /// Map buffer to memory.
     /// Warning! Buffer should have UPLOAD_BUFFER, DOWNLOAD_BUFFER or
-    /// VOLATILE_UNIFORM_BUFFER usage.
+    /// VOLATILE_UNIFORM_BUFFER usage or have VMA_MEMORY_USAGE_CPU_TO_GPU
+    /// memory usage.
     /// Warning! Don't use multiple mappers at the same time.
     /// Warning! Don't use mapper and uploadData method at the same time.
     class MemoryMapper
@@ -49,6 +50,10 @@ namespace mtt
 
   public:
     PlainBuffer(LogicalDevice& device, size_t size, Usage usage);
+    PlainBuffer(LogicalDevice& device,
+                size_t size,
+                VmaMemoryUsage memoryUsage,
+                VkBufferUsageFlags bufferUsageFlags);
     PlainBuffer(const PlainBuffer&) = delete;
     PlainBuffer& operator = (const PlainBuffer&) = delete;
   protected:
@@ -57,11 +62,11 @@ namespace mtt
   public:
     inline VkBuffer handle() const;
     inline size_t size() const;
-    inline Usage usage() const;
 
     /// Upload data from host to gpu via direct access.
     /// Warning! Buffer should have UPLOAD_BUFFER or
-    /// VOLATILE_UNIFORM_BUFFER usage.
+    /// VOLATILE_UNIFORM_BUFFER usage or have VMA_MEMORY_USAGE_CPU_TO_GPU
+    /// memory usage.
     /// Warning! Don't use mapper and uploadData method at the same time.
     void uploadData(const void* data, size_t shift, size_t dataSize);
 
@@ -78,7 +83,6 @@ namespace mtt
     LogicalDevice& _device;
     VkBuffer _handle;
     size_t _size;
-    Usage _usage;
 
     VmaAllocation _allocation;
   };
@@ -91,11 +95,6 @@ namespace mtt
   inline size_t PlainBuffer::size() const
   {
     return _size;
-  }
-
-  inline PlainBuffer::Usage PlainBuffer::usage() const
-  {
-    return _usage;
   }
 
   inline void* PlainBuffer::MemoryMapper::data() const

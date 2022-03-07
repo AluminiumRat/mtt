@@ -24,11 +24,14 @@ namespace mtt
 
     inline Buffer* attachedBuffer() const noexcept;
     /// The buffer will be bound the next time the pipeline binds.
+    /// buffer must contain data in type() format
     inline void attachBuffer(Buffer* newBuffer) noexcept;
 
     /// Attach data from buffer as vertex indices
+    /// buffer must contain data in type() format
     void scheduleBindData(PlainBuffer& buffer, CommandProducer& drawProducer);
     /// Attach data from buffer as vertex indices
+    /// buffer must contain data in type() format
     void scheduleBindData(Buffer& buffer,
                           CommandProducer& drawProducer);
     /// attached buffer will be used
