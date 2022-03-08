@@ -59,6 +59,7 @@ set(HEADERS
     "include/Objects/RootObject.h"
 
     "include/Render/DrawParticlesAction.h"
+    "include/Render/EmitterRenderObserver.h"
     "include/Render/FieldRenderObserver.h"
     "include/Render/ParticlesDrawable.h"
     "include/Render/RenderObserverFactory.h"
@@ -88,6 +89,7 @@ set(SOURCES
     "src/Objects/RootObject.cpp"
 
     "src/Render/DrawParticlesAction.cpp"
+    "src/Render/EmitterRenderObserver.cpp"
     "src/Render/FieldRenderObserver.cpp"
     "src/Render/ParticlesDrawable.cpp"
     "src/Render/RenderObserverFactory.cpp"
@@ -110,10 +112,15 @@ set(UI_FILES
     "src/MainWindow.ui"
     )
 
+set(QRC_FILES
+    "resources/resources.qrc"
+    )
+
 add_executable (ParticlesEditor
                 ${HEADERS}
                 ${SOURCES}
-                ${UI_FILES})
+                ${UI_FILES}
+                ${QRC_FILES})
 
 target_link_libraries(ParticlesEditor
                       ${Vulkan_LIBRARIES}

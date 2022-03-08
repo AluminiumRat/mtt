@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/particlesEditor">
+      <file>emitter.png</file>
+    </qresource>
+</RCC>
