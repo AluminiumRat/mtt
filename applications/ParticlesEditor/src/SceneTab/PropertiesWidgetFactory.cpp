@@ -10,7 +10,7 @@ PropertiesWidgetFactory::PropertiesWidgetFactory(
                                                 EditorCommonData& commonData) :
   PEVisitorT( widgetsLayout,
               commonData,
-              &commonData.scene()->root().skeletonGroup(),
+              &commonData.scene()->root().modificatorsGroup(),
               &commonData.animationPlayer()),
   _commonData(commonData)
 {

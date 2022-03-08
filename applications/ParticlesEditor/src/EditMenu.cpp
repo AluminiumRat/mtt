@@ -7,8 +7,7 @@
 #include <mtt/application/EditCommands/CompositeCommand.h>
 #include <mtt/application/EditCommands/RemoveObjectCommand.h>
 #include <mtt/editorLib/AsyncTasks/AddAnimationFromFbxTask.h>
-#include <mtt/editorLib/Objects/SkeletonGroup.h>
-#include <mtt/editorLib/Objects/SkeletonObject.h>
+#include <mtt/editorLib/Objects/FrameObject.h>
 #include <mtt/editorLib/EditorApplication.h>
 
 #include <EditMenu.h>
@@ -52,10 +51,10 @@ void EditMenu::setupUI()
           &EditMenu::_deleteObject,
           Qt::DirectConnection);
 
-  connect(_ui.actionAdd_bone,
+  connect(_ui.actionAdd_frame,
           &QAction::triggered,
           this,
-          &EditMenu::_addBone,
+          &EditMenu::_addFrame,
           Qt::DirectConnection);
 
   connect(_ui.actionAdd_animation_from_fbx,
@@ -150,29 +149,29 @@ void EditMenu::_deleteObject() noexcept
   }
 }
 
-void EditMenu::_addBone() noexcept
+void EditMenu::_addFrame() noexcept
 {
   try
   {
     EditorScene* scene = _commonData.scene();
     if(scene == nullptr) return;
 
-    std::unique_ptr<mtt::SkeletonObject> newBone(
-                                    new mtt::SkeletonObject(tr("bone"), true));
-    mtt::SkeletonObject* bonePtr = newBone.get();
+    std::unique_ptr<mtt::FrameObject> newFrame(
+                                      new mtt::FrameObject(tr("frame"), true));
+    mtt::FrameObject* framePtr = newFrame.get();
 
     mtt::Object* target = nullptr;    
     if (_commonData.selectedObjects().size() == 1)
     {
       target = _commonData.selectedObjects()[0];
-      if(!target->subobjectCanBeAddedAndRemoved(*newBone)) target = nullptr;
+      if(!target->subobjectCanBeAddedAndRemoved(*newFrame)) target = nullptr;
     }
-    if(target == nullptr) target = &scene->root().skeletonGroup();
+    if(target == nullptr) target = &scene->root().modificatorsGroup();
     
     std::unique_ptr<mtt::AddObjectCommand> command(
-                        new mtt::AddObjectCommand(std::move(newBone), *target));
+                      new mtt::AddObjectCommand(std::move(newFrame), *target));
     _commonData.undoStack().addAndMake(std::move(command));
-    _commonData.selectObjects({bonePtr});
+    _commonData.selectObjects({framePtr});
   }
   catch(std::exception& error)
   {
@@ -203,10 +202,10 @@ void EditMenu::_addAnimationFromFbx() noexcept
 
     std::unique_ptr<mtt::AddAnimationFromFbxTask> task(
                                   new mtt::AddAnimationFromFbxTask(
-                                                fileName,
-                                                scene->root().animationGroup(),
-                                                &scene->root().skeletonGroup(),
-                                                _commonData));
+                                            fileName,
+                                            scene->root().animationGroup(),
+                                            &scene->root().modificatorsGroup(),
+                                            _commonData));
     mtt::EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
   }
   catch (...)

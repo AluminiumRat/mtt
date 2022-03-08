@@ -5,7 +5,7 @@
 #include <mtt/editorLib/Objects/AnimationGroup.h>
 #include <mtt/editorLib/Objects/BackgroundObject.h>
 #include <mtt/editorLib/Objects/EnvironmentGroup.h>
-#include <mtt/editorLib/Objects/SkeletonGroup.h>
+#include <mtt/editorLib/Objects/Object3DGroup.h>
 
 #include <Objects/ParticleField.h>
 #include <Objects/PEVisitorExtension.h>
@@ -27,8 +27,8 @@ public:
   RootObject& operator = (const RootObject&) = delete;
   virtual ~RootObject() noexcept = default;
 
-  inline mtt::SkeletonGroup& skeletonGroup() noexcept;
-  inline const mtt::SkeletonGroup& skeletonGroup() const noexcept;
+  inline mtt::Object3DGroup& modificatorsGroup() noexcept;
+  inline const mtt::Object3DGroup& modificatorsGroup() const noexcept;
 
   inline mtt::AnimationGroup& animationGroup() noexcept;
   inline const mtt::AnimationGroup& animationGroup() const noexcept;
@@ -47,21 +47,21 @@ signals:
   void backgroundChanged(mtt::BackgroundObject& newBackground);
 
 private:
-  mtt::SkeletonGroup* _skeletonGroup;
+  mtt::Object3DGroup* _modificatorsGroup;
   mtt::AnimationGroup* _animationGroup;
   mtt::BackgroundObject* _background;
   mtt::EnvironmentGroup* _environment;
   ParticleField* _particleField;
 };
 
-inline mtt::SkeletonGroup& RootObject::skeletonGroup() noexcept
+inline mtt::Object3DGroup& RootObject::modificatorsGroup() noexcept
 {
-  return *_skeletonGroup;
+  return *_modificatorsGroup;
 }
 
-inline const mtt::SkeletonGroup& RootObject::skeletonGroup() const noexcept
+inline const mtt::Object3DGroup& RootObject::modificatorsGroup() const noexcept
 {
-  return *_skeletonGroup;
+  return *_modificatorsGroup;
 }
 
 inline mtt::AnimationGroup& RootObject::animationGroup() noexcept

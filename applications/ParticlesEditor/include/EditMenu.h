@@ -26,7 +26,7 @@ private:
   void _redo() noexcept;
   void _updateDeleteAction() noexcept;
   void _deleteObject() noexcept;
-  void _addBone() noexcept;
+  void _addFrame() noexcept;
   void _addAnimationFromFbx() noexcept;
 
 private:

@@ -35,7 +35,7 @@
     <addaction name="separator"/>
     <addaction name="actionDelete"/>
     <addaction name="separator"/>
-    <addaction name="actionAdd_bone"/>
+    <addaction name="actionAdd_frame"/>
     <addaction name="actionAdd_animation_from_fbx"/>
    </widget>
    <widget class="QMenu" name="menuManipulator">
@@ -71,9 +71,9 @@
    <addaction name="menuManipulator"/>
    <addaction name="menuStatistic"/>
   </widget>
-  <action name="actionAdd_bone">
+  <action name="actionAdd_frame">
    <property name="text">
-    <string>Add bone</string>
+    <string>Add frame</string>
    </property>
   </action>
   <action name="actionUndo">

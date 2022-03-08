@@ -15,9 +15,11 @@ namespace mtt
   class EnvironmentGroup;
   class EnvironmentModel;
   class EnvironmentObject;
+  class FrameObject;
   class LightObject;
   class MovableObject;
   class Object3D;
+  class Object3DGroup;
   class RotatableObject;
   class ScalableObject;
   class SkeletonGroup;
@@ -65,6 +67,9 @@ namespace mtt
                                           const EnvironmentObject& object) = 0;
     virtual void visitEnvironmentObject(EnvironmentObject& object) = 0;
 
+    virtual void visitConstFrameObject(const FrameObject& object) = 0;
+    virtual void visitFrameObject(FrameObject& object) = 0;
+
     virtual void visitConstLightObject(const LightObject& object) = 0;
     virtual void visitLightObject(LightObject& object) = 0;
 
@@ -73,6 +78,9 @@ namespace mtt
 
     virtual void visitConstObject3D(const Object3D& object) = 0;
     virtual void visitObject3D(Object3D& object) = 0;
+
+    virtual void visitConstObject3DGroup(const Object3DGroup& object) = 0;
+    virtual void visitObject3DGroup(Object3DGroup& object) = 0;
 
     virtual void visitConstRotatableObject(const RotatableObject& object) = 0;
     virtual void visitRotatableObject(RotatableObject& object) = 0;

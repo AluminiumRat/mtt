@@ -9,17 +9,17 @@ RootObject::RootObject( const QString& name,
                         bool canBeRenamed,
                         const mtt::UID& theId) :
   Object(name, canBeRenamed, theId),
-  _skeletonGroup(nullptr),
+  _modificatorsGroup(nullptr),
   _animationGroup(nullptr),
   _environment(nullptr)
 {
-  mtt::UID skeletonId(id().mixedUID(6078948842405049854ull));
-  std::unique_ptr<mtt::SkeletonGroup> skeletonGroup(
-                                        new mtt::SkeletonGroup( tr("Skeleton"),
-                                                                false,
-                                                                skeletonId));
-  _skeletonGroup = skeletonGroup.get();
-  addSubobject(std::move(skeletonGroup));
+  mtt::UID modificatorsId(id().mixedUID(6078948842405049854ull));
+  std::unique_ptr<mtt::Object3DGroup> modificatorsGroup(
+                                    new mtt::Object3DGroup( tr("Modificators"),
+                                                            false,
+                                                            modificatorsId));
+  _modificatorsGroup = modificatorsGroup.get();
+  addSubobject(std::move(modificatorsGroup));
 
   mtt::UID animationId(id().mixedUID(9391846700167947331ull));
   std::unique_ptr<mtt::AnimationGroup> animationGroup(

@@ -1,7 +1,27 @@
 #pragma once
 
 #include <mtt/application/Scene/ObjectVisitor.h>
+#include <mtt/editorLib/Objects/AmbientLightObject.h>
+#include <mtt/editorLib/Objects/AnimationGroup.h>
+#include <mtt/editorLib/Objects/AnimationObject.h>
+#include <mtt/editorLib/Objects/AnimationTrack.h>
+#include <mtt/editorLib/Objects/BackgroundObject.h>
 #include <mtt/editorLib/Objects/CEVisitorExtension.h>
+#include <mtt/editorLib/Objects/CubemapObject.h>
+#include <mtt/editorLib/Objects/DirectLightObject.h>
+#include <mtt/editorLib/Objects/DisplayedObject.h>
+#include <mtt/editorLib/Objects/EnvironmentGroup.h>
+#include <mtt/editorLib/Objects/EnvironmentModel.h>
+#include <mtt/editorLib/Objects/EnvironmentObject.h>
+#include <mtt/editorLib/Objects/FrameObject.h>
+#include <mtt/editorLib/Objects/LightObject.h>
+#include <mtt/editorLib/Objects/MovableObject.h>
+#include <mtt/editorLib/Objects/Object3D.h>
+#include <mtt/editorLib/Objects/Object3DGroup.h>
+#include <mtt/editorLib/Objects/RotatableObject.h>
+#include <mtt/editorLib/Objects/ScalableObject.h>
+#include <mtt/editorLib/Objects/SkeletonGroup.h>
+#include <mtt/editorLib/Objects/SkeletonObject.h>
 
 namespace mtt
 {
@@ -66,6 +86,10 @@ namespace mtt
     inline virtual void visitEnvironmentObject(
                                             EnvironmentObject& object) override;
 
+    inline virtual void visitConstFrameObject(
+                                            const FrameObject& object) override;
+    inline virtual void visitFrameObject(FrameObject& object) override;
+
     inline virtual void visitConstLightObject(
                                             const LightObject& object) override;
     inline virtual void visitLightObject(LightObject& object) override;
@@ -76,6 +100,10 @@ namespace mtt
 
     inline virtual void visitConstObject3D(const Object3D& object) override;
     inline virtual void visitObject3D(Object3D& object) override;
+
+    inline virtual void visitConstObject3DGroup(
+                                          const Object3DGroup& object) override;
+    inline virtual void visitObject3DGroup(Object3DGroup& object) override;
 
     inline virtual void visitConstRotatableObject(
                                         const RotatableObject& object) override;
@@ -100,25 +128,6 @@ namespace mtt
 
   using CEVisitor = CEVisitorT<ObjectVisitor>;
 }
-
-#include <mtt/editorLib/Objects/AmbientLightObject.h>
-#include <mtt/editorLib/Objects/AnimationGroup.h>
-#include <mtt/editorLib/Objects/AnimationObject.h>
-#include <mtt/editorLib/Objects/AnimationTrack.h>
-#include <mtt/editorLib/Objects/BackgroundObject.h>
-#include <mtt/editorLib/Objects/CubemapObject.h>
-#include <mtt/editorLib/Objects/DirectLightObject.h>
-#include <mtt/editorLib/Objects/DisplayedObject.h>
-#include <mtt/editorLib/Objects/EnvironmentGroup.h>
-#include <mtt/editorLib/Objects/EnvironmentModel.h>
-#include <mtt/editorLib/Objects/EnvironmentObject.h>
-#include <mtt/editorLib/Objects/LightObject.h>
-#include <mtt/editorLib/Objects/MovableObject.h>
-#include <mtt/editorLib/Objects/Object3D.h>
-#include <mtt/editorLib/Objects/RotatableObject.h>
-#include <mtt/editorLib/Objects/ScalableObject.h>
-#include <mtt/editorLib/Objects/SkeletonGroup.h>
-#include <mtt/editorLib/Objects/SkeletonObject.h>
 
 namespace mtt
 {
@@ -283,6 +292,19 @@ namespace mtt
   }
 
   template <typename BaseVisitor>
+  inline void CEVisitorT<BaseVisitor>::visitConstFrameObject(
+                                                      const FrameObject& object)
+  {
+    visitConstScalableObject(object);
+  }
+
+  template <typename BaseVisitor>
+  inline void CEVisitorT<BaseVisitor>::visitFrameObject(FrameObject& object)
+  {
+    visitScalableObject(object);
+  }
+
+  template <typename BaseVisitor>
   inline void CEVisitorT<BaseVisitor>::visitLightObject(LightObject& object)
   {
     visitEnvironmentObject(object);
@@ -318,6 +340,19 @@ namespace mtt
 
   template <typename BaseVisitor>
   inline void CEVisitorT<BaseVisitor>::visitObject3D(Object3D& object)
+  {
+    visitDisplayedObject(object);
+  }
+
+  template <typename BaseVisitor>
+  inline void CEVisitorT<BaseVisitor>::visitConstObject3DGroup(
+                                                    const Object3DGroup& object)
+  {
+    visitConstDisplayedObject(object);
+  }
+
+  template <typename BaseVisitor>
+  inline void CEVisitorT<BaseVisitor>::visitObject3DGroup(Object3DGroup& object)
   {
     visitDisplayedObject(object);
   }
