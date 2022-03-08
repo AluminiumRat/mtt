@@ -1,9 +1,9 @@
 #include <mtt/editorLib/Render/AmbientLightRenderObserver.h>
 #include <mtt/editorLib/Render/BackgroundObserver.h>
+#include <mtt/editorLib/Render/CrossRenderObserver.h>
 #include <mtt/editorLib/Render/DirectLightRenderObserver.h>
 #include <mtt/editorLib/Render/EnvironmentModelRenderObserver.h>
 #include <mtt/editorLib/Render/RenderObserverFactory.h>
-#include <mtt/editorLib/Render/SkeletonRenderObserver.h>
 
 using namespace mtt;
 
@@ -48,8 +48,14 @@ void RenderObserverFactory::visitEnvironmentModel(EnvironmentModel& object)
                                                               commonData()));
 }
 
+void RenderObserverFactory::visitFrameObject(FrameObject& object)
+{
+  setResult(std::make_unique<CrossRenderObserver>(object,
+                                                  commonData()));
+}
+
 void RenderObserverFactory::visitSkeletonObject(SkeletonObject& object)
 {
-  setResult(std::make_unique<SkeletonRenderObserver>( object,
-                                                      commonData()));
+  setResult(std::make_unique<CrossRenderObserver>(object,
+                                                  commonData()));
 }

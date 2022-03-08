@@ -93,6 +93,7 @@ set(HEADERS
     "../../include/mtt/editorLib/Render/AmbientLightRenderObserver.h"
     "../../include/mtt/editorLib/Render/BackgroundObserver.h"
     "../../include/mtt/editorLib/Render/CubemapObserver.h"
+    "../../include/mtt/editorLib/Render/CrossRenderObserver.h"
     "../../include/mtt/editorLib/Render/DirectLightRenderObserver.h"
     "../../include/mtt/editorLib/Render/EditorRenderAction.h"
     "../../include/mtt/editorLib/Render/EditorRenderWidget.h"
@@ -101,7 +102,6 @@ set(HEADERS
     "../../include/mtt/editorLib/Render/Object3DRenderObserver.h"
     "../../include/mtt/editorLib/Render/RenderObserverFactory.h"
     "../../include/mtt/editorLib/Render/SceneRenderObserver.h"
-    "../../include/mtt/editorLib/Render/SkeletonRenderObserver.h"
 
     "../../include/mtt/editorLib/SceneTab/AmbientLightWidget.h"
     "../../include/mtt/editorLib/SceneTab/AnimationObjectWidget.h"
@@ -190,6 +190,7 @@ set(SOURCES
     "Render/AbstractObjectRenderObserver.cpp"
     "Render/AmbientLightRenderObserver.cpp"
     "Render/BackgroundObserver.cpp"
+    "Render/CrossRenderObserver.cpp"
     "Render/CubemapObserver.cpp"
     "Render/DirectLightRenderObserver.cpp"
     "Render/EditorRenderAction.cpp"
@@ -199,7 +200,6 @@ set(SOURCES
     "Render/Object3DRenderObserver.cpp"
     "Render/RenderObserverFactory.cpp"
     "Render/SceneRenderObserver.cpp"
-    "Render/SkeletonRenderObserver.cpp"
 
     "SceneTab/AmbientLightWidget.cpp"
     "SceneTab/AnimationObjectWidget.cpp"

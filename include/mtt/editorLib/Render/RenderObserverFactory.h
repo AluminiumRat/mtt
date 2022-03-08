@@ -24,6 +24,7 @@ namespace mtt
     virtual void visitBackgroundObject(BackgroundObject& object) override;
     virtual void visitDirectLightObject(DirectLightObject& object) override;
     virtual void visitEnvironmentModel(EnvironmentModel& object) override;
+    virtual void visitFrameObject(FrameObject& object) override;
     virtual void visitSkeletonObject(SkeletonObject& object) override;
 
   protected:
