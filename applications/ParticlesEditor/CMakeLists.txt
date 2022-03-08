@@ -50,6 +50,7 @@ set(HEADERS
     "include/AsyncTasks/UploadParticleTexturesTask.h"
 
     "include/Objects/FrameObject.h"
+    "include/Objects/EmitterObject.h"
     "include/Objects/ModificatorGroup.h"
     "include/Objects/ModificatorObject.h"
     "include/Objects/ParticleField.h"
@@ -79,6 +80,7 @@ set(SOURCES
     "src/AsyncTasks/UploadParticleTexturesTask.cpp"
 
     "src/Objects/FrameObject.cpp"
+    "src/Objects/EmitterObject.cpp"
     "src/Objects/ModificatorGroup.cpp"
     "src/Objects/ModificatorObject.cpp"
     "src/Objects/ParticleField.cpp"

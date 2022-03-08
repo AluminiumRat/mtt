@@ -9,6 +9,7 @@
 #include <mtt/editorLib/AsyncTasks/AddAnimationFromFbxTask.h>
 #include <mtt/editorLib/EditorApplication.h>
 
+#include <Objects/EmitterObject.h>
 #include <Objects/FrameObject.h>
 #include <EditMenu.h>
 #include <MainWindow.h>
@@ -55,6 +56,12 @@ void EditMenu::setupUI()
           &QAction::triggered,
           this,
           &EditMenu::_addFrame,
+          Qt::DirectConnection);
+
+  connect(_ui.actionAdd_emitter,
+          &QAction::triggered,
+          this,
+          &EditMenu::_addEmitter,
           Qt::DirectConnection);
 
   connect(_ui.actionAdd_animation_from_fbx,
@@ -149,39 +156,66 @@ void EditMenu::_deleteObject() noexcept
   }
 }
 
+void EditMenu::_addModificator(std::unique_ptr<ModificatorObject> object)
+{
+  EditorScene* scene = _commonData.scene();
+  if (scene == nullptr) return;
+
+  ModificatorObject* objectPtr = object.get();
+
+  mtt::Object* target = nullptr;
+  if (_commonData.selectedObjects().size() == 1)
+  {
+    target = _commonData.selectedObjects()[0];
+    if(!target->subobjectCanBeAddedAndRemoved(*object)) target = nullptr;
+  }
+  if(target == nullptr) target = &scene->root().modificatorsGroup();
+    
+  std::unique_ptr<mtt::AddObjectCommand> command(
+                        new mtt::AddObjectCommand(std::move(object), *target));
+  _commonData.undoStack().addAndMake(std::move(command));
+  _commonData.selectObjects({objectPtr});
+}
+
 void EditMenu::_addFrame() noexcept
 {
   try
   {
-    EditorScene* scene = _commonData.scene();
-    if(scene == nullptr) return;
-
     std::unique_ptr<FrameObject> newFrame(new FrameObject(tr("frame"), true));
-    FrameObject* framePtr = newFrame.get();
-
-    mtt::Object* target = nullptr;    
-    if (_commonData.selectedObjects().size() == 1)
-    {
-      target = _commonData.selectedObjects()[0];
-      if(!target->subobjectCanBeAddedAndRemoved(*newFrame)) target = nullptr;
-    }
-    if(target == nullptr) target = &scene->root().modificatorsGroup();
-    
-    std::unique_ptr<mtt::AddObjectCommand> command(
-                      new mtt::AddObjectCommand(std::move(newFrame), *target));
-    _commonData.undoStack().addAndMake(std::move(command));
-    _commonData.selectObjects({framePtr});
+    _addModificator(std::move(newFrame));
   }
   catch(std::exception& error)
   {
     QMessageBox::critical(&_window,
-                          tr("Unable to add a bone"),
+                          tr("Unable to add a frame"),
                           error.what());
   }
   catch(...)
   {
     QMessageBox::critical(&_window,
-                          tr("Unable to add a bone"),
+                          tr("Unable to add a frame"),
+                          tr("Unknown error"));
+  }
+}
+
+void EditMenu::_addEmitter() noexcept
+{
+  try
+  {
+    std::unique_ptr<EmitterObject> newObject(
+                                        new EmitterObject(tr("emitter"), true));
+    _addModificator(std::move(newObject));
+  }
+  catch(std::exception& error)
+  {
+    QMessageBox::critical(&_window,
+                          tr("Unable to add a emitter"),
+                          error.what());
+  }
+  catch(...)
+  {
+    QMessageBox::critical(&_window,
+                          tr("Unable to add a emitter"),
                           tr("Unknown error"));
   }
 }

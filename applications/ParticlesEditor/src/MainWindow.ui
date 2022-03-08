@@ -36,6 +36,7 @@
     <addaction name="actionDelete"/>
     <addaction name="separator"/>
     <addaction name="actionAdd_frame"/>
+    <addaction name="actionAdd_emitter"/>
     <addaction name="actionAdd_animation_from_fbx"/>
    </widget>
    <widget class="QMenu" name="menuManipulator">
@@ -233,6 +234,11 @@
   <action name="actionAdd_environment_model">
    <property name="text">
     <string>Add model to environment</string>
+   </property>
+  </action>
+  <action name="actionAdd_emitter">
+   <property name="text">
+    <string>Add emitter</string>
    </property>
   </action>
  </widget>

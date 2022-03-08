@@ -1,9 +1,6 @@
 #pragma once
 
-#include <mtt/editorLib/Objects/ScalableObject.h>
-
 #include <Objects/ModificatorObject.h>
-#include <Objects/PEVisitorExtension.h>
 
 class FrameObject : public ModificatorObject
 {

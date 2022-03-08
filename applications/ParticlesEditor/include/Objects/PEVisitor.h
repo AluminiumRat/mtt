@@ -3,6 +3,7 @@
 #include <mtt/editorLib/Objects/CEVisitor.h>
 
 #include <Objects/FrameObject.h>
+#include <Objects/EmitterObject.h>
 #include <Objects/ModificatorGroup.h>
 #include <Objects/ModificatorObject.h>
 #include <Objects/ParticleField.h>
@@ -19,6 +20,10 @@ public:
   PEVisitorT(const PEVisitorT&) = delete;
   PEVisitorT& operator = (const PEVisitorT&) = delete;
   virtual ~PEVisitorT() noexcept = default;
+
+  inline virtual void visitConstEmitterObject(
+                                          const EmitterObject& object) override;
+  inline virtual void visitEmitterObject(EmitterObject& object) override;
 
   inline virtual void visitConstFrameObject(const FrameObject& object) override;
   inline virtual void visitFrameObject(FrameObject& object) override;
@@ -51,6 +56,19 @@ template <typename... Args>
 inline PEVisitorT<BaseVisitor>::PEVisitorT(Args&&... args) :
   BaseVisitor(args...)
 {
+}
+
+template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitConstEmitterObject(
+                                                    const EmitterObject& object)
+{
+  visitConstModificatorObject(object);
+}
+
+template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitEmitterObject(EmitterObject& object)
+{
+  visitModificatorObject(object);
 }
 
 template <typename BaseVisitor>
@@ -91,7 +109,7 @@ template <typename BaseVisitor>
 inline void PEVisitorT<BaseVisitor>::visitModificatorObject(
                                                       ModificatorObject& object)
 {
-  static_cast<BaseVisitor*>(this)->visitConstScalableObject(object);
+  static_cast<BaseVisitor*>(this)->visitScalableObject(object);
 }
 
 template <typename BaseVisitor>

@@ -2,6 +2,7 @@
 
 #include <mtt/application/Scene/ObjectVisitor.h>
 
+class EmitterObject;
 class FrameObject;
 class ModificatorGroup;
 class ModificatorObject;
@@ -14,6 +15,9 @@ public:
   static mtt::ObjectVisitor::ExtensionID extensionID;
 
 public:
+  virtual void visitConstEmitterObject(const EmitterObject& object) = 0;
+  virtual void visitEmitterObject(EmitterObject& object) = 0;
+
   virtual void visitConstFrameObject(const FrameObject& object) = 0;
   virtual void visitFrameObject(FrameObject& object) = 0;
 
