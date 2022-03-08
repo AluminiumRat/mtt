@@ -7,9 +7,9 @@
 #include <mtt/application/EditCommands/CompositeCommand.h>
 #include <mtt/application/EditCommands/RemoveObjectCommand.h>
 #include <mtt/editorLib/AsyncTasks/AddAnimationFromFbxTask.h>
-#include <mtt/editorLib/Objects/FrameObject.h>
 #include <mtt/editorLib/EditorApplication.h>
 
+#include <Objects/FrameObject.h>
 #include <EditMenu.h>
 #include <MainWindow.h>
 
@@ -156,9 +156,8 @@ void EditMenu::_addFrame() noexcept
     EditorScene* scene = _commonData.scene();
     if(scene == nullptr) return;
 
-    std::unique_ptr<mtt::FrameObject> newFrame(
-                                      new mtt::FrameObject(tr("frame"), true));
-    mtt::FrameObject* framePtr = newFrame.get();
+    std::unique_ptr<FrameObject> newFrame(new FrameObject(tr("frame"), true));
+    FrameObject* framePtr = newFrame.get();
 
     mtt::Object* target = nullptr;    
     if (_commonData.selectedObjects().size() == 1)

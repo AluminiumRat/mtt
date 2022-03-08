@@ -10,4 +10,5 @@ public:
   RenderObserverFactory(mtt::CommonEditData& commonData);
 
   virtual void visitParticleField(ParticleField& object) override;
+  virtual void visitFrameObject(FrameObject& object) override;
 };

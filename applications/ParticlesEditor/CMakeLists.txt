@@ -49,6 +49,9 @@ set(HEADERS
     "include/AsyncTasks/LoadEnvironmentTask.h"
     "include/AsyncTasks/UploadParticleTexturesTask.h"
 
+    "include/Objects/FrameObject.h"
+    "include/Objects/ModificatorGroup.h"
+    "include/Objects/ModificatorObject.h"
     "include/Objects/ParticleField.h"
     "include/Objects/PEVisitor.h"
     "include/Objects/PEVisitorExtension.h"
@@ -75,6 +78,9 @@ set(SOURCES
     "src/AsyncTasks/LoadEnvironmentTask.cpp"
     "src/AsyncTasks/UploadParticleTexturesTask.cpp"
 
+    "src/Objects/FrameObject.cpp"
+    "src/Objects/ModificatorGroup.cpp"
+    "src/Objects/ModificatorObject.cpp"
     "src/Objects/ParticleField.cpp"
     "src/Objects/PEVisitorExtension.cpp"
     "src/Objects/RootObject.cpp"

@@ -14,8 +14,8 @@ RootObject::RootObject( const QString& name,
   _environment(nullptr)
 {
   mtt::UID modificatorsId(id().mixedUID(6078948842405049854ull));
-  std::unique_ptr<mtt::Object3DGroup> modificatorsGroup(
-                                    new mtt::Object3DGroup( tr("Modificators"),
+  std::unique_ptr<ModificatorGroup> modificatorsGroup(
+                                      new ModificatorGroup( tr("Modificators"),
                                                             false,
                                                             modificatorsId));
   _modificatorsGroup = modificatorsGroup.get();

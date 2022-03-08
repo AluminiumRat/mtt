@@ -48,12 +48,6 @@ void RenderObserverFactory::visitEnvironmentModel(EnvironmentModel& object)
                                                               commonData()));
 }
 
-void RenderObserverFactory::visitFrameObject(FrameObject& object)
-{
-  setResult(std::make_unique<CrossRenderObserver>(object,
-                                                  commonData()));
-}
-
 void RenderObserverFactory::visitSkeletonObject(SkeletonObject& object)
 {
   setResult(std::make_unique<CrossRenderObserver>(object,
