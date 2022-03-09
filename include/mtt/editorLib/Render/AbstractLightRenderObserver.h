@@ -5,6 +5,7 @@
 #include <optional>
 #include <vector>
 
+#include <mtt/editorLib/Render/HullDrawableNode.h>
 #include <mtt/editorLib/Render/Object3DRenderObserver.h>
 #include <mtt/editorLib/Render/IconDrawableNode.h>
 #include <mtt/render/Drawable/VisibleDrawableFilter.h>
@@ -34,11 +35,11 @@ namespace mtt
                                   const AbstractLightRenderObserver&) = delete;
     virtual ~AbstractLightRenderObserver() noexcept = default;
 
+    inline HullDrawableNode& hullNode() noexcept;
+    inline const HullDrawableNode& hullNode() const noexcept;
+
   protected:
     void setLightObject(CompositeObjectNode& light);
-
-    /// newGeometry should be in VK_PRIMITIVE_TOPOLOGY_LINE_LIST topology
-    void setHullGeometry(const std::vector<glm::vec3> newGeometry);
 
   private:
     void _clearLightRenderer() noexcept;
@@ -50,8 +51,17 @@ namespace mtt
     CompositeObjectNode* _lightRenderer;
 
     std::optional<IconDrawableNode> _iconNode;
-
-    Mesh _hullMesh;
-    SimpleDrawableNode _hullNode;
+    HullDrawableNode _hullNode;
   };
+
+  inline HullDrawableNode& AbstractLightRenderObserver::hullNode() noexcept
+  {
+    return _hullNode;
+  }
+
+  inline const HullDrawableNode&
+                          AbstractLightRenderObserver::hullNode() const noexcept
+  {
+    return _hullNode;
+  }
 }

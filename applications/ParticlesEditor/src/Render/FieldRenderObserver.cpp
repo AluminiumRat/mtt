@@ -15,33 +15,13 @@
 FieldRenderObserver::FieldRenderObserver( ParticleField& object,
                                           mtt::CommonEditData& commonData) :
   Object3DRenderObserver(object, commonData),
-  _field(object),
-  _boxMesh(mtt::EditorApplication::instance().displayDevice())
+  _field(object)
 {
-  _boxMesh.setTechnique(
-        mtt::clPipeline::colorFrameType,
-        std::make_unique<mtt::clPipeline::InstrumentalCompositeTechnique>(
-                                                VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
-                                                true,
-                                                true));
-  _boxMesh.setTechnique(mtt::clPipeline::uidFrameType,
-                        std::make_unique<mtt::UidMeshTechnique>(
-                                                VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
-                                                true,
-                                                true));
-
-  mtt::SurfaceMaterialData materialData;
-  materialData.albedo = glm::vec3(.7f, .7f, .4f);
-  materialData.roughness = 1;
-  materialData.specularStrength = 1;
-  _boxMesh.extraData().setSurfaceMaterialData(materialData);
-
-  _boxNode.setDrawable(&_boxMesh, mtt::Sphere());
-  registerCulledDrawable(_boxNode);
-  positionRotateJoint().addChild(_boxNode);
-  _boxNode.addModificator(visibleFilter());
-  _boxNode.addModificator(uidSetter());
-  _boxNode.addModificator(selectionModificator());
+  registerCulledDrawable(_hullNode);
+  positionRotateJoint().addChild(_hullNode);
+  _hullNode.addModificator(visibleFilter());
+  _hullNode.addModificator(uidSetter());
+  _hullNode.addModificator(selectionModificator());
 
   _particlesNode.setDrawable(&_particlesDrawable, mtt::Sphere());
   registerCulledDrawable(_particlesNode);
@@ -80,68 +60,21 @@ FieldRenderObserver::FieldRenderObserver( ParticleField& object,
 void FieldRenderObserver::_updateSize() noexcept
 {
   glm::vec3 size = _field.size();
-  glm::vec3 halfSize = size / 2.f;
 
   try
   {
-    std::vector<glm::vec3> newVertices;
-    newVertices.push_back(glm::vec3(-halfSize.x, -halfSize.y,  halfSize.z));
-    newVertices.push_back(glm::vec3( halfSize.x, -halfSize.y,  halfSize.z));
-
-    newVertices.push_back(glm::vec3( halfSize.x, -halfSize.y,  halfSize.z));
-    newVertices.push_back(glm::vec3( halfSize.x, -halfSize.y, -halfSize.z));
-
-    newVertices.push_back(glm::vec3( halfSize.x, -halfSize.y, -halfSize.z));
-    newVertices.push_back(glm::vec3(-halfSize.x, -halfSize.y, -halfSize.z));
-
-    newVertices.push_back(glm::vec3(-halfSize.x, -halfSize.y, -halfSize.z));
-    newVertices.push_back(glm::vec3(-halfSize.x, -halfSize.y,  halfSize.z));
-
-    newVertices.push_back(glm::vec3(-halfSize.x, -halfSize.y,  halfSize.z));
-    newVertices.push_back(glm::vec3(-halfSize.x,  halfSize.y,  halfSize.z));
-
-    newVertices.push_back(glm::vec3( halfSize.x, -halfSize.y,  halfSize.z));
-    newVertices.push_back(glm::vec3( halfSize.x,  halfSize.y,  halfSize.z));
-
-    newVertices.push_back(glm::vec3( halfSize.x, -halfSize.y, -halfSize.z));
-    newVertices.push_back(glm::vec3( halfSize.x,  halfSize.y, -halfSize.z));
-
-    newVertices.push_back(glm::vec3(-halfSize.x, -halfSize.y, -halfSize.z));
-    newVertices.push_back(glm::vec3(-halfSize.x,  halfSize.y, -halfSize.z));
-
-    newVertices.push_back(glm::vec3(-halfSize.x, halfSize.y, halfSize.z));
-    newVertices.push_back(glm::vec3(halfSize.x, halfSize.y, halfSize.z));
-
-    newVertices.push_back(glm::vec3(halfSize.x, halfSize.y, halfSize.z));
-    newVertices.push_back(glm::vec3(halfSize.x, halfSize.y, -halfSize.z));
-
-    newVertices.push_back(glm::vec3(halfSize.x, halfSize.y, -halfSize.z));
-    newVertices.push_back(glm::vec3(-halfSize.x, halfSize.y, -halfSize.z));
-
-    newVertices.push_back(glm::vec3(-halfSize.x, halfSize.y, -halfSize.z));
-    newVertices.push_back(glm::vec3(-halfSize.x, halfSize.y, halfSize.z));
-
-    mtt::LogicalDevice& device =
-                            mtt::EditorApplication::instance().displayDevice();
-    std::shared_ptr<mtt::Buffer> positionsBuffer(
-                          new mtt::Buffer(device, mtt::Buffer::VERTEX_BUFFER));
-    positionsBuffer->setData( newVertices.data(),
-                              newVertices.size() * sizeof(glm::vec3));
-    _boxMesh.setPositionBuffer(positionsBuffer);
-
-    _boxMesh.setVerticesNumber(uint32_t(newVertices.size()));
+    _hullNode.setBoxGeometry(size);
   }
   catch (std::exception& error)
   {
-    mtt::Log() << "FieldRenderObserver::_updateBox: " << error.what();
+    mtt::Log() << "FieldRenderObserver::_updateSize: " << error.what();
   }
   catch (...)
   {
-    mtt::Log() << "FieldRenderObserver::_updateBox: unknown error";
+    mtt::Log() << "FieldRenderObserver::_updateSize: unknown error";
   }
 
   mtt::Sphere boundSphere(glm::vec3(0.f), glm::length(size) / 2.f);
-  _boxNode.setLocalBoundSphere(boundSphere);
   _particlesNode.setLocalBoundSphere(boundSphere);
 }
 

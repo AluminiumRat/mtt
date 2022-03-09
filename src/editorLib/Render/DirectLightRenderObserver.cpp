@@ -99,61 +99,19 @@ void DirectLightRenderObserver::_updateRadius() noexcept
 
 void DirectLightRenderObserver::_updateCylinderMesh() noexcept
 {
+  if (_lightObject.radius() <= 0.f || _lightObject.distance() <= 0.f)
+  {
+    hullNode().resetGeometry();
+    return;
+  }
+
   try
   {
-    std::vector<glm::vec3> vertices;
-    vertices.reserve(BODY_SEGMENTS * 2 + CAP_SEGMENTS * 2 * 2);
-
-    float radius = _lightObject.radius();
-    float length = _lightObject.distance();
-
-    float bodyStep = 2.f * glm::pi<float>() / BODY_SEGMENTS;
-    float bodyAngle = 0;
-    for(size_t bodySegment = 0; bodySegment < BODY_SEGMENTS; bodySegment++)
-    {
-      vertices.emplace_back(cos(bodyAngle) * radius,
-                            sin(bodyAngle) * radius,
-                            0.f);
-      vertices.emplace_back(cos(bodyAngle) * radius,
-                            sin(bodyAngle) * radius,
-                            -length);
-      bodyAngle += bodyStep;
-    }
-
-    float capStep = 2.f * glm::pi<float>() / CAP_SEGMENTS;
-    float capAngle = 0;
-    for(size_t capSegment = 0; capSegment < CAP_SEGMENTS - 1; capSegment++)
-    {
-      float nextAngle = capAngle + capStep;
-
-      vertices.emplace_back(cos(capAngle) * radius,
-                            sin(capAngle) * radius,
-                            0.f);
-      vertices.emplace_back(cos(nextAngle) * radius,
-                            sin(nextAngle) * radius,
-                            0.f);
-
-      vertices.emplace_back(cos(capAngle) * radius,
-                            sin(capAngle) * radius,
-                            -length);
-      vertices.emplace_back(cos(nextAngle) * radius,
-                            sin(nextAngle) * radius,
-                            -length);
-
-      capAngle = nextAngle;
-    }
-
-    vertices.emplace_back(cos(capAngle) * radius,
-                          sin(capAngle) * radius,
-                          0.f);
-    vertices.emplace_back(radius, 0.f, 0.f);
-
-    vertices.emplace_back(cos(capAngle) * radius,
-                          sin(capAngle) * radius,
-                          -length);
-    vertices.emplace_back(radius, 0.f, -length);
-
-    setHullGeometry(vertices);
+    hullNode().setCylinderGeometry( _lightObject.radius(),
+                                    _lightObject.distance(),
+                                    -_lightObject.distance() / 2.f,
+                                    BODY_SEGMENTS,
+                                    CAP_SEGMENTS);
   }
   catch (std::exception& error)
   {

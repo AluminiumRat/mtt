@@ -1,5 +1,6 @@
 #pragma once
 
+#include <mtt/editorLib/Render/HullDrawableNode.h>
 #include <mtt/editorLib/Render/Object3DRenderObserver.h>
 #include <mtt/editorLib/Render/IconDrawableNode.h>
 
@@ -13,11 +14,14 @@ public:
   EmitterRenderObserver(EmitterObject& object,
                         mtt::CommonEditData& commonData);
   EmitterRenderObserver(const EmitterRenderObserver&) = delete;
-  EmitterRenderObserver& operator = (
-    const EmitterRenderObserver&) = delete;
+  EmitterRenderObserver& operator = (const EmitterRenderObserver&) = delete;
   virtual ~EmitterRenderObserver() noexcept = default;
+
+private:
+  void _updateHull() noexcept;
 
 private:
   EmitterObject& _emitter;
   mtt::IconDrawableNode _iconNode;
+  mtt::HullDrawableNode _hullNode;
 };

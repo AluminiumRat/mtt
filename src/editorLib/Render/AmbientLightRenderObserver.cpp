@@ -75,44 +75,15 @@ void AmbientLightRenderObserver::_updateDistance() noexcept
 
 void AmbientLightRenderObserver::_updateSphereMesh() noexcept
 {
+  if(_lightObject.distance() <= 0.f)
+  {
+    hullNode().resetGeometry();
+    return;
+  }
+
   try
   {
-    std::vector<glm::vec3> vertices;
-    vertices.reserve(CYRCLE_SEGMENTS * 2 * 3);
-
-    float radius = _lightObject.distance();
-
-    float angleStep = 2.f * glm::pi<float>() / CYRCLE_SEGMENTS;
-    float currentAngle = 0;
-    for(size_t segment = 0; segment < CYRCLE_SEGMENTS - 1; segment++)
-    {
-      float nextAngle = currentAngle + angleStep;
-
-      float sinCurrent = sin(currentAngle) * radius;
-      float cosCurrent = cos(currentAngle) * radius;
-      float sinNext = sin(nextAngle) * radius;
-      float cosNext = cos(nextAngle) * radius;
-
-      vertices.emplace_back(cosCurrent, sinCurrent, 0.f);
-      vertices.emplace_back(cosNext, sinNext, 0.f);
-      vertices.emplace_back(cosCurrent, 0.f, sinCurrent);
-      vertices.emplace_back(cosNext, 0.f, sinNext);
-      vertices.emplace_back(0.f, cosCurrent, sinCurrent);
-      vertices.emplace_back(0.f, cosNext, sinNext);
-
-      currentAngle = nextAngle;
-    }
-
-    float sinCurrent = sin(currentAngle) * radius;
-    float cosCurrent = cos(currentAngle) * radius;
-    vertices.emplace_back(cosCurrent, sinCurrent, 0.f);
-    vertices.emplace_back(radius, 0.f, 0.f);
-    vertices.emplace_back(cosCurrent, 0.f, sinCurrent);
-    vertices.emplace_back(radius, 0.f, 0.f);
-    vertices.emplace_back(0.f, cosCurrent, sinCurrent);
-    vertices.emplace_back(0.f, radius, 0.f);
-
-    setHullGeometry(vertices);
+    hullNode().setSphereGeometry(_lightObject.distance(), CYRCLE_SEGMENTS);
   }
   catch (std::exception& error)
   {

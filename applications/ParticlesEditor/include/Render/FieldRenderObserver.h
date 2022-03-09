@@ -1,7 +1,7 @@
 #pragma once
 
+#include <mtt/editorLib/Render/HullDrawableNode.h>
 #include <mtt/editorLib/Render/Object3DRenderObserver.h>
-#include <mtt/render/Mesh/Mesh.h>
 #include <mtt/render/SceneGraph/SimpleDrawableNode.h>
 #include <mtt/application/AsyncTasks/AsyncTaskQueue.h>
 
@@ -27,8 +27,7 @@ private:
 private:
   ParticleField& _field;
 
-  mtt::Mesh _boxMesh;
-  mtt::SimpleDrawableNode _boxNode;
+  mtt::HullDrawableNode _hullNode;
 
   ParticlesDrawable _particlesDrawable;
   mtt::SimpleDrawableNode _particlesNode;
