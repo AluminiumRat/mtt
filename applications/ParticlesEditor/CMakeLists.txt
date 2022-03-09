@@ -64,6 +64,7 @@ set(HEADERS
     "include/Render/ParticlesDrawable.h"
     "include/Render/RenderObserverFactory.h"
 
+    "include/SceneTab/EmitterWidget.h"
     "include/SceneTab/ParticleFieldWidget.h"
     "include/SceneTab/PropertiesWidgetFactory.h"
     "include/SceneTab/SceneTab.h"
@@ -94,6 +95,7 @@ set(SOURCES
     "src/Render/ParticlesDrawable.cpp"
     "src/Render/RenderObserverFactory.cpp"
 
+    "src/SceneTab/EmitterWidget.cpp"
     "src/SceneTab/ParticleFieldWidget.cpp"
     "src/SceneTab/PropertiesWidgetFactory.cpp"
     "src/SceneTab/SceneTab.cpp"
@@ -108,6 +110,7 @@ set(SOURCES
     )
 
 set(UI_FILES
+    "src/SceneTab/EmitterWidget.ui"
     "src/SceneTab/ParticleFieldWidget.ui"
     "src/MainWindow.ui"
     )

@@ -17,6 +17,7 @@ public:
                                       const PropertiesWidgetFactory&) = delete;
   virtual ~PropertiesWidgetFactory() noexcept = default;
 
+  virtual void visitEmitterObject(EmitterObject& object) override;
   virtual void visitParticleField(ParticleField& object) override;
 
 private:

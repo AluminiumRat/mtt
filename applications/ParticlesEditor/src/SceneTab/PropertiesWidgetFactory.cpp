@@ -1,5 +1,6 @@
 #include <QtWidgets/QVBoxLayout>
 
+#include <SceneTab/EmitterWidget.h>
 #include <SceneTab/ParticleFieldWidget.h>
 #include <SceneTab/PropertiesWidgetFactory.h>
 #include <EditorCommonData.h>
@@ -14,6 +15,12 @@ PropertiesWidgetFactory::PropertiesWidgetFactory(
               &commonData.animationPlayer()),
   _commonData(commonData)
 {
+}
+
+void PropertiesWidgetFactory::visitEmitterObject(EmitterObject& object)
+{
+  PEVisitorT::visitEmitterObject(object);
+  widgetsLayout().addWidget(new EmitterWidget(object, _commonData.undoStack()));
 }
 
 void PropertiesWidgetFactory::visitParticleField(ParticleField& object)
