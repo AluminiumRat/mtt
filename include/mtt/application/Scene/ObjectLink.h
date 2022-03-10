@@ -8,13 +8,14 @@ namespace mtt
   class ObjectRefBase
   {
   public:
-    ObjectRefBase();
+    ObjectRefBase(Object& observer);
     ObjectRefBase(const ObjectRefBase&) = delete;
     ObjectRefBase& operator = (const ObjectRefBase&) = delete;
-    virtual ~ObjectRefBase() = default;
+    virtual ~ObjectRefBase() noexcept = default;
 
     inline Object* get() const noexcept;
     inline const UID& referencedId() const noexcept;
+    inline void setReferencedId(const UID& newValue);
 
     /// Refrenced id is valid(not null)
     inline bool isValid() const noexcept;
@@ -24,11 +25,12 @@ namespace mtt
     inline bool operator == (nullptr_t) const noexcept;
     inline bool operator != (nullptr_t) const noexcept;
 
+    inline Object& observer() const noexcept;
+
   protected:
-    inline void setReferencedId(const UID& newValue);
     inline void addToObserver(Object& observer);
     inline void removeFromObserver(Object & observer) noexcept;
-    inline void updateFromObserver(Object& observer) noexcept;
+    inline void updateFromObserver() noexcept;
 
   protected:
     virtual void link(Object& referenced) = 0;
@@ -39,6 +41,7 @@ namespace mtt
     void setReferencedPtr(Object* referenced);
 
   private:
+    Object& _observer;
     Object* _referencedPtr;
     UID _referencedId;
   };
@@ -47,12 +50,13 @@ namespace mtt
   class ObjectRef : public ObjectRefBase
   {
   public:
-    inline ObjectRef() = default;
+    inline ObjectRef(Object& observer);
     ObjectRef(const ObjectRefBase&) = delete;
     ObjectRef& operator = (const ObjectRefBase&) = delete;
-    virtual ~ObjectRef() = default;
+    virtual ~ObjectRef() noexcept = default;
   
     inline Referenced* get() const noexcept;
+    inline void set(Referenced* object);
   };
 
   template <typename Referenced,
@@ -63,39 +67,38 @@ namespace mtt
   {
   public:
     ObjectLink(Observer& observer) :
-      _observer(observer)
+      ObjectRef<Referenced>(observer)
     {
-      ObjectRef<Referenced>::addToObserver(_observer);
+      ObjectRef<Referenced>::addToObserver(observer);
     }
 
     ObjectLink(const ObjectLink&) = delete;
     ObjectLink& operator = (const ObjectLink&) = delete;
     virtual ~ObjectLink()
     {
-      ObjectRef<Referenced>::removeFromObserver(_observer);
-    }
-
-    /// newValue should belong to an object of class Referenced or
-    /// should be invalid(null)
-    void setReferencedId(const UID& newValue)
-    {
-      ObjectRefBase::setReferencedId(newValue);
-      ObjectRef<Referenced>::updateFromObserver(_observer);
+      ObjectRef<Referenced>::removeFromObserver(ObjectRefBase::observer());
     }
 
   protected:
     virtual void link(Object& referenced) override
     {
-      (_observer.*linkPtr)(static_cast<Referenced&>(referenced));
+      if(linkPtr != nullptr)
+      {
+        Observer& observerRef =
+                              static_cast<Observer&>(ObjectRefBase::observer());
+        (observerRef.*linkPtr)(static_cast<Referenced&>(referenced));
+      }
     }
 
     virtual void unlink(Object& referenced) noexcept override
     {
-      (_observer.*unlinkPtr)(static_cast<Referenced&>(referenced));
+      if(unlinkPtr != nullptr)
+      {
+        Observer& observerRef =
+                              static_cast<Observer&>(ObjectRefBase::observer());
+        (observerRef.*unlinkPtr)(static_cast<Referenced&>(referenced));
+      }
     }
-  
-  private:
-    Observer& _observer;
   };
 
   inline Object* ObjectRefBase::get() const noexcept
@@ -128,11 +131,22 @@ namespace mtt
     return _referencedPtr != nullptr;
   }
 
+  inline Object& ObjectRefBase::observer() const noexcept
+  {
+    return _observer;
+  }
+
   inline void ObjectRefBase::setReferencedId(const UID& newValue)
   {
     _referencedId = UID();
     setReferencedPtr(nullptr);
     _referencedId = newValue;
+    updateFromObserver();
+  }
+
+  inline void ObjectRefBase::updateFromObserver() noexcept
+  {
+    _observer.updateLink(*this);
   }
 
   inline void ObjectRefBase::addToObserver(Object& observer)
@@ -145,14 +159,22 @@ namespace mtt
     observer.removeLink(*this);
   }
 
-  inline void ObjectRefBase::updateFromObserver(Object& observer) noexcept
+  template <typename Referenced>
+  inline ObjectRef<Referenced>::ObjectRef(Object& observer) :
+    ObjectRefBase(observer)
   {
-    observer.updateLink(*this);
   }
 
   template <typename Referenced>
   inline Referenced* ObjectRef<Referenced>::get() const noexcept
   {
     return static_cast<Referenced*>(ObjectRefBase::get());
+  }
+
+  template <typename Referenced>
+  inline void ObjectRef<Referenced>::set(Referenced* object)
+  {
+    if(object == nullptr) setReferencedId(UID());
+    else setReferencedId(object->id());
   }
 }

@@ -2,7 +2,8 @@
 
 using namespace mtt;
 
-ObjectRefBase::ObjectRefBase() :
+ObjectRefBase::ObjectRefBase(Object& observer) :
+  _observer(observer),
   _referencedPtr(nullptr),
   _referencedId(UID())
 {
