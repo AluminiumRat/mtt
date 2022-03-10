@@ -1,8 +1,15 @@
 #pragma once
 
 #include <map>
+#include <random>
+
+#include <glm/vec3.hpp>
+
+#include <mtt/application/Scene/ObjectLink.h>
+#include <mtt/application/Application.h>
 
 #include <Objects/ModificatorObject.h>
+#include <Objects/ParticleField.h>
 
 class EmitterObject : public ModificatorObject
 {
@@ -25,6 +32,8 @@ public:
     SMOOTH_DISTRIBUTION = 1
   };
   const static std::map<Distribution, QString> distributionNames;
+
+  using TimeType = mtt::Application::TimeType;
 
   Q_PROPERTY( float intensity
               READ size
@@ -91,6 +100,12 @@ public:
   void setDistribution(Distribution newValue) noexcept;
   inline void resetDistribution() noexcept;
 
+  inline mtt::ObjectRef<ParticleField>& fieldRef() noexcept;
+  inline const mtt::ObjectRef<ParticleField>& fieldRef() const noexcept;
+
+  void simulationStep(TimeType currentTime, TimeType delta);
+  void emitParticles(size_t particlesNumber) noexcept;
+
 signals:
   void intensityChanged(float newValue);
   void sizeChanged(float newValue);
@@ -98,10 +113,19 @@ signals:
   void distributionChanged(Distribution newValue);
 
 private:
+  glm::vec4 _getParticlePosition() const noexcept;
+
+private:
   float _intensity;
   float _size;
   Shape _shape;
   Distribution _distribution;
+
+  mtt::ObjectLink<ParticleField, EmitterObject, nullptr, nullptr> _fieldRef;
+
+  mutable std::default_random_engine _randomEngine;
+  std::uniform_real_distribution<float> _symmetricalDistribution;
+  std::uniform_real_distribution<float> _displacedDistribution;
 };
 
 inline float EmitterObject::intensity() const noexcept
@@ -142,4 +166,15 @@ inline EmitterObject::Distribution EmitterObject::distribution() const noexcept
 inline void EmitterObject::resetDistribution() noexcept
 {
   setDistribution(UNIFORM_DISTRIBUTION);
+}
+
+inline mtt::ObjectRef<ParticleField>& EmitterObject::fieldRef() noexcept
+{
+  return _fieldRef;
+}
+
+inline const mtt::ObjectRef<ParticleField>&
+                                        EmitterObject::fieldRef() const noexcept
+{
+  return _fieldRef;
 }

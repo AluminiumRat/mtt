@@ -202,9 +202,13 @@ void EditMenu::_addEmitter() noexcept
 {
   try
   {
-    std::unique_ptr<EmitterObject> newObject(
+    EditorScene* scene = _commonData.scene();
+    if (scene == nullptr) return;
+
+    std::unique_ptr<EmitterObject> newEmitter(
                                         new EmitterObject(tr("emitter"), true));
-    _addModificator(std::move(newObject));
+    newEmitter->fieldRef().set(&scene->root().particleField());
+    _addModificator(std::move(newEmitter));
   }
   catch(std::exception& error)
   {

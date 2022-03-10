@@ -51,7 +51,7 @@ void ParticleField::setTextureFiles(const std::vector<QString>& newFiles)
   emit textureFilesChanged(_textureFiles);
 }
 
-void ParticleField::simulationStep(TimeType delta)
+void ParticleField::simulationStep(TimeType currentTime, TimeType delta)
 {
   emit simulationStepStarted();
 

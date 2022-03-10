@@ -29,6 +29,10 @@ public:
   virtual ~EmitterWidget() noexcept;
 
 private:
+  void emitParticles() noexcept;
+  void step() noexcept;
+
+private:
   std::unique_ptr<Ui::EmitterWidget> _ui;
 
   EmitterObject& _emitter;

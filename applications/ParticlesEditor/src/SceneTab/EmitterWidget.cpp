@@ -38,7 +38,32 @@ EmitterWidget::EmitterWidget(EmitterObject& object, mtt::UndoStack& undoStack) :
                                   EmitterObject::distributionNames,
                                   undoStack);
 
+  connect(_ui->emitButton,
+          &QPushButton::pressed,
+          this,
+          &EmitterWidget::emitParticles,
+          Qt::DirectConnection);
+
+  connect(_ui->stepButton,
+          &QPushButton::pressed,
+          this,
+          &EmitterWidget::step,
+          Qt::DirectConnection);
+
   adjustSize();
 }
 
 EmitterWidget::~EmitterWidget() noexcept = default;
+
+void EmitterWidget::emitParticles() noexcept
+{
+  _emitter.emitParticles(100);
+}
+
+void EmitterWidget::step() noexcept
+{
+  _emitter.simulationStep(
+                      ParticleField::TimeType(0),
+                      std::chrono::duration_cast<ParticleField::TimeType>(
+                                              std::chrono::milliseconds(100)));
+}

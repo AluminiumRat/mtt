@@ -84,7 +84,7 @@ public:
   void setTextureFiles(const std::vector<QString>& newFiles);
   inline void resetTextureFiles();
 
-  void simulationStep(TimeType delta);
+  void simulationStep(TimeType currentTime, TimeType delta);
 
 signals:
   void sizeChanged(const glm::vec3& newValue);
