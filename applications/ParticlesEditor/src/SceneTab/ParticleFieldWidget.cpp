@@ -42,12 +42,6 @@ ParticleFieldWidget::ParticleFieldWidget( ParticleField& object,
           &ParticleFieldWidget::_clear,
           Qt::DirectConnection);
 
-  connect(_ui->emitButton,
-          &QPushButton::pressed,
-          this,
-          &ParticleFieldWidget::_emitParticles,
-          Qt::DirectConnection);
-
   connect(_ui->stepButton,
           &QPushButton::pressed,
           this,
@@ -93,42 +87,6 @@ ParticleFieldWidget::~ParticleFieldWidget() noexcept = default;
 void ParticleFieldWidget::_clear() noexcept
 {
   _field.clear();
-}
-
-void ParticleFieldWidget::_emitParticles() noexcept
-{
-  std::default_random_engine randomEngine;
-  std::uniform_real_distribution<float> symmetricalDistribution(-1.f, 1.f);
-  std::uniform_real_distribution<float> displacedDistribution(0.f, 1.f);
-  std::uniform_int_distribution<int> timeDistribution(300, 5000);
-
-  for (size_t i = 0; i < 20; i++)
-  {
-    ParticleField::ParticleData newParticle;
-    newParticle.typeIndex = 0;
-    newParticle.position = glm::vec3( symmetricalDistribution(randomEngine),
-                                      symmetricalDistribution(randomEngine),
-                                      symmetricalDistribution(randomEngine));
-    newParticle.position *= _field.size() / 2.f;
-    newParticle.speed = glm::vec3(symmetricalDistribution(randomEngine),
-                                  symmetricalDistribution(randomEngine),
-                                  symmetricalDistribution(randomEngine));
-    newParticle.size = displacedDistribution(randomEngine) + .1f;
-    newParticle.rotation = symmetricalDistribution(randomEngine);
-    newParticle.rotationSpeed = symmetricalDistribution(randomEngine);
-    newParticle.color = glm::vec3(displacedDistribution(randomEngine),
-                                  displacedDistribution(randomEngine),
-                                  displacedDistribution(randomEngine));
-    newParticle.brightness = .5f + .5f * displacedDistribution(randomEngine);
-    newParticle.opacity = newParticle.brightness;
-    newParticle.textureIndex = 0;
-    if(i > 15) newParticle.textureIndex = 1;
-    newParticle.currentTime = ParticleField::TimeType(0);
-    newParticle.maxTime =
-                        ParticleField::TimeType(timeDistribution(randomEngine));
-
-    _field.addParticle(newParticle);
-  }
 }
 
 void ParticleFieldWidget::_stepSimulation() noexcept

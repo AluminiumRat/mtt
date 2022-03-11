@@ -95,6 +95,8 @@ set(HEADERS
     "../../include/mtt/application/Widgets/AsyncTaskDialog/AsyncTaskDialog.h"
     "../../include/mtt/application/Widgets/AsyncTaskDialog/TaskProgressWidget.h"
 
+    "../../include/mtt/application/Widgets/PropertiesWidgets/Bitfield32PropertyConnection.h"
+    "../../include/mtt/application/Widgets/PropertiesWidgets/Bitfield32Widget.h"
     "../../include/mtt/application/Widgets/PropertiesWidgets/BoolCheckboxConnection.h"
     "../../include/mtt/application/Widgets/PropertiesWidgets/BoolPropertyWidget.h"
     "../../include/mtt/application/Widgets/PropertiesWidgets/ColorPropertyWidget.h"
@@ -137,6 +139,7 @@ set(HEADERS
 
 set(UI_FILES
     "Widgets/AsyncTaskDialog/TaskProgressWidget.ui"
+    "Widgets/PropertiesWidgets/Bitfield32Widget.ui"
     "Widgets/PropertiesWidgets/ColorPropertyWidget.ui"
     "Widgets/PropertiesWidgets/NamePropertyWidget.ui"
     "Widgets/PropertiesWidgets/ReferencePropertyWidget.ui"
@@ -188,6 +191,7 @@ set(SOURCES
 
     "Widgets/AsyncTaskDialog/AsyncTaskDialog.cpp"
     "Widgets/AsyncTaskDialog/TaskProgressWidget.cpp"
+    "Widgets/PropertiesWidgets/Bitfield32Widget.cpp"
     "Widgets/PropertiesWidgets/ColorWidget.cpp"
     "Widgets/PropertiesWidgets/NamePropertyWidget.cpp"
     "Widgets/PropertiesWidgets/ReferenceWidget.cpp"

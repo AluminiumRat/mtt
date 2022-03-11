@@ -1,3 +1,5 @@
+#include <mtt/application/Widgets/PropertiesWidgets/Bitfield32Widget.h>
+
 #include <SceneTab/EmitterWidget.h>
 
 #include <GeneratedFiles/ui_EmitterWidget.h>
@@ -53,6 +55,16 @@ EmitterWidget::EmitterWidget(EmitterObject& object, mtt::UndoStack& undoStack) :
                                   &EmitterObject::distributionChanged,
                                   EmitterObject::distributionNames,
                                   undoStack);
+
+  std::unique_ptr<mtt::Bitfield32Widget> typeMaskWidget(
+                                                    new mtt::Bitfield32Widget);
+  _typemaskConnection.emplace(*typeMaskWidget,
+                              object,
+                              &EmitterObject::typeMask,
+                              &EmitterObject::setTypeMask,
+                              &EmitterObject::typeMaskChanged,
+                              undoStack);
+  _ui->typeMaskLayout->addWidget(typeMaskWidget.release(), 3);
 
   connect(_ui->emitButton,
           &QPushButton::pressed,

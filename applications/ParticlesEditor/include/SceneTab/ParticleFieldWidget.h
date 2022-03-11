@@ -26,7 +26,6 @@ public:
 
 private:
   void _clear() noexcept;
-  void _emitParticles() noexcept;
   void _stepSimulation() noexcept;
   void _updateTextures() noexcept;
   void _setTextureFiles(const std::vector<QString>& files);

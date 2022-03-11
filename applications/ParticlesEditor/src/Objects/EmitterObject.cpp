@@ -20,6 +20,7 @@ EmitterObject::EmitterObject( const QString& name,
   _shape(SPHERE_SHAPE),
   _distribution(UNIFORM_DISTRIBUTION),
   _directionAngle(2.f * glm::pi<float>()),
+  _typeMask(1),
   _fieldRef(*this),
   _randomEngine(
     unsigned int(std::chrono::system_clock::now().time_since_epoch().count())),
@@ -68,6 +69,13 @@ void EmitterObject::setSpeedRange(const mtt::Range<float>& newValue) noexcept
   if(_speedRange == newValue) return;
   _speedRange = newValue;
   emit speedRangeChanged(newValue);
+}
+
+void EmitterObject::setTypeMask(uint32_t newValue) noexcept
+{
+  if(_typeMask == newValue) return;
+  _typeMask = newValue;
+  emit typeMaskChanged(newValue);
 }
 
 void EmitterObject::simulationStep(TimeType currentTime, TimeType delta)
@@ -152,7 +160,7 @@ void EmitterObject::emitParticles(size_t particlesNumber) noexcept
   for (size_t i = 0; i < particlesNumber; i++)
   {
     ParticleField::ParticleData newParticle;
-    newParticle.typeIndex = 0;
+    newParticle.typeMask = _typeMask;
     newParticle.position = toField * _getParticlePosition();
     newParticle.speed = toField * _getParticleSpeed();
     newParticle.size = _displacedDistribution(_randomEngine) + .1f;
@@ -168,6 +176,8 @@ void EmitterObject::emitParticles(size_t particlesNumber) noexcept
     newParticle.currentTime = ParticleField::TimeType(0);
     newParticle.maxTime =
                       ParticleField::TimeType(timeDistribution(_randomEngine));
+    newParticle.mass = .001f;
+    newParticle.frictionFactor = .001f;
 
     field->addParticle(newParticle);
   }

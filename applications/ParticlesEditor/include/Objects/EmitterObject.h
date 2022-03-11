@@ -96,6 +96,16 @@ public:
               STORED true
               USER false)
 
+  Q_PROPERTY( uint32_t typeMask
+              READ typeMask
+              WRITE setTypeMask
+              RESET resetTypeMask
+              NOTIFY typeMaskChanged
+              DESIGNABLE true
+              SCRIPTABLE true
+              STORED true
+              USER false)
+
 public:
   EmitterObject(const QString& name,
                 bool canBeRenamed,
@@ -129,6 +139,10 @@ public:
   void setSpeedRange(const mtt::Range<float>& newValue) noexcept;
   inline void resetSpeedRange() noexcept;
 
+  inline uint32_t typeMask() const noexcept;
+  void setTypeMask(uint32_t newValue) noexcept;
+  inline void resetTypeMask() noexcept;
+
   inline mtt::ObjectRef<ParticleField>& fieldRef() noexcept;
   inline const mtt::ObjectRef<ParticleField>& fieldRef() const noexcept;
 
@@ -142,6 +156,7 @@ signals:
   void distributionChanged(Distribution newValue);
   void directionAngleChanged(float newValue);
   void speedRangeChanged(const mtt::Range<float>& newValue);
+  void typeMaskChanged(uint32_t newValue);
 
 private:
   glm::vec4 _getParticlePosition() const noexcept;
@@ -155,6 +170,7 @@ private:
 
   float _directionAngle;
   mtt::Range<float> _speedRange;
+  uint32_t _typeMask;
 
   mtt::ObjectLink<ParticleField, EmitterObject, nullptr, nullptr> _fieldRef;
 
@@ -221,6 +237,16 @@ inline const mtt::Range<float>& EmitterObject::speedRange() const noexcept
 inline void EmitterObject::resetSpeedRange() noexcept
 {
   setSpeedRange(mtt::Range<float>());
+}
+
+inline uint32_t EmitterObject::typeMask() const noexcept
+{
+  return _typeMask;
+}
+
+inline void EmitterObject::resetTypeMask() noexcept
+{
+  setTypeMask(1);
 }
 
 inline mtt::ObjectRef<ParticleField>& EmitterObject::fieldRef() noexcept

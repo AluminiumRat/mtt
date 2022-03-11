@@ -5,6 +5,7 @@
 
 #include <QtWidgets/QWidget>
 
+#include <mtt/application/Widgets/PropertiesWidgets/Bitfield32PropertyConnection.h>
 #include <mtt/application/Widgets/PropertiesWidgets/EnumComboConnection.h>
 #include <mtt/application/Widgets/PropertiesWidgets/FloatRangeSpinConnection.h>
 #include <mtt/application/Widgets/PropertiesWidgets/FloatSpinConnection.h>
@@ -54,4 +55,7 @@ private:
                                                   EmitterObject,
                                                   EmitterObject::Distribution>;
   std::optional<DistributionConnection> _distributionConnection;
+
+  using TypeMaskConnection = mtt::Bitfield32PropertyConnection<EmitterObject>;
+  std::optional<TypeMaskConnection> _typemaskConnection;
 };

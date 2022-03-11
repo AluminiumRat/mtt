@@ -45,7 +45,7 @@ public:
 
   struct ParticleData
   {
-    uint8_t typeIndex;
+    uint32_t typeMask;
     glm::vec3 position;
     glm::vec3 speed;
     float size;
@@ -57,6 +57,8 @@ public:
     uint8_t textureIndex;
     TimeType currentTime;
     TimeType maxTime;
+    float mass;
+    float frictionFactor;
   };
 
 public:
