@@ -21,7 +21,7 @@ EmitterRenderObserver::EmitterRenderObserver( EmitterObject& object,
   _iconNode.addModificator(selectionModificator());
 
   registerCulledDrawable(_hullNode);
-  positionJoint().addChild(_hullNode);
+  fullTransformJoint().addChild(_hullNode);
   _hullNode.addModificator(visibleFilter());
   _hullNode.addModificator(uidSetter());
   _hullNode.addModificator(selectionModificator());

@@ -104,6 +104,7 @@ set(HEADERS
     "../../include/mtt/application/Widgets/PropertiesWidgets/FloatPropertyLinearSlider.h"
     "../../include/mtt/application/Widgets/PropertiesWidgets/FloatPropertyProgressiveSlider.h"
     "../../include/mtt/application/Widgets/PropertiesWidgets/FloatPropertySpin.h"
+    "../../include/mtt/application/Widgets/PropertiesWidgets/FloatRangeSpinConnection.h"
     "../../include/mtt/application/Widgets/PropertiesWidgets/FloatSpinConnection.h"
     "../../include/mtt/application/Widgets/PropertiesWidgets/IntPropertySpin.h"
     "../../include/mtt/application/Widgets/PropertiesWidgets/IntSpinConnection.h"

@@ -18,14 +18,14 @@ FieldRenderObserver::FieldRenderObserver( ParticleField& object,
   _field(object)
 {
   registerCulledDrawable(_hullNode);
-  positionRotateJoint().addChild(_hullNode);
+  fullTransformJoint().addChild(_hullNode);
   _hullNode.addModificator(visibleFilter());
   _hullNode.addModificator(uidSetter());
   _hullNode.addModificator(selectionModificator());
 
   _particlesNode.setDrawable(&_particlesDrawable, mtt::Sphere());
   registerCulledDrawable(_particlesNode);
-  positionRotateJoint().addChild(_particlesNode);
+  fullTransformJoint().addChild(_particlesNode);
   _particlesNode.addModificator(visibleFilter());
   _particlesNode.addModificator(uidSetter());
   _particlesNode.addModificator(selectionModificator());

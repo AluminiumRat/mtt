@@ -6,6 +6,7 @@
 #include <QtWidgets/QWidget>
 
 #include <mtt/application/Widgets/PropertiesWidgets/EnumComboConnection.h>
+#include <mtt/application/Widgets/PropertiesWidgets/FloatRangeSpinConnection.h>
 #include <mtt/application/Widgets/PropertiesWidgets/FloatSpinConnection.h>
 
 #include <Objects/EmitterObject.h>
@@ -40,6 +41,10 @@ private:
   using FloatConnection = mtt::FloatSpinConnection<EmitterObject>;
   std::optional<FloatConnection> _intensityConnection;
   std::optional<FloatConnection> _sizeConnection;
+  std::optional<FloatConnection> _angleConnection;
+
+  using RangeConnection = mtt::FloatRangeSpinConnection<EmitterObject>;
+  std::optional<RangeConnection> _speedConnection;
 
   using ShapeConnection = mtt::EnumComboConnection< EmitterObject,
                                                     EmitterObject::Shape>;

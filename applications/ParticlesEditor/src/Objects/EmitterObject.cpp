@@ -19,6 +19,7 @@ EmitterObject::EmitterObject( const QString& name,
   _size(1.f),
   _shape(SPHERE_SHAPE),
   _distribution(UNIFORM_DISTRIBUTION),
+  _directionAngle(2.f * glm::pi<float>()),
   _fieldRef(*this),
   _randomEngine(
     unsigned int(std::chrono::system_clock::now().time_since_epoch().count())),
@@ -53,6 +54,20 @@ void EmitterObject::setDistribution(Distribution newValue) noexcept
   if(_distribution == newValue) return;
   _distribution = newValue;
   emit distributionChanged(newValue);
+}
+
+void EmitterObject::setDirectionAngle(float newValue) noexcept
+{
+  if(_directionAngle == newValue) return;
+  _directionAngle = newValue;
+  emit directionAngleChanged(newValue);
+}
+
+void EmitterObject::setSpeedRange(const mtt::Range<float>& newValue) noexcept
+{
+  if(_speedRange == newValue) return;
+  _speedRange = newValue;
+  emit speedRangeChanged(newValue);
 }
 
 void EmitterObject::simulationStep(TimeType currentTime, TimeType delta)
@@ -107,6 +122,21 @@ glm::vec4 EmitterObject::_getParticlePosition() const noexcept
   }
 }
 
+glm::vec4 EmitterObject::_getParticleSpeed() const noexcept
+{
+  float angle1 = glm::pi<float>() * _symmetricalDistribution(_randomEngine);
+  float startZ = cos(_directionAngle / 2.f);
+  float zValue = glm::mix(startZ, 1.f, _displacedDistribution(_randomEngine));
+  float angle2 = asin(zValue);
+  float length = glm::mix(_speedRange.min(),
+                          _speedRange.max(),
+                          _displacedDistribution(_randomEngine));
+  return glm::vec4( sin(angle1) * cos(angle2) * length,
+                    cos(angle1) * cos(angle2) * length,
+                    zValue * length,
+                    0.f);
+}
+
 void EmitterObject::emitParticles(size_t particlesNumber) noexcept
 {
   if(particlesNumber == 0) return;
@@ -124,9 +154,7 @@ void EmitterObject::emitParticles(size_t particlesNumber) noexcept
     ParticleField::ParticleData newParticle;
     newParticle.typeIndex = 0;
     newParticle.position = toField * _getParticlePosition();
-    newParticle.speed = glm::vec3(_symmetricalDistribution(_randomEngine),
-                                  _symmetricalDistribution(_randomEngine),
-                                  _symmetricalDistribution(_randomEngine));
+    newParticle.speed = toField * _getParticleSpeed();
     newParticle.size = _displacedDistribution(_randomEngine) + .1f;
     newParticle.rotation = _symmetricalDistribution(_randomEngine);
     newParticle.rotationSpeed = _symmetricalDistribution(_randomEngine);

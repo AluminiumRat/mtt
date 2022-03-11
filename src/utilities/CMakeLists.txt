@@ -22,6 +22,7 @@ set(HEADERS
     "../../include/mtt/utilities/lineLineNearest.h"
     "../../include/mtt/utilities/Log.h"
     "../../include/mtt/utilities/Plane.h"
+    "../../include/mtt/utilities/Range.h"
     "../../include/mtt/utilities/ScopedSetter.h"
     "../../include/mtt/utilities/Segment.h"
     "../../include/mtt/utilities/Sphere.h"

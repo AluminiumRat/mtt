@@ -7,6 +7,7 @@
 
 #include <mtt/application/Scene/ObjectLink.h>
 #include <mtt/application/Application.h>
+#include <mtt/utilities/Range.h>
 
 #include <Objects/ModificatorObject.h>
 #include <Objects/ParticleField.h>
@@ -75,6 +76,26 @@ public:
               STORED true
               USER false)
 
+  Q_PROPERTY( float directionAngle
+              READ directionAngle
+              WRITE setDirectionAngle
+              RESET resetDirectionAngle
+              NOTIFY directionAngleChanged
+              DESIGNABLE true
+              SCRIPTABLE true
+              STORED true
+              USER false)
+
+  Q_PROPERTY( mtt::Range<float> speedRange
+              READ speedRange
+              WRITE setSpeedRange
+              RESET resetSpeedRange
+              NOTIFY speedRangeChanged
+              DESIGNABLE true
+              SCRIPTABLE true
+              STORED true
+              USER false)
+
 public:
   EmitterObject(const QString& name,
                 bool canBeRenamed,
@@ -100,6 +121,14 @@ public:
   void setDistribution(Distribution newValue) noexcept;
   inline void resetDistribution() noexcept;
 
+  inline float directionAngle() const noexcept;
+  void setDirectionAngle(float newValue) noexcept;
+  inline void resetDirectionAngle() noexcept;
+
+  inline const mtt::Range<float>& speedRange() const noexcept;
+  void setSpeedRange(const mtt::Range<float>& newValue) noexcept;
+  inline void resetSpeedRange() noexcept;
+
   inline mtt::ObjectRef<ParticleField>& fieldRef() noexcept;
   inline const mtt::ObjectRef<ParticleField>& fieldRef() const noexcept;
 
@@ -111,15 +140,21 @@ signals:
   void sizeChanged(float newValue);
   void shapeChanged(Shape newValue);
   void distributionChanged(Distribution newValue);
+  void directionAngleChanged(float newValue);
+  void speedRangeChanged(const mtt::Range<float>& newValue);
 
 private:
   glm::vec4 _getParticlePosition() const noexcept;
+  glm::vec4 _getParticleSpeed() const noexcept;
 
 private:
   float _intensity;
   float _size;
   Shape _shape;
   Distribution _distribution;
+
+  float _directionAngle;
+  mtt::Range<float> _speedRange;
 
   mtt::ObjectLink<ParticleField, EmitterObject, nullptr, nullptr> _fieldRef;
 
@@ -166,6 +201,26 @@ inline EmitterObject::Distribution EmitterObject::distribution() const noexcept
 inline void EmitterObject::resetDistribution() noexcept
 {
   setDistribution(UNIFORM_DISTRIBUTION);
+}
+
+inline float EmitterObject::directionAngle() const noexcept
+{
+  return _directionAngle;
+}
+
+inline void EmitterObject::resetDirectionAngle() noexcept
+{
+  setDirectionAngle(2.f * glm::pi<float>());
+}
+
+inline const mtt::Range<float>& EmitterObject::speedRange() const noexcept
+{
+  return _speedRange;
+}
+
+inline void EmitterObject::resetSpeedRange() noexcept
+{
+  setSpeedRange(mtt::Range<float>());
 }
 
 inline mtt::ObjectRef<ParticleField>& EmitterObject::fieldRef() noexcept

@@ -29,7 +29,10 @@ namespace mtt
     FloatSpinConnection(const FloatSpinConnection&) = delete;
     FloatSpinConnection& operator = (const FloatSpinConnection&) = delete;
     virtual ~FloatSpinConnection() noexcept = default;
-  
+
+    inline float multiplier() const noexcept;
+    inline void setMultiplier(float newValue) noexcept;
+
     inline void updateWidget() noexcept;
 
   private:
@@ -40,6 +43,8 @@ namespace mtt
     ObjectClass& _object;
     Getter _getter;
     Setter _setter;
+
+    float _multiplier;
 
     UndoStack& _undoStack;
     bool _skipUpdate;
@@ -58,6 +63,7 @@ namespace mtt
     _object(object),
     _getter(getter),
     _setter(setter),
+    _multiplier(1.f),
     _undoStack(undoStack),
     _skipUpdate(false)
   {
@@ -80,11 +86,13 @@ namespace mtt
   inline void FloatSpinConnection<ObjectClass>::_updateProperty() noexcept
   {
     if(_skipUpdate) return;
+    if(_multiplier == 0.f) return;
     ScopedTrueSetter skipper(_skipUpdate);
-  
+
     try
     {
-      if ((_object.*_getter)() == _widget.value()) return;
+      float newValue = _widget.value() / _multiplier;
+      if ((_object.*_getter)() == newValue) return;
 
       using Command = SetPropertyCommand< ObjectClass,
                                           float,
@@ -92,7 +100,7 @@ namespace mtt
       std::unique_ptr<Command> command(new Command( _object,
                                                     _setter,
                                                     (_object.*_getter)(),
-                                                    _widget.value()));
+                                                    newValue));
       _undoStack.addAndMake(std::move(command));
     }
     catch (std::exception& error)
@@ -107,6 +115,20 @@ namespace mtt
   }
 
   template<typename ObjectClass>
+  inline float FloatSpinConnection<ObjectClass>::multiplier() const noexcept
+  {
+    return _multiplier;
+  }
+
+  template<typename ObjectClass>
+  inline void
+        FloatSpinConnection<ObjectClass>::setMultiplier(float newValue) noexcept
+  {
+    _multiplier = newValue;
+    updateWidget();
+  }
+
+  template<typename ObjectClass>
   inline void FloatSpinConnection<ObjectClass>::updateWidget() noexcept
   {
     if (_skipUpdate) return;
@@ -114,7 +136,7 @@ namespace mtt
 
     try
     {
-      _widget.setValue((_object.*_getter)());
+      _widget.setValue((_object.*_getter)() * _multiplier);
     }
     catch (std::exception& error)
     {

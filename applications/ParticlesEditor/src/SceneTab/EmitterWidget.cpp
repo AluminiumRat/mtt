@@ -22,6 +22,22 @@ EmitterWidget::EmitterWidget(EmitterObject& object, mtt::UndoStack& undoStack) :
                           &EmitterObject::sizeChanged,
                           undoStack);
 
+  _angleConnection.emplace( *_ui->directionAngleSpin,
+                            object,
+                            &EmitterObject::directionAngle,
+                            &EmitterObject::setDirectionAngle,
+                            &EmitterObject::directionAngleChanged,
+                            undoStack);
+  _angleConnection->setMultiplier(360.f / 2.f / glm::pi<float>());
+
+  _speedConnection.emplace( *_ui->minSpeedSpin,
+                            *_ui->maxSpeedSpin,
+                            object,
+                            &EmitterObject::speedRange,
+                            &EmitterObject::setSpeedRange,
+                            &EmitterObject::speedRangeChanged,
+                            undoStack);
+
   _shapeConnection.emplace( *_ui->shapeCombo,
                             object,
                             &EmitterObject::shape,
