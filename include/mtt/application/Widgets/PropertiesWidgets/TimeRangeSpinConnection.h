@@ -1,11 +1,13 @@
 #pragma once
 
+#include <chrono>
 #include <stdexcept>
 
 #include <QtWidgets/QDoubleSpinBox>
 
 #include <mtt/application/EditCommands/SetPropertyCommand.h>
 #include <mtt/application/EditCommands/UndoStack.h>
+#include <mtt/application/Application.h>
 #include <mtt/utilities/Log.h>
 #include <mtt/utilities/Range.h>
 #include <mtt/utilities/ScopedSetter.h>
@@ -13,25 +15,26 @@
 namespace mtt
 {
   template <typename ObjectClass>
-  class FloatRangeSpinConnection : public QObject
+  class TimeRangeSpinConnection : public QObject
   {
   public:
-    using Getter = const Range<float>& (ObjectClass::*)() const noexcept;
-    using Setter = void (ObjectClass::*)(const Range<float>&);
+    using TimeType = Application::TimeType;
+    using Getter = const Range<TimeType>& (ObjectClass::*)() const noexcept;
+    using Setter = void (ObjectClass::*)(const Range<TimeType>&);
 
   public:
     template<typename Signal>
-    inline FloatRangeSpinConnection(QDoubleSpinBox& minWidget,
+    inline TimeRangeSpinConnection( QDoubleSpinBox& minWidget,
                                     QDoubleSpinBox& maxWidget,
                                     ObjectClass& object,
                                     Getter getter,
                                     Setter setter,
                                     Signal signal,
                                     UndoStack& undoStack);
-    FloatRangeSpinConnection(const FloatRangeSpinConnection&) = delete;
-    FloatRangeSpinConnection& operator =
-                                    (const FloatRangeSpinConnection&) = delete;
-    virtual ~FloatRangeSpinConnection() noexcept = default;
+    TimeRangeSpinConnection(const TimeRangeSpinConnection&) = delete;
+    TimeRangeSpinConnection& operator =
+                                    (const TimeRangeSpinConnection&) = delete;
+    virtual ~TimeRangeSpinConnection() noexcept = default;
 
     inline float multiplier() const noexcept;
     inline void setMultiplier(float newValue) noexcept;
@@ -57,7 +60,7 @@ namespace mtt
 
   template<typename ObjectClass>
   template<typename Signal>
-  inline FloatRangeSpinConnection<ObjectClass>::FloatRangeSpinConnection(
+  inline TimeRangeSpinConnection<ObjectClass>::TimeRangeSpinConnection(
                                                       QDoubleSpinBox& minWidget,
                                                       QDoubleSpinBox& maxWidget,
                                                       ObjectClass& object,
@@ -77,19 +80,19 @@ namespace mtt
     connect(&_minWidget,
             QOverload<double>::of(&QDoubleSpinBox::valueChanged),
             this,
-            &FloatRangeSpinConnection::_updateFromWidgets,
+            &TimeRangeSpinConnection::_updateFromWidgets,
             Qt::DirectConnection);
 
     connect(&_maxWidget,
             QOverload<double>::of(&QDoubleSpinBox::valueChanged),
             this,
-            &FloatRangeSpinConnection::_updateFromWidgets,
+            &TimeRangeSpinConnection::_updateFromWidgets,
             Qt::DirectConnection);
 
     connect(&_object,
             signal,
             this,
-            &FloatRangeSpinConnection::_updateFromProperty,
+            &TimeRangeSpinConnection::_updateFromProperty,
             Qt::DirectConnection);
 
     _updateFromProperty();
@@ -97,7 +100,7 @@ namespace mtt
 
   template<typename ObjectClass>
   inline void
-            FloatRangeSpinConnection<ObjectClass>::_updateFromWidgets() noexcept
+            TimeRangeSpinConnection<ObjectClass>::_updateFromWidgets() noexcept
   {
     if(_skipUpdate) return;
     if(_multiplier == 0.f) return;
@@ -107,12 +110,16 @@ namespace mtt
 
     try
     {
-      Range<float> newValue = Range<float>( _minWidget.value(),
-                                            _maxWidget.value()) / _multiplier;
+      using FloatTimeType = std::chrono::duration<float>;
+      FloatTimeType minTime(_minWidget.value() / _multiplier);
+      FloatTimeType maxTime(_maxWidget.value() / _multiplier);
+      Range<TimeType> newValue = Range<TimeType>(
+                                std::chrono::duration_cast<TimeType>(minTime),
+                                std::chrono::duration_cast<TimeType>(maxTime));
       if ((_object.*_getter)() == newValue) return;
 
       using Command = SetPropertyCommand< ObjectClass,
-                                          Range<float>,
+                                          Range<TimeType>,
                                           Setter>;
       std::unique_ptr<Command> command(new Command( _object,
                                                     _setter,
@@ -123,23 +130,23 @@ namespace mtt
     catch (std::exception& error)
     {
       Log() << error.what();
-      Log() << "FloatRangeSpinConnection::_updateFromWidgets: unable to update property.";
+      Log() << "TimeRangeSpinConnection::_updateFromWidgets: unable to update property.";
     }
     catch(...)
     {
-      Log() << "FloatRangeSpinConnection::_updateFromWidgets: unable to update property.";
+      Log() << "TimeRangeSpinConnection::_updateFromWidgets: unable to update property.";
     }
   }
 
   template<typename ObjectClass>
   inline float
-              FloatRangeSpinConnection<ObjectClass>::multiplier() const noexcept
+              TimeRangeSpinConnection<ObjectClass>::multiplier() const noexcept
   {
     return _multiplier;
   }
 
   template<typename ObjectClass>
-  inline void FloatRangeSpinConnection<ObjectClass>::setMultiplier(
+  inline void TimeRangeSpinConnection<ObjectClass>::setMultiplier(
                                                         float newValue) noexcept
   {
     _multiplier = newValue;
@@ -148,33 +155,39 @@ namespace mtt
 
   template<typename ObjectClass>
   inline void
-          FloatRangeSpinConnection<ObjectClass>::_updateFromProperty() noexcept
+          TimeRangeSpinConnection<ObjectClass>::_updateFromProperty() noexcept
   {
     if (_skipUpdate) return;
     ScopedTrueSetter skipper(_skipUpdate);
 
     try
     {
-      Range<float> value = (_object.*_getter)() * _multiplier;
+      Range<TimeType> value = (_object.*_getter)();
+      using FloatTimeType = std::chrono::duration<float>;
+      FloatTimeType minTime(
+                        std::chrono::duration_cast<FloatTimeType>(value.min()));
+      FloatTimeType maxTime(
+                        std::chrono::duration_cast<FloatTimeType>(value.max()));
+
       _minWidget.setMaximum(FLT_MAX);
       _maxWidget.setMinimum(-FLT_MAX);
-      _minWidget.setValue(value.min());
-      _maxWidget.setValue(value.max());
+      _minWidget.setValue(minTime.count() * _multiplier);
+      _maxWidget.setValue(maxTime.count() * _multiplier);
     }
     catch (std::exception& error)
     {
       Log() << error.what();
-      Log() << "FloatRangeSpinConnection::_updateFromProperty: unable to update widget.";
+      Log() << "TimeRangeSpinConnection::_updateFromProperty: unable to update widget.";
     }
     catch (...)
     {
-      Log() << "FloatRangeSpinConnection::_updateFromProperty: unable to update widget.";
+      Log() << "TimeRangeSpinConnection::_updateFromProperty: unable to update widget.";
     }
     _updateMinmax();
   }
 
   template<typename ObjectClass>
-  inline void FloatRangeSpinConnection<ObjectClass>::_updateMinmax() noexcept
+  inline void TimeRangeSpinConnection<ObjectClass>::_updateMinmax() noexcept
   {
     _minWidget.setMaximum(_maxWidget.value());
     _maxWidget.setMinimum(_minWidget.value());

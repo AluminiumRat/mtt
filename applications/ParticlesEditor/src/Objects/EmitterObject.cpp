@@ -21,6 +21,20 @@ EmitterObject::EmitterObject( const QString& name,
   _distribution(UNIFORM_DISTRIBUTION),
   _directionAngle(2.f * glm::pi<float>()),
   _typeMask(1),
+  _sizeRange(1.f, 1.f),
+  _rotationRange(-glm::pi<float>(), glm::pi<float>()),
+  _rotationSpeedRange(.0f, .0f),
+  _firstColor(1.f, 1.f, 1.f),
+  _secondColor(1.f, 1.f, 1.f),
+  _opacityRange(1.f, 1.f),
+  _ignoreBrightness(true),
+  _brightnessRange(1.f, 1.f),
+  _textureIndex(0),
+  _lifetimeRange(
+                std::chrono::duration_cast<TimeType>(std::chrono::seconds(1)),
+                std::chrono::duration_cast<TimeType>(std::chrono::seconds(1))),
+  _massRange(0.f, 0.f),
+  _frictionFactorRange(0.f, 0.f),
   _fieldRef(*this),
   _randomEngine(
     unsigned int(std::chrono::system_clock::now().time_since_epoch().count())),
@@ -76,6 +90,94 @@ void EmitterObject::setTypeMask(uint32_t newValue) noexcept
   if(_typeMask == newValue) return;
   _typeMask = newValue;
   emit typeMaskChanged(newValue);
+}
+
+void EmitterObject::setSizeRange(const mtt::Range<float>& newValue) noexcept
+{
+  if(_sizeRange == newValue) return;
+  _sizeRange = newValue;
+  emit sizeRangeChanged(newValue);
+}
+
+void EmitterObject::setRotationRange(const mtt::Range<float>& newValue) noexcept
+{
+  if(_rotationRange == newValue) return;
+  _rotationRange = newValue;
+  emit rotationRangeChanged(newValue);
+}
+
+void EmitterObject::setRotationSpeedRange(
+                                    const mtt::Range<float>& newValue) noexcept
+{
+  if(_rotationSpeedRange == newValue) return;
+  _rotationSpeedRange = newValue;
+  emit rotationSpeedRangeChanged(newValue);
+}
+
+void EmitterObject::setFirstColor(const glm::vec3& newValue) noexcept
+{
+  if(_firstColor == newValue) return;
+  _firstColor = newValue;
+  emit firstColorChanged(newValue);
+}
+
+void EmitterObject::setSecondColor(const glm::vec3& newValue) noexcept
+{
+  if(_secondColor == newValue) return;
+  _secondColor = newValue;
+  emit secondColorChanged(newValue);
+}
+
+void EmitterObject::setOpacityRange(const mtt::Range<float>& newValue) noexcept
+{
+  if(_opacityRange == newValue) return;
+  _opacityRange = newValue;
+  emit opacityRangeChanged(newValue);
+}
+
+void EmitterObject::setIgnoreBrightness(bool newValue) noexcept
+{
+  if(_ignoreBrightness == newValue) return;
+  _ignoreBrightness = newValue;
+  emit ignoreBrightnessChanged(newValue);
+}
+
+void EmitterObject::setBrightnessRange(
+                                    const mtt::Range<float>& newValue) noexcept
+{
+  if(_brightnessRange == newValue) return;
+  _brightnessRange = newValue;
+  emit brightnessRangeChanged(newValue);
+}
+
+void EmitterObject::setTextureIndex(uint8_t newValue) noexcept
+{
+  if(_textureIndex == newValue) return;
+  _textureIndex = newValue;
+  emit textureIndexChanged(newValue);
+}
+
+void EmitterObject::setLifetimeRange(
+                                  const mtt::Range<TimeType>& newValue) noexcept
+{
+  if(_lifetimeRange == newValue) return;
+  _lifetimeRange = newValue;
+  emit lifetimeRangeChanged(newValue);
+}
+
+void EmitterObject::setMassRange(const mtt::Range<float>& newValue) noexcept
+{
+  if(_massRange == newValue) return;
+  _massRange = newValue;
+  emit massRangeChanged(newValue);
+}
+
+void EmitterObject::setFrictionFactorRange(
+                                    const mtt::Range<float>& newValue) noexcept
+{
+  if(_frictionFactorRange == newValue) return;
+  _frictionFactorRange = newValue;
+  emit frictionFactorRangeChanged(newValue);
 }
 
 void EmitterObject::simulationStep(TimeType currentTime, TimeType delta)
@@ -155,7 +257,9 @@ void EmitterObject::emitParticles(size_t particlesNumber) noexcept
   glm::mat4x4 toField = glm::inverse(field->localToWorldTransform()) *
                                                         localToWorldTransform();
 
-  std::uniform_int_distribution<int> timeDistribution(300, 5000);
+  std::uniform_int_distribution<TimeType::rep>
+                  timeDistribution( glm::max(_lifetimeRange.min().count(), 0),
+                                    glm::max(_lifetimeRange.max().count(), 0));
 
   for (size_t i = 0; i < particlesNumber; i++)
   {
@@ -163,21 +267,47 @@ void EmitterObject::emitParticles(size_t particlesNumber) noexcept
     newParticle.typeMask = _typeMask;
     newParticle.position = toField * _getParticlePosition();
     newParticle.speed = toField * _getParticleSpeed();
-    newParticle.size = _displacedDistribution(_randomEngine) + .1f;
-    newParticle.rotation = _symmetricalDistribution(_randomEngine);
-    newParticle.rotationSpeed = _symmetricalDistribution(_randomEngine);
-    newParticle.color = glm::vec3(_displacedDistribution(_randomEngine),
-                                  _displacedDistribution(_randomEngine),
+    newParticle.size = glm::mix(_sizeRange.min(),
+                                _sizeRange.max(),
+                                _displacedDistribution(_randomEngine));
+    newParticle.size = glm::max(newParticle.size, 0.f);
+    newParticle.rotation = glm::mix(_rotationRange.min(),
+                                    _rotationRange.max(),
+                                    _displacedDistribution(_randomEngine));
+    newParticle.rotationSpeed = glm::mix(
+                                      _rotationSpeedRange.min(),
+                                      _rotationSpeedRange.max(),
+                                      _displacedDistribution(_randomEngine));
+    newParticle.color = glm::mix( _firstColor,
+                                  _secondColor,
                                   _displacedDistribution(_randomEngine));
-    newParticle.brightness = .5f + .5f * _displacedDistribution(_randomEngine);
-    newParticle.opacity = newParticle.brightness;
-    newParticle.textureIndex = 0;
-    if(i > 15) newParticle.textureIndex = 1;
+    newParticle.color = glm::clamp( newParticle.color,
+                                    glm::vec3(0.f),
+                                    glm::vec3(1.f));
+    newParticle.opacity = glm::mix( _opacityRange.min(),
+                                    _opacityRange.max(),
+                                   _displacedDistribution(_randomEngine));
+    if (_ignoreBrightness) newParticle.brightness = newParticle.opacity;
+    else
+    {
+      newParticle.brightness = glm::mix(_brightnessRange.min(),
+                                        _brightnessRange.max(),
+                                        _displacedDistribution(_randomEngine));
+      newParticle.brightness = glm::max(newParticle.brightness, 0.f);
+    }
+    newParticle.textureIndex = _textureIndex;
     newParticle.currentTime = ParticleField::TimeType(0);
-    newParticle.maxTime =
-                      ParticleField::TimeType(timeDistribution(_randomEngine));
-    newParticle.mass = .001f;
-    newParticle.frictionFactor = .001f;
+    newParticle.maxTime = TimeType(timeDistribution(_randomEngine));
+    newParticle.mass = glm::mix(_massRange.min(),
+                                _massRange.max(),
+                                _displacedDistribution(_randomEngine));
+    newParticle.mass = glm::max(0.f, newParticle.mass);
+
+    newParticle.frictionFactor = glm::mix(
+                                        _frictionFactorRange.min(),
+                                        _frictionFactorRange.max(),
+                                        _displacedDistribution(_randomEngine));
+    newParticle.frictionFactor = glm::max(0.f, newParticle.frictionFactor);
 
     field->addParticle(newParticle);
   }

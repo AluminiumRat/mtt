@@ -1,4 +1,5 @@
 #include <mtt/application/Widgets/PropertiesWidgets/Bitfield32Widget.h>
+#include <mtt/application/Widgets/PropertiesWidgets/ColorPropertyWidget.h>
 
 #include <SceneTab/EmitterWidget.h>
 
@@ -55,6 +56,100 @@ EmitterWidget::EmitterWidget(EmitterObject& object, mtt::UndoStack& undoStack) :
                                   &EmitterObject::distributionChanged,
                                   EmitterObject::distributionNames,
                                   undoStack);
+
+  _sizeRangeConnection.emplace( *_ui->minSizeSpin,
+                                *_ui->maxSizeSpin,
+                                object,
+                                &EmitterObject::sizeRange,
+                                &EmitterObject::setSizeRange,
+                                &EmitterObject::sizeRangeChanged,
+                                undoStack);
+
+  _rotationConnection.emplace(*_ui->minRotationSpin,
+                              *_ui->maxRotationSpin,
+                              object,
+                              &EmitterObject::rotationRange,
+                              &EmitterObject::setRotationRange,
+                              &EmitterObject::rotationRangeChanged,
+                              undoStack);
+  _rotationConnection->setMultiplier(360.f / 2.f / glm::pi<float>());
+
+  _rotationSpeedConnection.emplace( *_ui->minRotationSpeedSpin,
+                                    *_ui->maxRotationSpeedSpin,
+                                    object,
+                                    &EmitterObject::rotationSpeedRange,
+                                    &EmitterObject::setRotationSpeedRange,
+                                    &EmitterObject::rotationSpeedRangeChanged,
+                                    undoStack);
+  _rotationSpeedConnection->setMultiplier(360.f / 2.f / glm::pi<float>());
+
+  _opacityConnection.emplace( *_ui->minOpacitySpin,
+                              *_ui->maxOpacitySpin,
+                              object,
+                              &EmitterObject::opacityRange,
+                              &EmitterObject::setOpacityRange,
+                              &EmitterObject::opacityRangeChanged,
+                              undoStack);
+
+  _ignoreBrightnessConnection.emplace(*_ui->ignoreBrightnessCheck,
+                                      object,
+                                      &EmitterObject::ignoreBrightness,
+                                      &EmitterObject::setIgnoreBrightness,
+                                      &EmitterObject::ignoreBrightnessChanged,
+                                      undoStack);
+
+  _brightnessConnection.emplace(*_ui->minBrightnessSpin,
+                                *_ui->maxBrightnessSpin,
+                                object,
+                                &EmitterObject::brightnessRange,
+                                &EmitterObject::setBrightnessRange,
+                                &EmitterObject::brightnessRangeChanged,
+                                undoStack);
+
+  _textureConnection.emplace( *_ui->textureIndexSpin,
+                              object,
+                              &EmitterObject::textureIndex,
+                              &EmitterObject::setTextureIndex,
+                              &EmitterObject::textureIndexChanged,
+                              undoStack);
+
+  _lifetimeConnection.emplace(*_ui->minLifetimeSpin,
+                              *_ui->maxLifetimeSpin,
+                              object,
+                              &EmitterObject::lifetimeRange,
+                              &EmitterObject::setLifetimeRange,
+                              &EmitterObject::lifetimeRangeChanged,
+                              undoStack);
+
+  _massConnection.emplace(*_ui->minMassSpin,
+                          *_ui->maxMassSpin,
+                          object,
+                          &EmitterObject::massRange,
+                          &EmitterObject::setMassRange,
+                          &EmitterObject::massRangeChanged,
+                          undoStack);
+
+  _frictionFactorConnection.emplace(*_ui->minFrictionFactorSpin,
+                                    *_ui->maxFrictionFactorSpin,
+                                    object,
+                                    &EmitterObject::frictionFactorRange,
+                                    &EmitterObject::setFrictionFactorRange,
+                                    &EmitterObject::frictionFactorRangeChanged,
+                                    undoStack);
+
+  using ColorWidget = mtt::ColorPropertyWidget<EmitterObject>;
+  _ui->colorWidgetLayout->addWidget(
+                                new ColorWidget(object,
+                                                &EmitterObject::firstColor,
+                                                &EmitterObject::setFirstColor,
+                                                &EmitterObject::firstColorChanged,
+                                                undoStack));
+  _ui->colorWidgetLayout->addWidget(
+                              new ColorWidget(object,
+                                              &EmitterObject::secondColor,
+                                              &EmitterObject::setSecondColor,
+                                              &EmitterObject::secondColorChanged,
+                                              undoStack));
 
   std::unique_ptr<mtt::Bitfield32Widget> typeMaskWidget(
                                                     new mtt::Bitfield32Widget);
