@@ -19,11 +19,10 @@ AnimationTrackWidget::AnimationTrackWidget( AnimationTrack& object,
                               undoStack);
 
   using ReferenceWidget = ReferencePropertyWidget<AnimationTrack,
-                                                  SkeletonObject>;
+                                                  SkeletonObject,
+                                                  &AnimationTrack::skeletonRef>;
   ReferenceWidget* referenceWidget =
                         new ReferenceWidget(object,
-                                            &AnimationTrack::skeleton,
-                                            &AnimationTrack::setSkeleton,
                                             &AnimationTrack::skeletonRefChanged,
                                             undoStack,
                                             skeletonSelectArea);

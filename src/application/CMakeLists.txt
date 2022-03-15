@@ -61,6 +61,7 @@ set(HEADERS
     "../../include/mtt/application/EditCommands/MoveObjectCommand.h"
     "../../include/mtt/application/EditCommands/RemoveObjectCommand.h"
     "../../include/mtt/application/EditCommands/SetPropertyCommand.h"
+    "../../include/mtt/application/EditCommands/SetReferenceCommand.h"
     "../../include/mtt/application/EditCommands/UndoStack.h"
 
     "../../include/mtt/application/Manipulator/AbstractManipulator.h"

@@ -23,13 +23,9 @@ public:
   GeometryObject& operator = (const GeometryObject&) = delete;
   virtual ~GeometryObject() noexcept = default;
 
+  inline mtt::ObjectRef<mtt::SkeletonObject>& skeletonRef() noexcept;
   inline const mtt::ObjectRef<mtt::SkeletonObject>&
                                                   skeletonRef() const noexcept;
-  inline mtt::SkeletonObject* skeleton() const noexcept;
-  /// You can use nullptr to remove link
-  void setSkeleton(mtt::SkeletonObject* skeleton);
-  /// You can use invalid UID to remove link
-  void setSkeletonId(const mtt::UID& id);
 
 signals:
   void skeletonRefChanged(mtt::SkeletonObject* skeleton);
@@ -42,17 +38,19 @@ private:
   using SkeletonLink = mtt::ObjectLink< mtt::SkeletonObject,
                                         GeometryObject,
                                         &GeometryObject::_connectSkeleton,
-                                        &GeometryObject::_disconnectSkeleton>;
+                                        &GeometryObject::_disconnectSkeleton,
+                                        &GeometryObject::skeletonRefChanged>;
   SkeletonLink _skeletonLink;
 };
+
+inline mtt::ObjectRef<mtt::SkeletonObject>&
+                                          GeometryObject::skeletonRef() noexcept
+{
+  return _skeletonLink;
+}
 
 inline const mtt::ObjectRef<mtt::SkeletonObject>&
                                   GeometryObject::skeletonRef() const noexcept
 {
   return _skeletonLink;
-}
-
-inline mtt::SkeletonObject* GeometryObject::skeleton() const noexcept
-{
-  return _skeletonLink.get();
 }

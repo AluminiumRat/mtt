@@ -56,12 +56,8 @@ namespace mtt
 
     void update(TimeType time);
 
+    inline ObjectRef<SkeletonObject>& skeletonRef() noexcept;
     inline const ObjectRef<SkeletonObject>& skeletonRef() const noexcept;
-    inline SkeletonObject* skeleton() const noexcept;
-    /// You can use nullptr to remove link
-    void setSkeleton(SkeletonObject* skeleton);
-    /// You can use invalid UID to remove link
-    void setSkeletonId(const UID& id);
 
     /// Makes a command to restore animated object after the animation has
     /// played. The command has no undo functional.
@@ -82,16 +78,13 @@ namespace mtt
     virtual void onDurationChanged() noexcept override;
 
   private:
-    void _connectSkeleton(SkeletonObject& skeleton);
-    void _disconnectSkeleton(SkeletonObject& skeleton) noexcept;
-
-  private:
     bool _enabled;
 
     using SkeletonLink = ObjectLink<SkeletonObject,
                                     AnimationTrack,
-                                    &AnimationTrack::_connectSkeleton,
-                                    &AnimationTrack::_disconnectSkeleton>;
+                                    nullptr,
+                                    nullptr,
+                                    &AnimationTrack::skeletonRefChanged>;
     SkeletonLink _skeletonLink;
   };
 
@@ -105,14 +98,14 @@ namespace mtt
     setEnabled(true);
   }
 
-  inline const ObjectRef<SkeletonObject>&
-                                    AnimationTrack::skeletonRef() const noexcept
+  inline ObjectRef<SkeletonObject>& AnimationTrack::skeletonRef() noexcept
   {
     return _skeletonLink;
   }
 
-  inline SkeletonObject* AnimationTrack::skeleton() const noexcept
+  inline const ObjectRef<SkeletonObject>&
+                                    AnimationTrack::skeletonRef() const noexcept
   {
-    return _skeletonLink.get();
+    return _skeletonLink;
   }
 }

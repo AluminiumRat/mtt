@@ -66,7 +66,7 @@ void AddAnimationFromFbxTask::finalizePart()
       AnimationTrack& track = _animation->child(trackIndex);
       SkeletonObject* skeleton = findSkeleton(track.name(),
                                               *_skeletonSearchGroup);
-      if(skeleton != nullptr) track.setSkeleton(skeleton);
+      if(skeleton != nullptr) track.skeletonRef().set(skeleton);
     }
   }
 

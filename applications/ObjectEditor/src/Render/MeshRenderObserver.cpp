@@ -132,7 +132,7 @@ void MeshRenderObserver::_updateBones() noexcept
 void MeshRenderObserver::_updateMaterialObserver() noexcept
 {
   _materialObserver.reset();
-  MaterialObject* material = _object.material();
+  MaterialObject* material = _object.materialRef().get();
   if(material != nullptr)
   {
     try

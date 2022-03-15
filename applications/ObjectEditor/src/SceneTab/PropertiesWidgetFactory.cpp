@@ -27,12 +27,12 @@ void PropertiesWidgetFactory::visitBoneRefObject(BoneRefObject& object)
 {
   OEVisitorT::visitBoneRefObject(object);
 
-  using ReferenceWidget = mtt::ReferencePropertyWidget< BoneRefObject,
-                                                        mtt::SkeletonObject>;
+  using ReferenceWidget = mtt::ReferencePropertyWidget<
+                                                      BoneRefObject,
+                                                      mtt::SkeletonObject,
+                                                      &BoneRefObject::boneRef>;
   ReferenceWidget* referenceWidget = new ReferenceWidget(
                                               object,
-                                              &BoneRefObject::bone,
-                                              &BoneRefObject::setBone,
                                               &BoneRefObject::boneRefChanged,
                                               _commonData.undoStack(),
                                               _scene.root().skeletonGroup());

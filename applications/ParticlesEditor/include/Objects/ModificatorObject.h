@@ -58,11 +58,16 @@ public:
 signals:
   void enabledChanged(bool newValue);
   void typeMaskChanged(uint32_t newValue);
+  void fieldChanged(ParticleField* newField);
 
 private:
   bool _enabled;
   uint32_t _typeMask;
-  mtt::ObjectLink<ParticleField, ModificatorObject, nullptr, nullptr> _fieldRef;
+  mtt::ObjectLink<ParticleField,
+                  ModificatorObject,
+                  nullptr,
+                  nullptr,
+                  &ModificatorObject::fieldChanged> _fieldRef;
 };
 
 inline bool ModificatorObject::enabled() const noexcept

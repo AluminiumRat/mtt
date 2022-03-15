@@ -36,7 +36,7 @@ BonesObserver::BonesObserver( MeshObject& object,
                                       {
                                         _setBoneObject(bone, boneIndex);
                                       });
-      _setBoneObject(boneRef.bone(), boneIndex);
+      _setBoneObject(boneRef.boneRef().get(), boneIndex);
 
       _bones[boneIndex].inverseMatrixConnection =
                         connect(&boneRef,

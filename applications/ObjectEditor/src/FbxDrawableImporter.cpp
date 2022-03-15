@@ -72,11 +72,11 @@ void FbxDrawableImporter::processMesh(mtt::CommonMeshGeometry&& vertices,
   std::unique_ptr<MeshObject> newDrawable(new MeshObject(mesh.GetName(), true));
   newDrawable->setGeometry(std::move(vertices));
 
-  newDrawable->setMaterial(material);
+  newDrawable->materialRef().set(material);
 
   if(!_skeletonStack.empty())
   {
-    newDrawable->setSkeleton(_skeletonStack.back());
+    newDrawable->skeletonRef().set(_skeletonStack.back());
   }
 
   if(!bones.empty())_boneLinks.push_back({newDrawable.get(), bones});
@@ -135,7 +135,7 @@ void FbxDrawableImporter::_resolveBoneLinks()
       std::unique_ptr<BoneRefObject> newRef(
                               new BoneRefObject(skeleton->name(), true));
       newRef->setBoneInverseMatrix(bone.toBone);
-      newRef->setBone(skeleton);
+      newRef->boneRef().set(skeleton);
 
       references.push_back(std::move(newRef));
     }

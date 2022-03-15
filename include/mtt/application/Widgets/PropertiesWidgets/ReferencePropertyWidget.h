@@ -1,8 +1,9 @@
 #pragma once
 
-#include <mtt/application/EditCommands/SetPropertyCommand.h>
+#include <mtt/application/EditCommands/SetReferenceCommand.h>
 #include <mtt/application/EditCommands/UndoStack.h>
 #include <mtt/application/Scene/Object.h>
+#include <mtt/application/Scene/ObjectLink.h>
 #include <mtt/application/Widgets/PropertiesWidgets/ReferenceWidget.h>
 #include <mtt/application/Widgets/SelectObjectsDialog.h>
 #include <mtt/utilities/Abort.h>
@@ -10,18 +11,13 @@
 namespace mtt
 {
   template <typename ObserverClass,
-            typename ReferencedClass>
+            typename ReferencedClass,
+            ObjectRef<ReferencedClass>& (ObserverClass::* refGetter)() noexcept>
   class ReferencePropertyWidget : public ReferenceWidget
   {
   public:
-    using Getter = ReferencedClass* (ObserverClass::*)() const noexcept;
-    using Setter = void (ObserverClass::*)(ReferencedClass*);
-
-  public:
     template<typename Signal>
     inline ReferencePropertyWidget( ObserverClass& object,
-                                    Getter getter,
-                                    Setter setter,
                                     Signal signal,
                                     UndoStack& undoStack,
                                     Object& selectArea);
@@ -37,12 +33,11 @@ namespace mtt
   private:
     inline void _connectToReference() noexcept;
     inline void _updateName() noexcept;
-    inline void _setReference(ReferencedClass* object) noexcept;
+    inline void _setReference(ReferencedClass* newValue) noexcept;
 
   private:
     ObserverClass& _object;
-    Getter _getter;
-    Setter _setter;
+    ObjectRef<ReferencedClass>& _reference;
 
     ReferencedClass* _referenced;
 
@@ -52,20 +47,18 @@ namespace mtt
   };
 
   template< typename ObserverClass,
-            typename ReferencedClass>
+            typename ReferencedClass,
+            ObjectRef<ReferencedClass>& (ObserverClass::* refGetter)() noexcept>
   template<typename Signal>
   inline ReferencePropertyWidget< ObserverClass,
-                                  ReferencedClass>::
-                                          ReferencePropertyWidget(
-                                                        ObserverClass& object,
-                                                        Getter getter,
-                                                        Setter setter,
-                                                        Signal signal,
-                                                        UndoStack& undoStack,
-                                                        Object& selectArea) :
+                                  ReferencedClass,
+                                  refGetter>::ReferencePropertyWidget(
+                                          ObserverClass& object,
+                                          Signal signal,
+                                          UndoStack& undoStack,
+                                          Object& selectArea) :
     _object(object),
-    _getter(getter),
-    _setter(setter),
+    _reference((object.*refGetter)()),
     _referenced(nullptr),
     _undoStack(undoStack),
     _selectArea(selectArea)
@@ -80,13 +73,15 @@ namespace mtt
   }
 
   template< typename ObserverClass,
-            typename ReferencedClass>
-  inline void ReferencePropertyWidget<ObserverClass, ReferencedClass>::
-                                                  _connectToReference() noexcept
+            typename ReferencedClass,
+            ObjectRef<ReferencedClass>& (ObserverClass::* refGetter)() noexcept>
+  inline void ReferencePropertyWidget<ObserverClass,
+                                      ReferencedClass,
+                                      refGetter>::_connectToReference() noexcept
   {
     try
     {
-      ReferencedClass* newReferenced = (_object.*_getter)();
+      ReferencedClass* newReferenced = _reference.get();
       if(newReferenced == _referenced) return;
 
       if(_referenced != nullptr)
@@ -117,9 +112,11 @@ namespace mtt
   }
 
   template< typename ObserverClass,
-            typename ReferencedClass>
+            typename ReferencedClass,
+            ObjectRef<ReferencedClass>& (ObserverClass::* refGetter)() noexcept>
   inline void ReferencePropertyWidget<ObserverClass,
-                                      ReferencedClass>::_updateName() noexcept
+                                      ReferencedClass,
+                                      refGetter>::_updateName() noexcept
   {
     try
     {
@@ -133,9 +130,11 @@ namespace mtt
   }
 
   template< typename ObserverClass,
-            typename ReferencedClass>
-  inline void ReferencePropertyWidget<ObserverClass, ReferencedClass>::
-                                                      selectReference() noexcept
+            typename ReferencedClass,
+            ObjectRef<ReferencedClass>& (ObserverClass::* refGetter)() noexcept>
+  inline void ReferencePropertyWidget<ObserverClass,
+                                      ReferencedClass,
+                                      refGetter>::selectReference() noexcept
   {
     auto filter = [](Object& object) -> bool
     {
@@ -155,29 +154,33 @@ namespace mtt
   }
 
   template< typename ObserverClass,
-            typename ReferencedClass>
-  inline void ReferencePropertyWidget< ObserverClass, ReferencedClass>::
-                                                      resetReference() noexcept
+            typename ReferencedClass,
+            ObjectRef<ReferencedClass>& (ObserverClass::* refGetter)() noexcept>
+  inline void ReferencePropertyWidget<ObserverClass,
+                                      ReferencedClass,
+                                      refGetter>::resetReference() noexcept
   {
     _setReference(nullptr);
   }
 
   template< typename ObserverClass,
-            typename ReferencedClass>
-  inline void ReferencePropertyWidget<ObserverClass, ReferencedClass>::
-                                _setReference(ReferencedClass* object) noexcept
+            typename ReferencedClass,
+            ObjectRef<ReferencedClass>& (ObserverClass::* refGetter)() noexcept>
+  inline void ReferencePropertyWidget<ObserverClass,
+                                      ReferencedClass,
+                                      refGetter>::_setReference(
+                                              ReferencedClass* newValue) noexcept
   {
-    if((_object.*_getter)() == object) return;
+    if(_reference.get() == newValue) return;
 
     try
     {
-      using Command = SetPropertyCommand< ObserverClass,
-                                          ReferencedClass*,
-                                          Setter>;
+      using Command = SetReferenceCommand<ObserverClass,
+                                          ReferencedClass,
+                                          refGetter>;
       std::unique_ptr<Command> command(new Command( _object,
-                                                    _setter,
-                                                    (_object.*_getter)(),
-                                                    object));
+                                                    _reference.get(),
+                                                    newValue));
       _undoStack.addAndMake(std::move(command));
     }
     catch(...)

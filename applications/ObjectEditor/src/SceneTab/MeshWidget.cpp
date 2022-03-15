@@ -19,15 +19,15 @@ MeshWidget::MeshWidget( MeshObject& object,
   VertexDataWidget* vertexDataWidget = new VertexDataWidget(object);
   _ui->vertexDataLayout->addWidget(vertexDataWidget);
 
-  using ReferenceWidget = mtt::ReferencePropertyWidget< MeshObject,
-                                                        MaterialObject>;
+  using ReferenceWidget = mtt::ReferencePropertyWidget<
+                                                      MeshObject,
+                                                      MaterialObject,
+                                                      &MeshObject::materialRef>;
   ReferenceWidget* referenceWidget = new ReferenceWidget(
-                                          object,
-                                          &MeshObject::material,
-                                          &MeshObject::setMaterial,
-                                          &MeshObject::materialRefChanged,
-                                          undoStack,
-                                          materialsGroup);
+                                                object,
+                                                &MeshObject::materialRefChanged,
+                                                undoStack,
+                                                materialsGroup);
   _ui->materialLayout->addWidget(referenceWidget);
 
   adjustSize();
@@ -48,9 +48,10 @@ void MeshWidget::_updateMaterialWidget() noexcept
     _materialWidget = nullptr;
   }
 
-  if(_object.material() != nullptr)
+  MaterialObject* material = _object.materialRef().get();
+  if(material != nullptr)
   {
-    _materialWidget = new MaterialWidget(*_object.material(), _undoStack);
+    _materialWidget = new MaterialWidget(*material, _undoStack);
     _ui->materialLayout->addWidget(_materialWidget);
   }
 }

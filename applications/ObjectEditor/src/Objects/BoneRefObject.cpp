@@ -11,42 +11,6 @@ BoneRefObject::BoneRefObject( const QString& name,
 {
 }
 
-void BoneRefObject::setBone(mtt::SkeletonObject* bone)
-{
-  if(bone == nullptr) setBoneId(mtt::UID());
-  else setBoneId(bone->id());
-}
-
-void BoneRefObject::setBoneId(const mtt::UID& id)
-{
-  try
-  {
-    _link.setReferencedId(id);
-  }
-  catch (...)
-  {
-    try
-    {
-      _link.setReferencedId(mtt::UID());
-    }
-    catch (...)
-    {
-      mtt::Abort("BoneRefObject::setBoneId: unable to emplace skeleton link");
-    }
-    throw;
-  }
-}
-
-void BoneRefObject::_connectBone(mtt::SkeletonObject& bone)
-{
-  emit boneRefChanged(&bone);
-}
-
-void BoneRefObject::_disconnectBone(mtt::SkeletonObject& bone) noexcept
-{
-  emit boneRefChanged(nullptr);
-}
-
 void BoneRefObject::setBoneInverseMatrix(const glm::mat4& newValue)
 {
   if(_boneInverseMatrix == newValue) return;

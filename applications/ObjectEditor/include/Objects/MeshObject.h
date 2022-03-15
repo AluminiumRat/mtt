@@ -32,12 +32,8 @@ public:
   /// refs object should not be nullptr
   void setBoneRefs(std::unique_ptr<BoneRefBatch> refs);
 
+  inline mtt::ObjectRef<MaterialObject>& materialRef() noexcept;
   inline const mtt::ObjectRef<MaterialObject>& materialRef() const noexcept;
-  inline MaterialObject* material() const noexcept;
-  /// You can use nullptr to remove link
-  void setMaterial(MaterialObject* material);
-  /// You can use invalid UID to remove link
-  void setMaterialId(const mtt::UID& id);
 
 signals:
   void geometryChanged();
@@ -45,16 +41,13 @@ signals:
   void materialRefChanged(MaterialObject* material);
 
 private:
-  void _connectMaterial(MaterialObject& material);
-  void _disconnectMaterial(MaterialObject& material) noexcept;
-
-private:
   mtt::CommonMeshGeometry _geometry;
 
   using MaterialLink = mtt::ObjectLink< MaterialObject,
                                         MeshObject,
-                                        &MeshObject::_connectMaterial,
-                                        &MeshObject::_disconnectMaterial>;
+                                        nullptr,
+                                        nullptr,
+                                        &MeshObject::materialRefChanged>;
   MaterialLink _materialLink;
 
   BoneRefBatch* _boneRefs;
@@ -75,13 +68,13 @@ inline const BoneRefBatch& MeshObject::boneRefs() const noexcept
   return *_boneRefs;
 }
 
-inline const mtt::ObjectRef<MaterialObject>&
-                                      MeshObject::materialRef() const noexcept
+inline mtt::ObjectRef<MaterialObject>& MeshObject::materialRef() noexcept
 {
   return _materialLink;
 }
 
-inline MaterialObject* MeshObject::material() const noexcept
+inline const mtt::ObjectRef<MaterialObject>&
+                                      MeshObject::materialRef() const noexcept
 {
-  return _materialLink.get();
+  return _materialLink;
 }

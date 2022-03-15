@@ -33,31 +33,3 @@ void MeshObject::setBoneRefs(std::unique_ptr<BoneRefBatch> refs)
 
   emit boneRefsChanged(*_boneRefs);
 }
-
-void MeshObject::setMaterial(MaterialObject* material)
-{
-  if(material == nullptr) setMaterialId(mtt::UID());
-  else setMaterialId(material->id());
-}
-
-void MeshObject::setMaterialId(const mtt::UID& id)
-{
-  try
-  {
-    _materialLink.setReferencedId(id);
-  }
-  catch(...)
-  {
-    mtt::Abort("MeshObject::setMaterialId: unable to set material link");
-  }
-}
-
-void MeshObject::_connectMaterial(MaterialObject& material)
-{
-  emit materialRefChanged(&material);
-}
-
-void MeshObject::_disconnectMaterial(MaterialObject& material) noexcept
-{
-  emit materialRefChanged(nullptr);
-}

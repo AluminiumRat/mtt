@@ -35,6 +35,7 @@ namespace mtt
   protected:
     virtual void link(Object& referenced) = 0;
     virtual void unlink(Object& referenced) noexcept = 0;
+    virtual void onReferenceChanged(Object* referenced) noexcept = 0;
 
   private:
     friend class Object;
@@ -59,10 +60,13 @@ namespace mtt
     inline void set(Referenced* object);
   };
 
+  /// Warning!!! onChangedPtr must be noexcept. Current signature has been made
+  /// to suitable with Qt signals.
   template <typename Referenced,
             typename Observer,
             void(Observer::*linkPtr)(Referenced&),
-            void(Observer::*unlinkPtr)(Referenced&) noexcept>
+            void(Observer::*unlinkPtr)(Referenced&) noexcept,
+            void(Observer::*onChangedPtr)(Referenced*)>
   class ObjectLink : public ObjectRef<Referenced>
   {
   public:
@@ -82,7 +86,7 @@ namespace mtt
   protected:
     virtual void link(Object& referenced) override
     {
-      if(linkPtr != nullptr)
+      if (linkPtr != nullptr)
       {
         Observer& observerRef =
                               static_cast<Observer&>(ObjectRefBase::observer());
@@ -92,11 +96,21 @@ namespace mtt
 
     virtual void unlink(Object& referenced) noexcept override
     {
-      if(unlinkPtr != nullptr)
+      if (unlinkPtr != nullptr)
       {
         Observer& observerRef =
                               static_cast<Observer&>(ObjectRefBase::observer());
         (observerRef.*unlinkPtr)(static_cast<Referenced&>(referenced));
+      }
+    }
+
+    virtual void onReferenceChanged(Object* referenced) noexcept override
+    {
+      if (onChangedPtr != nullptr)
+      {
+        Observer& observerRef =
+                              static_cast<Observer&>(ObjectRefBase::observer());
+        (observerRef.*onChangedPtr)(static_cast<Referenced*>(referenced));
       }
     }
   };

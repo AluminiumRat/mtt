@@ -75,7 +75,7 @@ void ObjectLoader::visitAnimationTrack(AnimationTrack& object)
     object.addScaleKeypoint(std::move(keypoint));
   }
 
-  object.setSkeletonId(readUID());
+  object.skeletonRef().setReferencedId(readUID());
 }
 
 void ObjectLoader::visitBackgroundObject(BackgroundObject& object)

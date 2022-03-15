@@ -12,16 +12,16 @@ GeometryObjectWidget::GeometryObjectWidget( GeometryObject& object,
 {
   _ui->setupUi(this);
 
-  using ReferenceWidget = mtt::ReferencePropertyWidget< GeometryObject,
-                                                        mtt::SkeletonObject>;
+  using ReferenceWidget = mtt::ReferencePropertyWidget<
+                                                  GeometryObject,
+                                                  mtt::SkeletonObject,
+                                                  &GeometryObject::skeletonRef>;
 
   ReferenceWidget* referenceWidget = new ReferenceWidget(
-                                          object,
-                                          &GeometryObject::skeleton,
-                                          &GeometryObject::setSkeleton,
-                                          &GeometryObject::skeletonRefChanged,
-                                          undoStack,
-                                          skeletonGroup);
+                                            object,
+                                            &GeometryObject::skeletonRefChanged,
+                                            undoStack,
+                                            skeletonGroup);
   _ui->boneLayout->addWidget(referenceWidget, 3);
   adjustSize();
 }

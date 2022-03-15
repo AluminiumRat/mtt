@@ -18,13 +18,20 @@ void ObjectRefBase::setReferencedPtr(Object* referenced)
   if(oldReferenced != nullptr) unlink(*oldReferenced);
 
   _referencedPtr = referenced;
+
   try
   {
     if(_referencedPtr != nullptr) link(*_referencedPtr);
   }
   catch(...)
   {
-    _referencedPtr = nullptr;
+    if(_referencedPtr != nullptr)
+    {
+      _referencedPtr = nullptr;
+      onReferenceChanged(_referencedPtr);
+    }
     throw;
   }
+
+  onReferenceChanged(_referencedPtr);
 }

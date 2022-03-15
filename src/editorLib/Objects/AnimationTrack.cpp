@@ -26,7 +26,7 @@ void AnimationTrack::update(TimeType time)
   if(!enabled()) return;
   if(time < startTime() || time > finishTime()) return;
 
-  mtt::SkeletonObject* skeletonObject = skeleton();
+  mtt::SkeletonObject* skeletonObject = _skeletonLink.get();
   if(skeletonObject == nullptr) return;
 
   skeletonObject->setPosition(positionAnimation().value(time));
@@ -34,46 +34,10 @@ void AnimationTrack::update(TimeType time)
   skeletonObject->setScale(scaleAnimation().value(time));
 }
 
-void AnimationTrack::setSkeleton(mtt::SkeletonObject* skeleton)
-{
-  if(skeleton == nullptr) setSkeletonId(mtt::UID());
-  else setSkeletonId(skeleton->id());
-}
-
-void AnimationTrack::setSkeletonId(const mtt::UID& id)
-{
-  try
-  {
-    _skeletonLink.setReferencedId(id);
-  }
-  catch(...)
-  {
-    try
-    {
-      _skeletonLink.setReferencedId(mtt::UID());
-    }
-    catch(...)
-    {
-      mtt::Abort("AnimationTrack::setSkeletonId: unable to emplace skeleton link");
-    }
-    throw;
-  }
-}
-
-void AnimationTrack::_connectSkeleton(mtt::SkeletonObject& skeleton)
-{
-  emit skeletonRefChanged(&skeleton);
-}
-
-void AnimationTrack::_disconnectSkeleton(mtt::SkeletonObject& skeleton) noexcept
-{
-  emit skeletonRefChanged(nullptr);
-}
-
 std::unique_ptr<mtt::AbstractEditCommand>
                                     AnimationTrack::makeRestoreCommand() const
 {
-  mtt::SkeletonObject* skeletonObject = skeleton();
+  mtt::SkeletonObject* skeletonObject = _skeletonLink.get();
   if(skeletonObject == nullptr) return nullptr;
 
   using PositionSetter = void (mtt::SkeletonObject::*)(const glm::vec3&);

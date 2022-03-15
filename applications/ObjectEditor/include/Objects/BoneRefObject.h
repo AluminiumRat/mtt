@@ -34,12 +34,8 @@ public:
   BoneRefObject& operator = (const BoneRefObject&) = delete;
   virtual ~BoneRefObject() noexcept = default;
 
+  inline mtt::ObjectRef<mtt::SkeletonObject>& boneRef() noexcept;
   inline const mtt::ObjectRef<mtt::SkeletonObject>& boneRef() const noexcept;
-  inline mtt::SkeletonObject* bone() const noexcept;
-  /// You can use nullptr to remove link
-  void setBone(mtt::SkeletonObject* bone);
-  /// You can use invalid UID to remove link
-  void setBoneId(const mtt::UID& id);
 
   inline const glm::mat4& boneInverseMatrix() const noexcept;
   void setBoneInverseMatrix(const glm::mat4& newValue);
@@ -49,28 +45,25 @@ signals:
   void boneInverseMatrixChanged(const glm::mat4& newValue);
 
 private:
-  void _connectBone(mtt::SkeletonObject& bone);
-  void _disconnectBone(mtt::SkeletonObject& bone) noexcept;
-
-private:
   using BoneLink = mtt::ObjectLink< mtt::SkeletonObject,
                                     BoneRefObject,
-                                    &BoneRefObject::_connectBone,
-                                    &BoneRefObject::_disconnectBone>;
+                                    nullptr,
+                                    nullptr,
+                                    &BoneRefObject::boneRefChanged>;
   BoneLink _link;
 
   glm::mat4 _boneInverseMatrix;
 };
 
-inline const mtt::ObjectRef<mtt::SkeletonObject>&
-                                        BoneRefObject::boneRef() const noexcept
+inline mtt::ObjectRef<mtt::SkeletonObject>& BoneRefObject::boneRef() noexcept
 {
   return _link;
 }
 
-inline mtt::SkeletonObject* BoneRefObject::bone() const noexcept
+inline const mtt::ObjectRef<mtt::SkeletonObject>&
+                                        BoneRefObject::boneRef() const noexcept
 {
-  return _link.get();
+  return _link;
 }
 
 inline const glm::mat4& BoneRefObject::boneInverseMatrix() const noexcept

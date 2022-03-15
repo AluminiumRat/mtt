@@ -3,7 +3,7 @@
 void ObjectLoader::visitGeometryObject(GeometryObject& object)
 {
   OEVisitorT::visitGeometryObject(object);
-  object.setSkeletonId(readUID());
+  object.skeletonRef().setReferencedId(readUID());
 }
 
 void ObjectLoader::visitLODObject(LODObject& object)
@@ -87,7 +87,7 @@ std::unique_ptr<BoneRefBatch> ObjectLoader::readBoneRefs()
     stream() >> name;
 
     std::unique_ptr<BoneRefObject> refObject(new BoneRefObject(name, true));
-    refObject->setBoneId(readUID());
+    refObject->boneRef().setReferencedId(readUID());
     refObject->setBoneInverseMatrix(stream().readMat4());
     refs.push_back(std::move(refObject));
   }
@@ -106,5 +106,5 @@ void ObjectLoader::visitMeshObject(MeshObject& object)
   readGeometry(geometry);
   object.setGeometry(std::move(geometry));
   object.setBoneRefs(readBoneRefs());
-  object.setMaterialId(readUID());
+  object.materialRef().setReferencedId(readUID());
 }
