@@ -96,16 +96,6 @@ public:
               STORED true
               USER false)
 
-  Q_PROPERTY( uint32_t typeMask
-              READ typeMask
-              WRITE setTypeMask
-              RESET resetTypeMask
-              NOTIFY typeMaskChanged
-              DESIGNABLE true
-              SCRIPTABLE true
-              STORED true
-              USER false)
-
   Q_PROPERTY( mtt::Range<float> sizeRange
               READ sizeRange
               WRITE setSizeRange
@@ -259,9 +249,6 @@ public:
   void setSpeedRange(const mtt::Range<float>& newValue) noexcept;
   inline void resetSpeedRange() noexcept;
 
-  inline uint32_t typeMask() const noexcept;
-  void setTypeMask(uint32_t newValue) noexcept;
-  inline void resetTypeMask() noexcept;
   inline const mtt::Range<float>& sizeRange() const noexcept;
   void setSizeRange(const mtt::Range<float>& newValue) noexcept;
   inline void resetSizeRange() noexcept;
@@ -299,9 +286,6 @@ public:
   void setFrictionFactorRange(const mtt::Range<float>& newValue) noexcept;
   inline void resetFrictionFactorRange() noexcept;
 
-  inline mtt::ObjectRef<ParticleField>& fieldRef() noexcept;
-  inline const mtt::ObjectRef<ParticleField>& fieldRef() const noexcept;
-
   void simulationStep(TimeType currentTime, TimeType delta);
   void emitParticles(size_t particlesNumber) noexcept;
 
@@ -312,7 +296,6 @@ signals:
   void distributionChanged(Distribution newValue);
   void directionAngleChanged(float newValue);
   void speedRangeChanged(const mtt::Range<float>& newValue);
-  void typeMaskChanged(uint32_t newValue);
   void sizeRangeChanged(const mtt::Range<float>& newValue);
   void rotationRangeChanged(const mtt::Range<float>& newValue);
   void rotationSpeedRangeChanged(const mtt::Range<float>& newValue);
@@ -338,7 +321,6 @@ private:
 
   float _directionAngle;
   mtt::Range<float> _speedRange;
-  uint32_t _typeMask;
   mtt::Range<float> _sizeRange;
   mtt::Range<float> _rotationRange;
   mtt::Range<float> _rotationSpeedRange;
@@ -351,8 +333,6 @@ private:
   mtt::Range<TimeType> _lifetimeRange;
   mtt::Range<float> _massRange;
   mtt::Range<float> _frictionFactorRange;
-
-  mtt::ObjectLink<ParticleField, EmitterObject, nullptr, nullptr> _fieldRef;
 
   mutable std::default_random_engine _randomEngine;
   std::uniform_real_distribution<float> _symmetricalDistribution;
@@ -417,16 +397,6 @@ inline const mtt::Range<float>& EmitterObject::speedRange() const noexcept
 inline void EmitterObject::resetSpeedRange() noexcept
 {
   setSpeedRange(mtt::Range<float>());
-}
-
-inline uint32_t EmitterObject::typeMask() const noexcept
-{
-  return _typeMask;
-}
-
-inline void EmitterObject::resetTypeMask() noexcept
-{
-  setTypeMask(1);
 }
 
 inline const mtt::Range<float>& EmitterObject::sizeRange() const noexcept
@@ -552,15 +522,4 @@ inline const mtt::Range<float>&
 inline void EmitterObject::resetFrictionFactorRange() noexcept
 {
   setFrictionFactorRange(mtt::Range<float>(0.f, 0.f));
-}
-
-inline mtt::ObjectRef<ParticleField>& EmitterObject::fieldRef() noexcept
-{
-  return _fieldRef;
-}
-
-inline const mtt::ObjectRef<ParticleField>&
-                                        EmitterObject::fieldRef() const noexcept
-{
-  return _fieldRef;
 }

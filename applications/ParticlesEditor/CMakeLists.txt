@@ -68,6 +68,7 @@ set(HEADERS
     "include/SceneTab/ParticleFieldWidget.h"
     "include/SceneTab/PropertiesWidgetFactory.h"
     "include/SceneTab/SceneTab.h"
+    "include/SceneTab/TypeMaskWidget.h"
 
     "include/EditMenu.h"
     "include/EditorCommonData.h"
@@ -99,6 +100,7 @@ set(SOURCES
     "src/SceneTab/ParticleFieldWidget.cpp"
     "src/SceneTab/PropertiesWidgetFactory.cpp"
     "src/SceneTab/SceneTab.cpp"
+    "src/SceneTab/TypeMaskWidget.cpp"
 
     "src/EditMenu.cpp"
     "src/EditorCommonData.cpp"
@@ -112,6 +114,7 @@ set(SOURCES
 set(UI_FILES
     "src/SceneTab/EmitterWidget.ui"
     "src/SceneTab/ParticleFieldWidget.ui"
+    "src/SceneTab/TypeMaskWidget.ui"
     "src/MainWindow.ui"
     )
 

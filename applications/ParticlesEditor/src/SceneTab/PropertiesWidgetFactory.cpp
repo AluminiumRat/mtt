@@ -3,6 +3,7 @@
 #include <SceneTab/EmitterWidget.h>
 #include <SceneTab/ParticleFieldWidget.h>
 #include <SceneTab/PropertiesWidgetFactory.h>
+#include <SceneTab/TypeMaskWidget.h>
 #include <EditorCommonData.h>
 #include <EditorScene.h>
 
@@ -21,6 +22,7 @@ void PropertiesWidgetFactory::visitEmitterObject(EmitterObject& object)
 {
   PEVisitorT::visitEmitterObject(object);
   widgetsLayout().addWidget(new EmitterWidget(object, _commonData.undoStack()));
+  widgetsLayout().addWidget(new TypeMaskWidget(object, _commonData.undoStack()));
 }
 
 void PropertiesWidgetFactory::visitParticleField(ParticleField& object)

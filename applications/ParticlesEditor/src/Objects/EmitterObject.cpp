@@ -20,7 +20,6 @@ EmitterObject::EmitterObject( const QString& name,
   _shape(SPHERE_SHAPE),
   _distribution(UNIFORM_DISTRIBUTION),
   _directionAngle(2.f * glm::pi<float>()),
-  _typeMask(1),
   _sizeRange(1.f, 1.f),
   _rotationRange(-glm::pi<float>(), glm::pi<float>()),
   _rotationSpeedRange(.0f, .0f),
@@ -35,7 +34,6 @@ EmitterObject::EmitterObject( const QString& name,
                 std::chrono::duration_cast<TimeType>(std::chrono::seconds(1))),
   _massRange(0.f, 0.f),
   _frictionFactorRange(0.f, 0.f),
-  _fieldRef(*this),
   _randomEngine(
     unsigned int(std::chrono::system_clock::now().time_since_epoch().count())),
   _symmetricalDistribution(-1.f, 1.f),
@@ -83,13 +81,6 @@ void EmitterObject::setSpeedRange(const mtt::Range<float>& newValue) noexcept
   if(_speedRange == newValue) return;
   _speedRange = newValue;
   emit speedRangeChanged(newValue);
-}
-
-void EmitterObject::setTypeMask(uint32_t newValue) noexcept
-{
-  if(_typeMask == newValue) return;
-  _typeMask = newValue;
-  emit typeMaskChanged(newValue);
 }
 
 void EmitterObject::setSizeRange(const mtt::Range<float>& newValue) noexcept
@@ -251,7 +242,7 @@ void EmitterObject::emitParticles(size_t particlesNumber) noexcept
 {
   if(particlesNumber == 0) return;
 
-  ParticleField* field = _fieldRef.get();
+  ParticleField* field = fieldRef().get();
   if(field == nullptr) return;
 
   glm::mat4x4 toField = glm::inverse(field->localToWorldTransform()) *
@@ -264,7 +255,7 @@ void EmitterObject::emitParticles(size_t particlesNumber) noexcept
   for (size_t i = 0; i < particlesNumber; i++)
   {
     ParticleField::ParticleData newParticle;
-    newParticle.typeMask = _typeMask;
+    newParticle.typeMask = typeMask();
     newParticle.position = toField * _getParticlePosition();
     newParticle.speed = toField * _getParticleSpeed();
     newParticle.size = glm::mix(_sizeRange.min(),
