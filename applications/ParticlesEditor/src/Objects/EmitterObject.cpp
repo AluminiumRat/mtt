@@ -240,6 +240,7 @@ glm::vec4 EmitterObject::_getParticleSpeed() const noexcept
 
 void EmitterObject::emitParticles(size_t particlesNumber) noexcept
 {
+  if(!enabled()) return;
   if(particlesNumber == 0) return;
 
   ParticleField* field = fieldRef().get();

@@ -16,6 +16,16 @@ class ModificatorObject : public mtt::ScalableObject
                           visitConstModificatorObject,
                           mtt::MovableObject)
 
+  Q_PROPERTY( bool enabled
+              READ enabled
+              WRITE setEnabled
+              RESET resetEnabled
+              NOTIFY enabledChanged
+              DESIGNABLE true
+              SCRIPTABLE true
+              STORED true
+              USER false)
+
   Q_PROPERTY( uint32_t typeMask
               READ typeMask
               WRITE setTypeMask
@@ -34,6 +44,10 @@ public:
   ModificatorObject& operator = (const ModificatorObject&) = delete;
   virtual ~ModificatorObject() noexcept = default;
 
+  inline bool enabled() const noexcept;
+  void setEnabled(bool newValue) noexcept;
+  inline void resetEnabled() noexcept;
+
   inline uint32_t typeMask() const noexcept;
   void setTypeMask(uint32_t newValue) noexcept;
   inline void resetTypeMask() noexcept;
@@ -42,12 +56,24 @@ public:
   inline const mtt::ObjectRef<ParticleField>& fieldRef() const noexcept;
 
 signals:
+  void enabledChanged(bool newValue);
   void typeMaskChanged(uint32_t newValue);
 
 private:
+  bool _enabled;
   uint32_t _typeMask;
   mtt::ObjectLink<ParticleField, ModificatorObject, nullptr, nullptr> _fieldRef;
 };
+
+inline bool ModificatorObject::enabled() const noexcept
+{
+  return _enabled;
+}
+
+inline void ModificatorObject::resetEnabled() noexcept
+{
+  setEnabled(true);
+}
 
 inline uint32_t ModificatorObject::typeMask() const noexcept
 {
