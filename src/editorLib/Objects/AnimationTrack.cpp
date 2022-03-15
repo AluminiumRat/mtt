@@ -7,10 +7,10 @@ using namespace mtt;
 
 AnimationTrack::AnimationTrack( const QString& name,
                                 bool canBeRenamed,
-                                const mtt::UID& id) :
+                                const UID& id) :
   Object(name, canBeRenamed,id),
   _enabled(true),
-  _skeletonLink(*this)
+  _targetLink(*this)
 {
 }
 
@@ -26,52 +26,50 @@ void AnimationTrack::update(TimeType time)
   if(!enabled()) return;
   if(time < startTime() || time > finishTime()) return;
 
-  mtt::SkeletonObject* skeletonObject = _skeletonLink.get();
-  if(skeletonObject == nullptr) return;
+  ScalableObject* target = _targetLink.get();
+  if(target == nullptr) return;
 
-  skeletonObject->setPosition(positionAnimation().value(time));
-  skeletonObject->setRotation(rotationAnimation().value(time));
-  skeletonObject->setScale(scaleAnimation().value(time));
+  target->setPosition(positionAnimation().value(time));
+  target->setRotation(rotationAnimation().value(time));
+  target->setScale(scaleAnimation().value(time));
 }
 
-std::unique_ptr<mtt::AbstractEditCommand>
-                                    AnimationTrack::makeRestoreCommand() const
+std::unique_ptr<AbstractEditCommand> AnimationTrack::makeRestoreCommand() const
 {
-  mtt::SkeletonObject* skeletonObject = _skeletonLink.get();
-  if(skeletonObject == nullptr) return nullptr;
+  ScalableObject* target = _targetLink.get();
+  if(target == nullptr) return nullptr;
 
-  using PositionSetter = void (mtt::SkeletonObject::*)(const glm::vec3&);
-  using PositionCommand = mtt::SetPropertyCommand<mtt::SkeletonObject,
-                                                  glm::vec3,
-                                                  PositionSetter>;
+  using PositionSetter = void (ScalableObject::*)(const glm::vec3&);
+  using PositionCommand = SetPropertyCommand< ScalableObject,
+                                              glm::vec3,
+                                              PositionSetter>;
   std::unique_ptr<PositionCommand> positionCommand(
-                          new PositionCommand(*skeletonObject,
-                                              &mtt::SkeletonObject::setPosition,
-                                              skeletonObject->position(),
-                                              skeletonObject->position()));
+                              new PositionCommand(*target,
+                                                  &ScalableObject::setPosition,
+                                                  target->position(),
+                                                  target->position()));
 
-  using RotationSetter = void (mtt::SkeletonObject::*)(const glm::quat&);
-  using RotationCommand = mtt::SetPropertyCommand<mtt::SkeletonObject,
-                                                  glm::quat,
-                                                  RotationSetter>;
+  using RotationSetter = void (ScalableObject::*)(const glm::quat&);
+  using RotationCommand = SetPropertyCommand< ScalableObject,
+                                              glm::quat,
+                                              RotationSetter>;
   std::unique_ptr<RotationCommand> rotationCommand(
-                          new RotationCommand(*skeletonObject,
-                                              &mtt::SkeletonObject::setRotation,
-                                              skeletonObject->rotation(),
-                                              skeletonObject->rotation()));
+                              new RotationCommand(*target,
+                                                  &ScalableObject::setRotation,
+                                                  target->rotation(),
+                                                  target->rotation()));
 
-  using ScaleSetter = void (mtt::SkeletonObject::*)(const glm::vec3&);
-  using ScaleCommand = mtt::SetPropertyCommand< mtt::SkeletonObject,
-                                                glm::vec3,
-                                                ScaleSetter>;
+  using ScaleSetter = void (ScalableObject::*)(const glm::vec3&);
+  using ScaleCommand = SetPropertyCommand<ScalableObject,
+                                          glm::vec3,
+                                          ScaleSetter>;
   std::unique_ptr<ScaleCommand> scaleCommand(
-                              new ScaleCommand( *skeletonObject,
-                                                &mtt::SkeletonObject::setScale,
-                                                skeletonObject->scale(),
-                                                skeletonObject->scale()));
+                                    new ScaleCommand( *target,
+                                                      &ScalableObject::setScale,
+                                                      target->scale(),
+                                                      target->scale()));
 
-  std::unique_ptr<mtt::CompositeCommand> resultCommand(
-                                                  new mtt::CompositeCommand());
+  std::unique_ptr<CompositeCommand> resultCommand(new CompositeCommand());
   resultCommand->addSubcommand(std::move(positionCommand));
   resultCommand->addSubcommand(std::move(rotationCommand));
   resultCommand->addSubcommand(std::move(scaleCommand));

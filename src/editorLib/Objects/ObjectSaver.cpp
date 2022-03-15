@@ -102,7 +102,7 @@ void ObjectSaver::visitConstAnimationTrack(const mtt::AnimationTrack& object)
     writeKeypoint(object.scaleKeypoint(keypointIndex));
   }
   
-  *_stream << object.skeletonRef().referencedId();
+  *_stream << object.targetRef().referencedId();
 }
 
 void ObjectSaver::visitConstBackgroundObject(

@@ -17,7 +17,7 @@ namespace mtt
   public:
     AddAnimationFromFbxTask(const QString& filename,
                             AnimationGroup& targetGroup,
-                            Object* skeletonSearchGroup,
+                            Object* targetSearchGroup,
                             CommonEditData& commonData);
     AddAnimationFromFbxTask(const AddAnimationFromFbxTask&) = delete;
     AddAnimationFromFbxTask& operator = (
@@ -31,7 +31,7 @@ namespace mtt
   private:
     QString _filename;
     AnimationGroup& _targetGroup;
-    Object* _skeletonSearchGroup;
+    Object* _targetSearchGroup;
     CommonEditData& _commonData;
 
     std::unique_ptr<AnimationObject> _animation;

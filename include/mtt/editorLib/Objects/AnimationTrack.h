@@ -12,7 +12,7 @@
 #include <mtt/application/Scene/Object.h>
 #include <mtt/application/Application.h>
 #include <mtt/editorLib/Objects/CEVisitorExtension.h>
-#include <mtt/editorLib/Objects/SkeletonObject.h>
+#include <mtt/editorLib/Objects/ScalableObject.h>
 
 namespace mtt
 {
@@ -56,8 +56,8 @@ namespace mtt
 
     void update(TimeType time);
 
-    inline ObjectRef<SkeletonObject>& skeletonRef() noexcept;
-    inline const ObjectRef<SkeletonObject>& skeletonRef() const noexcept;
+    inline ObjectRef<ScalableObject>& targetRef() noexcept;
+    inline const ObjectRef<ScalableObject>& targetRef() const noexcept;
 
     /// Makes a command to restore animated object after the animation has
     /// played. The command has no undo functional.
@@ -69,7 +69,7 @@ namespace mtt
     void finishTimeChanged(TimeType newFinishTime);
     void durationChanged(TimeType newDuration);
     void timingChanged();
-    void skeletonRefChanged(SkeletonObject* skeleton);
+    void targetRefChanged(ScalableObject* target);
 
   protected:
     virtual void onStartTimeChanged() noexcept override;
@@ -80,12 +80,12 @@ namespace mtt
   private:
     bool _enabled;
 
-    using SkeletonLink = ObjectLink<SkeletonObject,
-                                    AnimationTrack,
-                                    nullptr,
-                                    nullptr,
-                                    &AnimationTrack::skeletonRefChanged>;
-    SkeletonLink _skeletonLink;
+    using TargetLink = ObjectLink<ScalableObject,
+                                  AnimationTrack,
+                                  nullptr,
+                                  nullptr,
+                                  &AnimationTrack::targetRefChanged>;
+    TargetLink _targetLink;
   };
 
   inline bool AnimationTrack::enabled() const noexcept
@@ -98,14 +98,14 @@ namespace mtt
     setEnabled(true);
   }
 
-  inline ObjectRef<SkeletonObject>& AnimationTrack::skeletonRef() noexcept
+  inline ObjectRef<ScalableObject>& AnimationTrack::targetRef() noexcept
   {
-    return _skeletonLink;
+    return _targetLink;
   }
 
-  inline const ObjectRef<SkeletonObject>&
-                                    AnimationTrack::skeletonRef() const noexcept
+  inline const ObjectRef<ScalableObject>&
+                                      AnimationTrack::targetRef() const noexcept
   {
-    return _skeletonLink;
+    return _targetLink;
   }
 }

@@ -19,13 +19,13 @@ AnimationTrackWidget::AnimationTrackWidget( AnimationTrack& object,
                               undoStack);
 
   using ReferenceWidget = ReferencePropertyWidget<AnimationTrack,
-                                                  SkeletonObject,
-                                                  &AnimationTrack::skeletonRef>;
+                                                  ScalableObject,
+                                                  &AnimationTrack::targetRef>;
   ReferenceWidget* referenceWidget =
-                        new ReferenceWidget(object,
-                                            &AnimationTrack::skeletonRefChanged,
-                                            undoStack,
-                                            skeletonSelectArea);
+                          new ReferenceWidget(object,
+                                              &AnimationTrack::targetRefChanged,
+                                              undoStack,
+                                              skeletonSelectArea);
   _ui->boneLayout->addWidget(referenceWidget, 3);
   adjustSize();
 }

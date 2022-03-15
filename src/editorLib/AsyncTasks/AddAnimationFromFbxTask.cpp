@@ -9,14 +9,14 @@ using namespace mtt;
 
 AddAnimationFromFbxTask::AddAnimationFromFbxTask( const QString& filename,
                                                   AnimationGroup& targetGroup,
-                                                  Object* skeletonSearchGroup,
+                                                  Object* targetSearchGroup,
                                                   CommonEditData& commonData) :
   AbstractAsyncTask(QObject::tr("Load from fbx"),
                     AbstractAsyncTask::INDEPENDENT,
                     AbstractAsyncTask::EXPLICIT),
   _filename(filename),
   _targetGroup(targetGroup),
-  _skeletonSearchGroup(skeletonSearchGroup),
+  _targetSearchGroup(targetSearchGroup),
   _commonData(commonData)
 {
 }
@@ -30,19 +30,22 @@ void AddAnimationFromFbxTask::asyncPart()
   _animation = importer.import(_filename.toUtf8().data());
 }
 
-static SkeletonObject* findSkeleton( const QString& name,
-                                          Object& searchArea)
+static ScalableObject* findTarget(const QString& name, Object& searchArea)
 {
-  SkeletonObject* skeleton = qobject_cast<SkeletonObject*>(&searchArea);
-  if(skeleton != nullptr && skeleton->name() == name) return skeleton;
+  ScalableObject* scalableObject = qobject_cast<ScalableObject*>(&searchArea);
+  if(scalableObject != nullptr && scalableObject->name() == name)
+  {
+    return scalableObject;
+  }
+
   for(size_t childIndex = 0;
       childIndex < searchArea.subobjectNumber();
       childIndex++)
   {
-    SkeletonObject* childSkeleton = findSkeleton(
+    ScalableObject* childTarget = findTarget(
                                               name,
                                               searchArea.subobject(childIndex));
-    if(childSkeleton != nullptr) return childSkeleton;
+    if(childTarget != nullptr) return childTarget;
   }
   return nullptr;
 }
@@ -57,16 +60,15 @@ void AddAnimationFromFbxTask::finalizePart()
     throw std::runtime_error("Animation not found in fbx file");
   }
 
-  if(_skeletonSearchGroup != nullptr)
+  if(_targetSearchGroup != nullptr)
   {
     for(size_t trackIndex = 0;
         trackIndex < _animation->childsNumber();
         trackIndex++)
     {
       AnimationTrack& track = _animation->child(trackIndex);
-      SkeletonObject* skeleton = findSkeleton(track.name(),
-                                              *_skeletonSearchGroup);
-      if(skeleton != nullptr) track.skeletonRef().set(skeleton);
+      ScalableObject* target = findTarget(track.name(), *_targetSearchGroup);
+      if(target != nullptr) track.targetRef().set(target);
     }
   }
 
