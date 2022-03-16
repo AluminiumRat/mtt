@@ -1,3 +1,5 @@
+#include <limits>
+
 #include <mtt/Application/Application.h>
 #include <mtt/clPipeline/constants.h>
 #include <mtt/render/DrawPlan/DrawMeshAction.h>
@@ -138,7 +140,7 @@ mtt::Ref<mtt::PlainBuffer> ParticlesDrawable::DrawTechnique::_makeIndices(
 
   std::vector<uint16_t> indicesData;
   indicesData.reserve(_parent._positionsData.size());
-  for(uint16_t i = 0; i < _parent._positionsData.size(); i++)
+  for(uint16_t i = 0; i < _parent._particlesNumber; i++)
   {
     indicesData.push_back(i);
   }
@@ -188,6 +190,9 @@ void ParticlesDrawable::setData(std::vector<glm::vec3> positionData,
 
   size_t particlesNumber = positionData.size();
   if(particlesNumber == 0) return;
+
+  particlesNumber = std::min( particlesNumber,
+                              size_t(std::numeric_limits<uint16_t>::max()));
 
   _positionBuffer.setData(positionData.data(),
                           particlesNumber * sizeof(glm::vec3));
