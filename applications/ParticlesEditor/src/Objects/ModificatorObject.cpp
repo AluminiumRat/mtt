@@ -24,7 +24,8 @@ void ModificatorObject::setTypeMask(uint32_t newValue) noexcept
   emit typeMaskChanged(newValue);
 }
 
-void ModificatorObject::simulationStep(TimeType currentTime, TimeType delta)
+void ModificatorObject::simulationStep( mtt::TimeT currentTime,
+                                        mtt::TimeT delta)
 {
 }
 

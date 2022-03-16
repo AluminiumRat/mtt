@@ -67,8 +67,7 @@ namespace mtt
     std::unique_ptr<DrawModelAnimation> removeAnimation(
                                         DrawModelAnimation& animation) noexcept;
 
-    void updateFromAnimation( const DrawModelAnimation& animation,
-                              Application::TimeType time);
+    void updateFromAnimation( const DrawModelAnimation& animation, TimeT time);
 
     /// This is the protection of slave models. If you try to change the locked
     /// master model, the mtt::Abort will be called.

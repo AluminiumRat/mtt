@@ -43,12 +43,12 @@ void DrawModelAnimation::updateTiming() noexcept
 {
   if (_tracks.empty())
   {
-    _timeRange = Range<TimeType>();
+    _timeRange = Range<TimeT>();
     return;
   }
 
-  TimeType newStartTime = _tracks[0]->startTime();
-  TimeType newFinishTime = _tracks[0]->finishTime();
+  TimeT newStartTime = _tracks[0]->startTime();
+  TimeT newFinishTime = _tracks[0]->finishTime();
 
   for ( size_t trackIndex = 1;
         trackIndex < _tracks.size();
@@ -57,5 +57,5 @@ void DrawModelAnimation::updateTiming() noexcept
     newStartTime = std::min(newStartTime, _tracks[trackIndex]->startTime());
     newFinishTime = std::min(newFinishTime, _tracks[trackIndex]->startTime());
   }
-  _timeRange = Range<TimeType>(newStartTime, newFinishTime);
+  _timeRange = Range<TimeT>(newStartTime, newFinishTime);
 }

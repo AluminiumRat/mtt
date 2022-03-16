@@ -29,8 +29,7 @@ namespace mtt
     inline const DrawModelAnimation* findAnimation(
                                             const QString& name) const noexcept;
 
-    void updateFromAnimation( const DrawModelAnimation& animation,
-                              Application::TimeType time);
+    void updateFromAnimation( const DrawModelAnimation& animation, TimeT time);
 
   private:
     struct JointRecord

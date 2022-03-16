@@ -10,19 +10,18 @@ ParticleAnimation::ParticleAnimation( const QString& name,
 }
 
 void ParticleAnimation::setTimeRange(
-                                  const mtt::Range<TimeType>& newValue) noexcept
+                                const mtt::Range<mtt::TimeT>& newValue) noexcept
 {
   _storedTimeRange = newValue;
   updateTiming();
 }
 
-mtt::Range<ParticleAnimation::TimeType>
-                              ParticleAnimation::calculateTiming() const noexcept
+mtt::Range<mtt::TimeT> ParticleAnimation::calculateTiming() const noexcept
 {
   return _storedTimeRange;
 }
 
-void ParticleAnimation::update(TimeType time)
+void ParticleAnimation::update(mtt::TimeT time)
 {
   if(time < startTime() || time > finishTime()) return;
 

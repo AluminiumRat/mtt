@@ -3,6 +3,7 @@
 
 #include <QtCore/QFileInfo>
 
+#include <mtt/application/TimeT.h>
 #include <mtt/editorLib/FbxAnimationImporter.h>
 #include <mtt/utilities/Abort.h>
 
@@ -59,13 +60,11 @@ void FbxAnimationImporter::_fillTrack(mtt::AnimationTrack& track,
                                       FbxNode& source,
                                       const std::set<FbxTime>& times)
 {
-  using TimeType = mtt::AnimationTrack::TimeType;
-
   for(const FbxTime& fbxTime : times)
   {
     using MediumTime = std::chrono::duration<FbxLongLong, std::ratio<1, 1000>>;
     MediumTime medium = MediumTime(fbxTime.GetMilliSeconds());
-    TimeType time = std::chrono::duration_cast<TimeType>(medium);
+    TimeT time = std::chrono::duration_cast<TimeT>(medium);
 
     FbxDouble3 fbxPosition = source.LclTranslation.EvaluateValue(fbxTime);
     glm::vec3 position(fbxPosition[0], fbxPosition[1], fbxPosition[2]);

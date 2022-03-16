@@ -3,7 +3,7 @@
 #include <mtt/editorLib/Objects/ScalableObject.h>
 
 #include <mtt/application/Scene/ObjectLink.h>
-#include <mtt/application/Application.h>
+#include <mtt/application/TimeT.h>
 
 #include <Objects/ParticleField.h>
 #include <Objects/PEVisitorExtension.h>
@@ -38,9 +38,6 @@ class ModificatorObject : public mtt::ScalableObject
               USER false)
 
 public:
-  using TimeType = mtt::Application::TimeType;
-
-public:
   ModificatorObject(const QString& name,
                     bool canBeRenamed,
                     const mtt::UID& id = mtt::UID());
@@ -59,7 +56,7 @@ public:
   inline mtt::ObjectRef<ParticleField>& fieldRef() noexcept;
   inline const mtt::ObjectRef<ParticleField>& fieldRef() const noexcept;
 
-  virtual void simulationStep(TimeType currentTime, TimeType delta);
+  virtual void simulationStep(mtt::TimeT currentTime, mtt::TimeT delta);
 
 signals:
   void enabledChanged(bool newValue);

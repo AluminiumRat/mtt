@@ -18,9 +18,6 @@ namespace mtt
     Q_OBJECT
 
   public:
-    using TimeType = std::chrono::duration<int32_t, std::ratio<1, 1000>>;
-
-  public:
     Application(int& argc,
                 char** argv,
                 const char* applicationName,

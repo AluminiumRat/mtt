@@ -30,8 +30,8 @@ EmitterObject::EmitterObject( const QString& name,
   _brightnessRange(1.f, 1.f),
   _textureIndex(0),
   _lifetimeRange(
-                std::chrono::duration_cast<TimeType>(std::chrono::seconds(1)),
-                std::chrono::duration_cast<TimeType>(std::chrono::seconds(1))),
+              std::chrono::duration_cast<mtt::TimeT>(std::chrono::seconds(1)),
+              std::chrono::duration_cast<mtt::TimeT>(std::chrono::seconds(1))),
   _massRange(0.f, 0.f),
   _frictionFactorRange(0.f, 0.f),
   _randomEngine(
@@ -149,7 +149,7 @@ void EmitterObject::setTextureIndex(uint8_t newValue) noexcept
 }
 
 void EmitterObject::setLifetimeRange(
-                                  const mtt::Range<TimeType>& newValue) noexcept
+                            const mtt::Range<mtt::TimeT>& newValue) noexcept
 {
   if(_lifetimeRange == newValue) return;
   _lifetimeRange = newValue;
@@ -171,7 +171,7 @@ void EmitterObject::setFrictionFactorRange(
   emit frictionFactorRangeChanged(newValue);
 }
 
-void EmitterObject::simulationStep(TimeType currentTime, TimeType delta)
+void EmitterObject::simulationStep(mtt::TimeT currentTime, mtt::TimeT delta)
 {
   if(_intensity <= 0.f) return;
 
@@ -249,7 +249,7 @@ void EmitterObject::emitParticles(size_t particlesNumber) noexcept
   glm::mat4x4 toField = glm::inverse(field->localToWorldTransform()) *
                                                         localToWorldTransform();
 
-  std::uniform_int_distribution<TimeType::rep>
+  std::uniform_int_distribution<mtt::TimeT::rep>
                   timeDistribution( glm::max(_lifetimeRange.min().count(), 0),
                                     glm::max(_lifetimeRange.max().count(), 0));
 
@@ -288,8 +288,8 @@ void EmitterObject::emitParticles(size_t particlesNumber) noexcept
       newParticle.brightness = glm::max(newParticle.brightness, 0.f);
     }
     newParticle.textureIndex = _textureIndex;
-    newParticle.currentTime = ParticleField::TimeType(0);
-    newParticle.maxTime = TimeType(timeDistribution(_randomEngine));
+    newParticle.currentTime = mtt::TimeT(0);
+    newParticle.maxTime = mtt::TimeT(timeDistribution(_randomEngine));
     newParticle.mass = glm::mix(_massRange.min(),
                                 _massRange.max(),
                                 _displacedDistribution(_randomEngine));

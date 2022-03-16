@@ -1,5 +1,6 @@
 #include <stdexcept>
 
+#include <mtt/application/TimeT.h>
 #include <mtt/editorLib/AnimationPlayer.h>
 
 using namespace mtt;
@@ -82,7 +83,7 @@ void AnimationPlayer::_playNextFrame() noexcept
     std::chrono::system_clock::time_point now =
                                               std::chrono::system_clock::now();
     std::chrono::system_clock::duration duration = now - _startTime;
-    TimeType animationTime = std::chrono::duration_cast<TimeType>(duration);
+    TimeT animationTime = std::chrono::duration_cast<TimeT>(duration);
 
     if(animationTime > _currentAnimation->finishTime()) stop();
     else _currentAnimation->update(animationTime);

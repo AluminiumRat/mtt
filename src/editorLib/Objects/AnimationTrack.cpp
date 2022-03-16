@@ -21,7 +21,7 @@ void AnimationTrack::setEnabled(bool newValue)
   emit enabledChanged(_enabled);
 }
 
-void AnimationTrack::update(TimeType time)
+void AnimationTrack::update(TimeT time)
 {
   if(!enabled()) return;
   if(time < startTime() || time > finishTime()) return;

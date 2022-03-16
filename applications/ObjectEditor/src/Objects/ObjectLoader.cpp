@@ -94,7 +94,7 @@ std::unique_ptr<BoneRefBatch> ObjectLoader::readBoneRefs()
 
   return std::make_unique<BoneRefBatch>(
                                       std::move(refs),
-                                      QCoreApplication::tr("Bone references"),
+                                      QObject::tr("Bone references"),
                                       false);
 }
 

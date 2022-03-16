@@ -11,7 +11,7 @@ AnimationObject::AnimationObject( const QString& name,
 {
 }
 
-void AnimationObject::update(TimeType time)
+void AnimationObject::update(TimeT time)
 {
   if(time < startTime() || time > finishTime()) return;
   for(size_t trackIndex = 0; trackIndex < childsNumber(); trackIndex++)
@@ -47,13 +47,12 @@ void AnimationObject::onSubobjectRemoved(Object& object) noexcept
   updateTiming();
 }
 
-Range<AnimationObject::TimeType>
-                              AnimationObject::calculateTiming() const noexcept
+Range<TimeT> AnimationObject::calculateTiming() const noexcept
 {
-  if (childsNumber() == 0) return Range<TimeType>();
+  if (childsNumber() == 0) return Range<TimeT>();
 
-  TimeType newStartTime = child(0).startTime();
-  TimeType newFinishTime = child(0).finishTime();
+  TimeT newStartTime = child(0).startTime();
+  TimeT newFinishTime = child(0).finishTime();
 
   for(size_t childIndex = 1; childIndex < childsNumber(); childIndex++)
   {
@@ -62,12 +61,12 @@ Range<AnimationObject::TimeType>
     newFinishTime = std::max(newFinishTime, track.finishTime());
   }
 
-  return Range<TimeType>(newStartTime, newFinishTime);
+  return Range<TimeT>(newStartTime, newFinishTime);
 }
 
 void AnimationObject::updateTiming() noexcept
 {
-  Range<TimeType> newRange = calculateTiming();
+  Range<TimeT> newRange = calculateTiming();
   if (newRange == _timeRange) return;
   _timeRange = newRange;
   emit timeRangeChanged(_timeRange);

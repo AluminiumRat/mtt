@@ -75,7 +75,7 @@ void SlaveDrawModel::_connectNodes(const NodeMap& nodeMap)
 }
 
 void SlaveDrawModel::updateFromAnimation( const DrawModelAnimation& animation,
-                                          Application::TimeType time)
+                                          TimeT time)
 {
   animation.updateTransform(_transformTable, time);
 

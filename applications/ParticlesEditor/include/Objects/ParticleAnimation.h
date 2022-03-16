@@ -25,16 +25,16 @@ public:
   inline mtt::ObjectRef<ParticleField>& fieldRef() noexcept;
   inline const mtt::ObjectRef<ParticleField>& fieldRef() const noexcept;
 
-  void setTimeRange(const mtt::Range<TimeType>& newValue) noexcept;
+  void setTimeRange(const mtt::Range<mtt::TimeT>& newValue) noexcept;
   inline void resetTimeRange() noexcept;
 
-  virtual void update(TimeType time) override;
+  virtual void update(mtt::TimeT time) override;
 
 signals:
   void fieldChanged(ParticleField* newField);
 
 protected:
-  virtual mtt::Range<TimeType> calculateTiming() const noexcept override;
+  virtual mtt::Range<mtt::TimeT> calculateTiming() const noexcept override;
 
 private:
   mtt::ObjectLink<ParticleField,
@@ -43,8 +43,8 @@ private:
                   nullptr,
                   &ParticleAnimation::fieldChanged> _fieldRef;
 
-  mtt::Range<TimeType> _storedTimeRange;
-  TimeType _lastTime;
+  mtt::Range<mtt::TimeT> _storedTimeRange;
+  mtt::TimeT _lastTime;
 };
 
 inline mtt::ObjectRef<ParticleField>& ParticleAnimation::fieldRef() noexcept
@@ -60,5 +60,5 @@ inline const mtt::ObjectRef<ParticleField>&
 
 inline void ParticleAnimation::resetTimeRange() noexcept
 {
-  setTimeRange(mtt::Range<TimeType>());
+  setTimeRange(mtt::Range<mtt::TimeT>());
 }

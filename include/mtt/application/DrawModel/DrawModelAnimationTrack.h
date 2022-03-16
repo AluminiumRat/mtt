@@ -2,14 +2,13 @@
 
 #include <mtt/animation/KeypointsAnimatedTransform.h>
 #include <mtt/application/DrawModel/TransformTable.h>
-#include <mtt/application/Application.h>
+#include <mtt/application/TimeT.h>
 
 namespace mtt
 {
   class DrawModelAnimation;
 
-  class DrawModelAnimationTrack :
-                      public KeypointsAnimatedTransform<Application::TimeType>
+  class DrawModelAnimationTrack : public KeypointsAnimatedTransform<TimeT>
   {
   public:
 
@@ -23,8 +22,7 @@ namespace mtt
     inline TransformTable::Index boneIndex() const noexcept;
     inline void setBoneIndex(TransformTable::Index newValue) noexcept;
 
-    inline void updateTransform(TransformTable& target,
-                                Application::TimeType time) const;
+    inline void updateTransform(TransformTable& target, TimeT time) const;
 
   protected:
     virtual void onTimeRangeChanged() noexcept override;
@@ -50,9 +48,8 @@ namespace mtt
     _boneIndex = newValue;
   }
 
-  inline void DrawModelAnimationTrack::updateTransform(
-                                              TransformTable& target,
-                                              Application::TimeType time) const
+  inline void DrawModelAnimationTrack::updateTransform( TransformTable& target,
+                                                        TimeT time) const
   {
     if(time < startTime() || time > finishTime()) return;
     if(_boneIndex == TransformTable::notIndex) return;

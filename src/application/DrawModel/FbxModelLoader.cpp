@@ -132,8 +132,7 @@ void FbxModelLoader::loadAnimationTrack(FbxNode& node,
     using MediumTime = std::chrono::duration<FbxLongLong, std::ratio<1, 1000>>;
     MediumTime medium = MediumTime(fbxTime.GetMilliSeconds());
 
-    using TimeType = Application::TimeType;
-    TimeType time = std::chrono::duration_cast<TimeType>(medium);
+    TimeT time = std::chrono::duration_cast<TimeT>(medium);
 
     FbxDouble3 fbxPosition = node.LclTranslation.EvaluateValue(fbxTime);
     glm::vec3 position(fbxPosition[0], fbxPosition[1], fbxPosition[2]);

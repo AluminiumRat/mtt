@@ -174,8 +174,7 @@ void EmitterWidget::emitParticles() noexcept
 
 void EmitterWidget::step() noexcept
 {
-  _emitter.simulationStep(
-                      ParticleField::TimeType(0),
-                      std::chrono::duration_cast<ParticleField::TimeType>(
+  _emitter.simulationStep(mtt::TimeT(0),
+                          std::chrono::duration_cast<mtt::TimeT>(
                                               std::chrono::milliseconds(100)));
 }

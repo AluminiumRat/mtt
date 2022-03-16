@@ -10,14 +10,14 @@
 #include <mtt/application/EditCommands/AbstractEditCommand.h>
 #include <mtt/application/Scene/ObjectLink.h>
 #include <mtt/application/Scene/Object.h>
-#include <mtt/application/Application.h>
+#include <mtt/application/TimeT.h>
 #include <mtt/editorLib/Objects/CEVisitorExtension.h>
 #include <mtt/editorLib/Objects/ScalableObject.h>
 
 namespace mtt
 {
   class AnimationTrack :  public Object,
-                          public KeypointsAnimatedTransform<Application::TimeType>
+                          public KeypointsAnimatedTransform<TimeT>
   {
     Q_OBJECT
 
@@ -37,10 +37,9 @@ namespace mtt
                 USER false)
 
   public:
-    using TimeType = Application::TimeType;
-    using PositionKeypoint = ValueKeypoint<glm::vec3, TimeType>;
-    using RotationKeypoint = ValueKeypoint<glm::quat, TimeType>;
-    using ScaleKeypoint = ValueKeypoint<glm::vec3, TimeType>;
+    using PositionKeypoint = ValueKeypoint<glm::vec3, TimeT>;
+    using RotationKeypoint = ValueKeypoint<glm::quat, TimeT>;
+    using ScaleKeypoint = ValueKeypoint<glm::vec3, TimeT>;
 
   public:
     AnimationTrack( const QString& name,
@@ -54,7 +53,7 @@ namespace mtt
     void setEnabled(bool newValue);
     inline void resetEnabled();
 
-    void update(TimeType time);
+    void update(TimeT time);
 
     inline ObjectRef<ScalableObject>& targetRef() noexcept;
     inline const ObjectRef<ScalableObject>& targetRef() const noexcept;
@@ -65,7 +64,7 @@ namespace mtt
 
   signals:
     void enabledChanged(bool newValue);
-    void timeRangeChanged(const Range<TimeType>& newRange);
+    void timeRangeChanged(const Range<TimeT>& newRange);
     void targetRefChanged(ScalableObject* target);
 
   protected:

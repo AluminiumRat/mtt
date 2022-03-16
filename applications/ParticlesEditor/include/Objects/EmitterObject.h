@@ -6,7 +6,7 @@
 #include <glm/vec3.hpp>
 
 #include <mtt/application/Scene/ObjectLink.h>
-#include <mtt/application/Application.h>
+#include <mtt/application/TimeT.h>
 #include <mtt/utilities/Range.h>
 
 #include <Objects/ModificatorObject.h>
@@ -184,7 +184,7 @@ public:
               STORED true
               USER false)
 
-  Q_PROPERTY( mtt::Range<TimeType> lifetimeRange
+  Q_PROPERTY( mtt::Range<mtt::TimeT> lifetimeRange
               READ lifetimeRange
               WRITE setLifetimeRange
               RESET resetLifetimeRange
@@ -274,8 +274,8 @@ public:
   inline uint8_t textureIndex() const noexcept;
   void setTextureIndex(uint8_t newValue) noexcept;
   inline void resetTextureIndex() noexcept;
-  inline const mtt::Range<TimeType>& lifetimeRange() const noexcept;
-  void setLifetimeRange(const mtt::Range<TimeType>& newValue) noexcept;
+  inline const mtt::Range<mtt::TimeT>& lifetimeRange() const noexcept;
+  void setLifetimeRange(const mtt::Range<mtt::TimeT>& newValue) noexcept;
   inline void resetLifetimeRange() noexcept;
   inline const mtt::Range<float>& massRange() const noexcept;
   void setMassRange(const mtt::Range<float>& newValue) noexcept;
@@ -284,7 +284,8 @@ public:
   void setFrictionFactorRange(const mtt::Range<float>& newValue) noexcept;
   inline void resetFrictionFactorRange() noexcept;
 
-  virtual void simulationStep(TimeType currentTime, TimeType delta) override;
+  virtual void simulationStep(mtt::TimeT currentTime,
+                              mtt::TimeT delta) override;
   void emitParticles(size_t particlesNumber) noexcept;
 
 signals:
@@ -303,7 +304,7 @@ signals:
   void ignoreBrightnessChanged(bool newValue);
   void brightnessRangeChanged(const mtt::Range<float>& newValue);
   void textureIndexChanged(uint8_t newValue);
-  void lifetimeRangeChanged(const mtt::Range<TimeType>& newValue);
+  void lifetimeRangeChanged(const mtt::Range<mtt::TimeT>& newValue);
   void massRangeChanged(const mtt::Range<float>& newValue);
   void frictionFactorRangeChanged(const mtt::Range<float>& newValue);
 
@@ -328,7 +329,7 @@ private:
   bool _ignoreBrightness;
   mtt::Range<float> _brightnessRange;
   uint8_t _textureIndex;
-  mtt::Range<TimeType> _lifetimeRange;
+  mtt::Range<mtt::TimeT> _lifetimeRange;
   mtt::Range<float> _massRange;
   mtt::Range<float> _frictionFactorRange;
 
@@ -488,7 +489,7 @@ inline void EmitterObject::resetTextureIndex() noexcept
   setTextureIndex(0);
 }
 
-inline const mtt::Range<EmitterObject::TimeType>&
+inline const mtt::Range<mtt::TimeT>&
                                   EmitterObject::lifetimeRange() const noexcept
 {
   return _lifetimeRange;
@@ -496,9 +497,9 @@ inline const mtt::Range<EmitterObject::TimeType>&
 
 inline void EmitterObject::resetLifetimeRange() noexcept
 {
-  setLifetimeRange(mtt::Range<TimeType>(
-                std::chrono::duration_cast<TimeType>(std::chrono::seconds(1)),
-                std::chrono::duration_cast<TimeType>(std::chrono::seconds(1))));
+  setLifetimeRange(mtt::Range<mtt::TimeT>(
+              std::chrono::duration_cast<mtt::TimeT>(std::chrono::seconds(1)),
+              std::chrono::duration_cast<mtt::TimeT>(std::chrono::seconds(1))));
 }
 
 inline const mtt::Range<float>& EmitterObject::massRange() const noexcept

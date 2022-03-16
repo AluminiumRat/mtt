@@ -137,6 +137,7 @@ set(HEADERS
     "../../include/mtt/application/ApplicationStatistic.h"
     "../../include/mtt/application/CommonEditData.h"
     "../../include/mtt/application/DataStream.h"
+    "../../include/mtt/application/TimeT.h"
     )
 
 set(UI_FILES

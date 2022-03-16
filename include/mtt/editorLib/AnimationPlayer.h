@@ -13,9 +13,6 @@ namespace mtt
     Q_OBJECT
 
   public:
-    using TimeType = AnimationObject::TimeType;
-
-  public:
     AnimationPlayer();
     AnimationPlayer(const AnimationPlayer&) = delete;
     AnimationPlayer& operator = (const AnimationPlayer&) = delete;

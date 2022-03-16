@@ -6,6 +6,7 @@
 #include <QtCore/QString>
 
 #include <mtt/application/DataStream.h>
+#include <mtt/application/TimeT.h>
 #include <mtt/editorLib/Objects/AnimationTrack.h>
 #include <mtt/editorLib/Objects/CEVisitor.h>
 #include <mtt/editorLib/Objects/ObjectFactory.h>
@@ -51,8 +52,7 @@ namespace mtt
   protected:
     QString readFilename();
     template<typename ValueType>
-    inline void readKeypoint( ValueKeypoint<ValueType,
-                              AnimationTrack::TimeType>& keypoint);
+    inline void readKeypoint(ValueKeypoint<ValueType, TimeT>& keypoint);
     void readCubemapData(CubemapObject& object);
     UID readUID();
 
@@ -131,11 +131,11 @@ namespace mtt
   }
 
   template<typename ValueType>
-  inline void ObjectLoader::readKeypoint( ValueKeypoint<ValueType,
-                                          AnimationTrack::TimeType>& keypoint)
+  inline void ObjectLoader::readKeypoint(
+                                      ValueKeypoint<ValueType, TimeT>& keypoint)
   {
     uint32_t timeCount = _stream->readUint32();
-    AnimationTrack::TimeType time(timeCount);
+    TimeT time(timeCount);
     keypoint.setTime(time);
 
     ValueType value;

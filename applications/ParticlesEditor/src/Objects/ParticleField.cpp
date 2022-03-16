@@ -71,7 +71,7 @@ void ParticleField::unregisterModificator(
   _modificators.erase(iModificator);
 }
 
-void ParticleField::simulationStep(TimeType currentTime, TimeType delta)
+void ParticleField::simulationStep(mtt::TimeT currentTime, mtt::TimeT delta)
 {
   emit simulationStepStarted();
 
@@ -137,7 +137,7 @@ void ParticleField::_addParticles()
   if(!newIndices.empty()) emit particlesAdded(newIndices);
 }
 
-void ParticleField::_updateParticlesData(TimeType delta)
+void ParticleField::_updateParticlesData(mtt::TimeT delta)
 {
   using FloatTime = std::chrono::duration<float>;
   float floatDelta = std::chrono::duration_cast<FloatTime>(delta).count();

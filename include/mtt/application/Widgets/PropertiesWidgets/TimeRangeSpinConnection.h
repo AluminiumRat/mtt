@@ -7,7 +7,7 @@
 
 #include <mtt/application/EditCommands/SetPropertyCommand.h>
 #include <mtt/application/EditCommands/UndoStack.h>
-#include <mtt/application/Application.h>
+#include <mtt/application/TimeT.h>
 #include <mtt/utilities/Log.h>
 #include <mtt/utilities/Range.h>
 #include <mtt/utilities/ScopedSetter.h>
@@ -18,9 +18,8 @@ namespace mtt
   class TimeRangeSpinConnection : public QObject
   {
   public:
-    using TimeType = Application::TimeType;
-    using Getter = const Range<TimeType>& (ObjectClass::*)() const noexcept;
-    using Setter = void (ObjectClass::*)(const Range<TimeType>&);
+    using Getter = const Range<TimeT>& (ObjectClass::*)() const noexcept;
+    using Setter = void (ObjectClass::*)(const Range<TimeT>&);
 
   public:
     template<typename Signal>
@@ -113,13 +112,13 @@ namespace mtt
       using FloatTimeType = std::chrono::duration<float>;
       FloatTimeType minTime(_minWidget.value() / _multiplier);
       FloatTimeType maxTime(_maxWidget.value() / _multiplier);
-      Range<TimeType> newValue = Range<TimeType>(
-                                std::chrono::duration_cast<TimeType>(minTime),
-                                std::chrono::duration_cast<TimeType>(maxTime));
+      Range<TimeT> newValue = Range<TimeT>(
+                                    std::chrono::duration_cast<TimeT>(minTime),
+                                    std::chrono::duration_cast<TimeT>(maxTime));
       if ((_object.*_getter)() == newValue) return;
 
       using Command = SetPropertyCommand< ObjectClass,
-                                          Range<TimeType>,
+                                          Range<TimeT>,
                                           Setter>;
       std::unique_ptr<Command> command(new Command( _object,
                                                     _setter,
@@ -162,7 +161,7 @@ namespace mtt
 
     try
     {
-      Range<TimeType> value = (_object.*_getter)();
+      Range<TimeT> value = (_object.*_getter)();
       using FloatTimeType = std::chrono::duration<float>;
       FloatTimeType minTime(
                         std::chrono::duration_cast<FloatTimeType>(value.min()));

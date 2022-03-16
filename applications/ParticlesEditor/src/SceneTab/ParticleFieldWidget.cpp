@@ -91,8 +91,8 @@ void ParticleFieldWidget::_clear() noexcept
 
 void ParticleFieldWidget::_stepSimulation() noexcept
 {
-  _field.simulationStep(ParticleField::TimeType(0),
-                        std::chrono::duration_cast<ParticleField::TimeType>(
+  _field.simulationStep(mtt::TimeT(0),
+                        std::chrono::duration_cast<mtt::TimeT>(
                                               std::chrono::milliseconds(100)));
 }
 

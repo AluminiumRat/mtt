@@ -118,7 +118,7 @@ std::unique_ptr<DrawModelAnimation> MasterDrawModel::removeAnimation(
 }
 
 void MasterDrawModel::updateFromAnimation(const DrawModelAnimation& animation,
-                                          Application::TimeType time)
+                                          TimeT time)
 {
   if (_locked) mtt::Abort("MasterDrawModel::updateFromAnimation: model is locked");
   animation.updateTransform(_transformTable, time);

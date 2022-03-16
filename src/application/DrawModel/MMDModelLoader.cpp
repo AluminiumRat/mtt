@@ -363,10 +363,10 @@ void MMDModelLoader::_loadAnimations()
 
 template<typename ValueType>
 void MMDModelLoader::_readKeypoint(
-                mtt::ValueKeypoint<ValueType, Application::TimeType>& keypoint)
+                                mtt::ValueKeypoint<ValueType, TimeT>& keypoint)
 {
   uint32_t timeCount = _stream->readUint32();
-  Application::TimeType time(timeCount);
+  TimeT time(timeCount);
   keypoint.setTime(time);
 
   ValueType value;

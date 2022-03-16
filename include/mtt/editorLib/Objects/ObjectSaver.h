@@ -4,6 +4,7 @@
 #include <QtCore/QString>
 
 #include <mtt/application/DataStream.h>
+#include <mtt/application/TimeT.h>
 #include <mtt/editorLib/Objects/CEVisitor.h>
 #include <mtt/editorLib/Objects/ObjectFactory.h>
 
@@ -34,7 +35,7 @@ namespace mtt
     virtual void visitConstDirectLightObject(
                                       const DirectLightObject& object) override;
     virtual void visitConstDisplayedObject(
-                                  const mtt::DisplayedObject& object) override;
+                                        const DisplayedObject& object) override;
     virtual void visitConstEnvironmentModel(
                                       const EnvironmentModel& object) override;
     virtual void visitConstLightObject(const LightObject& object) override;
@@ -54,8 +55,7 @@ namespace mtt
 
     void writeFilename(const QString& filename);
     template<typename ValueType>
-    inline void writeKeypoint(ValueKeypoint<ValueType,
-                              AnimationTrack::TimeType> keypoint);
+    inline void writeKeypoint(ValueKeypoint<ValueType, TimeT> keypoint);
     void writeCubemapData(const CubemapObject& object);
 
   private:
@@ -81,8 +81,7 @@ namespace mtt
 
   template<typename ValueType>
   inline void ObjectSaver::writeKeypoint(
-                                        mtt::ValueKeypoint<ValueType,
-                                        mtt::AnimationTrack::TimeType> keypoint)
+                                      ValueKeypoint<ValueType, TimeT> keypoint)
   {
     *_stream << (uint32_t)keypoint.time().count();
     *_stream << keypoint.value();

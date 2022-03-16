@@ -85,8 +85,7 @@ namespace mtt
     void _loadAnimations();
     std::unique_ptr<DrawModelAnimationTrack> loadAnimationTrack();
     template<typename ValueType>
-    void _readKeypoint( mtt::ValueKeypoint<ValueType,
-                        Application::TimeType>& keypoint);
+    void _readKeypoint( mtt::ValueKeypoint<ValueType, TimeT>& keypoint);
 
   private:
     QString _filename;

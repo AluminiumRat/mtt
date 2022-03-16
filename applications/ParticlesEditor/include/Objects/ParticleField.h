@@ -5,7 +5,7 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
-#include <mtt/application/Application.h>
+#include <mtt/application/TimeT.h>
 #include <mtt/editorLib/Objects/MovableObject.h>
 
 #include <Objects/PEVisitorExtension.h>
@@ -41,8 +41,6 @@ class ParticleField : public mtt::MovableObject
               USER false)
 
 public:
-  using TimeType = mtt::Application::TimeType;
-
   using ParticleIndex = uint16_t;
 
   struct ParticleData
@@ -57,8 +55,8 @@ public:
     float brightness;
     float opacity;
     uint8_t textureIndex;
-    TimeType currentTime;
-    TimeType maxTime;
+    mtt::TimeT currentTime;
+    mtt::TimeT maxTime;
     float mass;
     float frictionFactor;
   };
@@ -91,7 +89,7 @@ public:
   void registerModificator(ModificatorObject& modificator);
   void unregisterModificator(ModificatorObject& modificator) noexcept;
 
-  void simulationStep(TimeType currentTime, TimeType delta);
+  void simulationStep(mtt::TimeT currentTime, mtt::TimeT delta);
 
 signals:
   void sizeChanged(const glm::vec3& newValue);
@@ -110,7 +108,7 @@ signals:
 
 private:
   void _addParticles();
-  void _updateParticlesData(TimeType delta);
+  void _updateParticlesData(mtt::TimeT delta);
   void _deleteParticles();
 
 private:
