@@ -65,17 +65,11 @@ namespace mtt
 
   signals:
     void enabledChanged(bool newValue);
-    void startTimeChanged(TimeType newStartTime);
-    void finishTimeChanged(TimeType newFinishTime);
-    void durationChanged(TimeType newDuration);
-    void timingChanged();
+    void timeRangeChanged(Range<TimeType> newRange);
     void targetRefChanged(ScalableObject* target);
 
   protected:
-    virtual void onStartTimeChanged() noexcept override;
-    virtual void onFinishTimeChanged() noexcept override;
-    virtual void onTimingChanged() noexcept override;
-    virtual void onDurationChanged() noexcept override;
+    virtual void onTimeRangeChanged() noexcept override;
 
   private:
     bool _enabled;

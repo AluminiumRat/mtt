@@ -27,7 +27,7 @@ namespace mtt
                                 Application::TimeType time) const;
 
   protected:
-    virtual void onTimingChanged() noexcept override;
+    virtual void onTimeRangeChanged() noexcept override;
 
   private:
     friend class DrawModelAnimation;
@@ -54,6 +54,7 @@ namespace mtt
                                               TransformTable& target,
                                               Application::TimeType time) const
   {
+    if(time < startTime() || time > finishTime()) return;
     if(_boneIndex == TransformTable::notIndex) return;
     target.setTransform(_boneIndex, value(time));
   }

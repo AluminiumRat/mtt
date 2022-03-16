@@ -9,7 +9,7 @@ DrawModelAnimationTrack::DrawModelAnimationTrack() :
 {
 }
 
-void DrawModelAnimationTrack::onTimingChanged() noexcept
+void DrawModelAnimationTrack::onTimeRangeChanged() noexcept
 {
   if(_animation != nullptr) _animation->updateTiming();
 }

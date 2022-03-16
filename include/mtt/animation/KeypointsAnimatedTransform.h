@@ -9,6 +9,7 @@
 #include <mtt/animation/CompositeAnimatedTransform.h>
 #include <mtt/animation/KeypointsAnimatedValue.h>
 #include <mtt/animation/ValueKeypoint.h>
+#include <mtt/utilities/Range.h>
 
 namespace mtt
 {
@@ -61,6 +62,7 @@ namespace mtt
     inline std::unique_ptr<ScaleKeypoint> removeScaleKeypoint(
                                         const ScaleKeypoint& keypoint) noexcept;
 
+    inline Range<TimeType> timeRange() const noexcept;
     inline TimeType startTime() const noexcept;
     inline TimeType finishTime() const noexcept;
     inline TimeType duration() const noexcept;
@@ -68,10 +70,7 @@ namespace mtt
     inline virtual glm::mat4 value(TimeType time) const override;
 
   protected:
-    inline virtual void onStartTimeChanged() noexcept;
-    inline virtual void onFinishTimeChanged() noexcept;
-    inline virtual void onTimingChanged() noexcept;
-    inline virtual void onDurationChanged() noexcept;
+    inline virtual void onTimeRangeChanged() noexcept;
 
   private:
     inline void _updateTiming() noexcept;
@@ -84,17 +83,14 @@ namespace mtt
     using CompositeAnimation = CompositeAnimatedTransform<TimeType>;
     CompositeAnimation _compositeAnimation;
 
-    TimeType _startTime;
-    TimeType _finishTime;
+    Range<TimeType> _timeRange;
   };
 
   template <typename TimeType>
   inline KeypointsAnimatedTransform<TimeType>::KeypointsAnimatedTransform() :
     _positionAnimation(glm::vec3(0.f)),
     _rotationAnimation(glm::quat(1.f, 0.f, 0.f, 0.f)),
-    _scaleAnimation(glm::vec3(1.f)),
-    _startTime(0),
-    _finishTime(0)
+    _scaleAnimation(glm::vec3(1.f))
   {
     _compositeAnimation.position = &_positionAnimation;
     _compositeAnimation.rotation = &_rotationAnimation;
@@ -228,17 +224,24 @@ namespace mtt
   }
 
   template <typename TimeType>
+  inline Range<TimeType>
+                KeypointsAnimatedTransform<TimeType>::timeRange() const noexcept
+  {
+    return _timeRange;
+  }
+
+  template <typename TimeType>
   inline TimeType KeypointsAnimatedTransform<TimeType>::
                                                       startTime() const noexcept
   {
-    return _startTime;
+    return _timeRange.min();
   }
 
   template <typename TimeType>
   inline TimeType KeypointsAnimatedTransform<TimeType>::
                                                     finishTime() const noexcept
   {
-    return _finishTime;
+    return _timeRange.max();
   }
 
   template <typename TimeType>
@@ -266,39 +269,15 @@ namespace mtt
                                       _rotationAnimation.finishTime());
     newFinishTime = std::max(newFinishTime, _scaleAnimation.finishTime());
 
-    if (newStartTime == _startTime && newFinishTime == _finishTime) return;
+    if (newStartTime == startTime() && newFinishTime == finishTime()) return;
 
-    TimeType oldStartTime = _startTime;
-    TimeType oldFinishTime = _finishTime;
+    _timeRange = Range<TimeType>(newStartTime, newFinishTime);
 
-    _startTime = newStartTime;
-    _finishTime = newFinishTime;
-
-    if (oldStartTime != _startTime) onStartTimeChanged();
-    if (oldFinishTime != _finishTime) onFinishTimeChanged();
-    onDurationChanged();
-    onTimingChanged();
+    onTimeRangeChanged();
   }
 
   template <typename TimeType>
-  inline void KeypointsAnimatedTransform<TimeType>::
-                                                  onStartTimeChanged() noexcept
-  {
-  }
-
-  template <typename TimeType>
-  inline void KeypointsAnimatedTransform<TimeType>::
-                                                  onFinishTimeChanged() noexcept
-  {
-  }
-
-  template <typename TimeType>
-  inline void KeypointsAnimatedTransform<TimeType>::onTimingChanged() noexcept
-  {
-  }
-
-  template <typename TimeType>
-  inline void KeypointsAnimatedTransform<TimeType>::onDurationChanged() noexcept
+  inline void KeypointsAnimatedTransform<TimeType>::onTimeRangeChanged() noexcept
   {
   }
 }

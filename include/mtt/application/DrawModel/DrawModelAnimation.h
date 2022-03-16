@@ -6,20 +6,25 @@
 #include <mtt/application/DrawModel/DrawModelAnimationTrack.h>
 #include <mtt/application/DrawModel/TransformTable.h>
 #include <mtt/application/Application.h>
+#include <mtt/utilities/Range.h>
 
 namespace mtt
 {
   class DrawModelAnimation
   {
   public:
-    DrawModelAnimation();
+    using TimeType = Application::TimeType;
+
+  public:
+    DrawModelAnimation() = default;
     DrawModelAnimation(const DrawModelAnimation&) = delete;
     DrawModelAnimation& operator = (const DrawModelAnimation&) = delete;
     virtual ~DrawModelAnimation() noexcept = default;
 
-    inline Application::TimeType startTime() const noexcept;
-    inline Application::TimeType finishTime() const noexcept;
-    inline Application::TimeType duration() const noexcept;
+    inline Range<TimeType> timeRange() const noexcept;
+    inline TimeType startTime() const noexcept;
+    inline TimeType finishTime() const noexcept;
+    inline TimeType duration() const noexcept;
 
     inline size_t tracksNumber() const noexcept;
     inline DrawModelAnimationTrack& track(size_t trackIndex) noexcept;
@@ -31,33 +36,40 @@ namespace mtt
                                       DrawModelAnimationTrack& track) noexcept;
 
     inline void updateTransform(TransformTable& target,
-                                Application::TimeType time) const;
+                                TimeType time) const;
 
   private:
     friend class DrawModelAnimationTrack;
     void updateTiming() noexcept;
 
   private:
-    Application::TimeType _startTime;
-    Application::TimeType _finishTime;
+    Range<TimeType> _timeRange;
 
     using Tracks = std::vector<std::unique_ptr<DrawModelAnimationTrack>>;
     Tracks _tracks;
   };
 
-  inline Application::TimeType DrawModelAnimation::startTime() const noexcept
+  inline Range<DrawModelAnimation::TimeType>
+                                  DrawModelAnimation::timeRange() const noexcept
   {
-    return _startTime;
+    return _timeRange;
   }
 
-  inline Application::TimeType DrawModelAnimation::finishTime() const noexcept
+  inline DrawModelAnimation::TimeType
+                                  DrawModelAnimation::startTime() const noexcept
   {
-    return _finishTime;
+    return _timeRange.min();
   }
 
-  inline Application::TimeType DrawModelAnimation::duration() const noexcept
+  inline DrawModelAnimation::TimeType
+                                DrawModelAnimation::finishTime() const noexcept
   {
-    return _finishTime - _startTime;
+    return _timeRange.max();
+  }
+
+  inline DrawModelAnimation::TimeType DrawModelAnimation::duration() const noexcept
+  {
+    return finishTime() - startTime();
   }
 
   inline size_t DrawModelAnimation::tracksNumber() const noexcept
@@ -79,7 +91,7 @@ namespace mtt
 
   inline void DrawModelAnimation::updateTransform(
                                               TransformTable& target,
-                                              Application::TimeType time) const
+                                              TimeType time) const
   {
     for ( size_t trackIndex = 0;
           trackIndex != _tracks.size();

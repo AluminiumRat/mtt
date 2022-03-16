@@ -6,6 +6,7 @@
 
 #include <mtt/animation/AbstractAnimatedValue.h>
 #include <mtt/utilities/Abort.h>
+#include <mtt/utilities/Range.h>
 
 namespace mtt
 {
@@ -39,11 +40,12 @@ namespace mtt
     inline TimeT startTime() const noexcept;
     inline TimeT finishTime() const noexcept;
     inline TimeT duration() const noexcept;
+    inline Range<TimeT> timeRange() const noexcept;
 
   private:
     friend KeypointType;
     void sortKeypoints();
-  
+
   private:
     ValueT _defaultValue;
 
@@ -182,5 +184,12 @@ namespace mtt
                 KeypointsAnimatedValue<KeypointType>::duration() const noexcept
   {
     return finishTime() - startTime();
+  }
+
+  template <typename KeypointType>
+  inline Range<typename KeypointType::TimeT>
+                KeypointsAnimatedValue<KeypointType>::timeRange() const noexcept
+  {
+    return Range<TimeT>(startTime(), finishTime());
   }
 };

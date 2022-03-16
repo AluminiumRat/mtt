@@ -3,12 +3,6 @@
 
 using namespace mtt;
 
-DrawModelAnimation::DrawModelAnimation() :
-  _startTime(0),
-  _finishTime(0)
-{
-}
-
 void DrawModelAnimation::addTrack(
                                 std::unique_ptr<DrawModelAnimationTrack> track)
 {
@@ -49,18 +43,19 @@ void DrawModelAnimation::updateTiming() noexcept
 {
   if (_tracks.empty())
   {
-    _startTime = Application::TimeType(0);
-    _finishTime = Application::TimeType(0);
+    _timeRange = Range<TimeType>();
+    return;
   }
 
-  _startTime = _tracks[0]->startTime();
-  _finishTime = _tracks[0]->finishTime();
+  TimeType newStartTime = _tracks[0]->startTime();
+  TimeType newFinishTime = _tracks[0]->finishTime();
 
   for ( size_t trackIndex = 1;
         trackIndex < _tracks.size();
         trackIndex++)
   {
-    _startTime = std::min(_startTime, _tracks[trackIndex]->startTime());
-    _finishTime = std::min(_startTime, _tracks[trackIndex]->startTime());
+    newStartTime = std::min(newStartTime, _tracks[trackIndex]->startTime());
+    newFinishTime = std::min(newFinishTime, _tracks[trackIndex]->startTime());
   }
+  _timeRange = Range<TimeType>(newStartTime, newFinishTime);
 }

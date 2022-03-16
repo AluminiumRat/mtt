@@ -7,6 +7,7 @@
 #include <mtt/application/EditCommands/AbstractEditCommand.h>
 #include <mtt/application/Scene/SpecialGroup.h>
 #include <mtt/editorLib/Objects/AnimationTrack.h>
+#include <mtt/utilities/Range.h>
 
 namespace mtt
 {
@@ -30,6 +31,7 @@ namespace mtt
     AnimationObject& operator = (const AnimationObject&) = delete;
     virtual ~AnimationObject() noexcept = default;
 
+    inline Range<TimeType> timeRange() const noexcept;
     inline TimeType startTime() const noexcept;
     inline TimeType finishTime() const noexcept;
     inline TimeType duration() const noexcept;
@@ -44,10 +46,7 @@ namespace mtt
     void childAdded(AnimationTrack& object);
     void childRemoved(AnimationTrack& object);
 
-    void startTimeChanged(TimeType newStartTime);
-    void finishTimeChanged(TimeType newFinishTime);
-    void durationChanged(TimeType newDuration);
-    void timingChanged();
+    void timeRangeChanged(Range<TimeType> newRange);
 
   protected:
     virtual void onSubobjectAdded(Object& object) noexcept override;
@@ -57,18 +56,23 @@ namespace mtt
     void _updateTiming() noexcept;
 
   private:
-    TimeType _startTime;
-    TimeType _finishTime;
+    Range<TimeType> _timeRange;
   };
+
+  inline Range<AnimationObject::TimeType>
+                                    AnimationObject::timeRange() const noexcept
+  {
+    return _timeRange;
+  }
 
   inline AnimationObject::TimeType AnimationObject::startTime() const noexcept
   {
-    return _startTime;
+    return _timeRange.min();
   }
 
   inline AnimationObject::TimeType AnimationObject::finishTime() const noexcept
   {
-    return _finishTime;
+    return _timeRange.max();
   }
 
   inline AnimationObject::TimeType AnimationObject::duration() const noexcept

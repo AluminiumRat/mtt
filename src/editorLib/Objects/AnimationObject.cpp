@@ -7,9 +7,7 @@ using namespace mtt;
 AnimationObject::AnimationObject( const QString& name,
                                   bool canBeRenamed,
                                   const UID& id) :
-  SpecialGroup(name, canBeRenamed, id),
-  _startTime(0),
-  _finishTime(0)
+  SpecialGroup(name, canBeRenamed, id)
 {
 }
 
@@ -26,7 +24,7 @@ void AnimationObject::onSubobjectAdded(Object& object) noexcept
 {
   AnimationTrack& track = static_cast<AnimationTrack&>(object);
   connect(&track,
-          &AnimationTrack::timingChanged,
+          &AnimationTrack::timeRangeChanged,
           this,
           &AnimationObject::_updateTiming,
           Qt::DirectConnection);
@@ -40,7 +38,7 @@ void AnimationObject::onSubobjectRemoved(Object& object) noexcept
 {
   AnimationTrack& track = static_cast<AnimationTrack&>(object);
   disconnect( &track,
-              &AnimationTrack::timingChanged,
+              &AnimationTrack::timeRangeChanged,
               this,
               &AnimationObject::_updateTiming);
 
@@ -66,18 +64,10 @@ void AnimationObject::_updateTiming() noexcept
     newFinishTime = std::max(newFinishTime, track.finishTime());
   }
 
-  if (newStartTime == _startTime && newFinishTime == _finishTime) return;
+  if (newStartTime == startTime() && newFinishTime == finishTime()) return;
 
-  TimeType oldStartTime = _startTime;
-  TimeType oldFinishTime = _finishTime;
-
-  _startTime = newStartTime;
-  _finishTime = newFinishTime;
-
-  if(oldStartTime != _startTime) emit startTimeChanged(_startTime);
-  if(oldFinishTime != _finishTime) emit finishTimeChanged(_finishTime);
-  emit durationChanged(duration());
-  emit timingChanged();
+  _timeRange = Range<TimeType>(newStartTime, newFinishTime);
+  emit timeRangeChanged(_timeRange);
 }
 
 std::unique_ptr<AbstractEditCommand> AnimationObject::makeRestoreCommand() const

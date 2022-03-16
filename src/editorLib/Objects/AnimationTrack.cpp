@@ -76,22 +76,7 @@ std::unique_ptr<AbstractEditCommand> AnimationTrack::makeRestoreCommand() const
   return std::move(resultCommand);
 }
 
-void AnimationTrack::onStartTimeChanged() noexcept
+void AnimationTrack::onTimeRangeChanged() noexcept
 {
-  emit startTimeChanged(startTime());
-}
-
-void AnimationTrack::onFinishTimeChanged() noexcept
-{
-  emit finishTimeChanged(finishTime());
-}
-
-void AnimationTrack::onTimingChanged() noexcept
-{
-  emit timingChanged();
-}
-
-void AnimationTrack::onDurationChanged() noexcept
-{
-  emit durationChanged(duration());
+  emit timeRangeChanged(timeRange());
 }
