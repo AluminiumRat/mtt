@@ -10,6 +10,8 @@
 
 #include <Objects/PEVisitorExtension.h>
 
+class ModificatorObject;
+
 class ParticleField : public mtt::MovableObject
 {
   Q_OBJECT
@@ -86,6 +88,9 @@ public:
   void setTextureFiles(const std::vector<QString>& newFiles);
   inline void resetTextureFiles();
 
+  void registerModificator(ModificatorObject& modificator);
+  void unregisterModificator(ModificatorObject& modificator) noexcept;
+
   void simulationStep(TimeType currentTime, TimeType delta);
 
 signals:
@@ -117,6 +122,9 @@ private:
   std::vector<ParticleData> _newParticles;
 
   std::vector<QString> _textureFiles;
+
+  using Modificators = std::vector<ModificatorObject*>;
+  Modificators _modificators;
 };
 
 inline const glm::vec3& ParticleField::size() const noexcept

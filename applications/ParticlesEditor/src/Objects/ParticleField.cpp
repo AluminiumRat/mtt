@@ -1,7 +1,9 @@
+#include <algorithm>
 #include <exception>
 
 #include <mtt/utilities/Abort.h>
 
+#include <Objects/ModificatorObject.h>
 #include <Objects/ParticleField.h>
 
 ParticleField::ParticleField( const QString& name,
@@ -51,12 +53,35 @@ void ParticleField::setTextureFiles(const std::vector<QString>& newFiles)
   emit textureFilesChanged(_textureFiles);
 }
 
+void ParticleField::registerModificator(ModificatorObject& modificator)
+{
+  if(std::find( _modificators.begin(),
+                _modificators.end(),
+                &modificator) != _modificators.end()) mtt::Abort("ParticleField::registerModificator: modificator is already registerd.");
+  _modificators.push_back(&modificator);
+}
+
+void ParticleField::unregisterModificator(
+                                        ModificatorObject& modificator) noexcept
+{
+  Modificators::iterator iModificator = std::find(_modificators.begin(),
+                                                  _modificators.end(),
+                                                  &modificator);
+  if(iModificator == _modificators.end()) return;
+  _modificators.erase(iModificator);
+}
+
 void ParticleField::simulationStep(TimeType currentTime, TimeType delta)
 {
   emit simulationStepStarted();
 
   try
   {
+    for (ModificatorObject* modificator : _modificators)
+    {
+      modificator->simulationStep(currentTime, delta);
+    }
+
     _addParticles();
     _updateParticlesData(delta);
     _deleteParticles();

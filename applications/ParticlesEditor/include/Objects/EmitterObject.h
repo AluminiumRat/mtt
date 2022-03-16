@@ -34,8 +34,6 @@ public:
   };
   const static std::map<Distribution, QString> distributionNames;
 
-  using TimeType = mtt::Application::TimeType;
-
   Q_PROPERTY( float intensity
               READ size
               WRITE setIntensity
@@ -286,7 +284,7 @@ public:
   void setFrictionFactorRange(const mtt::Range<float>& newValue) noexcept;
   inline void resetFrictionFactorRange() noexcept;
 
-  void simulationStep(TimeType currentTime, TimeType delta);
+  virtual void simulationStep(TimeType currentTime, TimeType delta) override;
   void emitParticles(size_t particlesNumber) noexcept;
 
 signals:

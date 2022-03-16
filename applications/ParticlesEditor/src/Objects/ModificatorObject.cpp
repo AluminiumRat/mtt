@@ -23,3 +23,17 @@ void ModificatorObject::setTypeMask(uint32_t newValue) noexcept
   _typeMask = newValue;
   emit typeMaskChanged(newValue);
 }
+
+void ModificatorObject::simulationStep(TimeType currentTime, TimeType delta)
+{
+}
+
+void ModificatorObject::_connectToField(ParticleField& field)
+{
+  field.registerModificator(*this);
+}
+
+void ModificatorObject::_disconnectFromField(ParticleField& field) noexcept
+{
+  field.unregisterModificator(*this);
+}
