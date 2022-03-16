@@ -30,7 +30,7 @@ void ParticleAnimation::update(TimeType time)
   if(_lastTime > time) _lastTime = time;
   if (_fieldRef != nullptr)
   {
-    _fieldRef.get()->simulationStep(time, time - _lastTime);
+    _fieldRef->simulationStep(time, time - _lastTime);
   }
   _lastTime = time;
 }

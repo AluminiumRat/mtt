@@ -57,6 +57,8 @@ namespace mtt
     virtual ~ObjectRef() noexcept = default;
   
     inline Referenced* get() const noexcept;
+    inline Referenced& operator * () const noexcept;
+    inline Referenced* operator -> () const noexcept;
     inline void set(Referenced* object);
   };
 
@@ -183,6 +185,18 @@ namespace mtt
   inline Referenced* ObjectRef<Referenced>::get() const noexcept
   {
     return static_cast<Referenced*>(ObjectRefBase::get());
+  }
+
+  template <typename Referenced>
+  inline Referenced& ObjectRef<Referenced>::operator * () const noexcept
+  {
+    return *get();
+  }
+
+  template <typename Referenced>
+  inline Referenced* ObjectRef<Referenced>::operator -> () const noexcept
+  {
+    return get();
   }
 
   template <typename Referenced>
