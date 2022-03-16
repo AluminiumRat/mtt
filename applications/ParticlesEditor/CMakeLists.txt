@@ -46,6 +46,7 @@ add_definitions(${Qt5Core_DEFINITIONS}
 set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 
 set(HEADERS
+    "include/AsyncTasks/ImportAnimationTask.h"
     "include/AsyncTasks/LoadEnvironmentTask.h"
     "include/AsyncTasks/UploadParticleTexturesTask.h"
 
@@ -81,6 +82,7 @@ set(HEADERS
     )
 
 set(SOURCES
+    "src/AsyncTasks/ImportAnimationTask.cpp"
     "src/AsyncTasks/LoadEnvironmentTask.cpp"
     "src/AsyncTasks/UploadParticleTexturesTask.cpp"
 

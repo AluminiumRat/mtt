@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>292</width>
-    <height>617</height>
+    <height>605</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -862,26 +862,6 @@
          </widget>
         </item>
        </layout>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="typeMaskLayout">
-     <item>
-      <widget class="QLabel" name="typeMaskLabel">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>1</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Type mask</string>
-       </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
       </widget>
      </item>
     </layout>

@@ -10,7 +10,7 @@ RootObject::RootObject( const QString& name,
                         const mtt::UID& theId) :
   Object(name, canBeRenamed, theId),
   _modificatorsGroup(nullptr),
-  _animationGroup(nullptr),
+  _animation(nullptr),
   _environment(nullptr)
 {
   mtt::UID modificatorsId(id().mixedUID(6078948842405049854ull));
@@ -22,12 +22,16 @@ RootObject::RootObject( const QString& name,
   addSubobject(std::move(modificatorsGroup));
 
   mtt::UID animationId(id().mixedUID(9391846700167947331ull));
-  std::unique_ptr<mtt::AnimationGroup> animationGroup(
-                                      new mtt::AnimationGroup(tr("Animations"),
-                                                              false,
-                                                              animationId));
-  _animationGroup = animationGroup.get();
-  addSubobject(std::move(animationGroup));
+  std::unique_ptr<ParticleAnimation> animation(
+                                          new ParticleAnimation(tr("Animation"),
+                                                                false,
+                                                                animationId));
+  using TimeType = ParticleAnimation::TimeType;
+  TimeType defaultLength =
+                std::chrono::duration_cast<TimeType>(std::chrono::seconds(30));
+  animation->setTimeRange(mtt::Range<TimeType>(TimeType(0), defaultLength));
+  _animation = animation.get();
+  addSubobject(std::move(animation));
 
   mtt::UID backgroundId(id().mixedUID(11173449662433983694ull));
   std::unique_ptr<mtt::BackgroundObject> background(
@@ -52,6 +56,7 @@ RootObject::RootObject( const QString& name,
                                                           fieldId));
   _particleField = field.get();
   addSubobject(std::move(field));
+  _animation->fieldRef().set(_particleField);
 }
 
 void RootObject::changeBackground(

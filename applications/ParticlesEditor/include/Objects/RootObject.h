@@ -2,11 +2,11 @@
 
 #include <mtt/application/Scene/ObjectGroup.h>
 #include <mtt/application/Scene/Object.h>
-#include <mtt/editorLib/Objects/AnimationGroup.h>
 #include <mtt/editorLib/Objects/BackgroundObject.h>
 #include <mtt/editorLib/Objects/EnvironmentGroup.h>
 
 #include <Objects/ModificatorGroup.h>
+#include <Objects/ParticleAnimation.h>
 #include <Objects/ParticleField.h>
 #include <Objects/PEVisitorExtension.h>
 
@@ -30,8 +30,8 @@ public:
   inline ModificatorGroup& modificatorsGroup() noexcept;
   inline const ModificatorGroup& modificatorsGroup() const noexcept;
 
-  inline mtt::AnimationGroup& animationGroup() noexcept;
-  inline const mtt::AnimationGroup& animationGroup() const noexcept;
+  inline ParticleAnimation& animation() noexcept;
+  inline const ParticleAnimation& animation() const noexcept;
 
   inline mtt::BackgroundObject& background() noexcept;
   inline const mtt::BackgroundObject& background() const noexcept;
@@ -48,7 +48,7 @@ signals:
 
 private:
   ModificatorGroup* _modificatorsGroup;
-  mtt::AnimationGroup* _animationGroup;
+  ParticleAnimation* _animation;
   mtt::BackgroundObject* _background;
   mtt::EnvironmentGroup* _environment;
   ParticleField* _particleField;
@@ -64,14 +64,14 @@ inline const ModificatorGroup& RootObject::modificatorsGroup() const noexcept
   return *_modificatorsGroup;
 }
 
-inline mtt::AnimationGroup& RootObject::animationGroup() noexcept
+inline ParticleAnimation& RootObject::animation() noexcept
 {
-  return *_animationGroup;
+  return *_animation;
 }
 
-inline const mtt::AnimationGroup& RootObject::animationGroup() const noexcept
+inline const ParticleAnimation& RootObject::animation() const noexcept
 {
-  return *_animationGroup;
+  return *_animation;
 }
 
 inline mtt::BackgroundObject& RootObject::background() noexcept

@@ -11,7 +11,7 @@ AddAnimationFromFbxTask::AddAnimationFromFbxTask( const QString& filename,
                                                   AnimationGroup& targetGroup,
                                                   Object* targetSearchGroup,
                                                   CommonEditData& commonData) :
-  AbstractAsyncTask(QObject::tr("Load from fbx"),
+  AbstractAsyncTask(QObject::tr("Loading from fbx"),
                     AbstractAsyncTask::INDEPENDENT,
                     AbstractAsyncTask::EXPLICIT),
   _filename(filename),

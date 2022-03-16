@@ -6,9 +6,9 @@
 #include <mtt/application/EditCommands/AddObjectCommand.h>
 #include <mtt/application/EditCommands/CompositeCommand.h>
 #include <mtt/application/EditCommands/RemoveObjectCommand.h>
-#include <mtt/editorLib/AsyncTasks/AddAnimationFromFbxTask.h>
 #include <mtt/editorLib/EditorApplication.h>
 
+#include <AsyncTasks/ImportAnimationTask.h>
 #include <Objects/EmitterObject.h>
 #include <Objects/FrameObject.h>
 #include <Objects/ParticleAnimation.h>
@@ -63,12 +63,6 @@ void EditMenu::setupUI()
           &QAction::triggered,
           this,
           &EditMenu::_addEmitter,
-          Qt::DirectConnection);
-
-  connect(_ui.actionAdd_animation,
-          &QAction::triggered,
-          this,
-          &EditMenu::_addAnimation,
           Qt::DirectConnection);
 
   connect(_ui.actionAdd_animation_from_fbx,
@@ -231,40 +225,6 @@ void EditMenu::_addEmitter() noexcept
   }
 }
 
-void EditMenu::_addAnimation() noexcept
-{
-  try
-  {
-    EditorScene* scene = _commonData.scene();
-    if (scene == nullptr) return;
-
-    std::unique_ptr<ParticleAnimation> newAnimation(
-                                  new ParticleAnimation(tr("animation"), true));
-    newAnimation->fieldRef().set(&scene->root().particleField());
-
-    ParticleAnimation* animationPtr = newAnimation.get();
-
-    std::unique_ptr<mtt::AddObjectCommand> command(
-                                new mtt::AddObjectCommand(
-                                              std::move(newAnimation),
-                                              scene->root().animationGroup()));
-    _commonData.undoStack().addAndMake(std::move(command));
-    _commonData.selectObjects({animationPtr});
-  }
-  catch(std::exception& error)
-  {
-    QMessageBox::critical(&_window,
-                          tr("Unable to add a animation"),
-                          error.what());
-  }
-  catch(...)
-  {
-    QMessageBox::critical(&_window,
-                          tr("Unable to add a animation"),
-                          tr("Unknown error"));
-  }
-}
-
 void EditMenu::_addAnimationFromFbx() noexcept
 {
   try
@@ -278,12 +238,9 @@ void EditMenu::_addAnimationFromFbx() noexcept
                                                     tr("fbx (*.fbx)"));
     if(fileName.isEmpty()) return;
 
-    std::unique_ptr<mtt::AddAnimationFromFbxTask> task(
-                                  new mtt::AddAnimationFromFbxTask(
-                                            fileName,
-                                            scene->root().animationGroup(),
-                                            &scene->root().modificatorsGroup(),
-                                            _commonData));
+    std::unique_ptr<ImportAnimationTask> task(
+                                  new ImportAnimationTask(fileName,
+                                                          _commonData));
     mtt::EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
   }
   catch (...)
