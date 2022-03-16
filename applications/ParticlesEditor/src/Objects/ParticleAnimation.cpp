@@ -4,7 +4,8 @@ ParticleAnimation::ParticleAnimation( const QString& name,
                                       bool canBeRenamed,
                                       const mtt::UID& id) :
   AnimationObject(name, canBeRenamed, id),
-  _fieldRef(*this)
+  _fieldRef(*this),
+  _lastTime(0)
 {
 }
 
