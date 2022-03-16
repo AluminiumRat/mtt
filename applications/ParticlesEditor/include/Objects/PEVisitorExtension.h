@@ -6,6 +6,7 @@ class EmitterObject;
 class FrameObject;
 class ModificatorGroup;
 class ModificatorObject;
+class ParticleAnimation;
 class ParticleField;
 class RootObject;
 
@@ -26,6 +27,9 @@ public:
 
   virtual void visitConstModificatorObject(const ModificatorObject& object) = 0;
   virtual void visitModificatorObject(ModificatorObject& object) = 0;
+
+  virtual void visitConstParticleAnimation(const ParticleAnimation& object) = 0;
+  virtual void visitParticleAnimation(ParticleAnimation& object) = 0;
 
   virtual void visitConstParticleField(const ParticleField& object) = 0;
   virtual void visitParticleField(ParticleField& object) = 0;

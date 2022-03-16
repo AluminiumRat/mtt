@@ -33,6 +33,7 @@ private:
   void _addModificator(std::unique_ptr<ModificatorObject> object);
   void _addFrame() noexcept;
   void _addEmitter() noexcept;
+  void _addAnimation() noexcept;
   void _addAnimationFromFbx() noexcept;
 
 private:

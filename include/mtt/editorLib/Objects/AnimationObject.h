@@ -31,12 +31,12 @@ namespace mtt
     AnimationObject& operator = (const AnimationObject&) = delete;
     virtual ~AnimationObject() noexcept = default;
 
-    inline Range<TimeType> timeRange() const noexcept;
+    inline const Range<TimeType>& timeRange() const noexcept;
     inline TimeType startTime() const noexcept;
     inline TimeType finishTime() const noexcept;
     inline TimeType duration() const noexcept;
 
-    void update(TimeType time);
+    virtual void update(TimeType time);
 
     /// Makes a command to restore animated objects after the animation has
     /// played. The command has no undo functional.
@@ -45,21 +45,20 @@ namespace mtt
   signals:
     void childAdded(AnimationTrack& object);
     void childRemoved(AnimationTrack& object);
-
-    void timeRangeChanged(Range<TimeType> newRange);
+    void timeRangeChanged(const Range<TimeType>& newRange);
 
   protected:
+    void updateTiming() noexcept;
+    virtual Range<TimeType> calculateTiming() const noexcept;
+
     virtual void onSubobjectAdded(Object& object) noexcept override;
     virtual void onSubobjectRemoved(Object& object) noexcept override;
-
-  private:
-    void _updateTiming() noexcept;
 
   private:
     Range<TimeType> _timeRange;
   };
 
-  inline Range<AnimationObject::TimeType>
+  inline const Range<AnimationObject::TimeType>&
                                     AnimationObject::timeRange() const noexcept
   {
     return _timeRange;

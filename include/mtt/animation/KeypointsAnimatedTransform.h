@@ -62,7 +62,7 @@ namespace mtt
     inline std::unique_ptr<ScaleKeypoint> removeScaleKeypoint(
                                         const ScaleKeypoint& keypoint) noexcept;
 
-    inline Range<TimeType> timeRange() const noexcept;
+    inline const Range<TimeType>& timeRange() const noexcept;
     inline TimeType startTime() const noexcept;
     inline TimeType finishTime() const noexcept;
     inline TimeType duration() const noexcept;
@@ -224,7 +224,7 @@ namespace mtt
   }
 
   template <typename TimeType>
-  inline Range<TimeType>
+  inline const Range<TimeType>&
                 KeypointsAnimatedTransform<TimeType>::timeRange() const noexcept
   {
     return _timeRange;

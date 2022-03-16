@@ -21,7 +21,7 @@ namespace mtt
     DrawModelAnimation& operator = (const DrawModelAnimation&) = delete;
     virtual ~DrawModelAnimation() noexcept = default;
 
-    inline Range<TimeType> timeRange() const noexcept;
+    inline const Range<TimeType>& timeRange() const noexcept;
     inline TimeType startTime() const noexcept;
     inline TimeType finishTime() const noexcept;
     inline TimeType duration() const noexcept;
@@ -49,7 +49,7 @@ namespace mtt
     Tracks _tracks;
   };
 
-  inline Range<DrawModelAnimation::TimeType>
+  inline const Range<DrawModelAnimation::TimeType>&
                                   DrawModelAnimation::timeRange() const noexcept
   {
     return _timeRange;

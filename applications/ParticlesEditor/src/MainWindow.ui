@@ -37,6 +37,8 @@
     <addaction name="separator"/>
     <addaction name="actionAdd_frame"/>
     <addaction name="actionAdd_emitter"/>
+    <addaction name="separator"/>
+    <addaction name="actionAdd_animation"/>
     <addaction name="actionAdd_animation_from_fbx"/>
    </widget>
    <widget class="QMenu" name="menuManipulator">
@@ -239,6 +241,11 @@
   <action name="actionAdd_emitter">
    <property name="text">
     <string>Add emitter</string>
+   </property>
+  </action>
+  <action name="actionAdd_animation">
+   <property name="text">
+    <string>Add animation</string>
    </property>
   </action>
  </widget>

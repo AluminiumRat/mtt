@@ -6,6 +6,7 @@
 #include <Objects/EmitterObject.h>
 #include <Objects/ModificatorGroup.h>
 #include <Objects/ModificatorObject.h>
+#include <Objects/ParticleAnimation.h>
 #include <Objects/ParticleField.h>
 #include <Objects/PEVisitorExtension.h>
 #include <Objects/RootObject.h>
@@ -36,6 +37,11 @@ public:
                                       const ModificatorObject& object) override;
   inline virtual void visitModificatorObject(
                                             ModificatorObject& object) override;
+
+  inline virtual void visitConstParticleAnimation(
+                                      const ParticleAnimation& object) override;
+  inline virtual void visitParticleAnimation(
+                                            ParticleAnimation& object) override;
 
   inline virtual void visitConstParticleField(
                                           const ParticleField& object) override;
@@ -110,6 +116,20 @@ inline void PEVisitorT<BaseVisitor>::visitModificatorObject(
                                                       ModificatorObject& object)
 {
   static_cast<BaseVisitor*>(this)->visitScalableObject(object);
+}
+
+template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitConstParticleAnimation(
+                                                const ParticleAnimation& object)
+{
+  static_cast<BaseVisitor*>(this)->visitConstAnimationObject(object);
+}
+
+template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitParticleAnimation(
+                                                      ParticleAnimation& object)
+{
+  static_cast<BaseVisitor*>(this)->visitAnimationObject(object);
 }
 
 template <typename BaseVisitor>

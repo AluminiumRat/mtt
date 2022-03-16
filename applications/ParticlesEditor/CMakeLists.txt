@@ -53,6 +53,7 @@ set(HEADERS
     "include/Objects/EmitterObject.h"
     "include/Objects/ModificatorGroup.h"
     "include/Objects/ModificatorObject.h"
+    "include/Objects/ParticleAnimation.h"
     "include/Objects/ParticleField.h"
     "include/Objects/PEVisitor.h"
     "include/Objects/PEVisitorExtension.h"
@@ -65,6 +66,7 @@ set(HEADERS
     "include/Render/RenderObserverFactory.h"
 
     "include/SceneTab/EmitterWidget.h"
+    "include/SceneTab/ParticleAnimationWidget.h"
     "include/SceneTab/ParticleFieldWidget.h"
     "include/SceneTab/PropertiesWidgetFactory.h"
     "include/SceneTab/SceneTab.h"
@@ -86,6 +88,7 @@ set(SOURCES
     "src/Objects/EmitterObject.cpp"
     "src/Objects/ModificatorGroup.cpp"
     "src/Objects/ModificatorObject.cpp"
+    "src/Objects/ParticleAnimation.cpp"
     "src/Objects/ParticleField.cpp"
     "src/Objects/PEVisitorExtension.cpp"
     "src/Objects/RootObject.cpp"
@@ -97,6 +100,7 @@ set(SOURCES
     "src/Render/RenderObserverFactory.cpp"
 
     "src/SceneTab/EmitterWidget.cpp"
+    "src/SceneTab/ParticleAnimationWidget.cpp"
     "src/SceneTab/ParticleFieldWidget.cpp"
     "src/SceneTab/PropertiesWidgetFactory.cpp"
     "src/SceneTab/SceneTab.cpp"
@@ -113,6 +117,7 @@ set(SOURCES
 
 set(UI_FILES
     "src/SceneTab/EmitterWidget.ui"
+    "src/SceneTab/ParticleAnimationWidget.ui"
     "src/SceneTab/ParticleFieldWidget.ui"
     "src/SceneTab/TypeMaskWidget.ui"
     "src/MainWindow.ui"

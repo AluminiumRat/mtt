@@ -3,6 +3,7 @@
 #include <mtt/application/Widgets/PropertiesWidgets/BoolPropertyWidget.h>
 
 #include <SceneTab/EmitterWidget.h>
+#include <SceneTab/ParticleAnimationWidget.h>
 #include <SceneTab/ParticleFieldWidget.h>
 #include <SceneTab/PropertiesWidgetFactory.h>
 #include <SceneTab/TypeMaskWidget.h>
@@ -39,6 +40,14 @@ void PropertiesWidgetFactory::visitModificatorObject(ModificatorObject& object)
                                             _commonData.undoStack()));
   enableWidget->setText(QObject::tr("Enabled"));
   widgetsLayout().addWidget(enableWidget.release());
+}
+
+void PropertiesWidgetFactory::visitParticleAnimation(ParticleAnimation& object)
+{
+  PEVisitorT::visitParticleAnimation(object);
+  widgetsLayout().addWidget(
+                          new ParticleAnimationWidget(object,
+                                                      _commonData.undoStack()));
 }
 
 void PropertiesWidgetFactory::visitParticleField(ParticleField& object)

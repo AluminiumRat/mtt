@@ -65,7 +65,7 @@ namespace mtt
 
   signals:
     void enabledChanged(bool newValue);
-    void timeRangeChanged(Range<TimeType> newRange);
+    void timeRangeChanged(const Range<TimeType>& newRange);
     void targetRefChanged(ScalableObject* target);
 
   protected:

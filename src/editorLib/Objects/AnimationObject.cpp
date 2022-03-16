@@ -26,12 +26,12 @@ void AnimationObject::onSubobjectAdded(Object& object) noexcept
   connect(&track,
           &AnimationTrack::timeRangeChanged,
           this,
-          &AnimationObject::_updateTiming,
+          &AnimationObject::updateTiming,
           Qt::DirectConnection);
 
   Object::onSubobjectAdded(object);
 
-  _updateTiming();
+  updateTiming();
 }
 
 void AnimationObject::onSubobjectRemoved(Object& object) noexcept
@@ -40,33 +40,36 @@ void AnimationObject::onSubobjectRemoved(Object& object) noexcept
   disconnect( &track,
               &AnimationTrack::timeRangeChanged,
               this,
-              &AnimationObject::_updateTiming);
+              &AnimationObject::updateTiming);
 
   Object::onSubobjectRemoved(object);
 
-  _updateTiming();
+  updateTiming();
 }
 
-void AnimationObject::_updateTiming() noexcept
+Range<AnimationObject::TimeType>
+                              AnimationObject::calculateTiming() const noexcept
 {
-  TimeType newStartTime(0);
-  TimeType newFinishTime(0);
-  if(childsNumber() != 0)
-  {
-    newStartTime = child(0).startTime();
-    newFinishTime = child(0).finishTime();
-  }
+  if (childsNumber() == 0) return Range<TimeType>();
+
+  TimeType newStartTime = child(0).startTime();
+  TimeType newFinishTime = child(0).finishTime();
 
   for(size_t childIndex = 1; childIndex < childsNumber(); childIndex++)
   {
-    AnimationTrack& track = child(childIndex);
+    const AnimationTrack& track = child(childIndex);
     newStartTime = std::min(newStartTime, track.startTime());
     newFinishTime = std::max(newFinishTime, track.finishTime());
   }
 
-  if (newStartTime == startTime() && newFinishTime == finishTime()) return;
+  return Range<TimeType>(newStartTime, newFinishTime);
+}
 
-  _timeRange = Range<TimeType>(newStartTime, newFinishTime);
+void AnimationObject::updateTiming() noexcept
+{
+  Range<TimeType> newRange = calculateTiming();
+  if (newRange == _timeRange) return;
+  _timeRange = newRange;
   emit timeRangeChanged(_timeRange);
 }
 
