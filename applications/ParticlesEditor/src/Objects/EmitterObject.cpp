@@ -248,6 +248,10 @@ void EmitterObject::emitParticles(size_t particlesNumber) noexcept
 
   glm::mat4x4 toField = glm::inverse(field->localToWorldTransform()) *
                                                         localToWorldTransform();
+  float xScale = glm::length(glm::vec3(toField[0]));
+  float yScale = glm::length(glm::vec3(toField[1]));
+  float zScale = glm::length(glm::vec3(toField[2]));
+  float uniformScale = (xScale + yScale + zScale) / 3.f;
 
   std::uniform_int_distribution<mtt::TimeT::rep>
                   timeDistribution( glm::max(_lifetimeRange.min().count(), 0),
@@ -262,6 +266,7 @@ void EmitterObject::emitParticles(size_t particlesNumber) noexcept
     newParticle.size = glm::mix(_sizeRange.min(),
                                 _sizeRange.max(),
                                 _displacedDistribution(_randomEngine));
+    newParticle.size *= uniformScale;
     newParticle.size = glm::max(newParticle.size, 0.f);
     newParticle.rotation = glm::mix(_rotationRange.min(),
                                     _rotationRange.max(),
