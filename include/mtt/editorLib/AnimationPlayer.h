@@ -4,6 +4,7 @@
 
 #include <QtCore/QObject>
 
+#include <mtt/application/TimeT.h>
 #include <mtt/editorLib/Objects/AnimationObject.h>
 
 namespace mtt
@@ -11,6 +12,10 @@ namespace mtt
   class AnimationPlayer : public QObject
   {
     Q_OBJECT
+
+  public:
+    static constexpr TimeT maxTimeDelta =
+              std::chrono::duration_cast<TimeT>(std::chrono::milliseconds(100));
 
   public:
     AnimationPlayer();
@@ -36,7 +41,8 @@ namespace mtt
     std::unique_ptr<AbstractEditCommand> _restoreCommand;
 
     QTimer _playTimer;
-    std::chrono::system_clock::time_point _startTime;
+    TimeT _currentAnimationTime;
+    std::chrono::system_clock::time_point _lastSystemTime;
   };
 
   inline AnimationObject* AnimationPlayer::currentAnimation() const noexcept

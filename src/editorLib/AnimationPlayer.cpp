@@ -30,8 +30,11 @@ void AnimationPlayer::start(AnimationObject& animation) noexcept
     _restoreCommand = animation.makeRestoreCommand();
     _currentAnimation = &animation;
 
-    _startTime = std::chrono::system_clock::now();
+    _currentAnimationTime = mtt::TimeT(0);
+    _lastSystemTime = std::chrono::system_clock::now();
     _playTimer.start(0);
+
+    emit animationStarted(animation);
   }
   catch(std::exception& error)
   {
@@ -82,11 +85,17 @@ void AnimationPlayer::_playNextFrame() noexcept
   {
     std::chrono::system_clock::time_point now =
                                               std::chrono::system_clock::now();
-    std::chrono::system_clock::duration duration = now - _startTime;
-    TimeT animationTime = std::chrono::duration_cast<TimeT>(duration);
+    std::chrono::system_clock::duration systemDelta = now - _lastSystemTime;
+    _lastSystemTime = now;
 
-    if(animationTime > _currentAnimation->finishTime()) stop();
-    else _currentAnimation->update(animationTime);
+    TimeT animationDelta = std::chrono::duration_cast<TimeT>(systemDelta);
+    if(animationDelta < TimeT(0)) animationDelta = TimeT(0);
+    if(animationDelta > maxTimeDelta) animationDelta = maxTimeDelta;
+
+    _currentAnimationTime += animationDelta;
+
+    if(_currentAnimationTime > _currentAnimation->finishTime()) stop();
+    else _currentAnimation->update(_currentAnimationTime);
   }
   catch(std::exception& error)
   {
