@@ -178,9 +178,7 @@ namespace mtt
       using Command = SetReferenceCommand<ObserverClass,
                                           ReferencedClass,
                                           refGetter>;
-      std::unique_ptr<Command> command(new Command( _object,
-                                                    _reference.get(),
-                                                    newValue));
+      std::unique_ptr<Command> command(new Command(_object, newValue));
       _undoStack.addAndMake(std::move(command));
     }
     catch(...)

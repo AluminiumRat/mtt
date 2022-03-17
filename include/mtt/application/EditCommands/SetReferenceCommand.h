@@ -12,11 +12,9 @@ namespace mtt
   {
   public:
     inline SetReferenceCommand( ObserverClass& observer,
-                                ReferencedClass* oldReference,
                                 ReferencedClass* newReference) :
       _observer(observer),
-      _oldReference(oldReference),
-      _newReference(newReference)
+      _newReference(newReference != nullptr ? newReference->id() : UID())
     {
     }
 
@@ -26,17 +24,18 @@ namespace mtt
 
     inline virtual void make() override
     {
-      (_observer.*refGetter)().set(_newReference);
+      _oldReference = (_observer.*refGetter)().referencedId();
+      (_observer.*refGetter)().setReferencedId(_newReference);
     }
 
     inline virtual void undo() override
     {
-      (_observer.*refGetter)().set(_oldReference);
+      (_observer.*refGetter)().setReferencedId(_oldReference);
     }
 
   private:
     ObserverClass& _observer;
-    ReferencedClass* _oldReference;
-    ReferencedClass* _newReference;
+    UID _oldReference;
+    UID _newReference;
   };
 }
