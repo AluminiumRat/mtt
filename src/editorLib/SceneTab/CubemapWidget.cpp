@@ -121,14 +121,11 @@ void CubemapWidget::_setTextures(const QStringList& texturesList)
 
     if(textures == _object.textures()) return;
 
-    using Command = SetPropertyCommand< CubemapObject,
-                                        CubemapObject::Textures,
-                                        void(CubemapObject::*)(
-                                              const CubemapObject::Textures&)>;
-    std::unique_ptr<Command> command( new Command(_object,
-                                                  &CubemapObject::setTextures,
-                                                  _object.textures(),
-                                                  textures));
+    std::unique_ptr<AbstractEditCommand> command =
+                            makeSetPropertyCommand( _object,
+                                                    &CubemapObject::textures,
+                                                    &CubemapObject::setTextures,
+                                                    textures);
     _undoStack.addAndMake(std::move(command));
   }
   catch(std::exception& error)

@@ -94,14 +94,10 @@ namespace mtt
       float newValue = _widget.value() / _multiplier;
       if ((_object.*_getter)() == newValue) return;
 
-      using Command = SetPropertyCommand< ObjectClass,
-                                          float,
-                                          Setter>;
-      std::unique_ptr<Command> command(new Command( _object,
-                                                    _setter,
-                                                    (_object.*_getter)(),
-                                                    newValue));
-      _undoStack.addAndMake(std::move(command));
+      _undoStack.addAndMake(std::move(makeSetPropertyCommand( _object,
+                                                              _getter,
+                                                              _setter,
+                                                              newValue)));
     }
     catch (std::exception& error)
     {

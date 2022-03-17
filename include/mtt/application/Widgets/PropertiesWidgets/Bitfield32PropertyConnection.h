@@ -88,14 +88,10 @@ namespace mtt
       uint32_t newValue = _widget.value();
       if ((_object.*_getter)() == newValue) return;
 
-      using Command = SetPropertyCommand< ObjectClass,
-                                          uint32_t,
-                                          Setter>;
-      std::unique_ptr<Command> command(new Command( _object,
+      _undoStack.addAndMake(makeSetPropertyCommand( _object,
+                                                    _getter,
                                                     _setter,
-                                                    (_object.*_getter)(),
                                                     newValue));
-      _undoStack.addAndMake(std::move(command));
     }
     catch (std::exception& error)
     {

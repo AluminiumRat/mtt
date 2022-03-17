@@ -68,14 +68,11 @@ void TriangleManipulator::processScale(float scale) noexcept
 
   try
   {
-    using Command = SetPropertyCommand<
-                                    ScalableObject,
-                                    glm::vec3,
-                                    void (ScalableObject::*)(const glm::vec3&)>;
-    std::unique_ptr<Command> command( new Command(_object,
-                                                  &ScalableObject::setScale,
-                                                  _object.scale(),
-                                                  newScale));
+    std::unique_ptr<AbstractEditCommand> command =
+                              makeSetPropertyCommand( _object,
+                                                      &ScalableObject::scale,
+                                                      &ScalableObject::setScale,
+                                                      newScale);
     _undoStack.addAndMake(std::move(command));
   }
   catch(std::exception& error)

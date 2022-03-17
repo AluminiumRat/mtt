@@ -97,18 +97,14 @@ namespace mtt
       glm::quat newValue(angles);
       if ((_object.*_getter)() == newValue) return;
 
-      using Command = SetPropertyCommand< ObjectClass,
-                                          glm::quat,
-                                          Setter>;
-      std::unique_ptr<Command> command(new Command( _object,
+      _undoStack.addAndMake(makeSetPropertyCommand( _object,
+                                                    _getter,
                                                     _setter,
-                                                    (_object.*_getter)(),
                                                     newValue));
-      _undoStack.addAndMake(std::move(command));
     }
     catch(...)
     {
-      Abort("RotationPropertyWidget::updateProperty: unable to update property.");
+      Log() << "RotationPropertyWidget::updateProperty: unable to update property.";
     }
   }
 

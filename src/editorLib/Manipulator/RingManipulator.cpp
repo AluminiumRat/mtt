@@ -132,14 +132,11 @@ void RingManipulator::processRotation(const glm::mat4& rotation) noexcept
 
   try
   {
-    using Command = SetPropertyCommand<
-                                  RotatableObject,
-                                  glm::quat,
-                                  void (RotatableObject::*)(const glm::quat&)>;
-    std::unique_ptr<Command> command( new Command(_object,
+    std::unique_ptr<AbstractEditCommand> command =
+                          makeSetPropertyCommand( _object,
+                                                  &RotatableObject::rotation,
                                                   &RotatableObject::setRotation,
-                                                  _object.rotation(),
-                                                  newRotation));
+                                                  newRotation);
     _undoStack.addAndMake(std::move(command));
   }
   catch(std::exception& error)

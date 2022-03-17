@@ -49,14 +49,10 @@ void NamePropertyWidget::_updateObject() noexcept
     QString newValue = _ui->nameEdit->text();
     if (_object.name() == newValue) return;
 
-    using Command = SetPropertyCommand< Object,
-                                        QString,
-                                        void (Object::*)(const QString&)>;
-    std::unique_ptr<Command> command(new Command( _object,
+    _undoStack.addAndMake(makeSetPropertyCommand( _object,
+                                                  &Object::name,
                                                   &Object::tryRename,
-                                                  _object.name(),
                                                   newValue));
-    _undoStack.addAndMake(std::move(command));
   }
   catch (std::exception error)
   {

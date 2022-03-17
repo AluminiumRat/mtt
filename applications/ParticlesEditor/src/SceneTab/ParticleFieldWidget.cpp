@@ -108,15 +108,11 @@ void ParticleFieldWidget::_updateTextures() noexcept
 
 void ParticleFieldWidget::_setTextureFiles(const std::vector<QString>& files)
 {
-  using Command = mtt::SetPropertyCommand<
-                          ParticleField,
-                          std::vector<QString>,
-                          void(ParticleField::*)(const std::vector<QString>&)>;
-  std::unique_ptr<Command> command(new Command( _field,
+  _undoStack.addAndMake(
+                    mtt::makeSetPropertyCommand(_field,
+                                                &ParticleField::textureFiles,
                                                 &ParticleField::setTextureFiles,
-                                                _field.textureFiles(),
                                                 files));
-  _undoStack.addAndMake(std::move(command));
 }
 
 void ParticleFieldWidget::_addTexture() noexcept

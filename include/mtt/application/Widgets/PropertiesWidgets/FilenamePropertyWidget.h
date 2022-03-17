@@ -115,16 +115,14 @@ namespace mtt
 
     try
     {
-      using Command = mtt::SetPropertyCommand<ObjectClass, QString, Setter>;
-      std::unique_ptr<Command> command(new Command( _object,
+      _undoStack.addAndMake(makeSetPropertyCommand( _object,
+                                                    _getter,
                                                     _setter,
-                                                    (_object.*_getter)(),
                                                     fileName));
-      _undoStack.addAndMake(std::move(command));
     }
     catch(...)
     {
-      mtt::Abort("FilenamePropertyWidget::_setFilename: unable to update filename.");
+      Log() << "FilenamePropertyWidget::_setFilename: unable to update filename.";
     }
   }
 }

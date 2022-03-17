@@ -39,35 +39,23 @@ std::unique_ptr<AbstractEditCommand> AnimationTrack::makeRestoreCommand() const
   ScalableObject* target = _targetLink.get();
   if(target == nullptr) return nullptr;
 
-  using PositionSetter = void (ScalableObject::*)(const glm::vec3&);
-  using PositionCommand = SetPropertyCommand< ScalableObject,
-                                              glm::vec3,
-                                              PositionSetter>;
-  std::unique_ptr<PositionCommand> positionCommand(
-                              new PositionCommand(*target,
+  std::unique_ptr<AbstractEditCommand> positionCommand =
+                          makeSetPropertyCommand( *target,
+                                                  &ScalableObject::position,
                                                   &ScalableObject::setPosition,
-                                                  target->position(),
-                                                  target->position()));
+                                                  target->position());
 
-  using RotationSetter = void (ScalableObject::*)(const glm::quat&);
-  using RotationCommand = SetPropertyCommand< ScalableObject,
-                                              glm::quat,
-                                              RotationSetter>;
-  std::unique_ptr<RotationCommand> rotationCommand(
-                              new RotationCommand(*target,
+  std::unique_ptr<AbstractEditCommand> rotationCommand =
+                          makeSetPropertyCommand( *target,
+                                                  &ScalableObject::rotation,
                                                   &ScalableObject::setRotation,
-                                                  target->rotation(),
-                                                  target->rotation()));
+                                                  target->rotation());
 
-  using ScaleSetter = void (ScalableObject::*)(const glm::vec3&);
-  using ScaleCommand = SetPropertyCommand<ScalableObject,
-                                          glm::vec3,
-                                          ScaleSetter>;
-  std::unique_ptr<ScaleCommand> scaleCommand(
-                                    new ScaleCommand( *target,
+  std::unique_ptr<AbstractEditCommand> scaleCommand =
+                              makeSetPropertyCommand( *target,
+                                                      &ScalableObject::scale,
                                                       &ScalableObject::setScale,
-                                                      target->scale(),
-                                                      target->scale()));
+                                                      target->scale());
 
   std::unique_ptr<CompositeCommand> resultCommand(new CompositeCommand());
   resultCommand->addSubcommand(std::move(positionCommand));

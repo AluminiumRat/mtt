@@ -81,14 +81,11 @@ void PlaneManipulator::processShift(const glm::vec3& startTouchPoint,
 
   try
   {
-    using Command = SetPropertyCommand<
-                                MovableObject,
-                                glm::vec3,
-                                void (MovableObject::*)(const glm::vec3&)>;
-    std::unique_ptr<Command> command( new Command(_object,
-                                                  &MovableObject::setPosition,
-                                                  _object.position(),
-                                                  newPosition));
+    std::unique_ptr<AbstractEditCommand> command =
+                            makeSetPropertyCommand( _object,
+                                                    &MovableObject::position,
+                                                    &MovableObject::setPosition,
+                                                    newPosition);
     _undoStack.addAndMake(std::move(command));
   }
   catch(std::exception& error)

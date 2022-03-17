@@ -104,14 +104,10 @@ namespace mtt
       EnumType value = _enumValues[_widget.currentIndex()];
       if ((_object.*_getter)() == value) return;
 
-      using Command = SetPropertyCommand< ObjectClass,
-                                          EnumType,
-                                          Setter>;
-      std::unique_ptr<Command> command(new Command( _object,
+      _undoStack.addAndMake(makeSetPropertyCommand( _object,
+                                                    _getter,
                                                     _setter,
-                                                    (_object.*_getter)(),
                                                     value));
-      _undoStack.addAndMake(std::move(command));
     }
     catch (std::exception& error)
     {
