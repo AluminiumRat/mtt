@@ -8,6 +8,7 @@
 #include <mtt/application/EditCommands/UndoStack.h>
 #include <mtt/application/Widgets/PropertiesWidgets/Vec3PropertyWidget.h>
 #include <mtt/utilities/Log.h>
+#include <mtt/utilities/ScopedSetter.h>
 
 #include <SceneTab/ParticleFieldWidget.h>
 
@@ -17,7 +18,8 @@ ParticleFieldWidget::ParticleFieldWidget( ParticleField& object,
                                           mtt::UndoStack& undoStack) :
   _ui(new Ui::ParticleFieldWidget),
   _field(object),
-  _undoStack(undoStack)
+  _undoStack(undoStack),
+  _skipUpdate(false)
 {
   _ui->setupUi(this);
 
@@ -49,11 +51,23 @@ ParticleFieldWidget::ParticleFieldWidget( ParticleField& object,
           Qt::DirectConnection);
 
   connect(&_field,
-          &ParticleField::textureFilesChanged,
+          &ParticleField::textureDescriptionsChanged,
           this,
           &ParticleFieldWidget::_updateTextures,
           Qt::DirectConnection);
   _updateTextures();
+
+  connect(_ui->texturesList,
+          &QListWidget::currentRowChanged,
+          this,
+          &ParticleFieldWidget::_updateExtentSpin,
+          Qt::DirectConnection);
+
+  connect(_ui->extentSpin,
+          QOverload<int>::of(&QSpinBox::valueChanged),
+          this,
+          &ParticleFieldWidget::_setExtentValue,
+          Qt::DirectConnection);
 
   connect(_ui->addTextureButton,
           &QPushButton::pressed,
@@ -98,21 +112,54 @@ void ParticleFieldWidget::_stepSimulation() noexcept
 
 void ParticleFieldWidget::_updateTextures() noexcept
 {
+  if (_skipUpdate) return;
+
   _ui->texturesList->clear();
-  for (const QString& textureName : _field.textureFiles())
+  for (const ParticleTextureDescription& texture : _field.textureDescriptions())
   {
-    QFileInfo fileInfo(textureName);
+    QFileInfo fileInfo(texture.filename);
     _ui->texturesList->addItem(fileInfo.fileName());
   }
 }
 
-void ParticleFieldWidget::_setTextureFiles(const std::vector<QString>& files)
+void ParticleFieldWidget::_updateExtentSpin() noexcept
+{
+  mtt::ScopedTrueSetter lock(_skipUpdate);
+
+  int textureIndex = _ui->texturesList->currentRow();
+  if (textureIndex < 0)
+  {
+    _ui->extentSpin->setValue(1);
+    _ui->extentSpin->setEnabled(false);
+  }
+  else
+  {
+    _ui->extentSpin->setValue(
+                            _field.textureDescriptions()[textureIndex].extent);
+    _ui->extentSpin->setEnabled(true);
+  }
+}
+
+void ParticleFieldWidget::_setExtentValue() noexcept
+{
+  if(_skipUpdate) return;
+  mtt::ScopedTrueSetter lock(_skipUpdate);
+
+  int textureIndex = _ui->texturesList->currentRow();
+  if (textureIndex < 0) return;
+  ParticleTextureDescriptions textureFiles = _field.textureDescriptions();
+  textureFiles[textureIndex].extent = uint8_t(_ui->extentSpin->value());
+  _setTextureFiles(textureFiles);
+}
+
+void ParticleFieldWidget::_setTextureFiles(
+                                      const ParticleTextureDescriptions& files)
 {
   _undoStack.addAndMake(
-                    mtt::makeSetPropertyCommand(_field,
-                                                &ParticleField::textureFiles,
-                                                &ParticleField::setTextureFiles,
-                                                files));
+            mtt::makeSetPropertyCommand(_field,
+                                        &ParticleField::textureDescriptions,
+                                        &ParticleField::setTextureDescriptions,
+                                        files));
 }
 
 void ParticleFieldWidget::_addTexture() noexcept
@@ -126,9 +173,14 @@ void ParticleFieldWidget::_addTexture() noexcept
                               tr("picture files(*.png *.jpg *.jpeg *.bmp)"));
     if(fileName.isEmpty()) return;
 
-    std::vector<QString> textureFiles = _field.textureFiles();
-    textureFiles.push_back(fileName);
+    ParticleTextureDescription newDescription;
+    newDescription.filename = fileName;
+    newDescription.extent = 1;
+
+    ParticleTextureDescriptions textureFiles = _field.textureDescriptions();
+    textureFiles.push_back(newDescription);
     _setTextureFiles(textureFiles);
+    _ui->texturesList->setCurrentRow(textureFiles.size() - 1);
   }
   catch (std::exception& error)
   {
@@ -146,7 +198,7 @@ void ParticleFieldWidget::_removeTexture() noexcept
   {
     int textureIndex = _ui->texturesList->currentRow();
     if(textureIndex < 0) return;
-    std::vector<QString> textureFiles = _field.textureFiles();
+    ParticleTextureDescriptions textureFiles = _field.textureDescriptions();
     textureFiles.erase(textureFiles.begin() + textureIndex);
     _setTextureFiles(textureFiles);
   }
@@ -166,7 +218,7 @@ void ParticleFieldWidget::_moveTextureUp() noexcept
   {
     int textureIndex = _ui->texturesList->currentRow();
     if(textureIndex < 1) return;
-    std::vector<QString> textureFiles = _field.textureFiles();
+    ParticleTextureDescriptions textureFiles = _field.textureDescriptions();
     std::swap(textureFiles[textureIndex], textureFiles[textureIndex-1]);
     _setTextureFiles(textureFiles);
     _ui->texturesList->setCurrentRow(textureIndex - 1);
@@ -188,7 +240,7 @@ void ParticleFieldWidget::_moveTextureDown() noexcept
     int textureIndex = _ui->texturesList->currentRow();
     if(textureIndex < 0) return;
 
-    std::vector<QString> textureFiles = _field.textureFiles();
+    ParticleTextureDescriptions textureFiles = _field.textureDescriptions();
     if (textureIndex >= textureFiles.size() - 1) return;
 
     std::swap(textureFiles[textureIndex], textureFiles[textureIndex + 1]);

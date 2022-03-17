@@ -37,20 +37,21 @@ void ParticleField::addParticle(const ParticleData& particle)
   _newParticles.push_back(particle);
 }
 
-void ParticleField::setTextureFiles(const std::vector<QString>& newFiles)
+void ParticleField::setTextureDescriptions(
+                            const ParticleTextureDescriptions& newDescriptions)
 {
-  _textureFiles.clear();
+  _textureDescriptions.clear();
   try
   {
-    _textureFiles = newFiles;
+    _textureDescriptions = newDescriptions;
   }
   catch (...)
   {
-    emit textureFilesChanged(_textureFiles);
+    emit textureDescriptionsChanged(_textureDescriptions);
     throw;
   }
 
-  emit textureFilesChanged(_textureFiles);
+  emit textureDescriptionsChanged(_textureDescriptions);
 }
 
 void ParticleField::registerModificator(ModificatorObject& modificator)

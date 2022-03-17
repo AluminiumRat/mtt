@@ -20,6 +20,19 @@ void ParticlesDrawable::DrawTechnique::resetPipeline() noexcept
   _pipeline.reset();
 }
 
+std::string ParticlesDrawable::DrawTechnique::_makeTextureExtentefine() const
+{
+  std::string define;
+  for ( size_t textureIndex = 0;
+        textureIndex < _parent._textureData.size();
+        textureIndex++)
+  {
+    if(textureIndex != 0) define += ",";
+    define += std::to_string(_parent._textureData[textureIndex].extent);
+  }
+  return define;
+}
+
 void ParticlesDrawable::DrawTechnique::_rebuildPipeline(
                                             mtt::AbstractRenderPass& renderPass)
 {
@@ -71,6 +84,11 @@ void ParticlesDrawable::DrawTechnique::_rebuildPipeline(
     textureIndexAtribute.adjustDataType(mtt::VertexAttribute::UINT32_TYPE);
     textureIndexAtribute.attachBuffer(&_parent._textureIndexBuffer);
 
+    mtt::VertexAttribute& tileIndexAtribute =
+                          _pipeline->getOrCreateAttribute("tileIndexLocation");
+    tileIndexAtribute.adjustDataType(mtt::VertexAttribute::UINT32_TYPE);
+    tileIndexAtribute.attachBuffer(&_parent._tileIndexBuffer);
+
     _pipeline->addResource( mtt::DrawMatrices::bindingName,
                             _matricesUniform,
                             VK_SHADER_STAGE_VERTEX_BIT |
@@ -84,6 +102,7 @@ void ParticlesDrawable::DrawTechnique::_rebuildPipeline(
       _pipeline->setDefine("COLOR_SAMPLER_ENABLED");
       _pipeline->setDefine( "TEXTURES_NUMBER",
                             std::to_string(_parent._sampler->arraySize()));
+      _pipeline->setDefine("EXTENT_DEFINE", _makeTextureExtentefine());
     }
 
     _pipeline->setTopology(VK_PRIMITIVE_TOPOLOGY_POINT_LIST);
@@ -172,6 +191,8 @@ ParticlesDrawable::ParticlesDrawable() :
                 mtt::Buffer::VERTEX_BUFFER),
   _textureIndexBuffer(mtt::Application::instance().displayDevice(),
                       mtt::Buffer::VERTEX_BUFFER),
+  _tileIndexBuffer( mtt::Application::instance().displayDevice(),
+                    mtt::Buffer::VERTEX_BUFFER),
   _particlesNumber(0),
   _colorTechnique(*this)
 {
@@ -180,7 +201,8 @@ ParticlesDrawable::ParticlesDrawable() :
 void ParticlesDrawable::setData(std::vector<glm::vec3> positionData,
                                 std::vector<glm::vec2> sizeRotationData,
                                 std::vector<glm::vec4> colorData,
-                                std::vector<uint32_t> textureIndexData)
+                                std::vector<uint32_t> textureIndexData,
+                                std::vector<uint32_t> tileIndexData)
 {
   if( positionData.size() != sizeRotationData.size() ||
       positionData.size() != colorData.size() ||
@@ -202,6 +224,8 @@ void ParticlesDrawable::setData(std::vector<glm::vec3> positionData,
                         particlesNumber * sizeof(glm::vec4));
   _textureIndexBuffer.setData(textureIndexData.data(),
                               particlesNumber * sizeof(uint32_t));
+  _tileIndexBuffer.setData( tileIndexData.data(),
+                            particlesNumber * sizeof(uint32_t));
 
   _positionsData = positionData;
 
@@ -209,28 +233,32 @@ void ParticlesDrawable::setData(std::vector<glm::vec3> positionData,
 }
 
 void ParticlesDrawable::setParticleTextures(
-                  const std::vector<std::shared_ptr<mtt::Texture2D>>& textures)
+                                      const std::vector<TextureData>& textures)
 {
   _colorTechnique.resetPipeline();
   _sampler.reset();
+  _textureData.clear();
 
   if(textures.empty()) return;
 
   try
   {
-    _sampler.emplace( textures.size(),
+    _textureData = textures;
+    _sampler.emplace( _textureData.size(),
                       mtt::PipelineResource::STATIC,
                       mtt::Application::instance().displayDevice());
     for ( size_t textureIndex = 0;
-          textureIndex < textures.size();
+          textureIndex < _textureData.size();
           textureIndex++)
     {
-      if(textures[textureIndex] == nullptr) mtt::Abort("ParticlesDrawable::setParticleTextures: textures array contain nullptr");
-      _sampler->setAttachedTexture(textures[textureIndex], textureIndex);
+      if(_textureData[textureIndex].texture == nullptr) mtt::Abort("ParticlesDrawable::setParticleTextures: textures array contain nullptr");
+      _sampler->setAttachedTexture( _textureData[textureIndex].texture,
+                                    textureIndex);
     }
   }
   catch (...)
   {
+    _textureData.clear();
     _sampler.reset();
     throw;
   }

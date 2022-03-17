@@ -112,6 +112,13 @@ EmitterWidget::EmitterWidget(EmitterObject& object, mtt::UndoStack& undoStack) :
                               &EmitterObject::textureIndexChanged,
                               undoStack);
 
+  _tileConnection.emplace(*_ui->tileIndexSpin,
+                          object,
+                          &EmitterObject::tileIndex,
+                          &EmitterObject::setTileIndex,
+                          &EmitterObject::tileIndexChanged,
+                          undoStack);
+
   _lifetimeConnection.emplace(*_ui->minLifetimeSpin,
                               *_ui->maxLifetimeSpin,
                               object,

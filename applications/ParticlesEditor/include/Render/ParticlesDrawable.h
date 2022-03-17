@@ -21,6 +21,13 @@ namespace mtt
 class ParticlesDrawable : public mtt::Drawable
 {
 public:
+  struct TextureData
+  {
+    std::shared_ptr<mtt::Texture2D> texture;
+    uint8_t extent;
+  };
+
+public:
   ParticlesDrawable();
   ParticlesDrawable(const ParticlesDrawable&) = delete;
   ParticlesDrawable& operator = (const ParticlesDrawable&) = delete;
@@ -34,10 +41,10 @@ public:
   void setData( std::vector<glm::vec3> positionData,
                 std::vector<glm::vec2> sizeRotationData,
                 std::vector<glm::vec4> colorData,
-                std::vector<uint32_t> textureIndexData);
+                std::vector<uint32_t> textureIndexData,
+                std::vector<uint32_t> tileIndexData);
 
-  void setParticleTextures(
-                  const std::vector<std::shared_ptr<mtt::Texture2D>>& textures);
+  void setParticleTextures(const std::vector<TextureData>& textures);
 
 protected:
   virtual void buildDrawActions(mtt::DrawPlanBuildInfo& buildInfo) override;
@@ -52,6 +59,7 @@ private:
     void buildDrawActions(mtt::DrawPlanBuildInfo& buildInfo);
 
   private:
+    std::string _makeTextureExtentefine() const;
     void _rebuildPipeline(mtt::AbstractRenderPass& renderPass);
     mtt::Ref<mtt::PlainBuffer> _makeIndices(
                                 const mtt::DrawPlanBuildInfo& buildInfo,
@@ -69,10 +77,12 @@ private:
   mtt::Buffer _sizeRotationBuffer;
   mtt::Buffer _colorBuffer;
   mtt::Buffer _textureIndexBuffer;
+  mtt::Buffer _tileIndexBuffer;
   size_t _particlesNumber;
 
   std::optional<mtt::Sampler> _sampler;
 
+  std::vector<TextureData> _textureData;
   std::vector<glm::vec3> _positionsData;
 
   DrawTechnique _colorTechnique;

@@ -7,8 +7,11 @@
 #endif
 
 layout(location = 0) in vec4 inColor;
-layout(location = 1) in vec2 inTexCoords;
-layout(location = 2) in flat uint inTextureIndex;
+
+#ifdef COLOR_SAMPLER_ENABLED
+  layout(location = 1) in vec2 inTexCoords;
+  layout(location = 2) in flat uint inTextureIndex;
+#endif
 
 layout(location = 0) out vec4 outColor;
 

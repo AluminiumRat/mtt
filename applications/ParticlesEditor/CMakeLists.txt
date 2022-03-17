@@ -56,6 +56,7 @@ set(HEADERS
     "include/Objects/ModificatorObject.h"
     "include/Objects/ParticleAnimation.h"
     "include/Objects/ParticleField.h"
+    "include/Objects/ParticleTextureDescription.h"
     "include/Objects/PEVisitor.h"
     "include/Objects/PEVisitorExtension.h"
     "include/Objects/RootObject.h"

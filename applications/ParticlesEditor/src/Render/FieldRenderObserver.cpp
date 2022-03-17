@@ -50,7 +50,7 @@ FieldRenderObserver::FieldRenderObserver( ParticleField& object,
   _updateParticles();
 
   connect(&_field,
-          &ParticleField::textureFilesChanged,
+          &ParticleField::textureDescriptionsChanged,
           this,
           &FieldRenderObserver::_updateTextures,
           Qt::DirectConnection);
@@ -80,10 +80,22 @@ void FieldRenderObserver::_updateSize() noexcept
 
 void FieldRenderObserver::_updateParticles() noexcept
 {
+  size_t pointsNumber = _field.workIndices().size();
+
   std::vector<glm::vec3> positions;
+  positions.reserve(pointsNumber);
+
   std::vector<glm::vec2> sizeRotation;
+  sizeRotation.reserve(pointsNumber);
+
   std::vector<glm::vec4> color;
+  color.reserve(pointsNumber);
+
   std::vector<uint32_t> textureIndices;
+  textureIndices.reserve(pointsNumber);
+
+  std::vector<uint32_t> tileIndices;
+  tileIndices.reserve(pointsNumber);
 
   for (ParticleField::ParticleIndex index : _field.workIndices())
   {
@@ -93,26 +105,28 @@ void FieldRenderObserver::_updateParticles() noexcept
     color.push_back(glm::vec4(particle.color * particle.brightness,
                               particle.opacity));
     textureIndices.push_back(particle.textureIndex);
+    tileIndices.push_back(particle.tileIndex);
   }
 
   _particlesDrawable.setData( positions,
                               sizeRotation,
                               color,
-                              textureIndices);
+                              textureIndices,
+                              tileIndices);
 }
 
 void FieldRenderObserver::_updateTextures() noexcept
 {
   try
   {
-    if (_field.textureFiles().empty())
+    if (_field.textureDescriptions().empty())
     {
       _particlesDrawable.setParticleTextures({});
       return;
     }
 
     std::unique_ptr<UploadParticleTexturesTask> task;
-    task.reset(new UploadParticleTexturesTask(_field.textureFiles(),
+    task.reset(new UploadParticleTexturesTask(_field.textureDescriptions(),
                                               _particlesDrawable));
     mtt::AsyncTaskQueue& queue =
                               mtt::EditorApplication::instance().asyncTaskQueue;

@@ -8,6 +8,7 @@
 #include <mtt/application/TimeT.h>
 #include <mtt/editorLib/Objects/MovableObject.h>
 
+#include <Objects/ParticleTextureDescription.h>
 #include <Objects/PEVisitorExtension.h>
 
 class ModificatorObject;
@@ -30,11 +31,11 @@ class ParticleField : public mtt::MovableObject
               STORED true
               USER false)
 
-  Q_PROPERTY( std::vector<QString> textureFiles
-              READ textureFiles
-              WRITE setTextureFiles
-              RESET resetTextureFiles
-              NOTIFY textureFilesChanged
+  Q_PROPERTY( ParticleTextureDescriptions textureDescriptions
+              READ textureDescriptions
+              WRITE setTextureDescriptions
+              RESET resetTextureDescriptions
+              NOTIFY textureDescriptionsChanged
               DESIGNABLE true
               SCRIPTABLE true
               STORED true
@@ -55,6 +56,7 @@ public:
     float brightness;
     float opacity;
     uint8_t textureIndex;
+    uint8_t tileIndex;
     mtt::TimeT currentTime;
     mtt::TimeT maxTime;
     float mass;
@@ -82,9 +84,11 @@ public:
   /// Remove all particles
   void clear() noexcept;
 
-  inline const std::vector<QString>& textureFiles() const noexcept;
-  void setTextureFiles(const std::vector<QString>& newFiles);
-  inline void resetTextureFiles();
+  inline const ParticleTextureDescriptions&
+                                          textureDescriptions() const noexcept;
+  void setTextureDescriptions(
+                            const ParticleTextureDescriptions& newDescriptions);
+  inline void resetTextureDescriptions();
 
   void registerModificator(ModificatorObject& modificator);
   void unregisterModificator(ModificatorObject& modificator) noexcept;
@@ -93,7 +97,7 @@ public:
 
 signals:
   void sizeChanged(const glm::vec3& newValue);
-  void textureFilesChanged(const std::vector<QString>& newValue);
+  void textureDescriptionsChanged(const ParticleTextureDescriptions& newValue);
   void cleared();
   void simulationStepStarted();
   /// First step of simulation
@@ -119,7 +123,7 @@ private:
   std::vector<ParticleData> _particlesData;
   std::vector<ParticleData> _newParticles;
 
-  std::vector<QString> _textureFiles;
+  ParticleTextureDescriptions _textureDescriptions;
 
   using Modificators = std::vector<ModificatorObject*>;
   Modificators _modificators;
@@ -135,14 +139,15 @@ inline void ParticleField::resetSize()
   setSize(glm::vec3(10.f, 10.f, 10.f));
 }
 
-inline const std::vector<QString>& ParticleField::textureFiles() const noexcept
+inline const ParticleTextureDescriptions&
+                            ParticleField::textureDescriptions() const noexcept
 {
-  return _textureFiles;
+  return _textureDescriptions;
 }
 
-inline void ParticleField::resetTextureFiles()
+inline void ParticleField::resetTextureDescriptions()
 {
-  setTextureFiles(std::vector<QString>());
+  setTextureDescriptions(ParticleTextureDescriptions());
 }
 
 inline const std::vector<ParticleField::ParticleIndex>&

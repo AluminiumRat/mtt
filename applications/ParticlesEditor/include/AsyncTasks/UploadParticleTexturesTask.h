@@ -8,12 +8,13 @@
 #include <mtt/application/AsyncTasks/AbstractAsyncTask.h>
 #include <mtt/render/Pipeline/Texture2D.h>
 
-class ParticlesDrawable;
+#include <Objects/ParticleTextureDescription.h>
+#include <Render/ParticlesDrawable.h>
 
 class UploadParticleTexturesTask : public mtt::AbstractAsyncTask
 {
 public:
-  UploadParticleTexturesTask( const std::vector<QString>& filenames,
+  UploadParticleTexturesTask( const ParticleTextureDescriptions& descriptions,
                               ParticlesDrawable& drawable);
   UploadParticleTexturesTask(const UploadParticleTexturesTask&) = delete;
   UploadParticleTexturesTask& operator = (
@@ -25,7 +26,8 @@ protected:
   virtual void finalizePart() override;
 
 private:
-  std::vector<QString> _filenames;
+  ParticleTextureDescriptions _descriptions;
   ParticlesDrawable& _drawable;
-  std::vector<std::shared_ptr<mtt::Texture2D>> _textures;
+
+  std::vector<ParticlesDrawable::TextureData> _textures;
 };

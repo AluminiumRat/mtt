@@ -6,30 +6,34 @@
 #include <Render/ParticlesDrawable.h>
 
 UploadParticleTexturesTask::UploadParticleTexturesTask(
-                                        const std::vector<QString>& filenames,
-                                        ParticlesDrawable& drawable) :
+                                const ParticleTextureDescriptions& descriptions,
+                                ParticlesDrawable& drawable) :
   AbstractAsyncTask(QObject::tr("Texture loading"),
                     AbstractAsyncTask::INDEPENDENT,
                     AbstractAsyncTask::SILENT),
-  _filenames(filenames),
+  _descriptions(descriptions),
   _drawable(drawable)
 {
 }
 
 void UploadParticleTexturesTask::asyncPart()
 {
-  if(_filenames.empty()) return;
+  if(_descriptions.empty()) return;
 
   mtt::Texture2DLibrary& textureLibrary =
                               mtt::EditorApplication::instance().textureLibrary;
   mtt::LogicalDevice& device = mtt::Application::instance().displayDevice();
 
-  for(const QString& filename : _filenames)
+  for(const ParticleTextureDescription& description : _descriptions)
   {
-    std::shared_ptr<mtt::Texture2D> texture = textureLibrary.load(filename,
-                                                                  device,
-                                                                  true);
-    _textures.push_back(texture);
+    std::shared_ptr<mtt::Texture2D> texture = textureLibrary.load(
+                                                          description.filename,
+                                                          device,
+                                                          true);
+    ParticlesDrawable::TextureData newData;
+    newData.texture = texture;
+    newData.extent = description.extent;
+    _textures.push_back(newData);
   }
 }
 

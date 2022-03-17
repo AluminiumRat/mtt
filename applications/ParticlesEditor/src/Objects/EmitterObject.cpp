@@ -29,6 +29,7 @@ EmitterObject::EmitterObject( const QString& name,
   _ignoreBrightness(true),
   _brightnessRange(1.f, 1.f),
   _textureIndex(0),
+  _tileIndex(0),
   _lifetimeRange(
               std::chrono::duration_cast<mtt::TimeT>(std::chrono::seconds(1)),
               std::chrono::duration_cast<mtt::TimeT>(std::chrono::seconds(1))),
@@ -146,6 +147,13 @@ void EmitterObject::setTextureIndex(uint8_t newValue) noexcept
   if(_textureIndex == newValue) return;
   _textureIndex = newValue;
   emit textureIndexChanged(newValue);
+}
+
+void EmitterObject::setTileIndex(uint8_t newValue) noexcept
+{
+  if(_tileIndex == newValue) return;
+  _tileIndex = newValue;
+  emit tileIndexChanged(newValue);
 }
 
 void EmitterObject::setLifetimeRange(
@@ -293,6 +301,7 @@ void EmitterObject::emitParticles(size_t particlesNumber) noexcept
       newParticle.brightness = glm::max(newParticle.brightness, 0.f);
     }
     newParticle.textureIndex = _textureIndex;
+    newParticle.tileIndex = _tileIndex;
     newParticle.currentTime = mtt::TimeT(0);
     newParticle.maxTime = mtt::TimeT(timeDistribution(_randomEngine));
     newParticle.mass = glm::mix(_massRange.min(),

@@ -184,6 +184,16 @@ public:
               STORED true
               USER false)
 
+  Q_PROPERTY( uint8_t tileIndex
+              READ tileIndex
+              WRITE setTileIndex
+              RESET resetTileIndex
+              NOTIFY tileIndexChanged
+              DESIGNABLE true
+              SCRIPTABLE true
+              STORED true
+              USER false)
+
   Q_PROPERTY( mtt::Range<mtt::TimeT> lifetimeRange
               READ lifetimeRange
               WRITE setLifetimeRange
@@ -250,36 +260,51 @@ public:
   inline const mtt::Range<float>& sizeRange() const noexcept;
   void setSizeRange(const mtt::Range<float>& newValue) noexcept;
   inline void resetSizeRange() noexcept;
+
   inline const mtt::Range<float>& rotationRange() const noexcept;
   void setRotationRange(const mtt::Range<float>& newValue) noexcept;
   inline void resetRotationRange() noexcept;
+
   inline const mtt::Range<float>& rotationSpeedRange() const noexcept;
   void setRotationSpeedRange(const mtt::Range<float>& newValue) noexcept;
   inline void resetRotationSpeedRange() noexcept;
+
   inline const glm::vec3& firstColor() const noexcept;
   void setFirstColor(const glm::vec3& newValue) noexcept;
   inline void resetFirstColor() noexcept;
+
   inline const glm::vec3& secondColor() const noexcept;
   void setSecondColor(const glm::vec3& newValue) noexcept;
   inline void resetSecondColor() noexcept;
+
   inline const mtt::Range<float>& opacityRange() const noexcept;
   void setOpacityRange(const mtt::Range<float>& newValue) noexcept;
   inline void resetOpacityRange() noexcept;
+
   inline bool ignoreBrightness() const noexcept;
   void setIgnoreBrightness(bool newValue) noexcept;
   inline void resetIgnoreBrightness() noexcept;
+
   inline const mtt::Range<float>& brightnessRange() const noexcept;
   void setBrightnessRange(const mtt::Range<float>& newValue) noexcept;
   inline void resetBrightnessRange() noexcept;
+
   inline uint8_t textureIndex() const noexcept;
   void setTextureIndex(uint8_t newValue) noexcept;
   inline void resetTextureIndex() noexcept;
+
+  inline uint8_t tileIndex() const noexcept;
+  void setTileIndex(uint8_t newValue) noexcept;
+  inline void resetTileIndex() noexcept;
+
   inline const mtt::Range<mtt::TimeT>& lifetimeRange() const noexcept;
   void setLifetimeRange(const mtt::Range<mtt::TimeT>& newValue) noexcept;
   inline void resetLifetimeRange() noexcept;
+
   inline const mtt::Range<float>& massRange() const noexcept;
   void setMassRange(const mtt::Range<float>& newValue) noexcept;
   inline void resetMassRange() noexcept;
+
   inline const mtt::Range<float>& frictionFactorRange() const noexcept;
   void setFrictionFactorRange(const mtt::Range<float>& newValue) noexcept;
   inline void resetFrictionFactorRange() noexcept;
@@ -304,6 +329,7 @@ signals:
   void ignoreBrightnessChanged(bool newValue);
   void brightnessRangeChanged(const mtt::Range<float>& newValue);
   void textureIndexChanged(uint8_t newValue);
+  void tileIndexChanged(uint8_t newValue);
   void lifetimeRangeChanged(const mtt::Range<mtt::TimeT>& newValue);
   void massRangeChanged(const mtt::Range<float>& newValue);
   void frictionFactorRangeChanged(const mtt::Range<float>& newValue);
@@ -329,6 +355,7 @@ private:
   bool _ignoreBrightness;
   mtt::Range<float> _brightnessRange;
   uint8_t _textureIndex;
+  uint8_t _tileIndex;
   mtt::Range<mtt::TimeT> _lifetimeRange;
   mtt::Range<float> _massRange;
   mtt::Range<float> _frictionFactorRange;
@@ -487,6 +514,16 @@ inline uint8_t EmitterObject::textureIndex() const noexcept
 inline void EmitterObject::resetTextureIndex() noexcept
 {
   setTextureIndex(0);
+}
+
+inline uint8_t EmitterObject::tileIndex() const noexcept
+{
+  return _tileIndex;
+}
+
+inline void EmitterObject::resetTileIndex() noexcept
+{
+  setTileIndex(0);
 }
 
 inline const mtt::Range<mtt::TimeT>&

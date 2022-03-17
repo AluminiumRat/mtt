@@ -59,8 +59,9 @@ private:
   std::optional<RangeConnection> _massConnection;
   std::optional<RangeConnection> _frictionFactorConnection;
 
-  using TextureConnection = mtt::IntSpinConnection<EmitterObject, uint8_t>;
-  std::optional<TextureConnection> _textureConnection;
+  using Uint8Connection = mtt::IntSpinConnection<EmitterObject, uint8_t>;
+  std::optional<Uint8Connection> _textureConnection;
+  std::optional<Uint8Connection> _tileConnection;
 
   using LifetimeConnection = mtt::TimeRangeSpinConnection<EmitterObject>;
   std::optional<LifetimeConnection> _lifetimeConnection;

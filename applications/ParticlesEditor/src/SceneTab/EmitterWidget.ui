@@ -665,7 +665,37 @@
         </sizepolicy>
        </property>
        <property name="maximum">
-        <number>999</number>
+        <number>255</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="tileIndexLayout">
+     <item>
+      <widget class="QLabel" name="tileIndexLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Tile</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="tileIndexSpin">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>3</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximum">
+        <number>255</number>
        </property>
       </widget>
      </item>
@@ -682,7 +712,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string> Lifetime range</string>
+        <string>Lifetime range</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
