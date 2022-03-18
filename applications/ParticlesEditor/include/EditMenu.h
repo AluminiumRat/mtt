@@ -4,7 +4,7 @@
 
 #include <QtCore/QObject>
 
-#include <Objects/ModificatorObject.h>
+#include <Objects/HierarhicalObject.h>
 
 class EditorCommonData;
 class MainWindow;
@@ -30,7 +30,7 @@ private:
   void _redo() noexcept;
   void _updateDeleteAction() noexcept;
   void _deleteObject() noexcept;
-  void _addModificator(std::unique_ptr<ModificatorObject> object);
+  void _addHierarhical(std::unique_ptr<HierarhicalObject> object);
   void _addFrame() noexcept;
   void _addEmitter() noexcept;
   void _addAnimationFromFbx() noexcept;

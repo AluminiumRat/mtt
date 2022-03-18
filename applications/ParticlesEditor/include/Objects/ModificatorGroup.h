@@ -2,10 +2,10 @@
 
 #include <mtt/application/Scene/SpecialGroup.h>
 
-#include <Objects/ModificatorObject.h>
+#include <Objects/HierarhicalObject.h>
 
 class ModificatorGroup : public mtt::SpecialGroup<mtt::DisplayedObject,
-                                                  ModificatorObject>
+                                                  HierarhicalObject>
 {
   Q_OBJECT
   DEFINE_EXTENSION_ACCEPT(PEVisitorExtension,
@@ -22,6 +22,6 @@ public:
   virtual ~ModificatorGroup() noexcept = default;
 
 signals:
-  void childAdded(ModificatorObject& object);
-  void childRemoved(ModificatorObject& object);
+  void childAdded(HierarhicalObject& object);
+  void childRemoved(HierarhicalObject& object);
 };

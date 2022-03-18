@@ -11,7 +11,9 @@
 
 #include <QtCore/QDataStream>
 
+#include <mtt/application/TimeT.h>
 #include <mtt/utilities/UID.h>
+#include <mtt/utilities/Range.h>
 
 namespace mtt
 {
@@ -46,8 +48,11 @@ namespace mtt
     inline DataStream& operator<<(const glm::mat3& value);
     inline DataStream& operator<<(const glm::mat4& value);
     inline DataStream& operator<<(const UID& id);
+    inline DataStream& operator<<(const TimeT& time);
     template<typename ElementType>
     inline DataStream& operator<<(const std::vector<ElementType>& data);
+    template<typename ValueType>
+    inline DataStream& operator<<(const Range<ValueType>& data);
 
     inline DataStream& operator>>(int8_t& i);
     inline DataStream& operator>>(uint8_t& i);
@@ -69,8 +74,11 @@ namespace mtt
     inline DataStream& operator>>(glm::mat4& value);
     inline DataStream& operator>>(glm::quat& value);
     inline DataStream& operator>>(UID& id);
+    inline DataStream& operator>>(TimeT& target);
     template<typename ElementType>
     inline DataStream& operator>>(std::vector<ElementType>& target);
+    template<typename ValueType>
+    inline DataStream& operator>>(Range<ValueType>& target);
 
     inline int8_t readInt8();
     inline uint8_t readUint8();
@@ -90,6 +98,9 @@ namespace mtt
     inline glm::mat4 readMat4();
     inline glm::quat readQuat();
     inline UID readUID();
+    inline TimeT readTime();
+    template<typename ValueType>
+    inline Range<ValueType> readRange();
   };
 
   inline DataStream::DataStream(const QByteArray& a) :
@@ -224,6 +235,12 @@ namespace mtt
     return operator<<(id.value());
   }
 
+  inline DataStream& DataStream::operator<<(const TimeT& time)
+  {
+    using StoreTime = std::chrono::duration<int32_t, std::ratio<1, 1000>>;
+    return operator<<(std::chrono::duration_cast<StoreTime>(time).count());
+  }
+
   template<typename ElementType>
   inline DataStream& DataStream::operator<<(
                                           const std::vector<ElementType>& data)
@@ -234,6 +251,14 @@ namespace mtt
     {
       operator<<(element);
     }
+    return *this;
+  }
+
+  template<typename ValueType>
+  inline DataStream& DataStream::operator<<(const Range<ValueType>& data)
+  {
+    operator << (data.min());
+    operator << (data.max());
     return *this;
   }
 
@@ -353,6 +378,16 @@ namespace mtt
     return *this;
   }
 
+  inline DataStream& DataStream::operator>>(TimeT& target)
+  {
+    using StoreTime = std::chrono::duration<int32_t, std::ratio<1, 1000>>;
+    StoreTime::rep timeCount;
+    operator >> (timeCount);
+    StoreTime storeTime(timeCount);
+    target = std::chrono::duration_cast<TimeT>(storeTime);
+    return *this;
+  }
+
   template<typename ElementType>
   inline DataStream& DataStream::operator>>(std::vector<ElementType>& target)
   {
@@ -364,6 +399,17 @@ namespace mtt
       target.resize(dataLength);
       for(ElementType& element : target) operator>>(element);
     }
+    return *this;
+  }
+
+  template<typename ValueType>
+  inline DataStream& DataStream::operator>>(Range<ValueType>& target)
+  {
+    ValueType minValue;
+    operator >> (minValue);
+    ValueType maxValue;
+    operator >> (maxValue);
+    target.set(minValue, maxValue);
     return *this;
   }
 
@@ -489,6 +535,21 @@ namespace mtt
   inline UID DataStream::readUID()
   {
     UID value;
+    operator >> (value);
+    return value;
+  }
+
+  inline TimeT DataStream::readTime()
+  {
+    TimeT value;
+    operator >> (value);
+    return value;
+  }
+
+  template<typename ValueType>
+  inline Range<ValueType> DataStream::readRange()
+  {
+    Range<ValueType> value;
     operator >> (value);
     return value;
   }

@@ -2,8 +2,9 @@
 
 #include <mtt/editorLib/Objects/CEVisitor.h>
 
-#include <Objects/FrameObject.h>
 #include <Objects/EmitterObject.h>
+#include <Objects/HierarhicalObject.h>
+#include <Objects/FrameObject.h>
 #include <Objects/ModificatorGroup.h>
 #include <Objects/ModificatorObject.h>
 #include <Objects/ParticleAnimation.h>
@@ -28,6 +29,10 @@ public:
 
   inline virtual void visitConstFrameObject(const FrameObject& object) override;
   inline virtual void visitFrameObject(FrameObject& object) override;
+
+  virtual void visitConstHierarhicalObject(
+                                      const HierarhicalObject& object) override;
+  virtual void visitHierarhicalObject(HierarhicalObject& object) override;
 
   inline virtual void visitConstModificatorGroup(
                                       const ModificatorGroup& object) override;
@@ -81,13 +86,26 @@ template <typename BaseVisitor>
 inline void PEVisitorT<BaseVisitor>::visitConstFrameObject(
                                                       const FrameObject& object)
 {
-  visitConstModificatorObject(object);
+  visitConstHierarhicalObject(object);
 }
 
 template <typename BaseVisitor>
 inline void PEVisitorT<BaseVisitor>::visitFrameObject(FrameObject& object)
 {
-  visitModificatorObject(object);
+  visitHierarhicalObject(object);
+}
+
+template <typename BaseVisitor>
+void PEVisitorT<BaseVisitor>::visitConstHierarhicalObject(
+                                                const HierarhicalObject& object)
+{
+  static_cast<BaseVisitor*>(this)->visitConstScalableObject(object);
+}
+
+template <typename BaseVisitor>
+void PEVisitorT<BaseVisitor>::visitHierarhicalObject(HierarhicalObject& object)
+{
+  static_cast<BaseVisitor*>(this)->visitScalableObject(object);
 }
 
 template <typename BaseVisitor>
@@ -108,14 +126,14 @@ template <typename BaseVisitor>
 inline void PEVisitorT<BaseVisitor>::visitConstModificatorObject(
                                                 const ModificatorObject& object)
 {
-  static_cast<BaseVisitor*>(this)->visitConstScalableObject(object);
+  visitConstHierarhicalObject(object);
 }
 
 template <typename BaseVisitor>
 inline void PEVisitorT<BaseVisitor>::visitModificatorObject(
                                                       ModificatorObject& object)
 {
-  static_cast<BaseVisitor*>(this)->visitScalableObject(object);
+  visitHierarhicalObject(object);
 }
 
 template <typename BaseVisitor>

@@ -47,16 +47,22 @@ set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 
 set(HEADERS
     "include/AsyncTasks/ImportAnimationTask.h"
+    "include/AsyncTasks/LoadEffectTask.h"
     "include/AsyncTasks/LoadEnvironmentTask.h"
+    "include/AsyncTasks/SaveEffectTask.h"
     "include/AsyncTasks/UploadParticleTexturesTask.h"
 
-    "include/Objects/FrameObject.h"
     "include/Objects/EmitterObject.h"
+    "include/Objects/FrameObject.h"
+    "include/Objects/HierarhicalObject.h"
     "include/Objects/ModificatorGroup.h"
     "include/Objects/ModificatorObject.h"
+    "include/Objects/ObjectLoader.h"
+    "include/Objects/ObjectSaver.h"
     "include/Objects/ParticleAnimation.h"
     "include/Objects/ParticleField.h"
     "include/Objects/ParticleTextureDescription.h"
+    "include/Objects/PEEObjectFactory.h"
     "include/Objects/PEVisitor.h"
     "include/Objects/PEVisitorExtension.h"
     "include/Objects/RootObject.h"
@@ -84,15 +90,21 @@ set(HEADERS
 
 set(SOURCES
     "src/AsyncTasks/ImportAnimationTask.cpp"
+    "src/AsyncTasks/LoadEffectTask.cpp"
     "src/AsyncTasks/LoadEnvironmentTask.cpp"
     "src/AsyncTasks/UploadParticleTexturesTask.cpp"
+    "src/AsyncTasks/SaveEffectTask.cpp"
 
-    "src/Objects/FrameObject.cpp"
     "src/Objects/EmitterObject.cpp"
+    "src/Objects/FrameObject.cpp"
+    "src/Objects/HierarhicalObject.cpp"
     "src/Objects/ModificatorGroup.cpp"
     "src/Objects/ModificatorObject.cpp"
+    "src/Objects/ObjectLoader.cpp"
+    "src/Objects/ObjectSaver.cpp"
     "src/Objects/ParticleAnimation.cpp"
     "src/Objects/ParticleField.cpp"
+    "src/Objects/PEEObjectFactory.cpp"
     "src/Objects/PEVisitorExtension.cpp"
     "src/Objects/RootObject.cpp"
 

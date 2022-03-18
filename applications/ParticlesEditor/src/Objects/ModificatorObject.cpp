@@ -3,7 +3,7 @@
 ModificatorObject::ModificatorObject( const QString& name,
                                       bool canBeRenamed,
                                       const mtt::UID& id) :
-  ScalableObject(name, canBeRenamed, id),
+  HierarhicalObject(name, canBeRenamed, id),
   _enabled(true),
   _typeMask(1),
   _fieldRef(*this)

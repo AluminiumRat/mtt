@@ -157,12 +157,12 @@ void EditMenu::_deleteObject() noexcept
   }
 }
 
-void EditMenu::_addModificator(std::unique_ptr<ModificatorObject> object)
+void EditMenu::_addHierarhical(std::unique_ptr<HierarhicalObject> object)
 {
   EditorScene* scene = _commonData.scene();
   if (scene == nullptr) return;
 
-  ModificatorObject* objectPtr = object.get();
+  HierarhicalObject* objectPtr = object.get();
 
   mtt::Object* target = nullptr;
   if (_commonData.selectedObjects().size() == 1)
@@ -183,7 +183,7 @@ void EditMenu::_addFrame() noexcept
   try
   {
     std::unique_ptr<FrameObject> newFrame(new FrameObject(tr("frame"), true));
-    _addModificator(std::move(newFrame));
+    _addHierarhical(std::move(newFrame));
   }
   catch(std::exception& error)
   {
@@ -209,7 +209,7 @@ void EditMenu::_addEmitter() noexcept
     std::unique_ptr<EmitterObject> newEmitter(
                                         new EmitterObject(tr("emitter"), true));
     newEmitter->fieldRef().set(&scene->root().particleField());
-    _addModificator(std::move(newEmitter));
+    _addHierarhical(std::move(newEmitter));
   }
   catch(std::exception& error)
   {

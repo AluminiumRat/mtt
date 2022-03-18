@@ -3,7 +3,9 @@
 
 #include <mtt/editorLib/EditorApplication.h>
 
+#include <AsyncTasks/LoadEffectTask.h>
 #include <AsyncTasks/LoadEnvironmentTask.h>
+#include <AsyncTasks/SaveEffectTask.h>
 #include <EditorCommonData.h>
 #include <FileMenu.h>
 #include <MainWindow.h>
@@ -59,7 +61,7 @@ void FileMenu::_saveEffectAs() noexcept
     QString fileName = QFileDialog::getSaveFileName(&_window,
                                                     tr("Save effect"),
                                                     "",
-                                                    tr("mef (*.mef)"));
+                                                    tr("pee (*.pee)"));
     if(fileName.isEmpty()) return;
     _saveToFile(fileName);
   }
@@ -79,6 +81,11 @@ void FileMenu::_saveToFile(const QString& file) noexcept
 
   try
   {
+    std::unique_ptr<SaveEffectTask> task;
+    task.reset(new SaveEffectTask(*_commonData.scene(),
+                                  file,
+                                  _commonData));
+    mtt::EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
   }
   catch (...)
   {
@@ -99,12 +106,18 @@ void FileMenu::_load() noexcept
     QString fileName = QFileDialog::getOpenFileName(&_window,
                                                     tr("Load effect"),
                                                     "",
-                                                    tr("mef (*.mef)"));
+                                                    tr("pee (*.pee)"));
     if(fileName.isEmpty()) return;
+
+    std::unique_ptr<LoadEffectTask> task;
+    task.reset(new LoadEffectTask(*_commonData.scene(),
+                                  fileName,
+                                  _commonData));
+    mtt::EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
   }
   catch (...)
   {
-    QMessageBox::critical(&_window, tr("Error"), tr("Unable to load model"));
+    QMessageBox::critical(&_window, tr("Error"), tr("Unable to load effect"));
   }
 }
 

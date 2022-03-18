@@ -134,8 +134,7 @@ namespace mtt
   inline void ObjectLoader::readKeypoint(
                                       ValueKeypoint<ValueType, TimeT>& keypoint)
   {
-    uint32_t timeCount = _stream->readUint32();
-    TimeT time(timeCount);
+    TimeT time = _stream->readTime();
     keypoint.setTime(time);
 
     ValueType value;

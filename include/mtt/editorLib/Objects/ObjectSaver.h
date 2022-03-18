@@ -83,7 +83,7 @@ namespace mtt
   inline void ObjectSaver::writeKeypoint(
                                       ValueKeypoint<ValueType, TimeT> keypoint)
   {
-    *_stream << (uint32_t)keypoint.time().count();
+    *_stream << keypoint.time();
     *_stream << keypoint.value();
     *_stream << (uint8_t) keypoint.interpolation();
   }

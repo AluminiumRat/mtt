@@ -1,6 +1,5 @@
 #include <stdexcept>
 
-#include <QtCore/QCoreApplication>
 #include <QtCore/QFileInfo>
 #include <QtCore/QFile>
 
@@ -14,7 +13,7 @@
 SaveModelTask::SaveModelTask( const EditorScene& scene,
                               const QString& filename,
                               EditorCommonData& commonData) :
-  AbstractAsyncTask(QCoreApplication::tr("Save"),
+  AbstractAsyncTask(QObject::tr("Saving"),
                     mtt::AbstractAsyncTask::DEPENDENT,
                     mtt::AbstractAsyncTask::EXPLICIT),
   _scene(scene),

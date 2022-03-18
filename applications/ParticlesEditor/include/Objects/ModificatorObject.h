@@ -1,21 +1,20 @@
 #pragma once
 
-#include <mtt/editorLib/Objects/ScalableObject.h>
-
 #include <mtt/application/Scene/ObjectLink.h>
 #include <mtt/application/TimeT.h>
 
+#include <Objects/HierarhicalObject.h>
 #include <Objects/ParticleField.h>
 #include <Objects/PEVisitorExtension.h>
 
-class ModificatorObject : public mtt::ScalableObject
+class ModificatorObject : public HierarhicalObject
 {
   Q_OBJECT
 
   DEFINE_EXTENSION_ACCEPT(PEVisitorExtension,
                           visitModificatorObject,
                           visitConstModificatorObject,
-                          mtt::MovableObject)
+                          HierarhicalObject)
 
   Q_PROPERTY( bool enabled
               READ enabled

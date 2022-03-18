@@ -58,6 +58,32 @@ RootObject::RootObject( const QString& name,
   _animation->fieldRef().set(_particleField);
 }
 
+void RootObject::changeAnimation(
+                                std::unique_ptr<ParticleAnimation> newAnimation)
+{
+  if(newAnimation == nullptr) mtt::Abort("RootObject::changeAnimation: newAnimation is nullpt.");
+
+  std::unique_ptr<mtt::Object> oldAnimation = removeSubobject(*_animation,
+                                                              false);
+  ParticleAnimation* newAnimationPtr = newAnimation.get();
+  try
+  {
+    addSubobject(std::move(newAnimation));
+  }
+  catch (std::exception& error)
+  {
+    mtt::Log() << error.what();
+    mtt::Abort("RootObject::changeAnimation: unable to change animation.");
+  }
+  catch (...)
+  {
+    mtt::Abort("RootObject::changeAnimation: unable to change animation.");
+  }
+
+  _animation = newAnimationPtr;
+  emit animationChanged(*_animation);
+}
+
 void RootObject::changeBackground(
                           std::unique_ptr<mtt::BackgroundObject> newBackground)
 {
@@ -82,4 +108,29 @@ void RootObject::changeBackground(
 
   _background = newBackgroundPtr;
   emit backgroundChanged(*_background);
+}
+
+void RootObject::changeParticleField( std::unique_ptr<ParticleField> newField)
+{
+  if(newField == nullptr) mtt::Abort("RootObject::changeParticleField: newField is nullpt.");
+
+  std::unique_ptr<mtt::Object> oldField = removeSubobject(*_particleField,
+                                                          false);
+  ParticleField* newFieldPtr = newField.get();
+  try
+  {
+    addSubobject(std::move(newField));
+  }
+  catch (std::exception& error)
+  {
+    mtt::Log() << error.what();
+    mtt::Abort("RootObject::changeParticleField: unable to change particle field.");
+  }
+  catch (...)
+  {
+    mtt::Abort("RootObject::changeParticleField: unable to change particle field.");
+  }
+
+  _particleField = newFieldPtr;
+  emit particleFieldChanged(*_particleField);
 }

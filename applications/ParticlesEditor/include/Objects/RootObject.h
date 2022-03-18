@@ -32,9 +32,12 @@ public:
 
   inline ParticleAnimation& animation() noexcept;
   inline const ParticleAnimation& animation() const noexcept;
+  /// newAnimation must be not null
+  void changeAnimation(std::unique_ptr<ParticleAnimation> newAnimation);
 
   inline mtt::BackgroundObject& background() noexcept;
   inline const mtt::BackgroundObject& background() const noexcept;
+  /// newBackground must be not null
   void changeBackground(std::unique_ptr<mtt::BackgroundObject> newBackground);
 
   inline mtt::EnvironmentGroup& environment() noexcept;
@@ -42,9 +45,13 @@ public:
 
   inline ParticleField& particleField() noexcept;
   inline const ParticleField& particleField() const noexcept;
+  /// newField must be not null
+  void changeParticleField(std::unique_ptr<ParticleField> newField);
 
 signals:
+  void animationChanged(ParticleAnimation& newAnimation);
   void backgroundChanged(mtt::BackgroundObject& newBackground);
+  void particleFieldChanged(ParticleField& newField);
 
 private:
   ModificatorGroup* _modificatorsGroup;

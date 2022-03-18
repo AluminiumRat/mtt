@@ -4,6 +4,7 @@
 
 class EmitterObject;
 class FrameObject;
+class HierarhicalObject;
 class ModificatorGroup;
 class ModificatorObject;
 class ParticleAnimation;
@@ -21,6 +22,9 @@ public:
 
   virtual void visitConstFrameObject(const FrameObject& object) = 0;
   virtual void visitFrameObject(FrameObject& object) = 0;
+
+  virtual void visitConstHierarhicalObject(const HierarhicalObject& object) = 0;
+  virtual void visitHierarhicalObject(HierarhicalObject& object) = 0;
 
   virtual void visitConstModificatorGroup(const ModificatorGroup& object) = 0;
   virtual void visitModificatorGroup(ModificatorGroup& object) = 0;

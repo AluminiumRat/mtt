@@ -1,14 +1,14 @@
 #pragma once
 
-#include <Objects/ModificatorObject.h>
+#include <Objects/HierarhicalObject.h>
 
-class FrameObject : public ModificatorObject
+class FrameObject : public HierarhicalObject
 {
   Q_OBJECT
   DEFINE_EXTENSION_ACCEPT(PEVisitorExtension,
                           visitFrameObject,
                           visitConstFrameObject,
-                          ModificatorObject)
+                          HierarhicalObject)
 
 public:
   FrameObject(const QString& name,
@@ -19,12 +19,12 @@ public:
   virtual ~FrameObject() noexcept = default;
 
   inline size_t childsNumber() const noexcept;
-  inline ModificatorObject& child(size_t childIndex) noexcept;
-  inline const ModificatorObject& child(size_t childIndex) const noexcept;
+  inline HierarhicalObject& child(size_t childIndex) noexcept;
+  inline const HierarhicalObject& child(size_t childIndex) const noexcept;
 
-  virtual void addChild(std::unique_ptr<ModificatorObject> object);
-  virtual std::unique_ptr<ModificatorObject> removeChild(
-                                              ModificatorObject& object,
+  virtual void addChild(std::unique_ptr<HierarhicalObject> object);
+  virtual std::unique_ptr<HierarhicalObject> removeChild(
+                                              HierarhicalObject& object,
                                               bool removeFromScene) noexcept;
 
   virtual bool subobjectCanBeAdded(
@@ -38,8 +38,8 @@ public:
                                       bool removeFromScene) noexcept override;
 
 signals:
-  void childAdded(ModificatorObject& object);
-  void childRemoved(ModificatorObject& object);
+  void childAdded(HierarhicalObject& object);
+  void childRemoved(HierarhicalObject& object);
 };
 
 inline size_t FrameObject::childsNumber() const noexcept
@@ -47,13 +47,13 @@ inline size_t FrameObject::childsNumber() const noexcept
   return subobjectNumber();
 }
 
-inline ModificatorObject& FrameObject::child(size_t childIndex) noexcept
+inline HierarhicalObject& FrameObject::child(size_t childIndex) noexcept
 {
-  return static_cast<ModificatorObject&>(subobject(childIndex));
+  return static_cast<HierarhicalObject&>(subobject(childIndex));
 }
 
-inline const ModificatorObject& FrameObject::child(
+inline const HierarhicalObject& FrameObject::child(
                                             size_t childIndex) const noexcept
 {
-  return static_cast<const ModificatorObject&>(subobject(childIndex));
+  return static_cast<const HierarhicalObject&>(subobject(childIndex));
 }
