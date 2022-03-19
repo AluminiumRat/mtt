@@ -79,13 +79,13 @@ template <typename BaseVisitor>
 inline void PEVisitorT<BaseVisitor>::visitConstEmitterObject(
                                                     const EmitterObject& object)
 {
-  visitConstModificatorObject(object);
+  visitConstHierarhicalObject(object);
 }
 
 template <typename BaseVisitor>
 inline void PEVisitorT<BaseVisitor>::visitEmitterObject(EmitterObject& object)
 {
-  visitModificatorObject(object);
+  visitHierarhicalObject(object);
 }
 
 template <typename BaseVisitor>

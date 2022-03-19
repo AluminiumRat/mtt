@@ -10,6 +10,13 @@ EmitterWidget::EmitterWidget(EmitterObject& object, mtt::UndoStack& undoStack) :
 {
   _ui->setupUi(this);
 
+  _enabledConnection.emplace( *_ui->enabledCheck,
+                              object,
+                              &EmitterObject::enabled,
+                              &EmitterObject::setEnabled,
+                              &EmitterObject::enabledChanged,
+                              undoStack);
+
   _intensityConnection.emplace( *_ui->intensitySpin,
                                 object,
                                 &EmitterObject::intensity,

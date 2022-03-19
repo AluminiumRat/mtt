@@ -11,6 +11,7 @@
 #include <Objects/ParticleTextureDescription.h>
 #include <Objects/PEVisitorExtension.h>
 
+class EmitterObject;
 class ModificatorObject;
 
 class ParticleField : public mtt::MovableObject
@@ -95,6 +96,9 @@ public:
                             const ParticleTextureDescriptions& newDescriptions);
   inline void resetTextureDescriptions();
 
+  void registerEmitter(EmitterObject& emitter);
+  void unregisterEmitter(EmitterObject& emitter) noexcept;
+
   void registerModificator(ModificatorObject& modificator);
   void unregisterModificator(ModificatorObject& modificator) noexcept;
 
@@ -129,6 +133,9 @@ private:
   std::vector<ParticleData> _newParticles;
 
   ParticleTextureDescriptions _textureDescriptions;
+
+  using Emitters = std::vector<EmitterObject*>;
+  Emitters _emitters;
 
   using Modificators = std::vector<ModificatorObject*>;
   Modificators _modificators;

@@ -44,6 +44,7 @@ private:
 
   using BoolConnection = mtt::BoolCheckboxConnection<EmitterObject>;
   std::optional<BoolConnection> _ignoreBrightnessConnection;
+  std::optional<BoolConnection> _enabledConnection;
 
   using RangeConnection = mtt::FloatRangeSpinConnection<EmitterObject>;
   std::optional<RangeConnection> _speedConnection;

@@ -3,6 +3,7 @@
 
 #include <mtt/utilities/Abort.h>
 
+#include <Objects/EmitterObject.h>
 #include <Objects/ModificatorObject.h>
 #include <Objects/ParticleField.h>
 
@@ -54,6 +55,23 @@ void ParticleField::setTextureDescriptions(
   emit textureDescriptionsChanged(_textureDescriptions);
 }
 
+void ParticleField::registerEmitter(EmitterObject& emitter)
+{
+  if(std::find( _emitters.begin(),
+                _emitters.end(),
+                &emitter) != _emitters.end()) mtt::Abort("ParticleField::registerEmitter: emitter is already registerd.");
+  _emitters.push_back(&emitter);
+}
+
+void ParticleField::unregisterEmitter(EmitterObject& emitter) noexcept
+{
+  Emitters::iterator iEmitter = std::find(_emitters.begin(),
+                                          _emitters.end(),
+                                          &emitter);
+  if(iEmitter == _emitters.end()) return;
+  _emitters.erase(iEmitter);
+}
+
 void ParticleField::registerModificator(ModificatorObject& modificator)
 {
   if(std::find( _modificators.begin(),
@@ -78,12 +96,21 @@ void ParticleField::simulationStep(mtt::TimeT currentTime, mtt::TimeT delta)
 
   try
   {
-    for (ModificatorObject* modificator : _modificators)
+    for (EmitterObject* emitter : _emitters)
     {
-      modificator->simulationStep(currentTime, delta);
+      if(emitter->enabled()) emitter->simulationStep(currentTime, delta);
     }
 
     _addParticles();
+
+    for (ModificatorObject* modificator : _modificators)
+    {
+      if(modificator->enabled())
+      {
+        modificator->simulationStep(currentTime, delta);
+      }
+    }
+
     _updateParticlesData(delta);
     _deleteParticles();
   }

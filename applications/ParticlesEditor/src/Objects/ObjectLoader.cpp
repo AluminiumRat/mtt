@@ -4,6 +4,9 @@ void ObjectLoader::visitEmitterObject(EmitterObject& object)
 {
   PEVisitorT::visitEmitterObject(object);
 
+  object.setEnabled(stream().readBool());
+  object.setTypeMask(stream().readUint32());
+  object.fieldRef().setReferencedId(readUID());
   object.setIntensity(stream().readFloat());
   object.setSize(stream().readFloat());
   object.setShape(EmitterObject::Shape(stream().readUint8()));

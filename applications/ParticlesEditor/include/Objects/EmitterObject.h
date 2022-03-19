@@ -9,16 +9,16 @@
 #include <mtt/application/TimeT.h>
 #include <mtt/utilities/Range.h>
 
-#include <Objects/ModificatorObject.h>
+#include <Objects/HierarhicalObject.h>
 #include <Objects/ParticleField.h>
 
-class EmitterObject : public ModificatorObject
+class EmitterObject : public HierarhicalObject
 {
   Q_OBJECT
   DEFINE_EXTENSION_ACCEPT(PEVisitorExtension,
                           visitEmitterObject,
                           visitConstEmitterObject,
-                          ModificatorObject)
+                          HierarhicalObject)
 public:
   enum Shape
   {
@@ -33,6 +33,26 @@ public:
     SMOOTH_DISTRIBUTION = 1
   };
   const static std::map<Distribution, QString> distributionNames;
+
+  Q_PROPERTY( bool enabled
+              READ enabled
+              WRITE setEnabled
+              RESET resetEnabled
+              NOTIFY enabledChanged
+              DESIGNABLE true
+              SCRIPTABLE true
+              STORED true
+              USER false)
+
+  Q_PROPERTY( uint32_t typeMask
+              READ typeMask
+              WRITE setTypeMask
+              RESET resetTypeMask
+              NOTIFY typeMaskChanged
+              DESIGNABLE true
+              SCRIPTABLE true
+              STORED true
+              USER false)
 
   Q_PROPERTY( float intensity
               READ size
@@ -232,6 +252,17 @@ public:
   EmitterObject& operator = (const EmitterObject&) = delete;
   virtual ~EmitterObject() noexcept = default;
 
+  inline bool enabled() const noexcept;
+  void setEnabled(bool newValue) noexcept;
+  inline void resetEnabled() noexcept;
+
+  inline uint32_t typeMask() const noexcept;
+  void setTypeMask(uint32_t newValue) noexcept;
+  inline void resetTypeMask() noexcept;
+
+  inline mtt::ObjectRef<ParticleField>& fieldRef() noexcept;
+  inline const mtt::ObjectRef<ParticleField>& fieldRef() const noexcept;
+
   /// Emitting intensity in particles per second
   inline float intensity() const noexcept;
   void setIntensity(float newValue) noexcept;
@@ -310,10 +341,13 @@ public:
   inline void resetFrictionFactorRange() noexcept;
 
   virtual void simulationStep(mtt::TimeT currentTime,
-                              mtt::TimeT delta) override;
+                              mtt::TimeT delta);
   void emitParticles(size_t particlesNumber) noexcept;
 
 signals:
+  void enabledChanged(bool newValue);
+  void typeMaskChanged(uint32_t newValue);
+  void fieldChanged(ParticleField * newField);
   void intensityChanged(float newValue);
   void sizeChanged(float newValue);
   void shapeChanged(Shape newValue);
@@ -335,10 +369,20 @@ signals:
   void frictionFactorRangeChanged(const mtt::Range<float>& newValue);
 
 private:
+  void _connectToField(ParticleField& field);
+  void _disconnectFromField(ParticleField& field) noexcept;
   glm::vec4 _getParticlePosition() const noexcept;
   glm::vec4 _getParticleSpeed() const noexcept;
 
 private:
+  bool _enabled;
+  uint32_t _typeMask;
+  mtt::ObjectLink<ParticleField,
+                  EmitterObject,
+                  &EmitterObject::_connectToField,
+                  &EmitterObject::_disconnectFromField,
+                  &EmitterObject::fieldChanged> _fieldRef;
+
   float _intensity;
   float _size;
   Shape _shape;
@@ -364,6 +408,37 @@ private:
   std::uniform_real_distribution<float> _symmetricalDistribution;
   std::uniform_real_distribution<float> _displacedDistribution;
 };
+
+inline bool EmitterObject::enabled() const noexcept
+{
+  return _enabled;
+}
+
+inline void EmitterObject::resetEnabled() noexcept
+{
+  setEnabled(true);
+}
+
+inline uint32_t EmitterObject::typeMask() const noexcept
+{
+  return _typeMask;
+}
+
+inline void EmitterObject::resetTypeMask() noexcept
+{
+  setTypeMask(1);
+}
+
+inline mtt::ObjectRef<ParticleField>& EmitterObject::fieldRef() noexcept
+{
+  return _fieldRef;
+}
+
+inline const mtt::ObjectRef<ParticleField>&
+                                      EmitterObject::fieldRef() const noexcept
+{
+  return _fieldRef;
+}
 
 inline float EmitterObject::intensity() const noexcept
 {

@@ -14,7 +14,10 @@ const std::map<EmitterObject::Distribution, QString>
 EmitterObject::EmitterObject( const QString& name,
                               bool canBeRenamed,
                               const mtt::UID& id) :
-  ModificatorObject(name, canBeRenamed, id),
+  HierarhicalObject(name, canBeRenamed, id),
+  _enabled(true),
+  _typeMask(1),
+  _fieldRef(*this),
   _intensity(0.f),
   _size(1.f),
   _shape(SPHERE_SHAPE),
@@ -40,6 +43,30 @@ EmitterObject::EmitterObject( const QString& name,
   _symmetricalDistribution(-1.f, 1.f),
   _displacedDistribution(0.f, 1.f)
 {
+}
+
+void EmitterObject::_connectToField(ParticleField& field)
+{
+  field.registerEmitter(*this);
+}
+
+void EmitterObject::_disconnectFromField(ParticleField& field) noexcept
+{
+  field.unregisterEmitter(*this);
+}
+
+void EmitterObject::setEnabled(bool newValue) noexcept
+{
+  if (_enabled == newValue) return;
+  _enabled = newValue;
+  emit enabledChanged(newValue);
+}
+
+void EmitterObject::setTypeMask(uint32_t newValue) noexcept
+{
+  if (_typeMask == newValue) return;
+  _typeMask = newValue;
+  emit typeMaskChanged(newValue);
 }
 
 void EmitterObject::setIntensity(float newValue) noexcept
@@ -248,10 +275,10 @@ glm::vec4 EmitterObject::_getParticleSpeed() const noexcept
 
 void EmitterObject::emitParticles(size_t particlesNumber) noexcept
 {
-  if(!enabled()) return;
+  if(!_enabled) return;
   if(particlesNumber == 0) return;
 
-  ParticleField* field = fieldRef().get();
+  ParticleField* field = _fieldRef.get();
   if(field == nullptr) return;
 
   glm::mat4x4 toField = glm::inverse(field->localToWorldTransform()) *
@@ -268,7 +295,7 @@ void EmitterObject::emitParticles(size_t particlesNumber) noexcept
   for (size_t i = 0; i < particlesNumber; i++)
   {
     ParticleField::ParticleData newParticle;
-    newParticle.typeMask = typeMask();
+    newParticle.typeMask = _typeMask;
     newParticle.position = toField * _getParticlePosition();
     newParticle.speed = toField * _getParticleSpeed();
     newParticle.size = glm::mix(_sizeRange.min(),

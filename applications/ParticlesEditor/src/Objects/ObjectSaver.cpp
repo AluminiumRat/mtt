@@ -4,6 +4,9 @@ void ObjectSaver::visitConstEmitterObject(const EmitterObject& object)
 {
   PEVisitorT::visitConstEmitterObject(object);
 
+  stream() << object.enabled();
+  stream() << object.typeMask();
+  stream() << object.fieldRef().referencedId();
   stream() << object.intensity();
   stream() << object.size();
   stream() << uint8_t(object.shape());
