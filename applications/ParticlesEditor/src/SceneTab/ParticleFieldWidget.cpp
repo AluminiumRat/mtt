@@ -44,12 +44,6 @@ ParticleFieldWidget::ParticleFieldWidget( ParticleField& object,
           &ParticleFieldWidget::_clear,
           Qt::DirectConnection);
 
-  connect(_ui->stepButton,
-          &QPushButton::pressed,
-          this,
-          &ParticleFieldWidget::_stepSimulation,
-          Qt::DirectConnection);
-
   connect(&_field,
           &ParticleField::textureDescriptionsChanged,
           this,
@@ -101,13 +95,6 @@ ParticleFieldWidget::~ParticleFieldWidget() noexcept = default;
 void ParticleFieldWidget::_clear() noexcept
 {
   _field.clear();
-}
-
-void ParticleFieldWidget::_stepSimulation() noexcept
-{
-  _field.simulationStep(mtt::TimeT(0),
-                        std::chrono::duration_cast<mtt::TimeT>(
-                                              std::chrono::milliseconds(100)));
 }
 
 void ParticleFieldWidget::_updateTextures() noexcept

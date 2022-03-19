@@ -156,32 +156,7 @@ EmitterWidget::EmitterWidget(EmitterObject& object, mtt::UndoStack& undoStack) :
                                               &EmitterObject::setSecondColor,
                                               &EmitterObject::secondColorChanged,
                                               undoStack));
-
-  connect(_ui->emitButton,
-          &QPushButton::pressed,
-          this,
-          &EmitterWidget::emitParticles,
-          Qt::DirectConnection);
-
-  connect(_ui->stepButton,
-          &QPushButton::pressed,
-          this,
-          &EmitterWidget::step,
-          Qt::DirectConnection);
-
   adjustSize();
 }
 
 EmitterWidget::~EmitterWidget() noexcept = default;
-
-void EmitterWidget::emitParticles() noexcept
-{
-  _emitter.emitParticles(100);
-}
-
-void EmitterWidget::step() noexcept
-{
-  _emitter.simulationStep(mtt::TimeT(0),
-                          std::chrono::duration_cast<mtt::TimeT>(
-                                              std::chrono::milliseconds(100)));
-}

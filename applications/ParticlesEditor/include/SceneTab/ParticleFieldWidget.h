@@ -26,7 +26,6 @@ public:
 
 private:
   void _clear() noexcept;
-  void _stepSimulation() noexcept;
   void _updateTextures() noexcept;
   void _updateExtentSpin() noexcept;
   void _setExtentValue() noexcept;
