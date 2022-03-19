@@ -19,4 +19,6 @@ public:
   virtual void visitConstParticleAnimation(
                                       const ParticleAnimation& object) override;
   virtual void visitConstParticleField(const ParticleField& object) override;
+  virtual void visitConstVisibilityControlObject(
+                                const VisibilityControlObject& object) override;
 };

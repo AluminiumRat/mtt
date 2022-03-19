@@ -55,6 +55,7 @@ public:
     glm::vec3 color;
     float brightness;
     float opacity;
+    float visibilityFactor;
     uint8_t textureIndex;
     uint8_t tileIndex;
     mtt::TimeT currentTime;
@@ -83,6 +84,10 @@ public:
   void addParticle(const ParticleData& particle);
   /// Remove all particles
   void clear() noexcept;
+
+  /// delegate must have signature void(ParticleData&)
+  template<typename DelegateType>
+  inline void updateParticles(DelegateType theDelegate, uint32_t typeMask);
 
   inline const ParticleTextureDescriptions&
                                           textureDescriptions() const noexcept;
@@ -160,4 +165,18 @@ inline const std::vector<ParticleField::ParticleData>&
                                     ParticleField::particlesData() const noexcept
 {
   return _particlesData;
+}
+
+template<typename DelegateType>
+inline void ParticleField::updateParticles( DelegateType theDelegate,
+                                            uint32_t typeMask)
+{
+  for (ParticleIndex index : _workIndices)
+  {
+    ParticleData& particle = _particlesData[index];
+    if ((particle.typeMask & typeMask) != 0)
+    {
+      theDelegate(particle);
+    }
+  }
 }

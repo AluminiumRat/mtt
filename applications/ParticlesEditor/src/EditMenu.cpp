@@ -12,6 +12,7 @@
 #include <Objects/EmitterObject.h>
 #include <Objects/FrameObject.h>
 #include <Objects/ParticleAnimation.h>
+#include <Objects/VisibilityControlObject.h>
 #include <EditMenu.h>
 #include <MainWindow.h>
 
@@ -63,6 +64,12 @@ void EditMenu::setupUI()
           &QAction::triggered,
           this,
           &EditMenu::_addEmitter,
+          Qt::DirectConnection);
+
+  connect(_ui.actionAdd_visibility_control,
+          &QAction::triggered,
+          this,
+          &EditMenu::_addVisibilityControl,
           Qt::DirectConnection);
 
   connect(_ui.actionAdd_animation_from_fbx,
@@ -221,6 +228,32 @@ void EditMenu::_addEmitter() noexcept
   {
     QMessageBox::critical(&_window,
                           tr("Unable to add a emitter"),
+                          tr("Unknown error"));
+  }
+}
+
+void EditMenu::_addVisibilityControl() noexcept
+{
+  try
+  {
+    EditorScene* scene = _commonData.scene();
+    if (scene == nullptr) return;
+
+    std::unique_ptr<VisibilityControlObject> newModificator(
+                  new VisibilityControlObject(tr("visibility control"), true));
+    newModificator->fieldRef().set(&scene->root().particleField());
+    _addHierarhical(std::move(newModificator));
+  }
+  catch(std::exception& error)
+  {
+    QMessageBox::critical(&_window,
+                          tr("Unable to add a visibility control"),
+                          error.what());
+  }
+  catch(...)
+  {
+    QMessageBox::critical(&_window,
+                          tr("Unable to add a visibility control"),
                           tr("Unknown error"));
   }
 }

@@ -300,6 +300,7 @@ void EmitterObject::emitParticles(size_t particlesNumber) noexcept
                                         _displacedDistribution(_randomEngine));
       newParticle.brightness = glm::max(newParticle.brightness, 0.f);
     }
+    newParticle.visibilityFactor = 1.f;
     newParticle.textureIndex = _textureIndex;
     newParticle.tileIndex = _tileIndex;
     newParticle.currentTime = mtt::TimeT(0);

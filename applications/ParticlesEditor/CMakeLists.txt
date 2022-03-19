@@ -66,6 +66,7 @@ set(HEADERS
     "include/Objects/PEVisitor.h"
     "include/Objects/PEVisitorExtension.h"
     "include/Objects/RootObject.h"
+    "include/Objects/VisibilityControlObject.h"
 
     "include/Render/DrawParticlesAction.h"
     "include/Render/EmitterRenderObserver.h"
@@ -79,6 +80,7 @@ set(HEADERS
     "include/SceneTab/PropertiesWidgetFactory.h"
     "include/SceneTab/SceneTab.h"
     "include/SceneTab/TypeMaskWidget.h"
+    "include/SceneTab/VisibilityControlWidget.h"
 
     "include/EditMenu.h"
     "include/EditorCommonData.h"
@@ -107,6 +109,7 @@ set(SOURCES
     "src/Objects/PEEObjectFactory.cpp"
     "src/Objects/PEVisitorExtension.cpp"
     "src/Objects/RootObject.cpp"
+    "src/Objects/VisibilityControlObject.cpp"
 
     "src/Render/DrawParticlesAction.cpp"
     "src/Render/EmitterRenderObserver.cpp"
@@ -120,6 +123,7 @@ set(SOURCES
     "src/SceneTab/PropertiesWidgetFactory.cpp"
     "src/SceneTab/SceneTab.cpp"
     "src/SceneTab/TypeMaskWidget.cpp"
+    "src/SceneTab/VisibilityControlWidget.cpp"
 
     "src/EditMenu.cpp"
     "src/EditorCommonData.cpp"
@@ -135,6 +139,7 @@ set(UI_FILES
     "src/SceneTab/ParticleAnimationWidget.ui"
     "src/SceneTab/ParticleFieldWidget.ui"
     "src/SceneTab/TypeMaskWidget.ui"
+    "src/SceneTab/VisibilityControlWidget.ui"
     "src/MainWindow.ui"
     )
 

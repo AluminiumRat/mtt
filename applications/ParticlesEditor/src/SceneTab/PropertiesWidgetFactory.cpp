@@ -7,6 +7,7 @@
 #include <SceneTab/ParticleFieldWidget.h>
 #include <SceneTab/PropertiesWidgetFactory.h>
 #include <SceneTab/TypeMaskWidget.h>
+#include <SceneTab/VisibilityControlWidget.h>
 #include <EditorCommonData.h>
 #include <EditorScene.h>
 
@@ -55,4 +56,14 @@ void PropertiesWidgetFactory::visitParticleField(ParticleField& object)
   PEVisitorT::visitParticleField(object);
   widgetsLayout().addWidget(new ParticleFieldWidget(object,
                                                     _commonData.undoStack()));
+}
+
+void PropertiesWidgetFactory::visitVisibilityControlObject(
+                                                VisibilityControlObject& object)
+{
+  PEVisitorT::visitVisibilityControlObject(object);
+  widgetsLayout().addWidget(new VisibilityControlWidget(
+                                                      object,
+                                                      _commonData.undoStack()));
+  widgetsLayout().addWidget(new TypeMaskWidget(object, _commonData.undoStack()));
 }

@@ -5,6 +5,7 @@
 #include <Objects/ParticleAnimation.h>
 #include <Objects/ParticleField.h>
 #include <Objects/PEEObjectFactory.h>
+#include <Objects/VisibilityControlObject.h>
 
 PEEObjectFactory::PEEObjectFactory()
 {
@@ -13,4 +14,5 @@ PEEObjectFactory::PEEObjectFactory()
   registerType<EmitterObject, emitterIndex>();
   registerType<FrameObject, frameIndex>();
   registerType<ParticleField, particleFieldIndex>();
+  registerType<VisibilityControlObject, visibilityControlIndex>();
 }

@@ -76,3 +76,10 @@ void ObjectSaver::visitConstParticleField(const ParticleField& object)
     stream() << uint8_t(description.extent);
   }
 }
+
+void ObjectSaver::visitConstVisibilityControlObject(
+                                          const VisibilityControlObject& object)
+{
+  PEVisitorT::visitConstVisibilityControlObject(object);
+  stream() << object.saturationRange();
+}

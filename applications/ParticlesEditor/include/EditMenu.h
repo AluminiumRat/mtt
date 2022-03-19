@@ -33,6 +33,7 @@ private:
   void _addHierarhical(std::unique_ptr<HierarhicalObject> object);
   void _addFrame() noexcept;
   void _addEmitter() noexcept;
+  void _addVisibilityControl() noexcept;
   void _addAnimationFromFbx() noexcept;
 
 private:

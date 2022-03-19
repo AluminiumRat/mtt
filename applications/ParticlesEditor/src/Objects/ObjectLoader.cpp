@@ -74,3 +74,9 @@ void ObjectLoader::visitParticleField(ParticleField& object)
   }
   object.setTextureDescriptions(descriptions);
 }
+
+void ObjectLoader::visitVisibilityControlObject(VisibilityControlObject& object)
+{
+  PEVisitorT::visitVisibilityControlObject(object);
+  object.setSaturationRange(stream().readRange<float>());
+}

@@ -102,8 +102,9 @@ void FieldRenderObserver::_updateParticles() noexcept
     ParticleField::ParticleData particle = _field.particlesData()[index];
     positions.push_back(particle.position);
     sizeRotation.push_back(glm::vec2(particle.size, particle.rotation));
-    color.push_back(glm::vec4(particle.color * particle.brightness,
-                              particle.opacity));
+    color.push_back(glm::vec4(particle.color * particle.brightness *
+                                                      particle.visibilityFactor,
+                              particle.opacity * particle.visibilityFactor));
     textureIndices.push_back(particle.textureIndex);
     tileIndices.push_back(particle.tileIndex);
   }
