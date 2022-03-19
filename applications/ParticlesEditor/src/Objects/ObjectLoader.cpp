@@ -56,7 +56,7 @@ void ObjectLoader::visitParticleAnimation(ParticleAnimation& object)
 {
   PEVisitorT::visitParticleAnimation(object);
 
-  object.setTimeRange(stream().readRange<mtt::TimeT>());
+  object.setDuration(stream().readTime());
   object.fieldRef().setReferencedId(readUID());
 }
 

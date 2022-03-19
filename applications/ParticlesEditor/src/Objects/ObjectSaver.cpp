@@ -56,7 +56,7 @@ void ObjectSaver::visitConstParticleAnimation(const ParticleAnimation& object)
 {
   PEVisitorT::visitConstParticleAnimation(object);
 
-  stream() << object.timeRange();
+  stream() << object.duration();
   stream() << object.fieldRef().referencedId();
 }
 

@@ -26,9 +26,6 @@ RootObject::RootObject( const QString& name,
                                           new ParticleAnimation(tr("Animation"),
                                                                 false,
                                                                 animationId));
-  mtt::TimeT defaultLength =
-              std::chrono::duration_cast<mtt::TimeT>(std::chrono::seconds(30));
-  animation->setTimeRange(mtt::Range<mtt::TimeT>(mtt::TimeT(0), defaultLength));
   _animation = animation.get();
   addSubobject(std::move(animation));
 

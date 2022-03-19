@@ -8,14 +8,12 @@ ParticleAnimationWidget::ParticleAnimationWidget( ParticleAnimation& object,
 {
   _ui->setupUi(this);
 
-  _timeRangeConnection.emplace( *_ui->minTimeSpin,
-                                *_ui->maxTimeSpin,
-                                object,
-                                &ParticleAnimation::timeRange,
-                                &ParticleAnimation::setTimeRange,
-                                &ParticleAnimation::timeRangeChanged,
-                                undoStack);
-
+  _durationConnection.emplace(*_ui->durationSpin,
+                              object,
+                              &ParticleAnimation::duration,
+                              &ParticleAnimation::setDuration,
+                              &ParticleAnimation::durationChanged,
+                              undoStack);
   adjustSize();
 }
 

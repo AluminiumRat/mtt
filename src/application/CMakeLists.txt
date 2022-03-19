@@ -117,6 +117,7 @@ set(HEADERS
     "../../include/mtt/application/Widgets/PropertiesWidgets/RotationPropertyWidget.h"
     "../../include/mtt/application/Widgets/PropertiesWidgets/StringPropertyWidget.h"
     "../../include/mtt/application/Widgets/PropertiesWidgets/TimeRangeSpinConnection.h"
+    "../../include/mtt/application/Widgets/PropertiesWidgets/TimeSpinConnection.h"
     "../../include/mtt/application/Widgets/PropertiesWidgets/Vec3PropertyWidget.h"
     "../../include/mtt/application/Widgets/PropertiesWidgets/Vec3Widget.h"
 

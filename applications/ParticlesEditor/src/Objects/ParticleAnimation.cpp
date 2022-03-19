@@ -4,21 +4,25 @@ ParticleAnimation::ParticleAnimation( const QString& name,
                                       bool canBeRenamed,
                                       const mtt::UID& id) :
   AnimationObject(name, canBeRenamed, id),
+  _duration(std::chrono::duration_cast<mtt::TimeT>(std::chrono::seconds(10))),
   _fieldRef(*this),
   _lastTime(0)
 {
+  updateTiming();
 }
 
-void ParticleAnimation::setTimeRange(
-                                const mtt::Range<mtt::TimeT>& newValue) noexcept
+void ParticleAnimation::setDuration(mtt::TimeT newValue) noexcept
 {
-  _storedTimeRange = newValue;
+  if(newValue.count() < 0) newValue = mtt::TimeT(0);
+  if(_duration == newValue) return;
+  _duration = newValue;
   updateTiming();
+  emit durationChanged(newValue);
 }
 
 mtt::Range<mtt::TimeT> ParticleAnimation::calculateTiming() const noexcept
 {
-  return _storedTimeRange;
+  return mtt::Range<mtt::TimeT>(mtt::TimeT(0), _duration);
 }
 
 void ParticleAnimation::update(mtt::TimeT time)

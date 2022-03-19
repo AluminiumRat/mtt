@@ -5,7 +5,7 @@
 
 #include <QtWidgets/QWidget>
 
-#include <mtt/application/Widgets/PropertiesWidgets/TimeRangeSpinConnection.h>
+#include <mtt/application/Widgets/PropertiesWidgets/TimeSpinConnection.h>
 
 #include <Objects/ParticleAnimation.h>
 
@@ -30,6 +30,6 @@ public:
 private:
   std::unique_ptr<Ui::ParticleAnimationWidget> _ui;
 
-  using TimeRangeConnection = mtt::TimeRangeSpinConnection<ParticleAnimation>;
-  std::optional<TimeRangeConnection> _timeRangeConnection;
+  using TimeConnection = mtt::TimeSpinConnection<ParticleAnimation>;
+  std::optional<TimeConnection> _durationConnection;
 };

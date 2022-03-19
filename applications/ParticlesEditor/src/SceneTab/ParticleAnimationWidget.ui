@@ -32,7 +32,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLabel" name="timeRangeLabel">
+      <widget class="QLabel" name="durationLabel">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>1</horstretch>
@@ -40,7 +40,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Time range</string>
+        <string>Duration</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -48,47 +48,19 @@
       </widget>
      </item>
      <item>
-      <widget class="QWidget" name="timeRangeFrame" native="true">
+      <widget class="QDoubleSpinBox" name="durationSpin">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>3</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="QDoubleSpinBox" name="minTimeSpin">
-          <property name="decimals">
-           <number>1</number>
-          </property>
-          <property name="maximum">
-           <double>1000000.000000000000000</double>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QDoubleSpinBox" name="maxTimeSpin">
-          <property name="decimals">
-           <number>1</number>
-          </property>
-          <property name="maximum">
-           <double>1000000.000000000000000</double>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       <property name="decimals">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <double>1000000.000000000000000</double>
+       </property>
       </widget>
      </item>
     </layout>
