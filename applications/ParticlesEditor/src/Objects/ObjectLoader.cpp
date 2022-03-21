@@ -43,6 +43,13 @@ void ObjectLoader::visitFrameObject(FrameObject& object)
   }
 }
 
+void ObjectLoader::visitGravityModificator(GravityModificator& object)
+{
+  PEVisitorT::visitGravityModificator(object);
+
+  object.setAcceleration(stream().readFloat());
+}
+
 void ObjectLoader::visitModificatorObject(ModificatorObject& object)
 {
   PEVisitorT::visitModificatorObject(object);

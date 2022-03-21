@@ -30,6 +30,7 @@ public:
 private:
   std::unique_ptr<Ui::VisibilityControlWidget> _ui;
 
-  using RangeConnection = mtt::FloatRangeSpinConnection<VisibilityControlObject>;
+  using RangeConnection =
+                        mtt::FloatRangeSpinConnection<VisibilityControlObject>;
   std::optional<RangeConnection> _saturationConnection;
 };

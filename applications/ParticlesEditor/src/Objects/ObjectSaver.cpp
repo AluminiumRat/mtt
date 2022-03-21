@@ -43,6 +43,14 @@ void ObjectSaver::visitConstFrameObject(const FrameObject& object)
   }
 }
 
+void ObjectSaver::visitConstGravityModificator(
+                                              const GravityModificator& object)
+{
+  PEVisitorT::visitConstGravityModificator(object);
+
+  stream() << object.acceleration();
+}
+
 void ObjectSaver::visitConstModificatorObject(const ModificatorObject& object)
 {
   PEVisitorT::visitConstModificatorObject(object);

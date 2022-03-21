@@ -3,8 +3,9 @@
 #include <mtt/editorLib/Objects/CEVisitor.h>
 
 #include <Objects/EmitterObject.h>
-#include <Objects/HierarhicalObject.h>
 #include <Objects/FrameObject.h>
+#include <Objects/GravityModificator.h>
+#include <Objects/HierarhicalObject.h>
 #include <Objects/ModificatorGroup.h>
 #include <Objects/ModificatorObject.h>
 #include <Objects/ParticleAnimation.h>
@@ -30,6 +31,10 @@ public:
 
   inline virtual void visitConstFrameObject(const FrameObject& object) override;
   inline virtual void visitFrameObject(FrameObject& object) override;
+
+  virtual void visitConstGravityModificator(
+                                    const GravityModificator& object) override;
+  virtual void visitGravityModificator(GravityModificator& object) override;
 
   virtual void visitConstHierarhicalObject(
                                       const HierarhicalObject& object) override;
@@ -99,6 +104,20 @@ template <typename BaseVisitor>
 inline void PEVisitorT<BaseVisitor>::visitFrameObject(FrameObject& object)
 {
   visitHierarhicalObject(object);
+}
+
+template <typename BaseVisitor>
+void PEVisitorT<BaseVisitor>::visitConstGravityModificator(
+                                              const GravityModificator& object)
+{
+  visitConstModificatorObject(object);
+}
+
+template <typename BaseVisitor>
+void PEVisitorT<BaseVisitor>::visitGravityModificator(
+                                                    GravityModificator& object)
+{
+  visitModificatorObject(object);
 }
 
 template <typename BaseVisitor>

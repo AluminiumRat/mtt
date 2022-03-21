@@ -11,6 +11,7 @@
 #include <AsyncTasks/ImportAnimationTask.h>
 #include <Objects/EmitterObject.h>
 #include <Objects/FrameObject.h>
+#include <Objects/GravityModificator.h>
 #include <Objects/ParticleAnimation.h>
 #include <Objects/VisibilityControlObject.h>
 #include <EditMenu.h>
@@ -70,6 +71,12 @@ void EditMenu::setupUI()
           &QAction::triggered,
           this,
           &EditMenu::_addVisibilityControl,
+          Qt::DirectConnection);
+
+  connect(_ui.actionAdd_gravity,
+          &QAction::triggered,
+          this,
+          &EditMenu::_addGravity,
           Qt::DirectConnection);
 
   connect(_ui.actionAdd_animation_from_fbx,
@@ -254,6 +261,32 @@ void EditMenu::_addVisibilityControl() noexcept
   {
     QMessageBox::critical(&_window,
                           tr("Unable to add a visibility control"),
+                          tr("Unknown error"));
+  }
+}
+
+void EditMenu::_addGravity() noexcept
+{
+  try
+  {
+    EditorScene* scene = _commonData.scene();
+    if (scene == nullptr) return;
+
+    std::unique_ptr<GravityModificator> newModificator(
+                                  new GravityModificator(tr("gravity"), true));
+    newModificator->fieldRef().set(&scene->root().particleField());
+    _addHierarhical(std::move(newModificator));
+  }
+  catch(std::exception& error)
+  {
+    QMessageBox::critical(&_window,
+                          tr("Unable to add a gravity"),
+                          error.what());
+  }
+  catch(...)
+  {
+    QMessageBox::critical(&_window,
+                          tr("Unable to add a gravity"),
                           tr("Unknown error"));
   }
 }

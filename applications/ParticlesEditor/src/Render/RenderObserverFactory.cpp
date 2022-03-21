@@ -22,6 +22,15 @@ void RenderObserverFactory::visitFrameObject(FrameObject& object)
   setResult(std::make_unique<mtt::CrossRenderObserver>(object, commonData()));
 }
 
+void RenderObserverFactory::visitGravityModificator(GravityModificator& object)
+{
+  setResult(std::make_unique<ObserverWithIcon>(
+                                      object,
+                                      commonData(),
+                                      ":/particlesEditor/gravity.png",
+                                      ICON_SIZE));
+}
+
 void RenderObserverFactory::visitParticleField(ParticleField& object)
 {
   setResult(std::make_unique<FieldRenderObserver>(object, commonData()));

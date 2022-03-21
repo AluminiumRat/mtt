@@ -34,6 +34,7 @@ private:
   void _addFrame() noexcept;
   void _addEmitter() noexcept;
   void _addVisibilityControl() noexcept;
+  void _addGravity() noexcept;
   void _addAnimationFromFbx() noexcept;
 
 private:

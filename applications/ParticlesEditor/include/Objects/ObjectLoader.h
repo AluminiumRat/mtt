@@ -14,6 +14,7 @@ public:
 
   virtual void visitEmitterObject(EmitterObject& object) override;
   virtual void visitFrameObject(FrameObject& object) override;
+  virtual void visitGravityModificator(GravityModificator& object) override;
   virtual void visitModificatorObject(ModificatorObject& object) override;
   virtual void visitParticleAnimation(ParticleAnimation& object) override;
   virtual void visitParticleField(ParticleField& object) override;

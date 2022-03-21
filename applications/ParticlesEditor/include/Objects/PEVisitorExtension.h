@@ -4,6 +4,7 @@
 
 class EmitterObject;
 class FrameObject;
+class GravityModificator;
 class HierarhicalObject;
 class ModificatorGroup;
 class ModificatorObject;
@@ -23,6 +24,10 @@ public:
 
   virtual void visitConstFrameObject(const FrameObject& object) = 0;
   virtual void visitFrameObject(FrameObject& object) = 0;
+
+  virtual void visitConstGravityModificator(
+                                          const GravityModificator& object) = 0;
+  virtual void visitGravityModificator(GravityModificator& object) = 0;
 
   virtual void visitConstHierarhicalObject(const HierarhicalObject& object) = 0;
   virtual void visitHierarhicalObject(HierarhicalObject& object) = 0;

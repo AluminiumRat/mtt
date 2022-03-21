@@ -54,6 +54,7 @@ set(HEADERS
 
     "include/Objects/EmitterObject.h"
     "include/Objects/FrameObject.h"
+    "include/Objects/GravityModificator.h"
     "include/Objects/HierarhicalObject.h"
     "include/Objects/ModificatorGroup.h"
     "include/Objects/ModificatorObject.h"
@@ -76,6 +77,7 @@ set(HEADERS
     "include/Render/RenderObserverFactory.h"
 
     "include/SceneTab/EmitterWidget.h"
+    "include/SceneTab/GravityWidget.h"
     "include/SceneTab/ParticleAnimationWidget.h"
     "include/SceneTab/ParticleFieldWidget.h"
     "include/SceneTab/PropertiesWidgetFactory.h"
@@ -100,6 +102,7 @@ set(SOURCES
 
     "src/Objects/EmitterObject.cpp"
     "src/Objects/FrameObject.cpp"
+    "src/Objects/GravityModificator.cpp"
     "src/Objects/HierarhicalObject.cpp"
     "src/Objects/ModificatorGroup.cpp"
     "src/Objects/ModificatorObject.cpp"
@@ -120,6 +123,7 @@ set(SOURCES
     "src/Render/RenderObserverFactory.cpp"
 
     "src/SceneTab/EmitterWidget.cpp"
+    "src/SceneTab/GravityWidget.cpp"
     "src/SceneTab/ParticleAnimationWidget.cpp"
     "src/SceneTab/ParticleFieldWidget.cpp"
     "src/SceneTab/PropertiesWidgetFactory.cpp"
@@ -138,6 +142,7 @@ set(SOURCES
 
 set(UI_FILES
     "src/SceneTab/EmitterWidget.ui"
+    "src/SceneTab/GravityWidget.ui"
     "src/SceneTab/ParticleAnimationWidget.ui"
     "src/SceneTab/ParticleFieldWidget.ui"
     "src/SceneTab/TypeMaskWidget.ui"

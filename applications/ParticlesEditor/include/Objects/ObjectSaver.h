@@ -14,6 +14,8 @@ public:
 
   virtual void visitConstEmitterObject(const EmitterObject& object) override;
   virtual void visitConstFrameObject(const FrameObject& object) override;
+  virtual void visitConstGravityModificator(
+                                    const GravityModificator& object) override;
   virtual void visitConstModificatorObject(
                                       const ModificatorObject& object) override;
   virtual void visitConstParticleAnimation(
