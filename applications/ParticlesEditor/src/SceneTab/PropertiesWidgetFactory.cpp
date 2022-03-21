@@ -3,6 +3,7 @@
 #include <mtt/application/Widgets/PropertiesWidgets/BoolPropertyWidget.h>
 
 #include <SceneTab/EmitterWidget.h>
+#include <SceneTab/FluidWidget.h>
 #include <SceneTab/GravityWidget.h>
 #include <SceneTab/ParticleAnimationWidget.h>
 #include <SceneTab/ParticleFieldWidget.h>
@@ -27,6 +28,14 @@ void PropertiesWidgetFactory::visitEmitterObject(EmitterObject& object)
 {
   PEVisitorT::visitEmitterObject(object);
   widgetsLayout().addWidget(new EmitterWidget(object, _commonData.undoStack()));
+  widgetsLayout().addWidget(
+                          new TypeMaskWidget(object, _commonData.undoStack()));
+}
+
+void PropertiesWidgetFactory::visitFluidObject(FluidObject& object)
+{
+  PEVisitorT::visitFluidObject(object);
+  widgetsLayout().addWidget(new FluidWidget(object, _commonData.undoStack()));
   widgetsLayout().addWidget(
                           new TypeMaskWidget(object, _commonData.undoStack()));
 }

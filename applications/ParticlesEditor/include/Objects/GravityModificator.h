@@ -25,7 +25,7 @@ public:
   GravityModificator( const QString& name,
                       bool canBeRenamed,
                       const mtt::UID& id = mtt::UID());
-  GravityModificator(const ModificatorObject&) = delete;
+  GravityModificator(const GravityModificator&) = delete;
   GravityModificator& operator = (const GravityModificator&) = delete;
   virtual ~GravityModificator() noexcept = default;
 

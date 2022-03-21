@@ -3,6 +3,7 @@
 #include <mtt/editorLib/Objects/CEVisitor.h>
 
 #include <Objects/EmitterObject.h>
+#include <Objects/FluidObject.h>
 #include <Objects/FrameObject.h>
 #include <Objects/GravityModificator.h>
 #include <Objects/HierarhicalObject.h>
@@ -29,16 +30,21 @@ public:
                                           const EmitterObject& object) override;
   inline virtual void visitEmitterObject(EmitterObject& object) override;
 
+  inline virtual void visitConstFluidObject(const FluidObject& object) override;
+  inline virtual void visitFluidObject(FluidObject& object) override;
+
   inline virtual void visitConstFrameObject(const FrameObject& object) override;
   inline virtual void visitFrameObject(FrameObject& object) override;
 
-  virtual void visitConstGravityModificator(
+  inline  virtual void visitConstGravityModificator(
                                     const GravityModificator& object) override;
-  virtual void visitGravityModificator(GravityModificator& object) override;
+  inline virtual void visitGravityModificator(
+                                          GravityModificator& object) override;
 
-  virtual void visitConstHierarhicalObject(
+  inline  virtual void visitConstHierarhicalObject(
                                       const HierarhicalObject& object) override;
-  virtual void visitHierarhicalObject(HierarhicalObject& object) override;
+  inline virtual void visitHierarhicalObject(
+                                            HierarhicalObject& object) override;
 
   inline virtual void visitConstModificatorGroup(
                                       const ModificatorGroup& object) override;
@@ -61,9 +67,9 @@ public:
   inline virtual void visitConstRootObject(const RootObject& object) override;
   inline virtual void visitRootObject(RootObject& object) override;
 
-  virtual void visitConstVisibilityControlObject(
+  inline virtual void visitConstVisibilityControlObject(
                                 const VisibilityControlObject& object) override;
-  virtual void visitVisibilityControlObject(
+  inline virtual void visitVisibilityControlObject(
                                       VisibilityControlObject& object) override;
 
 protected:
@@ -94,6 +100,19 @@ inline void PEVisitorT<BaseVisitor>::visitEmitterObject(EmitterObject& object)
 }
 
 template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitConstFluidObject(
+                                                      const FluidObject& object)
+{
+  static_cast<BaseVisitor*>(this)->visitConstObject(object);
+}
+
+template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitFluidObject(FluidObject& object)
+{
+  static_cast<BaseVisitor*>(this)->visitObject(object);
+}
+
+template <typename BaseVisitor>
 inline void PEVisitorT<BaseVisitor>::visitConstFrameObject(
                                                       const FrameObject& object)
 {
@@ -107,28 +126,29 @@ inline void PEVisitorT<BaseVisitor>::visitFrameObject(FrameObject& object)
 }
 
 template <typename BaseVisitor>
-void PEVisitorT<BaseVisitor>::visitConstGravityModificator(
+inline void PEVisitorT<BaseVisitor>::visitConstGravityModificator(
                                               const GravityModificator& object)
 {
   visitConstModificatorObject(object);
 }
 
 template <typename BaseVisitor>
-void PEVisitorT<BaseVisitor>::visitGravityModificator(
+inline void PEVisitorT<BaseVisitor>::visitGravityModificator(
                                                     GravityModificator& object)
 {
   visitModificatorObject(object);
 }
 
 template <typename BaseVisitor>
-void PEVisitorT<BaseVisitor>::visitConstHierarhicalObject(
+inline void PEVisitorT<BaseVisitor>::visitConstHierarhicalObject(
                                                 const HierarhicalObject& object)
 {
   static_cast<BaseVisitor*>(this)->visitConstScalableObject(object);
 }
 
 template <typename BaseVisitor>
-void PEVisitorT<BaseVisitor>::visitHierarhicalObject(HierarhicalObject& object)
+inline void PEVisitorT<BaseVisitor>::visitHierarhicalObject(
+                                                      HierarhicalObject& object)
 {
   static_cast<BaseVisitor*>(this)->visitScalableObject(object);
 }
@@ -202,14 +222,14 @@ inline void PEVisitorT<BaseVisitor>::visitRootObject(RootObject& object)
 }
 
 template <typename BaseVisitor>
-void PEVisitorT<BaseVisitor>::visitConstVisibilityControlObject(
+inline void PEVisitorT<BaseVisitor>::visitConstVisibilityControlObject(
                                           const VisibilityControlObject& object)
 {
   visitConstModificatorObject(object);
 }
 
 template <typename BaseVisitor>
-void PEVisitorT<BaseVisitor>::visitVisibilityControlObject(
+inline void PEVisitorT<BaseVisitor>::visitVisibilityControlObject(
                                                 VisibilityControlObject& object)
 {
   visitModificatorObject(object);

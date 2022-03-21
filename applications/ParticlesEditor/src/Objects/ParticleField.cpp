@@ -4,15 +4,23 @@
 #include <mtt/utilities/Abort.h>
 
 #include <Objects/EmitterObject.h>
+#include <Objects/FluidObject.h>
 #include <Objects/ModificatorObject.h>
 #include <Objects/ParticleField.h>
 
 ParticleField::ParticleField( const QString& name,
                               bool canBeRenamed,
-                              const mtt::UID& id) :
-  MovableObject(name, canBeRenamed, id),
+                              const mtt::UID& theId) :
+  MovableObject(name, canBeRenamed, theId),
   _size(10.f, 10.f, 10.f)
 {
+  mtt::UID fluidId(id().mixedUID(18395279348825422041ull));
+  std::unique_ptr<FluidObject> fluid( new FluidObject(tr("Fluid"),
+                                                      false,
+                                                      *this,
+                                                      fluidId));
+  _fluid = fluid.get();
+  addSubobject(std::move(fluid));
 }
 
 void ParticleField::setSize(const glm::vec3& newValue)
@@ -110,6 +118,8 @@ void ParticleField::simulationStep(mtt::TimeT currentTime, mtt::TimeT delta)
         modificator->simulationStep(currentTime, delta);
       }
     }
+
+    _fluid->simulationStep(currentTime, delta);
 
     _updateParticlesData(delta);
     _deleteParticles();

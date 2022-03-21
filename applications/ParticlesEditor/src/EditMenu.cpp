@@ -196,7 +196,7 @@ void EditMenu::_addFrame() noexcept
 {
   try
   {
-    std::unique_ptr<FrameObject> newFrame(new FrameObject(tr("frame"), true));
+    std::unique_ptr<FrameObject> newFrame(new FrameObject(tr("Frame"), true));
     _addHierarhical(std::move(newFrame));
   }
   catch(std::exception& error)
@@ -221,7 +221,7 @@ void EditMenu::_addEmitter() noexcept
     if (scene == nullptr) return;
 
     std::unique_ptr<EmitterObject> newEmitter(
-                                        new EmitterObject(tr("emitter"), true));
+                                        new EmitterObject(tr("Emitter"), true));
     newEmitter->fieldRef().set(&scene->root().particleField());
     _addHierarhical(std::move(newEmitter));
   }
@@ -247,7 +247,7 @@ void EditMenu::_addVisibilityControl() noexcept
     if (scene == nullptr) return;
 
     std::unique_ptr<VisibilityControlObject> newModificator(
-                  new VisibilityControlObject(tr("visibility control"), true));
+                  new VisibilityControlObject(tr("Visibility control"), true));
     newModificator->fieldRef().set(&scene->root().particleField());
     _addHierarhical(std::move(newModificator));
   }
@@ -273,7 +273,7 @@ void EditMenu::_addGravity() noexcept
     if (scene == nullptr) return;
 
     std::unique_ptr<GravityModificator> newModificator(
-                                  new GravityModificator(tr("gravity"), true));
+                                  new GravityModificator(tr("Gravity"), true));
     newModificator->fieldRef().set(&scene->root().particleField());
     _addHierarhical(std::move(newModificator));
   }

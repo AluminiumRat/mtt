@@ -53,6 +53,7 @@ set(HEADERS
     "include/AsyncTasks/UploadParticleTexturesTask.h"
 
     "include/Objects/EmitterObject.h"
+    "include/Objects/FluidObject.h"
     "include/Objects/FrameObject.h"
     "include/Objects/GravityModificator.h"
     "include/Objects/HierarhicalObject.h"
@@ -77,6 +78,7 @@ set(HEADERS
     "include/Render/RenderObserverFactory.h"
 
     "include/SceneTab/EmitterWidget.h"
+    "include/SceneTab/FluidWidget.h"
     "include/SceneTab/GravityWidget.h"
     "include/SceneTab/ParticleAnimationWidget.h"
     "include/SceneTab/ParticleFieldWidget.h"
@@ -101,6 +103,7 @@ set(SOURCES
     "src/AsyncTasks/SaveEffectTask.cpp"
 
     "src/Objects/EmitterObject.cpp"
+    "src/Objects/FluidObject.cpp"
     "src/Objects/FrameObject.cpp"
     "src/Objects/GravityModificator.cpp"
     "src/Objects/HierarhicalObject.cpp"
@@ -123,6 +126,7 @@ set(SOURCES
     "src/Render/RenderObserverFactory.cpp"
 
     "src/SceneTab/EmitterWidget.cpp"
+    "src/SceneTab/FluidWidget.cpp"
     "src/SceneTab/GravityWidget.cpp"
     "src/SceneTab/ParticleAnimationWidget.cpp"
     "src/SceneTab/ParticleFieldWidget.cpp"
@@ -142,6 +146,7 @@ set(SOURCES
 
 set(UI_FILES
     "src/SceneTab/EmitterWidget.ui"
+    "src/SceneTab/FluidWidget.ui"
     "src/SceneTab/GravityWidget.ui"
     "src/SceneTab/ParticleAnimationWidget.ui"
     "src/SceneTab/ParticleFieldWidget.ui"

@@ -12,6 +12,7 @@
 #include <Objects/PEVisitorExtension.h>
 
 class EmitterObject;
+class FluidObject;
 class ModificatorObject;
 
 class ParticleField : public mtt::MovableObject
@@ -96,6 +97,9 @@ public:
                             const ParticleTextureDescriptions& newDescriptions);
   inline void resetTextureDescriptions();
 
+  inline FluidObject& fluid() noexcept;
+  inline const FluidObject& fluid() const noexcept;
+
   void registerEmitter(EmitterObject& emitter);
   void unregisterEmitter(EmitterObject& emitter) noexcept;
 
@@ -139,6 +143,8 @@ private:
 
   using Modificators = std::vector<ModificatorObject*>;
   Modificators _modificators;
+
+  FluidObject* _fluid;
 };
 
 inline const glm::vec3& ParticleField::size() const noexcept
@@ -160,6 +166,16 @@ inline const ParticleTextureDescriptions&
 inline void ParticleField::resetTextureDescriptions()
 {
   setTextureDescriptions(ParticleTextureDescriptions());
+}
+
+inline FluidObject& ParticleField::fluid() noexcept
+{
+  return *_fluid;
+}
+
+inline const FluidObject& ParticleField::fluid() const noexcept
+{
+  return *_fluid;
 }
 
 inline const std::vector<ParticleField::ParticleIndex>&

@@ -9,6 +9,7 @@
 #include <mtt/application/Widgets/PropertiesWidgets/Bitfield32PropertyConnection.h>
 
 #include <Objects/EmitterObject.h>
+#include <Objects/FluidObject.h>
 #include <Objects/ModificatorObject.h>
 
 namespace mtt
@@ -26,6 +27,7 @@ class TypeMaskWidget : public QWidget
 public:
   TypeMaskWidget(ModificatorObject& object, mtt::UndoStack& undoStack);
   TypeMaskWidget(EmitterObject& object, mtt::UndoStack& undoStack);
+  TypeMaskWidget(FluidObject& object, mtt::UndoStack& undoStack);
   TypeMaskWidget(const TypeMaskWidget&) = delete;
   TypeMaskWidget& operator = (const TypeMaskWidget&) = delete;
   virtual ~TypeMaskWidget() noexcept;
@@ -37,8 +39,10 @@ private:
                           mtt::Bitfield32PropertyConnection<ModificatorObject>;
 
   using EmitterConnection = mtt::Bitfield32PropertyConnection<EmitterObject>;
+  using FluidConnection = mtt::Bitfield32PropertyConnection<FluidObject>;
 
   std::variant< int,
                 ModificatorConnection,
-                EmitterConnection> _typemaskConnection;
+                EmitterConnection,
+                FluidConnection> _typemaskConnection;
 };

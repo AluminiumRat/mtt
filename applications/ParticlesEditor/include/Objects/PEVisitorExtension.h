@@ -3,6 +3,7 @@
 #include <mtt/application/Scene/ObjectVisitor.h>
 
 class EmitterObject;
+class FluidObject;
 class FrameObject;
 class GravityModificator;
 class HierarhicalObject;
@@ -21,6 +22,9 @@ public:
 public:
   virtual void visitConstEmitterObject(const EmitterObject& object) = 0;
   virtual void visitEmitterObject(EmitterObject& object) = 0;
+
+  virtual void visitConstFluidObject(const FluidObject& object) = 0;
+  virtual void visitFluidObject(FluidObject& object) = 0;
 
   virtual void visitConstFrameObject(const FrameObject& object) = 0;
   virtual void visitFrameObject(FrameObject& object) = 0;

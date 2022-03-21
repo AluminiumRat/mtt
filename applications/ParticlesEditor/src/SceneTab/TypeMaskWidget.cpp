@@ -46,4 +46,25 @@ TypeMaskWidget::TypeMaskWidget( EmitterObject& object,
   adjustSize();
 }
 
+TypeMaskWidget::TypeMaskWidget( FluidObject& object,
+                                mtt::UndoStack& undoStack) :
+  _ui(new Ui::TypeMaskWidget)
+{
+  _ui->setupUi(this);
+
+  std::unique_ptr<mtt::Bitfield32Widget> typeMaskWidget(
+                                                    new mtt::Bitfield32Widget);
+
+  _typemaskConnection.emplace<FluidConnection>(
+                                                *typeMaskWidget,
+                                                object,
+                                                &FluidObject::typeMask,
+                                                &FluidObject::setTypeMask,
+                                                &FluidObject::typeMaskChanged,
+                                                undoStack);
+  _ui->typeMaskLayout->addWidget(typeMaskWidget.release(), 3);
+
+  adjustSize();
+}
+
 TypeMaskWidget::~TypeMaskWidget() noexcept = default;
