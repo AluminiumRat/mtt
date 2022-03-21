@@ -71,6 +71,7 @@ set(HEADERS
     "include/Render/DrawParticlesAction.h"
     "include/Render/EmitterRenderObserver.h"
     "include/Render/FieldRenderObserver.h"
+    "include/Render/ObserverWithIcon.h"
     "include/Render/ParticlesDrawable.h"
     "include/Render/RenderObserverFactory.h"
 
@@ -114,6 +115,7 @@ set(SOURCES
     "src/Render/DrawParticlesAction.cpp"
     "src/Render/EmitterRenderObserver.cpp"
     "src/Render/FieldRenderObserver.cpp"
+    "src/Render/ObserverWithIcon.cpp"
     "src/Render/ParticlesDrawable.cpp"
     "src/Render/RenderObserverFactory.cpp"
 

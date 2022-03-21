@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/particlesEditor">
       <file>emitter.png</file>
+      <file>visibilityControl.png</file>
     </qresource>
 </RCC>
