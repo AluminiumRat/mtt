@@ -93,7 +93,7 @@ void Bitfield32Widget::_updateWidgets() noexcept
   uint32_t cursor = 1;
   for (size_t iCheckbox = 0; iCheckbox < 32; iCheckbox++)
   {
-    if ((_value & cursor) != 0) _checkboxes[iCheckbox]->setChecked(true);
+    _checkboxes[iCheckbox]->setChecked((_value & cursor));
     cursor *= 2;
   }
 }
