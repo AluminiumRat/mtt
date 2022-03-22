@@ -1,4 +1,4 @@
-#include <Objects/FluidObject.h>
+#include <Objects/Fluid/FluidObject.h>
 #include <Objects/ParticleField.h>
 
 FluidObject::FluidObject( const QString& name,

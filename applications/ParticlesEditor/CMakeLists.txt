@@ -52,8 +52,8 @@ set(HEADERS
     "include/AsyncTasks/SaveEffectTask.h"
     "include/AsyncTasks/UploadParticleTexturesTask.h"
 
+    "include/Objects/Fluid/FluidObject.h"
     "include/Objects/EmitterObject.h"
-    "include/Objects/FluidObject.h"
     "include/Objects/FrameObject.h"
     "include/Objects/GravityModificator.h"
     "include/Objects/HierarhicalObject.h"
@@ -102,8 +102,8 @@ set(SOURCES
     "src/AsyncTasks/UploadParticleTexturesTask.cpp"
     "src/AsyncTasks/SaveEffectTask.cpp"
 
+    "src/Objects/Fluid/FluidObject.cpp"
     "src/Objects/EmitterObject.cpp"
-    "src/Objects/FluidObject.cpp"
     "src/Objects/FrameObject.cpp"
     "src/Objects/GravityModificator.cpp"
     "src/Objects/HierarhicalObject.cpp"

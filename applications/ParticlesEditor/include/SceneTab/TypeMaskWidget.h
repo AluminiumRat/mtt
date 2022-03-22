@@ -8,8 +8,8 @@
 
 #include <mtt/application/Widgets/PropertiesWidgets/Bitfield32PropertyConnection.h>
 
+#include <Objects/Fluid/FluidObject.h>
 #include <Objects/EmitterObject.h>
-#include <Objects/FluidObject.h>
 #include <Objects/ModificatorObject.h>
 
 namespace mtt

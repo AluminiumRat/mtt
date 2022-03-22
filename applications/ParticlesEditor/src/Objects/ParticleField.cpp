@@ -3,8 +3,8 @@
 
 #include <mtt/utilities/Abort.h>
 
+#include <Objects/Fluid/FluidObject.h>
 #include <Objects/EmitterObject.h>
-#include <Objects/FluidObject.h>
 #include <Objects/ModificatorObject.h>
 #include <Objects/ParticleField.h>
 

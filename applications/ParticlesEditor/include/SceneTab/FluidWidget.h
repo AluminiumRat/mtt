@@ -7,7 +7,7 @@
 
 #include <mtt/application/Widgets/PropertiesWidgets/FloatSpinConnection.h>
 
-#include <Objects/FluidObject.h>
+#include <Objects/Fluid/FluidObject.h>
 
 namespace mtt
 {

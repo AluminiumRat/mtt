@@ -2,8 +2,8 @@
 
 #include <mtt/editorLib/Objects/CEVisitor.h>
 
+#include <Objects/Fluid/FluidObject.h>
 #include <Objects/EmitterObject.h>
-#include <Objects/FluidObject.h>
 #include <Objects/FrameObject.h>
 #include <Objects/GravityModificator.h>
 #include <Objects/HierarhicalObject.h>
