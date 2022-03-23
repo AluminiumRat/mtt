@@ -1,5 +1,10 @@
 #pragma once
 
+#include <optional>
+
+#include <glm/vec3.hpp>
+
+#include <Objects/Fluid/FluidMatrix.h>
 #include <Objects/ModificatorObject.h>
 
 class ParticleField;
@@ -50,17 +55,36 @@ public:
   void setCellSize(float newValue) noexcept;
   inline void resetCellSize() noexcept;
 
+  inline const glm::vec3& wind() const noexcept;
+  void setWind(const glm::vec3& newValue) noexcept;
+  inline void resetWind() noexcept;
+
   virtual void simulationStep(mtt::TimeT currentTime, mtt::TimeT delta);
+  void clear() noexcept;
 
 signals:
   void typeMaskChanged(uint32_t newValue);
   void cellSizeChanged(float newValue);
+  void windChanged(glm::vec3 newValue);
+
+private:
+  glm::vec3 _toMatrixCoord(const glm::vec3& fieldCoord) const noexcept;
+  void _resetMatrices() noexcept;
+  void _rebuildMatrices();
+  void _projectVelocity();
+  void _buildDivirgence(FluidMatrix<float>& target);
+  void _buildProjPressure(FluidMatrix<float>& target,
+                          const FluidMatrix<float>& divirgence);
+  void _updateParticles(float dTime);
 
 private:
   ParticleField& _parent;
 
   uint32_t _typeMask;
   float _cellSize;
+  glm::vec3 _wind;
+
+  std::optional<FluidMatrix<glm::vec3>> _velocityMatrix;
 };
 
 inline uint32_t FluidObject::typeMask() const noexcept
@@ -81,4 +105,14 @@ inline float FluidObject::cellSize() const noexcept
 inline void FluidObject::resetCellSize() noexcept
 {
   setCellSize(1.f);
+}
+
+inline const glm::vec3& FluidObject::wind() const noexcept
+{
+  return _wind;
+}
+
+inline void FluidObject::resetWind() noexcept
+{
+  setWind(glm::vec3(0.f));
 }

@@ -37,6 +37,7 @@ void ParticleField::clear() noexcept
   _freeIndices.clear();
   _particlesData.clear();
   _newParticles.clear();
+  _fluid->clear();
 
   emit cleared();
 }

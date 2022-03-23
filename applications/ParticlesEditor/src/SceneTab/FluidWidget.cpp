@@ -14,6 +14,15 @@ FluidWidget::FluidWidget( FluidObject& object,
                               &FluidObject::setCellSize,
                               &FluidObject::cellSizeChanged,
                               undoStack);
+
+  _windConnection.emplace(*_ui->windXSpin,
+                          *_ui->windYSpin,
+                          *_ui->windZSpin,
+                          object,
+                          &FluidObject::wind,
+                          &FluidObject::setWind,
+                          &FluidObject::windChanged,
+                          undoStack);
 }
 
 FluidWidget::~FluidWidget() noexcept = default;

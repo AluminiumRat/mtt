@@ -6,6 +6,7 @@
 #include <QtWidgets/QWidget>
 
 #include <mtt/application/Widgets/PropertiesWidgets/FloatSpinConnection.h>
+#include <mtt/application/Widgets/PropertiesWidgets/Vec3SpinConnection.h>
 
 #include <Objects/Fluid/FluidObject.h>
 
@@ -32,4 +33,7 @@ private:
 
   using FloatConnection = mtt::FloatSpinConnection<FluidObject>;
   std::optional<FloatConnection> _cellSizeConnection;
+
+  using Vec3Connection = mtt::Vec3SpinConnection<FluidObject>;
+  std::optional<Vec3Connection> _windConnection;
 };

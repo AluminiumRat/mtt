@@ -119,6 +119,7 @@ set(HEADERS
     "../../include/mtt/application/Widgets/PropertiesWidgets/TimeRangeSpinConnection.h"
     "../../include/mtt/application/Widgets/PropertiesWidgets/TimeSpinConnection.h"
     "../../include/mtt/application/Widgets/PropertiesWidgets/Vec3PropertyWidget.h"
+    "../../include/mtt/application/Widgets/PropertiesWidgets/Vec3SpinConnection.h"
     "../../include/mtt/application/Widgets/PropertiesWidgets/Vec3Widget.h"
 
     "../../include/mtt/application/Widgets/RenderWidget/ClickSelectHandler.h"

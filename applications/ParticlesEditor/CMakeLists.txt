@@ -52,6 +52,7 @@ set(HEADERS
     "include/AsyncTasks/SaveEffectTask.h"
     "include/AsyncTasks/UploadParticleTexturesTask.h"
 
+    "include/Objects/Fluid/FluidMatrix.h"
     "include/Objects/Fluid/FluidObject.h"
     "include/Objects/EmitterObject.h"
     "include/Objects/FrameObject.h"

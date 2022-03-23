@@ -1,12 +1,7 @@
 #pragma once
 
-#include <glm/vec3.hpp>
-
-#include <mtt/application/EditCommands/SetPropertyCommand.h>
-#include <mtt/application/EditCommands/UndoStack.h>
+#include <mtt/application/Widgets/PropertiesWidgets/Vec3SpinConnection.h>
 #include <mtt/application/Widgets/PropertiesWidgets/Vec3Widget.h>
-#include <mtt/utilities/Abort.h>
-#include <mtt/utilities/ScopedSetter.h>
 
 namespace mtt
 {
@@ -27,18 +22,11 @@ namespace mtt
     Vec3PropertyWidget(const Vec3PropertyWidget&) = delete;
     Vec3PropertyWidget& operator = (const Vec3PropertyWidget&) = delete;
     virtual ~Vec3PropertyWidget() noexcept = default;
-  
-  private:
-    inline void updateProperty() noexcept;
-    inline void updateWidget() noexcept;
-  
-  private:
-    ObjectClass& _object;
-    Getter _getter;
-    Setter _setter;
 
-    UndoStack& _undoStack;
-    bool _skipUpdate;
+    inline void updateWidget() noexcept;
+
+  private:
+    Vec3SpinConnection<ObjectClass> _connection;
   };
 
   template<typename ObjectClass>
@@ -49,79 +37,20 @@ namespace mtt
                                                         Setter setter,
                                                         Signal signal,
                                                         UndoStack& undoStack) :
-    _object(object),
-    _getter(getter),
-    _setter(setter),
-    _undoStack(undoStack),
-    _skipUpdate(false)
+    _connection(xSpin(),
+                ySpin(),
+                zSpin(),
+                object,
+                getter,
+                setter,
+                signal,
+                undoStack)
   {
-    connect(&xSpin(),
-            QOverload<double>::of(&QDoubleSpinBox::valueChanged),
-            this,
-            &Vec3PropertyWidget::updateProperty,
-            Qt::DirectConnection);
-
-    connect(&ySpin(),
-            QOverload<double>::of(&QDoubleSpinBox::valueChanged),
-            this,
-            &Vec3PropertyWidget::updateProperty,
-            Qt::DirectConnection);
-
-    connect(&zSpin(),
-            QOverload<double>::of(&QDoubleSpinBox::valueChanged),
-            this,
-            &Vec3PropertyWidget::updateProperty,
-            Qt::DirectConnection);
-
-    connect(&_object,
-            signal,
-            this,
-            &Vec3PropertyWidget::updateWidget,
-            Qt::DirectConnection);
-
-    updateWidget();
-  }
-
-  template<typename ObjectClass>
-  inline void Vec3PropertyWidget<ObjectClass>::updateProperty() noexcept
-  {
-    if(_skipUpdate) return;
-    ScopedTrueSetter skipper(_skipUpdate);
-  
-    try
-    {
-      glm::vec3 newValue( xSpin().value(),
-                          ySpin().value(),
-                          zSpin().value());
-      if ((_object.*_getter)() == newValue) return;
-
-      _undoStack.addAndMake(makeSetPropertyCommand( _object,
-                                                    _getter,
-                                                    _setter,
-                                                    newValue));
-    }
-    catch(...)
-    {
-      Log() << "Vec3PropertyWidget::updateProperty: unable to update property.";
-    }
   }
 
   template<typename ObjectClass>
   inline void Vec3PropertyWidget<ObjectClass>::updateWidget() noexcept
   {
-    if (_skipUpdate) return;
-    ScopedTrueSetter skipper(_skipUpdate);
-
-    try
-    {
-      glm::vec3 value = (_object.*_getter)();
-      xSpin().setValue(value.x);
-      ySpin().setValue(value.y);
-      zSpin().setValue(value.z);
-    }
-    catch (...)
-    {
-      Abort("Vec3PropertyWidget::updateWidget: unable to update widget.");
-    }
+    _connection.updateWidgets();
   }
 }
