@@ -90,6 +90,9 @@ inline void FluidMatrix<ValueType>::set(size_t x,
                                         size_t z,
                                         const ValueType& newValue) noexcept
 {
+  x = glm::min(x, _xSize - 1);
+  y = glm::min(y, _ySize - 1);
+  z = glm::min(z, _zSize - 1);
   size_t position = x + _xSize * y + _xyPlaneSize * z;
   _data[position] = newValue;
 }
@@ -99,6 +102,9 @@ inline const ValueType& FluidMatrix<ValueType>::get(size_t x,
                                                     size_t y,
                                                     size_t z) const noexcept
 {
+  x = glm::min(x, _xSize - 1);
+  y = glm::min(y, _ySize - 1);
+  z = glm::min(z, _zSize - 1);
   size_t position = x + _xSize * y + _xyPlaneSize * z;
   return _data[position];
 }
@@ -108,6 +114,9 @@ inline ValueType& FluidMatrix<ValueType>::operator () ( size_t x,
                                                         size_t y,
                                                         size_t z) noexcept
 {
+  x = glm::min(x, _xSize - 1);
+  y = glm::min(y, _ySize - 1);
+  z = glm::min(z, _zSize - 1);
   size_t position = x + _xSize * y + _xyPlaneSize * z;
   return _data[position];
 }
@@ -133,6 +142,10 @@ inline ValueType FluidMatrix<ValueType>::interpolate( float x,
                                                       float y,
                                                       float z) const noexcept
 {
+  x -= .5f;
+  y -= .5f;
+  z -= .5f;
+
   size_t intX = size_t(x);
   float fractX = glm::fract(x);
 

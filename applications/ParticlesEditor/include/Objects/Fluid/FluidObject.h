@@ -75,6 +75,7 @@ private:
   void _buildDivirgence(FluidMatrix<float>& target);
   void _buildProjPressure(FluidMatrix<float>& target,
                           const FluidMatrix<float>& divirgence);
+  void _moveVelocity(float dTime);
   void _updateParticles(float dTime);
 
 private:

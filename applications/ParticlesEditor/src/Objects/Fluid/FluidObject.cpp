@@ -60,9 +60,9 @@ void FluidObject::_rebuildMatrices()
   if(fieldSize.x <= 0.f || fieldSize.y <= 0.f || fieldSize.z <= 0.f) return;
 
   glm::vec3 fieldExtent = glm::ceil(fieldSize / _cellSize);
-  size_t fieldExtentX = size_t(fieldExtent.x) + 2;
-  size_t fieldExtentY = size_t(fieldExtent.y) + 2;
-  size_t fieldExtentZ = size_t(fieldExtent.z) + 2;
+  size_t fieldExtentX = size_t(fieldExtent.x) + 3;
+  size_t fieldExtentY = size_t(fieldExtent.y) + 3;
+  size_t fieldExtentZ = size_t(fieldExtent.z) + 3;
 
   _velocityMatrix.emplace(fieldExtentX, fieldExtentY, fieldExtentZ);
   _velocityMatrix->clear(_wind);
@@ -81,6 +81,8 @@ void FluidObject::simulationStep(mtt::TimeT currentTime, mtt::TimeT delta)
                         _velocityMatrix->zSize() / 2,
                         glm::vec3(5, 0, 0));
 
+  _projectVelocity();
+  _moveVelocity(dTime);
   _projectVelocity();
 
   _updateParticles(dTime);
@@ -180,12 +182,36 @@ void FluidObject::_projectVelocity()
   }
 }
 
+void FluidObject::_moveVelocity(float dTime)
+{
+  FluidMatrix<glm::vec3> newVelocity( _velocityMatrix->xSize(),
+                                      _velocityMatrix->ySize(),
+                                      _velocityMatrix->zSize());
+  newVelocity.clear(glm::vec3(0.f));
+
+  for (size_t x = 1; x < newVelocity.xSize() - 1; x++)
+  {
+    for (size_t y = 1; y < newVelocity.ySize() - 1; y++)
+    {
+      for (size_t z = 1; z < newVelocity.zSize() - 1; z++)
+      {
+        glm::vec3 currentVelocity = _velocityMatrix->get(x, y, z);
+        glm::vec3 shift = -currentVelocity / _cellSize * dTime;
+        glm::vec3 shiftedCoord = glm::vec3(x, y, z) + shift + glm::vec3(.5f);
+        newVelocity(x,y,z) = _velocityMatrix->interpolate(shiftedCoord);
+      }
+    }
+  }
+
+  _velocityMatrix->swap(newVelocity);
+}
+
 glm::vec3 FluidObject::_toMatrixCoord(
                                     const glm::vec3& fieldCoord) const noexcept
 {
   glm::vec3 matrixCoord = fieldCoord + _parent.size() / 2.f;
   matrixCoord /= _cellSize;
-  matrixCoord += 1.f;
+  matrixCoord += 1.5f;
   return matrixCoord;
 }
 
