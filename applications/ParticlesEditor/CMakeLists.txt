@@ -54,6 +54,7 @@ set(HEADERS
 
     "include/Objects/Fluid/FluidMatrix.h"
     "include/Objects/Fluid/FluidObject.h"
+    "include/Objects/BlockerObject.h"
     "include/Objects/EmitterObject.h"
     "include/Objects/FrameObject.h"
     "include/Objects/GravityModificator.h"
@@ -71,6 +72,7 @@ set(HEADERS
     "include/Objects/RootObject.h"
     "include/Objects/VisibilityControlObject.h"
 
+    "include/Render/BlockerRenderObserver.h"
     "include/Render/DrawParticlesAction.h"
     "include/Render/EmitterRenderObserver.h"
     "include/Render/FieldRenderObserver.h"
@@ -78,6 +80,7 @@ set(HEADERS
     "include/Render/ParticlesDrawable.h"
     "include/Render/RenderObserverFactory.h"
 
+    "include/SceneTab/BlockerWidget.h"
     "include/SceneTab/EmitterWidget.h"
     "include/SceneTab/FluidWidget.h"
     "include/SceneTab/GravityWidget.h"
@@ -104,6 +107,7 @@ set(SOURCES
     "src/AsyncTasks/SaveEffectTask.cpp"
 
     "src/Objects/Fluid/FluidObject.cpp"
+    "src/Objects/BlockerObject.cpp"
     "src/Objects/EmitterObject.cpp"
     "src/Objects/FrameObject.cpp"
     "src/Objects/GravityModificator.cpp"
@@ -119,6 +123,7 @@ set(SOURCES
     "src/Objects/RootObject.cpp"
     "src/Objects/VisibilityControlObject.cpp"
 
+    "src/Render/BlockerRenderObserver.cpp"
     "src/Render/DrawParticlesAction.cpp"
     "src/Render/EmitterRenderObserver.cpp"
     "src/Render/FieldRenderObserver.cpp"
@@ -126,6 +131,7 @@ set(SOURCES
     "src/Render/ParticlesDrawable.cpp"
     "src/Render/RenderObserverFactory.cpp"
 
+    "src/SceneTab/BlockerWidget.cpp"
     "src/SceneTab/EmitterWidget.cpp"
     "src/SceneTab/FluidWidget.cpp"
     "src/SceneTab/GravityWidget.cpp"

@@ -3,5 +3,6 @@
       <file>emitter.png</file>
       <file>gravity.png</file>
       <file>visibilityControl.png</file>
+      <file>blocker.png</file>
     </qresource>
 </RCC>

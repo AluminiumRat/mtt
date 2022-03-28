@@ -17,6 +17,7 @@ public:
                                       const PropertiesWidgetFactory&) = delete;
   virtual ~PropertiesWidgetFactory() noexcept = default;
 
+  virtual void visitBlockerObject(BlockerObject& object) override;
   virtual void visitEmitterObject(EmitterObject& object) override;
   virtual void visitFluidObject(FluidObject& object) override;
   virtual void visitGravityModificator(GravityModificator& object) override;

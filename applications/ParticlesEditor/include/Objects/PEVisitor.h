@@ -3,6 +3,7 @@
 #include <mtt/editorLib/Objects/CEVisitor.h>
 
 #include <Objects/Fluid/FluidObject.h>
+#include <Objects/BlockerObject.h>
 #include <Objects/EmitterObject.h>
 #include <Objects/FrameObject.h>
 #include <Objects/GravityModificator.h>
@@ -25,6 +26,10 @@ public:
   PEVisitorT(const PEVisitorT&) = delete;
   PEVisitorT& operator = (const PEVisitorT&) = delete;
   virtual ~PEVisitorT() noexcept = default;
+
+  inline virtual void visitConstBlockerObject(
+                                          const BlockerObject& object) override;
+  inline virtual void visitBlockerObject(BlockerObject& object) override;
 
   inline virtual void visitConstEmitterObject(
                                           const EmitterObject& object) override;
@@ -84,6 +89,19 @@ template <typename... Args>
 inline PEVisitorT<BaseVisitor>::PEVisitorT(Args&&... args) :
   BaseVisitor(args...)
 {
+}
+
+template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitConstBlockerObject(
+                                                    const BlockerObject& object)
+{
+  visitConstModificatorObject(object);
+}
+
+template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitBlockerObject(BlockerObject& object)
+{
+  visitModificatorObject(object);
 }
 
 template <typename BaseVisitor>

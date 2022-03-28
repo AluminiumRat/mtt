@@ -9,6 +9,7 @@ class RenderObserverFactory : public PEVisitorT<mtt::RenderObserverFactory>
 public:
   RenderObserverFactory(mtt::CommonEditData& commonData);
 
+  virtual void visitBlockerObject(BlockerObject& object) override;
   virtual void visitEmitterObject(EmitterObject& object) override;
   virtual void visitFrameObject(FrameObject& object) override;
   virtual void visitGravityModificator(GravityModificator& object) override;

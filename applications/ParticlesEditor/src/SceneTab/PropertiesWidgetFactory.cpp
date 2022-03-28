@@ -2,6 +2,7 @@
 
 #include <mtt/application/Widgets/PropertiesWidgets/BoolPropertyWidget.h>
 
+#include <SceneTab/BlockerWidget.h>
 #include <SceneTab/EmitterWidget.h>
 #include <SceneTab/FluidWidget.h>
 #include <SceneTab/GravityWidget.h>
@@ -22,6 +23,12 @@ PropertiesWidgetFactory::PropertiesWidgetFactory(
               &commonData.animationPlayer()),
   _commonData(commonData)
 {
+}
+
+void PropertiesWidgetFactory::visitBlockerObject(BlockerObject& object)
+{
+  PEVisitorT::visitBlockerObject(object);
+  widgetsLayout().addWidget(new BlockerWidget(object, _commonData.undoStack()));
 }
 
 void PropertiesWidgetFactory::visitEmitterObject(EmitterObject& object)

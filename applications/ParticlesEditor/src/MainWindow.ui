@@ -39,6 +39,7 @@
     <addaction name="actionAdd_emitter"/>
     <addaction name="actionAdd_visibility_control"/>
     <addaction name="actionAdd_gravity"/>
+    <addaction name="actionAdd_blocker"/>
     <addaction name="separator"/>
     <addaction name="actionAdd_animation_from_fbx"/>
    </widget>
@@ -257,6 +258,11 @@
   <action name="actionAdd_gravity">
    <property name="text">
     <string>Add gravity</string>
+   </property>
+  </action>
+  <action name="actionAdd_blocker">
+   <property name="text">
+    <string>Add blocker</string>
    </property>
   </action>
  </widget>

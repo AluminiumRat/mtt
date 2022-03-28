@@ -1,5 +1,6 @@
 #include <mtt/editorLib/Render/CrossRenderObserver.h>
 
+#include <Render/BlockerRenderObserver.h>
 #include <Render/EmitterRenderObserver.h>
 #include <Render/FieldRenderObserver.h>
 #include <Render/ObserverWithIcon.h>
@@ -10,6 +11,11 @@
 RenderObserverFactory::RenderObserverFactory(mtt::CommonEditData& commonData) :
   PEVisitorT(commonData)
 {
+}
+
+void RenderObserverFactory::visitBlockerObject(BlockerObject& object)
+{
+  setResult(std::make_unique<BlockerRenderObserver>(object, commonData()));
 }
 
 void RenderObserverFactory::visitEmitterObject(EmitterObject& object)

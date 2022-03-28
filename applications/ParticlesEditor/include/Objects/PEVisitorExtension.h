@@ -2,6 +2,7 @@
 
 #include <mtt/application/Scene/ObjectVisitor.h>
 
+class BlockerObject;
 class EmitterObject;
 class FluidObject;
 class FrameObject;
@@ -20,6 +21,9 @@ public:
   static mtt::ObjectVisitor::ExtensionID extensionID;
 
 public:
+  virtual void visitConstBlockerObject(const BlockerObject& object) = 0;
+  virtual void visitBlockerObject(BlockerObject& object) = 0;
+
   virtual void visitConstEmitterObject(const EmitterObject& object) = 0;
   virtual void visitEmitterObject(EmitterObject& object) = 0;
 

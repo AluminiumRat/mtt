@@ -9,6 +9,7 @@
 #include <mtt/editorLib/EditorApplication.h>
 
 #include <AsyncTasks/ImportAnimationTask.h>
+#include <Objects/BlockerObject.h>
 #include <Objects/EmitterObject.h>
 #include <Objects/FrameObject.h>
 #include <Objects/GravityModificator.h>
@@ -77,6 +78,12 @@ void EditMenu::setupUI()
           &QAction::triggered,
           this,
           &EditMenu::_addGravity,
+          Qt::DirectConnection);
+
+  connect(_ui.actionAdd_blocker,
+          &QAction::triggered,
+          this,
+          &EditMenu::_addBlocker,
           Qt::DirectConnection);
 
   connect(_ui.actionAdd_animation_from_fbx,
@@ -287,6 +294,32 @@ void EditMenu::_addGravity() noexcept
   {
     QMessageBox::critical(&_window,
                           tr("Unable to add a gravity"),
+                          tr("Unknown error"));
+  }
+}
+
+void EditMenu::_addBlocker() noexcept
+{
+  try
+  {
+    EditorScene* scene = _commonData.scene();
+    if (scene == nullptr) return;
+
+    std::unique_ptr<BlockerObject> newModificator(
+                                        new BlockerObject(tr("Blocker"), true));
+    newModificator->fieldRef().set(&scene->root().particleField());
+    _addHierarhical(std::move(newModificator));
+  }
+  catch(std::exception& error)
+  {
+    QMessageBox::critical(&_window,
+                          tr("Unable to add a blocker"),
+                          error.what());
+  }
+  catch(...)
+  {
+    QMessageBox::critical(&_window,
+                          tr("Unable to add a blocker"),
                           tr("Unknown error"));
   }
 }
