@@ -71,6 +71,7 @@ private:
   glm::vec3 _toMatrixCoord(const glm::vec3& fieldCoord) const noexcept;
   void _resetMatrices() noexcept;
   void _rebuildMatrices();
+  void _blockVelocity();
   void _projectVelocity();
   void _buildDivirgence(FluidMatrix<float>& target);
   void _buildProjPressure(FluidMatrix<float>& target,
@@ -86,6 +87,7 @@ private:
   glm::vec3 _wind;
 
   std::optional<FluidMatrix<glm::vec3>> _velocityMatrix;
+  std::optional<FluidMatrix<int>> _blockMatrix;
 };
 
 inline uint32_t FluidObject::typeMask() const noexcept
