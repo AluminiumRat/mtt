@@ -66,6 +66,13 @@ public:
     float frictionFactor;
   };
 
+  enum ModificatorApplyTime
+  {
+    PREFLUID_TIME,
+    POSTFLUID_TIME,
+    POSTUPDATE_TIME
+  };
+
 public:
   ParticleField(const QString& name,
                 bool canBeRenamed,
@@ -125,6 +132,9 @@ signals:
 
 private:
   void _addParticles();
+  void _applyModificators(mtt::TimeT currentTime,
+                          mtt::TimeT delta,
+                          ModificatorApplyTime applyTime);
   void _updateParticlesData(mtt::TimeT delta);
   void _deleteParticles();
 

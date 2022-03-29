@@ -10,7 +10,7 @@ const std::map<BlockerObject::Shape, QString> BlockerObject::shapeNames =
 BlockerObject::BlockerObject( const QString& name,
                               bool canBeRenamed,
                               const mtt::UID& id) :
-  ModificatorObject(name, canBeRenamed, id),
+  ModificatorObject(name, canBeRenamed, ParticleField::POSTUPDATE_TIME, id),
   _shape(SPHERE_SHAPE),
   _size(1.f),
   _halfsize(.5f)

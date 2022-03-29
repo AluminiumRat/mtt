@@ -1,9 +1,12 @@
 #include <Objects/ModificatorObject.h>
 
-ModificatorObject::ModificatorObject( const QString& name,
-                                      bool canBeRenamed,
-                                      const mtt::UID& id) :
+ModificatorObject::ModificatorObject(
+                                  const QString& name,
+                                  bool canBeRenamed,
+                                  ParticleField::ModificatorApplyTime applyTime,
+                                  const mtt::UID& id) :
   HierarhicalObject(name, canBeRenamed, id),
+  _applyTime(applyTime),
   _enabled(true),
   _typeMask(1),
   _fieldRef(*this)

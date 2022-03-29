@@ -3,7 +3,7 @@
 GravityModificator::GravityModificator( const QString& name,
                                         bool canBeRenamed,
                                         const mtt::UID& id) :
-  ModificatorObject(name, canBeRenamed, id),
+  ModificatorObject(name, canBeRenamed, ParticleField::PREFLUID_TIME, id),
   _acceleration(9.8f)
 {
 }

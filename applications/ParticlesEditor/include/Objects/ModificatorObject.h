@@ -39,6 +39,7 @@ class ModificatorObject : public HierarhicalObject
 public:
   ModificatorObject(const QString& name,
                     bool canBeRenamed,
+                    ParticleField::ModificatorApplyTime applyTime,
                     const mtt::UID& id = mtt::UID());
   ModificatorObject(const ModificatorObject&) = delete;
   ModificatorObject& operator = (const ModificatorObject&) = delete;
@@ -47,6 +48,8 @@ public:
   inline bool enabled() const noexcept;
   void setEnabled(bool newValue) noexcept;
   inline void resetEnabled() noexcept;
+
+  inline ParticleField::ModificatorApplyTime applyTime() const noexcept;
 
   inline uint32_t typeMask() const noexcept;
   void setTypeMask(uint32_t newValue) noexcept;
@@ -67,6 +70,7 @@ protected:
   virtual void disconnectFromField(ParticleField& field) noexcept;
 
 private:
+  ParticleField::ModificatorApplyTime _applyTime;
   bool _enabled;
   uint32_t _typeMask;
   mtt::ObjectLink<ParticleField,
@@ -79,6 +83,12 @@ private:
 inline bool ModificatorObject::enabled() const noexcept
 {
   return _enabled;
+}
+
+inline ParticleField::ModificatorApplyTime
+                                  ModificatorObject::applyTime() const noexcept
+{
+  return _applyTime;
 }
 
 inline void ModificatorObject::resetEnabled() noexcept

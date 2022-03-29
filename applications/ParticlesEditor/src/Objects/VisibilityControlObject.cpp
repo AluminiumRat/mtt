@@ -3,7 +3,7 @@
 VisibilityControlObject::VisibilityControlObject( const QString& name,
                                                   bool canBeRenamed,
                                                   const mtt::UID& id) :
-  ModificatorObject(name, canBeRenamed, id),
+  ModificatorObject(name, canBeRenamed, ParticleField::PREFLUID_TIME, id),
   _saturationRange(0.f, 1.f)
 {
 }
