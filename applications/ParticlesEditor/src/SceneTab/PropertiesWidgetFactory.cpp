@@ -29,6 +29,8 @@ void PropertiesWidgetFactory::visitBlockerObject(BlockerObject& object)
 {
   PEVisitorT::visitBlockerObject(object);
   widgetsLayout().addWidget(new BlockerWidget(object, _commonData.undoStack()));
+  widgetsLayout().addWidget(
+                          new TypeMaskWidget(object, _commonData.undoStack()));
 }
 
 void PropertiesWidgetFactory::visitEmitterObject(EmitterObject& object)

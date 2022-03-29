@@ -91,3 +91,99 @@ void BlockerObject::_disconnectFromFluid(FluidObject& fluid) noexcept
 {
   fluid.unregisterBlocker(*this);
 }
+
+void BlockerObject::simulationStep(mtt::TimeT currentTime, mtt::TimeT delta)
+{
+  ParticleField* field = fieldRef().get();
+  if (field == nullptr) return;
+
+  glm::mat4x4 toField = glm::inverse(field->localToWorldTransform()) *
+                                                        localToWorldTransform();
+  glm::mat4x4 fromField = glm::inverse(toField);
+
+  switch(_shape)
+  {
+  case SPHERE_SHAPE:
+    {
+      auto sphereDelegate =
+      [&](ParticleField::ParticleData& particle)
+      {
+        glm::vec3 localPosition = fromField * glm::vec4(particle.position, 1.f);
+        float distance = glm::length(localPosition);
+        if (distance == 0.f) return;
+        if (distance < _halfsize) localPosition *= _halfsize / distance;
+        particle.position = toField * glm::vec4(localPosition, 1.f);
+      };
+      field->updateParticles(sphereDelegate, typeMask());
+      break;
+    }
+
+  case BOX_SHAPE:
+    {
+      auto boxDelegate =
+      [&](ParticleField::ParticleData& particle)
+      {
+        glm::vec3 localPosition = fromField * glm::vec4(particle.position, 1.f);
+        if (isPointInside(localPosition))
+        {
+          float absX = abs(localPosition.x);
+          float absY = abs(localPosition.y);
+          float absZ = abs(localPosition.z);
+          if (absX > absY && absX > absZ)
+          {
+            localPosition.x *= _halfsize / absX;
+          }
+          else if (absY > absZ)
+          {
+            localPosition.y *= _halfsize / absY;
+          }
+          else
+          {
+            localPosition.z *= _halfsize / absZ;
+          }
+        }
+        particle.position = toField * glm::vec4(localPosition, 1.f);
+      };
+
+      field->updateParticles(boxDelegate, typeMask());
+      break;
+    }
+
+  case CYLINDER_SHAPE:
+    {
+      auto cylinderDelegate =
+      [&](ParticleField::ParticleData& particle)
+      {
+        glm::vec3 localPosition = fromField * glm::vec4(particle.position, 1.f);
+        if (localPosition.z >= _halfsize || localPosition.z <= -_halfsize)
+        {
+          return;
+        }
+
+        glm::vec2 localXY = glm::vec2(localPosition);
+
+        float radius = glm::length(localXY);
+        if(radius >= _halfsize) return;
+
+        if (localPosition.z > radius)
+        {
+          localPosition.z = _halfsize;
+        }
+        else if (localPosition.z < -radius)
+        {
+          localPosition.z = -_halfsize;
+        }
+        else
+        {
+          localXY *= _halfsize / radius;
+          localPosition = glm::vec3(localXY, localPosition.z);
+        }
+
+        particle.position = toField * glm::vec4(localPosition, 1.f);
+      };
+
+      field->updateParticles(cylinderDelegate, typeMask());
+      break;
+    }
+  }
+}
