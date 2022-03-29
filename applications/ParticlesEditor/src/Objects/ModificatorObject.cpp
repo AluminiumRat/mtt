@@ -29,12 +29,12 @@ void ModificatorObject::simulationStep( mtt::TimeT currentTime,
 {
 }
 
-void ModificatorObject::_connectToField(ParticleField& field)
+void ModificatorObject::connectToField(ParticleField& field)
 {
   field.registerModificator(*this);
 }
 
-void ModificatorObject::_disconnectFromField(ParticleField& field) noexcept
+void ModificatorObject::disconnectFromField(ParticleField& field) noexcept
 {
   field.unregisterModificator(*this);
 }

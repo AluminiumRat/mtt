@@ -2,6 +2,8 @@
 
 #include <Objects/ModificatorObject.h>
 
+class FluidObject;
+
 class BlockerObject : public ModificatorObject
 {
   Q_OBJECT
@@ -46,7 +48,7 @@ public:
                 const mtt::UID& id = mtt::UID());
   BlockerObject(const BlockerObject&) = delete;
   BlockerObject& operator = (const BlockerObject&) = delete;
-  virtual ~BlockerObject() noexcept = default;
+  virtual ~BlockerObject() noexcept;
 
   inline Shape shape() const noexcept;
   void setShape(Shape newValue) noexcept;
@@ -56,13 +58,24 @@ public:
   void setSize(float newValue) noexcept;
   inline void resetSize() noexcept;
 
+  bool isPointInside(const glm::vec3& point) noexcept;
+
 signals:
   void shapeChanged(Shape newValue);
   void sizeChanged(float newValue);
 
+protected:
+  virtual void connectToField(ParticleField& field) override;
+  virtual void disconnectFromField(ParticleField& field) noexcept override;
+
+private:
+  void _connectToFluid(FluidObject& fluid);
+  void _disconnectFromFluid(FluidObject& fluid) noexcept;
+
 private:
   Shape _shape;
   float _size;
+  float _halfsize;
 };
 
 inline BlockerObject::Shape BlockerObject::shape() const noexcept

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include <optional>
 
 #include <glm/vec3.hpp>
@@ -7,6 +8,7 @@
 #include <Objects/Fluid/FluidMatrix.h>
 #include <Objects/ModificatorObject.h>
 
+class BlockerObject;
 class ParticleField;
 
 class FluidObject : public mtt::Object
@@ -62,6 +64,9 @@ public:
   virtual void simulationStep(mtt::TimeT currentTime, mtt::TimeT delta);
   void clear() noexcept;
 
+  void registerBlocker(BlockerObject& blocker);
+  void unregisterBlocker(BlockerObject& blocker) noexcept;
+
 signals:
   void typeMaskChanged(uint32_t newValue);
   void cellSizeChanged(float newValue);
@@ -69,8 +74,12 @@ signals:
 
 private:
   glm::vec3 _toMatrixCoord(const glm::vec3& fieldCoord) const noexcept;
+  glm::vec3 _toFieldCoord(const glm::vec3& matrixCoord) const noexcept;
   void _resetMatrices() noexcept;
+  void _resetBlockMatrix() noexcept;
   void _rebuildMatrices();
+  void _applyBlocker(BlockerObject& blocker);
+  void _rebuildBlockMatrix();
   void _blockVelocity();
   void _projectVelocity();
   void _buildDivirgence(FluidMatrix<float>& target);
@@ -88,6 +97,9 @@ private:
 
   std::optional<FluidMatrix<glm::vec3>> _velocityMatrix;
   std::optional<FluidMatrix<int>> _blockMatrix;
+
+  using Blockers = std::vector<BlockerObject*>;
+  Blockers _blockers;
 };
 
 inline uint32_t FluidObject::typeMask() const noexcept

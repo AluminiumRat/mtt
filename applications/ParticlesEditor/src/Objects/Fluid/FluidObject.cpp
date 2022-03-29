@@ -1,7 +1,13 @@
+#include <algorithm>
+
+#include <mtt/utilities/Abort.h>
+#include <mtt/utilities/Box.h>
+
 #include <Objects/Fluid/FluidObject.h>
+#include <Objects/BlockerObject.h>
 #include <Objects/ParticleField.h>
 
-#define PROJECT_ITERATIONS 100
+#define PROJECT_ITERATIONS 30
 
 FluidObject::FluidObject( const QString& name,
                           bool canBeRenamed,
@@ -44,15 +50,72 @@ void FluidObject::setWind(const glm::vec3& newValue) noexcept
   emit windChanged(newValue);
 }
 
-void FluidObject::clear() noexcept
+void FluidObject::registerBlocker(BlockerObject& blocker)
 {
-  _resetMatrices();
+  if(std::find( _blockers.begin(),
+                _blockers.end(),
+                &blocker) != _blockers.end())
+  {
+    mtt::Abort("FluidObject::registerBlocker: blocker is already registered.");
+  }
+
+  try
+  {
+    _blockers.push_back(&blocker);
+
+    connect(&blocker,
+            &BlockerObject::transformChanged,
+            this,
+            &FluidObject::_resetBlockMatrix,
+            Qt::DirectConnection);
+
+    connect(&blocker,
+            &BlockerObject::shapeChanged,
+            this,
+            &FluidObject::_resetBlockMatrix,
+            Qt::DirectConnection);
+
+    connect(&blocker,
+            &BlockerObject::sizeChanged,
+            this,
+            &FluidObject::_resetBlockMatrix,
+            Qt::DirectConnection);
+
+    _resetBlockMatrix();
+  }
+  catch(...)
+  {
+    unregisterBlocker(blocker);
+    throw;
+  }
+}
+
+void FluidObject::unregisterBlocker(BlockerObject& blocker) noexcept
+{
+  Blockers::iterator iBlocker = std::find(_blockers.begin(),
+                                          _blockers.end(),
+                                          &blocker);
+  if(iBlocker == _blockers.end()) return;
+
+  _resetBlockMatrix();
+
+  _blockers.erase(iBlocker);
+}
+
+void FluidObject::_resetBlockMatrix() noexcept
+{
+  _blockMatrix.reset();
 }
 
 void FluidObject::_resetMatrices() noexcept
 {
   _velocityMatrix.reset();
-  _blockMatrix.reset();
+  _resetBlockMatrix();
+}
+
+void FluidObject::clear() noexcept
+{
+  _resetMatrices();
 }
 
 void FluidObject::_rebuildMatrices()
@@ -65,17 +128,97 @@ void FluidObject::_rebuildMatrices()
   size_t fieldExtentY = size_t(fieldExtent.y) + 3;
   size_t fieldExtentZ = size_t(fieldExtent.z) + 3;
 
-  _velocityMatrix.emplace(fieldExtentX, fieldExtentY, fieldExtentZ);
-  _velocityMatrix->clear(_wind);
+  try
+  {
+    _velocityMatrix.emplace(fieldExtentX, fieldExtentY, fieldExtentZ);
+    _velocityMatrix->clear(_wind);
+  }
+  catch(...)
+  {
+    _resetMatrices();
+    throw;
+  }
+}
 
-  _blockMatrix.emplace(fieldExtentX, fieldExtentY, fieldExtentZ);
-  _blockMatrix->clear(0);
+void FluidObject::_applyBlocker(BlockerObject& blocker)
+{
+  glm::mat4 toBlocker = glm::inverse(blocker.localToWorldTransform()) *
+                                                _parent.localToWorldTransform();
+  glm::mat4 fromBlocker = glm::inverse(toBlocker);
+
+  float halfSize = blocker.size() / 2.f;
+  const glm::vec4 corners[8] =
+                            { glm::vec4(-halfSize, -halfSize, -halfSize, 1.f),
+                              glm::vec4( halfSize, -halfSize, -halfSize, 1.f),
+                              glm::vec4(-halfSize,  halfSize, -halfSize, 1.f),
+                              glm::vec4( halfSize,  halfSize, -halfSize, 1.f),
+                              glm::vec4(-halfSize, -halfSize,  halfSize, 1.f),
+                              glm::vec4( halfSize, -halfSize,  halfSize, 1.f),
+                              glm::vec4(-halfSize,  halfSize,  halfSize, 1.f),
+                              glm::vec4( halfSize,  halfSize,  halfSize, 1.f)};
+  mtt::Box blockerBox;
+  for (const glm::vec4& corner : corners)
+  {
+    blockerBox.extend(fromBlocker * corner);
+  }
+  if(!blockerBox.valid()) return;
+
+  glm::vec3 startCorner = glm::round(_toMatrixCoord(blockerBox.minCorner));
+  startCorner = glm::max(startCorner, glm::vec3(1.f));
+  size_t startX = glm::min(size_t(startCorner.x), _blockMatrix->xSize() - 2);
+  size_t startY = glm::min(size_t(startCorner.y), _blockMatrix->ySize() - 2);
+  size_t startZ = glm::min(size_t(startCorner.z), _blockMatrix->zSize() - 2);
+
+  glm::vec3 endCorner = glm::round(_toMatrixCoord(blockerBox.maxCorner));
+  endCorner = glm::max(endCorner, glm::vec3(1.f));
+  size_t endX = glm::min(size_t(endCorner.x), _blockMatrix->xSize() - 1);
+  size_t endY = glm::min(size_t(endCorner.y), _blockMatrix->ySize() - 1);
+  size_t endZ = glm::min(size_t(endCorner.z), _blockMatrix->zSize() - 1);
+
+  glm::vec3 cellPosition(startX + .5f, startY + .5f, startZ + .5f);
+  for (size_t x = startX; x < endX; x++)
+  {
+    cellPosition.y = startY + .5f;
+    for (size_t y = startY; y < endY; y++)
+    {
+      cellPosition.z = startZ + .5f;
+      for (size_t z = startZ; z < endZ; z++)
+      {
+        glm::vec4 filedCoord = glm::vec4(_toFieldCoord(cellPosition), 1.f);
+        glm::vec3 blockerCoord = toBlocker * filedCoord;
+        if(blocker.isPointInside(blockerCoord)) _blockMatrix->set(x, y, z, 1);
+        cellPosition.z += 1.f;
+      }
+      cellPosition.y += 1.f;
+    }
+    cellPosition.x += 1.f;
+  }
+}
+
+void FluidObject::_rebuildBlockMatrix()
+{
+  try
+  {
+    _blockMatrix.emplace( _velocityMatrix->xSize(),
+                          _velocityMatrix->ySize(),
+                          _velocityMatrix->zSize());
+    _blockMatrix->clear(0);
+
+    for(BlockerObject* blocker : _blockers) _applyBlocker(*blocker);
+  }
+  catch (...)
+  {
+    _resetBlockMatrix();
+    throw;
+  }
 }
 
 void FluidObject::simulationStep(mtt::TimeT currentTime, mtt::TimeT delta)
 {
   if(!_velocityMatrix.has_value()) _rebuildMatrices();
   if(!_velocityMatrix.has_value()) return;
+
+  if(!_blockMatrix.has_value()) _rebuildBlockMatrix();
 
   float dTime =
         std::chrono::duration_cast<std::chrono::duration<float>>(delta).count();
@@ -314,6 +457,15 @@ glm::vec3 FluidObject::_toMatrixCoord(
   matrixCoord /= _cellSize;
   matrixCoord += 1.5f;
   return matrixCoord;
+}
+
+glm::vec3 FluidObject::_toFieldCoord(
+                                    const glm::vec3& matrixCoord) const noexcept
+{
+  glm::vec3 fieldCoord = matrixCoord - 1.5f;
+  fieldCoord *= _cellSize;
+  fieldCoord -= _parent.size() / 2.f;
+  return fieldCoord;
 }
 
 void FluidObject::_updateParticles(float dTime)

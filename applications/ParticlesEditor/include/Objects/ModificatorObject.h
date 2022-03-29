@@ -62,17 +62,17 @@ signals:
   void typeMaskChanged(uint32_t newValue);
   void fieldChanged(ParticleField* newField);
 
-private:
-  void _connectToField(ParticleField& field);
-  void _disconnectFromField(ParticleField& field) noexcept;
+protected:
+  virtual void connectToField(ParticleField& field);
+  virtual void disconnectFromField(ParticleField& field) noexcept;
 
 private:
   bool _enabled;
   uint32_t _typeMask;
   mtt::ObjectLink<ParticleField,
                   ModificatorObject,
-                  &ModificatorObject::_connectToField,
-                  &ModificatorObject::_disconnectFromField,
+                  &ModificatorObject::connectToField,
+                  &ModificatorObject::disconnectFromField,
                   &ModificatorObject::fieldChanged> _fieldRef;
 };
 
