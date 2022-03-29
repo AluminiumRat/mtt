@@ -64,6 +64,12 @@ void FluidObject::registerBlocker(BlockerObject& blocker)
     _blockers.push_back(&blocker);
 
     connect(&blocker,
+            &BlockerObject::enabledChanged,
+            this,
+            &FluidObject::_resetBlockMatrix,
+            Qt::DirectConnection);
+
+    connect(&blocker,
             &BlockerObject::transformChanged,
             this,
             &FluidObject::_resetBlockMatrix,
@@ -142,6 +148,8 @@ void FluidObject::_rebuildMatrices()
 
 void FluidObject::_applyBlocker(BlockerObject& blocker)
 {
+  if(!blocker.enabled()) return;
+
   glm::mat4 toBlocker = glm::inverse(blocker.localToWorldTransform()) *
                                                 _parent.localToWorldTransform();
   glm::mat4 fromBlocker = glm::inverse(toBlocker);
