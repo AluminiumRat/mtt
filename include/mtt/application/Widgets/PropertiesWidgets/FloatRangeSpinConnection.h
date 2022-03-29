@@ -36,11 +36,11 @@ namespace mtt
     inline float multiplier() const noexcept;
     inline void setMultiplier(float newValue) noexcept;
 
-    inline void _updateFromProperty() noexcept;
+    inline void updateFromProperty() noexcept;
 
   private:
-    inline void _updateFromWidgets() noexcept;
-    inline void _updateMinmax() noexcept;
+    inline void _updateFromMinWidget() noexcept;
+    inline void _updateFromMaxWidget() noexcept;
 
   private:
     QDoubleSpinBox& _minWidget;
@@ -77,53 +77,89 @@ namespace mtt
     connect(&_minWidget,
             QOverload<double>::of(&QDoubleSpinBox::valueChanged),
             this,
-            &FloatRangeSpinConnection::_updateFromWidgets,
+            &FloatRangeSpinConnection::_updateFromMinWidget,
             Qt::DirectConnection);
 
     connect(&_maxWidget,
             QOverload<double>::of(&QDoubleSpinBox::valueChanged),
             this,
-            &FloatRangeSpinConnection::_updateFromWidgets,
+            &FloatRangeSpinConnection::_updateFromMaxWidget,
             Qt::DirectConnection);
 
     connect(&_object,
             signal,
             this,
-            &FloatRangeSpinConnection::_updateFromProperty,
+            &FloatRangeSpinConnection::updateFromProperty,
             Qt::DirectConnection);
 
-    _updateFromProperty();
+    updateFromProperty();
   }
 
   template<typename ObjectClass>
   inline void
-            FloatRangeSpinConnection<ObjectClass>::_updateFromWidgets() noexcept
+          FloatRangeSpinConnection<ObjectClass>::_updateFromMinWidget() noexcept
   {
     if(_skipUpdate) return;
     if(_multiplier == 0.f) return;
     ScopedTrueSetter skipper(_skipUpdate);
 
-    _updateMinmax();
-
     try
     {
-      Range<float> newValue = Range<float>( _minWidget.value(),
-                                            _maxWidget.value()) / _multiplier;
+      Range<float> oldValue = (_object.*_getter)();
+      float newMax = std::max(oldValue.max(),
+                              float(_minWidget.value() / _multiplier));
+      Range<float> newValue = Range<float>( _minWidget.value() / _multiplier,
+                                            newMax);
       if ((_object.*_getter)() == newValue) return;
 
       _undoStack.addAndMake(makeSetPropertyCommand( _object,
                                                     _getter,
                                                     _setter,
                                                     newValue));
+      _maxWidget.setValue(newMax * _multiplier);
     }
     catch (std::exception& error)
     {
       Log() << error.what();
-      Log() << "FloatRangeSpinConnection::_updateFromWidgets: unable to update property.";
+      Log() << "FloatRangeSpinConnection::_updateFromMinWidget: unable to update property.";
     }
     catch(...)
     {
-      Log() << "FloatRangeSpinConnection::_updateFromWidgets: unable to update property.";
+      Log() << "FloatRangeSpinConnection::_updateFromMinWidget: unable to update property.";
+    }
+  }
+
+  template<typename ObjectClass>
+  inline void
+          FloatRangeSpinConnection<ObjectClass>::_updateFromMaxWidget() noexcept
+  {
+    if(_skipUpdate) return;
+    if(_multiplier == 0.f) return;
+    ScopedTrueSetter skipper(_skipUpdate);
+
+    try
+    {
+      Range<float> oldValue = (_object.*_getter)();
+      float newMin = std::min(oldValue.min(),
+                              float(_maxWidget.value() / _multiplier));
+      Range<float> newValue = Range<float>( newMin,
+                                            _maxWidget.value() / _multiplier);
+      if ((_object.*_getter)() == newValue) return;
+
+      _undoStack.addAndMake(makeSetPropertyCommand( _object,
+                                                    _getter,
+                                                    _setter,
+                                                    newValue));
+      _minWidget.setValue(newMin * _multiplier);
+    }
+    catch (std::exception& error)
+    {
+      Log() << error.what();
+      Log() << "FloatRangeSpinConnection::_updateFromMaxWidget: unable to update property.";
+    }
+    catch(...)
+    {
+      Log() << "FloatRangeSpinConnection::_updateFromMaxWidget: unable to update property.";
     }
   }
 
@@ -139,12 +175,12 @@ namespace mtt
                                                         float newValue) noexcept
   {
     _multiplier = newValue;
-    _updateFromProperty();
+    updateFromProperty();
   }
 
   template<typename ObjectClass>
   inline void
-          FloatRangeSpinConnection<ObjectClass>::_updateFromProperty() noexcept
+            FloatRangeSpinConnection<ObjectClass>::updateFromProperty() noexcept
   {
     if (_skipUpdate) return;
     ScopedTrueSetter skipper(_skipUpdate);
@@ -152,8 +188,6 @@ namespace mtt
     try
     {
       Range<float> value = (_object.*_getter)() * _multiplier;
-      _minWidget.setMaximum(FLT_MAX);
-      _maxWidget.setMinimum(-FLT_MAX);
       _minWidget.setValue(value.min());
       _maxWidget.setValue(value.max());
     }
@@ -166,13 +200,5 @@ namespace mtt
     {
       Log() << "FloatRangeSpinConnection::_updateFromProperty: unable to update widget.";
     }
-    _updateMinmax();
-  }
-
-  template<typename ObjectClass>
-  inline void FloatRangeSpinConnection<ObjectClass>::_updateMinmax() noexcept
-  {
-    _minWidget.setMaximum(_maxWidget.value());
-    _maxWidget.setMinimum(_minWidget.value());
   }
 }

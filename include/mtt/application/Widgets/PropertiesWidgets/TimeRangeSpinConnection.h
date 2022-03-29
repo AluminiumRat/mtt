@@ -38,11 +38,11 @@ namespace mtt
     inline float multiplier() const noexcept;
     inline void setMultiplier(float newValue) noexcept;
 
-    inline void _updateFromProperty() noexcept;
+    inline void updateFromProperty() noexcept;
 
   private:
-    inline void _updateFromWidgets() noexcept;
-    inline void _updateMinmax() noexcept;
+    inline void _updateFromMinWidget() noexcept;
+    inline void _updateFromMaxWidget() noexcept;
 
   private:
     QDoubleSpinBox& _minWidget;
@@ -79,57 +79,106 @@ namespace mtt
     connect(&_minWidget,
             QOverload<double>::of(&QDoubleSpinBox::valueChanged),
             this,
-            &TimeRangeSpinConnection::_updateFromWidgets,
+            &TimeRangeSpinConnection::_updateFromMinWidget,
             Qt::DirectConnection);
 
     connect(&_maxWidget,
             QOverload<double>::of(&QDoubleSpinBox::valueChanged),
             this,
-            &TimeRangeSpinConnection::_updateFromWidgets,
+            &TimeRangeSpinConnection::_updateFromMaxWidget,
             Qt::DirectConnection);
 
     connect(&_object,
             signal,
             this,
-            &TimeRangeSpinConnection::_updateFromProperty,
+            &TimeRangeSpinConnection::updateFromProperty,
             Qt::DirectConnection);
 
-    _updateFromProperty();
+    updateFromProperty();
   }
 
   template<typename ObjectClass>
   inline void
-            TimeRangeSpinConnection<ObjectClass>::_updateFromWidgets() noexcept
+          TimeRangeSpinConnection<ObjectClass>::_updateFromMinWidget() noexcept
   {
     if(_skipUpdate) return;
     if(_multiplier == 0.f) return;
     ScopedTrueSetter skipper(_skipUpdate);
 
-    _updateMinmax();
-
     try
     {
+      Range<TimeT> oldValue = (_object.*_getter)();
+
       using FloatTimeType = std::chrono::duration<float>;
+
       FloatTimeType minTime(_minWidget.value() / _multiplier);
-      FloatTimeType maxTime(_maxWidget.value() / _multiplier);
+      FloatTimeType maxTime =
+                      std::chrono::duration_cast<FloatTimeType>(oldValue.max());
+      if(maxTime < minTime) maxTime = minTime;
+
       Range<TimeT> newValue = Range<TimeT>(
                                     std::chrono::duration_cast<TimeT>(minTime),
                                     std::chrono::duration_cast<TimeT>(maxTime));
-      if ((_object.*_getter)() == newValue) return;
+      if (oldValue == newValue) return;
 
       _undoStack.addAndMake(makeSetPropertyCommand( _object,
                                                     _getter,
                                                     _setter,
                                                     newValue));
+
+      _maxWidget.setValue(maxTime.count() * _multiplier);
     }
     catch (std::exception& error)
     {
       Log() << error.what();
-      Log() << "TimeRangeSpinConnection::_updateFromWidgets: unable to update property.";
+      Log() << "TimeRangeSpinConnection::_updateFromMinWidget: unable to update property.";
     }
     catch(...)
     {
-      Log() << "TimeRangeSpinConnection::_updateFromWidgets: unable to update property.";
+      Log() << "TimeRangeSpinConnection::_updateFromMinWidget: unable to update property.";
+    }
+  }
+
+  template<typename ObjectClass>
+  inline void
+          TimeRangeSpinConnection<ObjectClass>::_updateFromMaxWidget() noexcept
+  {
+    if(_skipUpdate) return;
+    if(_multiplier == 0.f) return;
+    ScopedTrueSetter skipper(_skipUpdate);
+
+    try
+    {
+      Range<TimeT> oldValue = (_object.*_getter)();
+
+      using FloatTimeType = std::chrono::duration<float>;
+
+      FloatTimeType minTime =
+                      std::chrono::duration_cast<FloatTimeType>(oldValue.min());
+      FloatTimeType maxTime(_maxWidget.value() / _multiplier);
+
+      if(minTime > maxTime) minTime = maxTime;
+
+      Range<TimeT> newValue = Range<TimeT>(
+                                    std::chrono::duration_cast<TimeT>(minTime),
+                                    std::chrono::duration_cast<TimeT>(maxTime));
+      if (oldValue == newValue) return;
+
+      _undoStack.addAndMake(makeSetPropertyCommand( _object,
+                                                    _getter,
+                                                    _setter,
+                                                    newValue));
+
+      _minWidget.setValue(minTime.count() * _multiplier);
+    }
+    catch (std::exception& error)
+    {
+      Log() << error.what();
+      Log() << "TimeRangeSpinConnection::_updateFromMaxWidget: unable to update property.";
+    }
+    catch(...)
+    {
+      Log() << "TimeRangeSpinConnection::_updateFromMaxWidget: unable to update property.";
     }
   }
 
@@ -145,12 +194,12 @@ namespace mtt
                                                         float newValue) noexcept
   {
     _multiplier = newValue;
-    _updateFromProperty();
+    updateFromProperty();
   }
 
   template<typename ObjectClass>
   inline void
-          TimeRangeSpinConnection<ObjectClass>::_updateFromProperty() noexcept
+            TimeRangeSpinConnection<ObjectClass>::updateFromProperty() noexcept
   {
     if (_skipUpdate) return;
     ScopedTrueSetter skipper(_skipUpdate);
@@ -164,8 +213,6 @@ namespace mtt
       FloatTimeType maxTime(
                         std::chrono::duration_cast<FloatTimeType>(value.max()));
 
-      _minWidget.setMaximum(FLT_MAX);
-      _maxWidget.setMinimum(-FLT_MAX);
       _minWidget.setValue(minTime.count() * _multiplier);
       _maxWidget.setValue(maxTime.count() * _multiplier);
     }
@@ -178,13 +225,5 @@ namespace mtt
     {
       Log() << "TimeRangeSpinConnection::_updateFromProperty: unable to update widget.";
     }
-    _updateMinmax();
-  }
-
-  template<typename ObjectClass>
-  inline void TimeRangeSpinConnection<ObjectClass>::_updateMinmax() noexcept
-  {
-    _minWidget.setMaximum(_maxWidget.value());
-    _maxWidget.setMinimum(_minWidget.value());
   }
 }
