@@ -9,6 +9,9 @@
 
 #define PROJECT_ITERATIONS 30
 
+constexpr float defaultTemperature = 273.15f;
+constexpr float defaultPressure = 100000.f;
+
 FluidObject::FluidObject( const QString& name,
                           bool canBeRenamed,
                           ParticleField& parent,
@@ -116,6 +119,8 @@ void FluidObject::_resetBlockMatrix() noexcept
 void FluidObject::_resetMatrices() noexcept
 {
   _velocityMatrix.reset();
+  _temperatureMatrix.reset();
+  _pressureMatrix.reset();
   _resetBlockMatrix();
 }
 
@@ -138,6 +143,15 @@ void FluidObject::_rebuildMatrices()
   {
     _velocityMatrix.emplace(fieldExtentX, fieldExtentY, fieldExtentZ);
     _velocityMatrix->clear(_wind);
+
+    _temperatureMatrix.emplace(fieldExtentX, fieldExtentY, fieldExtentZ);
+    _temperatureMatrix->clear(defaultTemperature);
+
+    _pressureMatrix.emplace(fieldExtentX, fieldExtentY, fieldExtentZ);
+    _pressureMatrix->clear(defaultPressure);
+
+    _massMatrix.emplace(fieldExtentX, fieldExtentY, fieldExtentZ);
+    _massMatrix->clear(0.f);
   }
   catch(...)
   {
@@ -228,15 +242,90 @@ void FluidObject::simulationStep(mtt::TimeT currentTime, mtt::TimeT delta)
 
   if(!_blockMatrix.has_value()) _rebuildBlockMatrix();
 
+  _temperatureMatrix->set(_temperatureMatrix->xSize() / 2,
+                          _temperatureMatrix->ySize() / 2,
+                          _temperatureMatrix->zSize() / 2,
+                          300.f);
+
   float dTime =
         std::chrono::duration_cast<std::chrono::duration<float>>(delta).count();
 
+  _calculateMassMatrix();
+  _applyArchimedesForce(dTime);
   _blockVelocity();
   _projectVelocity();
-  _moveVelocity(dTime);
+  _moveMatrices(dTime);
   _projectVelocity();
 
   _updateParticles(dTime);
+}
+
+void FluidObject::_calculateMassMatrix() noexcept
+{
+  float cellVolume = _cellSize * _cellSize * _cellSize;
+  constexpr float gasConstant = 287.058f;
+
+  for (size_t x = 0; x < _velocityMatrix->xSize(); x++)
+  {
+    for (size_t y = 0; y < _velocityMatrix->ySize(); y++)
+    {
+      for (size_t z = 0; z < _velocityMatrix->zSize(); z++)
+      {
+        float temperature = _temperatureMatrix->get(x, y, z);
+        float pressure = _pressureMatrix->get(x, y, z);
+        float density = pressure / (gasConstant * temperature);
+        float mass = cellVolume * density;
+        _massMatrix->set(x, y, z, mass);
+      }
+    }
+  }
+}
+
+void FluidObject::_applyArchimedesForce(float dTime) noexcept
+{
+  for (size_t x = 1; x < _velocityMatrix->xSize() - 1; x++)
+  {
+    for (size_t y = 1; y < _velocityMatrix->ySize() - 1; y++)
+    {
+      for (size_t z = 1; z < _velocityMatrix->zSize() - 1; z++)
+      {
+        if(_blockMatrix->get(x, y, z) != 0) continue;
+
+        float neighbourMass = 0.f;
+        float neighbourCount = 0.f;
+        if (_blockMatrix->get(x + 1, y, z) == 0)
+        {
+          neighbourMass += _massMatrix->get(x + 1, y, z);
+          neighbourCount += 1;
+        }
+        if (_blockMatrix->get(x - 1, y, z) == 0)
+        {
+          neighbourMass += _massMatrix->get(x - 1, y, z);
+          neighbourCount += 1;
+        }
+        if (_blockMatrix->get(x, y + 1, z) == 0)
+        {
+          neighbourMass += _massMatrix->get(x, y + 1, z);
+          neighbourCount += 1;
+        }
+        if (_blockMatrix->get(x, y - 1, z) == 0)
+        {
+          neighbourMass += _massMatrix->get(x, y - 1, z);
+          neighbourCount += 1;
+        }
+
+        if(neighbourCount == 0.f) continue;
+
+        float currentMass = _massMatrix->get(x, y, z);
+        float force = neighbourMass / neighbourCount - currentMass;
+        force *= 9.8f;
+        float acceleration = force / currentMass;
+        glm::vec3 dVelocity = glm::vec3(0.f, 0.f, 1.f) * acceleration * dTime;
+        const glm::vec3& currentVelocity = _velocityMatrix->get(x, y, z);
+        _velocityMatrix->set(x, y, z, currentVelocity + dVelocity);
+      }
+    }
+  }
 }
 
 void FluidObject::_blockVelocity()
@@ -434,12 +523,22 @@ void FluidObject::_projectVelocity()
   }
 }
 
-void FluidObject::_moveVelocity(float dTime)
+void FluidObject::_moveMatrices(float dTime)
 {
   FluidMatrix<glm::vec3> newVelocity( _velocityMatrix->xSize(),
                                       _velocityMatrix->ySize(),
                                       _velocityMatrix->zSize());
   newVelocity.clear(_wind);
+
+  FluidMatrix<float> newTemperatureMatrix(_velocityMatrix->xSize(),
+                                          _velocityMatrix->ySize(),
+                                          _velocityMatrix->zSize());
+  newTemperatureMatrix.clear(defaultTemperature);
+
+  FluidMatrix<float> newPpressureMatrix(_velocityMatrix->xSize(),
+                                        _velocityMatrix->ySize(),
+                                        _velocityMatrix->zSize());
+  newPpressureMatrix.clear(defaultPressure);
 
   for (size_t x = 1; x < newVelocity.xSize() - 1; x++)
   {
@@ -451,11 +550,17 @@ void FluidObject::_moveVelocity(float dTime)
         glm::vec3 shift = -currentVelocity / _cellSize * dTime;
         glm::vec3 shiftedCoord = glm::vec3(x, y, z) + shift + glm::vec3(.5f);
         newVelocity(x,y,z) = _velocityMatrix->interpolate(shiftedCoord);
+        newTemperatureMatrix(x, y, z) =
+                                  _temperatureMatrix->interpolate(shiftedCoord);
+        newPpressureMatrix(x, y, z) =
+                                    _pressureMatrix->interpolate(shiftedCoord);
       }
     }
   }
 
   _velocityMatrix->swap(newVelocity);
+  _temperatureMatrix->swap(newTemperatureMatrix);
+  _pressureMatrix->swap(newPpressureMatrix);
 }
 
 glm::vec3 FluidObject::_toMatrixCoord(

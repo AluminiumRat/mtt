@@ -80,12 +80,14 @@ private:
   void _rebuildMatrices();
   void _applyBlocker(BlockerObject& blocker);
   void _rebuildBlockMatrix();
+  void _calculateMassMatrix() noexcept;
+  void _applyArchimedesForce(float dTime) noexcept;
   void _blockVelocity();
   void _projectVelocity();
   void _buildDivirgence(FluidMatrix<float>& target);
   void _buildProjPressure(FluidMatrix<float>& target,
                           const FluidMatrix<float>& divirgence);
-  void _moveVelocity(float dTime);
+  void _moveMatrices(float dTime);
   void _updateParticles(float dTime);
 
 private:
@@ -96,6 +98,9 @@ private:
   glm::vec3 _wind;
 
   std::optional<FluidMatrix<glm::vec3>> _velocityMatrix;
+  std::optional<FluidMatrix<float>> _temperatureMatrix;
+  std::optional<FluidMatrix<float>> _pressureMatrix;
+  std::optional<FluidMatrix<float>> _massMatrix;
   std::optional<FluidMatrix<int>> _blockMatrix;
 
   using Blockers = std::vector<BlockerObject*>;
