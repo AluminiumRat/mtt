@@ -11,6 +11,7 @@
 
 constexpr float defaultTemperature = 273.15f;
 constexpr float defaultPressure = 100000.f;
+constexpr float frictionFactor = .02f;
 
 FluidObject::FluidObject( const QString& name,
                           bool canBeRenamed,
@@ -252,6 +253,7 @@ void FluidObject::simulationStep(mtt::TimeT currentTime, mtt::TimeT delta)
 
   _calculateMassMatrix();
   _applyArchimedesForce(dTime);
+  _applyFriction(dTime),
   _blockVelocity();
   _projectVelocity();
   _moveMatrices(dTime);
@@ -321,6 +323,68 @@ void FluidObject::_applyArchimedesForce(float dTime) noexcept
         force *= 9.8f;
         float acceleration = force / currentMass;
         glm::vec3 dVelocity = glm::vec3(0.f, 0.f, 1.f) * acceleration * dTime;
+        const glm::vec3& currentVelocity = _velocityMatrix->get(x, y, z);
+        _velocityMatrix->set(x, y, z, currentVelocity + dVelocity);
+      }
+    }
+  }
+}
+
+template<int direction>
+float FluidObject::_getVelocity(size_t x, size_t y, size_t z)
+{
+  if (_blockMatrix->get(x, y, z) != 0) return 0;
+  return _velocityMatrix->get(x, y, z)[direction];
+}
+
+template<int direction, int normal1, int normal2>
+glm::vec3 FluidObject::_getFrictionForce(size_t x, size_t y, size_t z)
+{
+  float velocity = 0;
+
+  size_t coords[3] = { x, y, z };
+  coords[normal1] += 1;
+  velocity += _getVelocity<direction>(coords[0], coords[1], coords[2]);
+  coords[normal1] -= 2;
+  velocity += _getVelocity<direction>(coords[0], coords[1], coords[2]);
+
+  coords[normal1] += 2;
+  coords[normal2] += 1;
+  velocity += _getVelocity<direction>(coords[0], coords[1], coords[2]);
+  coords[normal2] -= 2;
+  velocity += _getVelocity<direction>(coords[0], coords[1], coords[2]);
+
+  velocity /= 4.f;
+
+  velocity -= _getVelocity<direction>(x, y, z);
+
+  /*if (abs(velocity) > 1)
+  {
+    mtt::Log() << velocity;
+  }*/
+
+  glm::vec3 force(0.f);
+  force[direction] = velocity * frictionFactor * _cellSize;
+                //velocity * 8.f * glm::pi<float>() * frictionFactor * _cellSize;
+
+  return force;
+}
+
+void FluidObject::_applyFriction(float dTime) noexcept
+{
+  for (size_t x = 1; x < _velocityMatrix->xSize() - 1; x++)
+  {
+    for (size_t y = 1; y < _velocityMatrix->ySize() - 1; y++)
+    {
+      for (size_t z = 1; z < _velocityMatrix->zSize() - 1; z++)
+      {
+        if (_blockMatrix->get(x, y, z) != 0) continue;
+        glm::vec3 force = _getFrictionForce<0, 1, 2>(x, y, z) +
+                          _getFrictionForce<1, 0, 2>(x, y, z) +
+                          _getFrictionForce<2, 0, 1>(x, y, z);
+
+        float mass = _massMatrix->get(x, y, z);
+        glm::vec3 dVelocity = force / mass * dTime;
         const glm::vec3& currentVelocity = _velocityMatrix->get(x, y, z);
         _velocityMatrix->set(x, y, z, currentVelocity + dVelocity);
       }
