@@ -7,6 +7,7 @@ class EmitterObject;
 class FluidObject;
 class FrameObject;
 class GravityModificator;
+class HeaterObject;
 class HierarhicalObject;
 class ModificatorGroup;
 class ModificatorObject;
@@ -36,6 +37,9 @@ public:
   virtual void visitConstGravityModificator(
                                           const GravityModificator& object) = 0;
   virtual void visitGravityModificator(GravityModificator& object) = 0;
+
+  virtual void visitConstHeaterObject(const HeaterObject& object) = 0;
+  virtual void visitHeaterObject(HeaterObject& object) = 0;
 
   virtual void visitConstHierarhicalObject(const HierarhicalObject& object) = 0;
   virtual void visitHierarhicalObject(HierarhicalObject& object) = 0;

@@ -21,6 +21,7 @@ public:
   virtual void visitEmitterObject(EmitterObject& object) override;
   virtual void visitFluidObject(FluidObject& object) override;
   virtual void visitGravityModificator(GravityModificator& object) override;
+  virtual void visitHeaterObject(HeaterObject& object) override;
   virtual void visitModificatorObject(ModificatorObject& object) override;
   virtual void visitParticleAnimation(ParticleAnimation& object) override;
   virtual void visitParticleField(ParticleField& object) override;

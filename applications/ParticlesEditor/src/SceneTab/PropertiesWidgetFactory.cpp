@@ -6,6 +6,7 @@
 #include <SceneTab/EmitterWidget.h>
 #include <SceneTab/FluidWidget.h>
 #include <SceneTab/GravityWidget.h>
+#include <SceneTab/HeaterWidget.h>
 #include <SceneTab/ParticleAnimationWidget.h>
 #include <SceneTab/ParticleFieldWidget.h>
 #include <SceneTab/PropertiesWidgetFactory.h>
@@ -56,6 +57,12 @@ void PropertiesWidgetFactory::visitGravityModificator(
   widgetsLayout().addWidget(new GravityWidget(object, _commonData.undoStack()));
   widgetsLayout().addWidget(
                           new TypeMaskWidget(object, _commonData.undoStack()));
+}
+
+void PropertiesWidgetFactory::visitHeaterObject(HeaterObject& object)
+{
+  PEVisitorT::visitHeaterObject(object);
+  widgetsLayout().addWidget(new HeaterWidget(object, _commonData.undoStack()));
 }
 
 void PropertiesWidgetFactory::visitModificatorObject(ModificatorObject& object)

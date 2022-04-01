@@ -13,6 +13,7 @@
 #include <Objects/EmitterObject.h>
 #include <Objects/FrameObject.h>
 #include <Objects/GravityModificator.h>
+#include <Objects/HeaterObject.h>
 #include <Objects/ParticleAnimation.h>
 #include <Objects/VisibilityControlObject.h>
 #include <EditMenu.h>
@@ -84,6 +85,12 @@ void EditMenu::setupUI()
           &QAction::triggered,
           this,
           &EditMenu::_addBlocker,
+          Qt::DirectConnection);
+
+  connect(_ui.actionAdd_heater,
+          &QAction::triggered,
+          this,
+          &EditMenu::_addHeater,
           Qt::DirectConnection);
 
   connect(_ui.actionAdd_animation_from_fbx,
@@ -320,6 +327,32 @@ void EditMenu::_addBlocker() noexcept
   {
     QMessageBox::critical(&_window,
                           tr("Unable to add a blocker"),
+                          tr("Unknown error"));
+  }
+}
+
+void EditMenu::_addHeater() noexcept
+{
+  try
+  {
+    EditorScene* scene = _commonData.scene();
+    if (scene == nullptr) return;
+
+    std::unique_ptr<HeaterObject> newModificator(
+                                          new HeaterObject(tr("Heater"), true));
+    newModificator->fieldRef().set(&scene->root().particleField());
+    _addHierarhical(std::move(newModificator));
+  }
+  catch(std::exception& error)
+  {
+    QMessageBox::critical(&_window,
+                          tr("Unable to add a heater"),
+                          error.what());
+  }
+  catch(...)
+  {
+    QMessageBox::critical(&_window,
+                          tr("Unable to add a heater"),
                           tr("Unknown error"));
   }
 }

@@ -7,6 +7,7 @@
 #include <Objects/EmitterObject.h>
 #include <Objects/FrameObject.h>
 #include <Objects/GravityModificator.h>
+#include <Objects/HeaterObject.h>
 #include <Objects/HierarhicalObject.h>
 #include <Objects/ModificatorGroup.h>
 #include <Objects/ModificatorObject.h>
@@ -45,6 +46,10 @@ public:
                                     const GravityModificator& object) override;
   inline virtual void visitGravityModificator(
                                           GravityModificator& object) override;
+
+  inline virtual void visitConstHeaterObject(
+                                          const HeaterObject& object) override;
+  inline virtual void visitHeaterObject(HeaterObject& object) override;
 
   inline  virtual void visitConstHierarhicalObject(
                                       const HierarhicalObject& object) override;
@@ -153,6 +158,19 @@ inline void PEVisitorT<BaseVisitor>::visitConstGravityModificator(
 template <typename BaseVisitor>
 inline void PEVisitorT<BaseVisitor>::visitGravityModificator(
                                                     GravityModificator& object)
+{
+  visitModificatorObject(object);
+}
+
+template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitConstHeaterObject(
+                                                    const HeaterObject& object)
+{
+  visitConstModificatorObject(object);
+}
+
+template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitHeaterObject(HeaterObject& object)
 {
   visitModificatorObject(object);
 }

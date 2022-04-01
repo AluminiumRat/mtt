@@ -21,6 +21,7 @@ FluidObject::FluidObject( const QString& name,
   _parent(parent),
   _typeMask(1),
   _cellSize(1.f),
+  _cellVolume(1.f),
   _wind(0.f)
 {
   connect(&parent,
@@ -42,6 +43,7 @@ void FluidObject::setCellSize(float newValue) noexcept
   newValue = glm::max(newValue, 0.f);
   if(_cellSize == newValue) return;
   _cellSize = newValue;
+  _cellVolume = _cellSize * _cellSize * _cellSize;
   _resetMatrices();
   emit cellSizeChanged(newValue);
 }
@@ -186,13 +188,13 @@ void FluidObject::_applyBlocker(BlockerObject& blocker)
   }
   if(!blockerBox.valid()) return;
 
-  glm::vec3 startCorner = glm::round(_toMatrixCoord(blockerBox.minCorner));
+  glm::vec3 startCorner = glm::round(toMatrixCoord(blockerBox.minCorner));
   startCorner = glm::max(startCorner, glm::vec3(1.f));
   size_t startX = glm::min(size_t(startCorner.x), _blockMatrix->xSize() - 2);
   size_t startY = glm::min(size_t(startCorner.y), _blockMatrix->ySize() - 2);
   size_t startZ = glm::min(size_t(startCorner.z), _blockMatrix->zSize() - 2);
 
-  glm::vec3 endCorner = glm::round(_toMatrixCoord(blockerBox.maxCorner));
+  glm::vec3 endCorner = glm::round(toMatrixCoord(blockerBox.maxCorner));
   endCorner = glm::max(endCorner, glm::vec3(1.f));
   size_t endX = glm::min(size_t(endCorner.x), _blockMatrix->xSize() - 1);
   size_t endY = glm::min(size_t(endCorner.y), _blockMatrix->ySize() - 1);
@@ -207,7 +209,7 @@ void FluidObject::_applyBlocker(BlockerObject& blocker)
       cellPosition.z = startZ + .5f;
       for (size_t z = startZ; z < endZ; z++)
       {
-        glm::vec4 filedCoord = glm::vec4(_toFieldCoord(cellPosition), 1.f);
+        glm::vec4 filedCoord = glm::vec4(toFieldCoord(cellPosition), 1.f);
         glm::vec3 blockerCoord = toBlocker * filedCoord;
         if(blocker.isPointInside(blockerCoord)) _blockMatrix->set(x, y, z, 1);
         cellPosition.z += 1.f;
@@ -243,11 +245,6 @@ void FluidObject::simulationStep(mtt::TimeT currentTime, mtt::TimeT delta)
 
   if(!_blockMatrix.has_value()) _rebuildBlockMatrix();
 
-  _temperatureMatrix->set(_temperatureMatrix->xSize() / 2,
-                          _temperatureMatrix->ySize() / 2,
-                          _temperatureMatrix->zSize() / 2,
-                          300.f);
-
   float dTime =
         std::chrono::duration_cast<std::chrono::duration<float>>(delta).count();
 
@@ -264,20 +261,13 @@ void FluidObject::simulationStep(mtt::TimeT currentTime, mtt::TimeT delta)
 
 void FluidObject::_calculateMassMatrix() noexcept
 {
-  float cellVolume = _cellSize * _cellSize * _cellSize;
-  constexpr float gasConstant = 287.058f;
-
   for (size_t x = 0; x < _velocityMatrix->xSize(); x++)
   {
     for (size_t y = 0; y < _velocityMatrix->ySize(); y++)
     {
       for (size_t z = 0; z < _velocityMatrix->zSize(); z++)
       {
-        float temperature = _temperatureMatrix->get(x, y, z);
-        float pressure = _pressureMatrix->get(x, y, z);
-        float density = pressure / (gasConstant * temperature);
-        float mass = cellVolume * density;
-        _massMatrix->set(x, y, z, mass);
+        _massMatrix->set(x, y, z, getCellMass(x, y, z));
       }
     }
   }
@@ -358,14 +348,8 @@ glm::vec3 FluidObject::_getFrictionForce(size_t x, size_t y, size_t z)
 
   velocity -= _getVelocity<direction>(x, y, z);
 
-  /*if (abs(velocity) > 1)
-  {
-    mtt::Log() << velocity;
-  }*/
-
   glm::vec3 force(0.f);
   force[direction] = velocity * frictionFactor * _cellSize;
-                //velocity * 8.f * glm::pi<float>() * frictionFactor * _cellSize;
 
   return force;
 }
@@ -627,24 +611,6 @@ void FluidObject::_moveMatrices(float dTime)
   _pressureMatrix->swap(newPpressureMatrix);
 }
 
-glm::vec3 FluidObject::_toMatrixCoord(
-                                    const glm::vec3& fieldCoord) const noexcept
-{
-  glm::vec3 matrixCoord = fieldCoord + _parent.size() / 2.f;
-  matrixCoord /= _cellSize;
-  matrixCoord += 1.5f;
-  return matrixCoord;
-}
-
-glm::vec3 FluidObject::_toFieldCoord(
-                                    const glm::vec3& matrixCoord) const noexcept
-{
-  glm::vec3 fieldCoord = matrixCoord - 1.5f;
-  fieldCoord *= _cellSize;
-  fieldCoord -= _parent.size() / 2.f;
-  return fieldCoord;
-}
-
 void FluidObject::_updateParticles(float dTime)
 {
   if(dTime <= 0.f) return;
@@ -654,7 +620,7 @@ void FluidObject::_updateParticles(float dTime)
     {
       if(particle.frictionFactor <= 0.f) return;
 
-      glm::vec3 matrixCoord = _toMatrixCoord(particle.position);
+      glm::vec3 matrixCoord = toMatrixCoord(particle.position);
       if( matrixCoord.x < 0 ||
           matrixCoord.x >= _velocityMatrix->xSize() - 1 ||
           matrixCoord.y < 0 ||

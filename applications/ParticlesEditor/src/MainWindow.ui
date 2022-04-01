@@ -40,6 +40,7 @@
     <addaction name="actionAdd_visibility_control"/>
     <addaction name="actionAdd_gravity"/>
     <addaction name="actionAdd_blocker"/>
+    <addaction name="actionAdd_heater"/>
     <addaction name="separator"/>
     <addaction name="actionAdd_animation_from_fbx"/>
    </widget>
@@ -263,6 +264,11 @@
   <action name="actionAdd_blocker">
    <property name="text">
     <string>Add blocker</string>
+   </property>
+  </action>
+  <action name="actionAdd_heater">
+   <property name="text">
+    <string>Add heater</string>
    </property>
   </action>
  </widget>
