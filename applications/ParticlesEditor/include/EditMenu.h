@@ -32,6 +32,9 @@ private:
   void _deleteObject() noexcept;
   void _addHierarhical(std::unique_ptr<HierarhicalObject> object);
   void _addFrame() noexcept;
+  template <typename Modificator>
+  void _addModificator( const QString& name,
+                        const QString& errorString) noexcept;
   void _addEmitter() noexcept;
   void _addVisibilityControl() noexcept;
   void _addGravity() noexcept;

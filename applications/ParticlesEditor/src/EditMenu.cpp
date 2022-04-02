@@ -227,134 +227,57 @@ void EditMenu::_addFrame() noexcept
   }
 }
 
-void EditMenu::_addEmitter() noexcept
+template <typename Modificator>
+void EditMenu::_addModificator( const QString& name,
+                                const QString& errorString) noexcept
 {
   try
   {
     EditorScene* scene = _commonData.scene();
     if (scene == nullptr) return;
 
-    std::unique_ptr<EmitterObject> newEmitter(
-                                        new EmitterObject(tr("Emitter"), true));
-    newEmitter->fieldRef().set(&scene->root().particleField());
-    _addHierarhical(std::move(newEmitter));
+    std::unique_ptr<Modificator> newObject(new Modificator(name, true));
+    newObject->fieldRef().set(&scene->root().particleField());
+    _addHierarhical(std::move(newObject));
   }
   catch(std::exception& error)
   {
-    QMessageBox::critical(&_window,
-                          tr("Unable to add a emitter"),
-                          error.what());
+    QMessageBox::critical(&_window, errorString, error.what());
   }
   catch(...)
   {
-    QMessageBox::critical(&_window,
-                          tr("Unable to add a emitter"),
-                          tr("Unknown error"));
+    QMessageBox::critical(&_window, errorString, tr("Unknown error"));
   }
+}
+
+void EditMenu::_addEmitter() noexcept
+{
+  _addModificator<EmitterObject>(tr("Emitter"), tr("Unable to add a emitter"));
 }
 
 void EditMenu::_addVisibilityControl() noexcept
 {
-  try
-  {
-    EditorScene* scene = _commonData.scene();
-    if (scene == nullptr) return;
-
-    std::unique_ptr<VisibilityControlObject> newModificator(
-                  new VisibilityControlObject(tr("Visibility control"), true));
-    newModificator->fieldRef().set(&scene->root().particleField());
-    _addHierarhical(std::move(newModificator));
-  }
-  catch(std::exception& error)
-  {
-    QMessageBox::critical(&_window,
-                          tr("Unable to add a visibility control"),
-                          error.what());
-  }
-  catch(...)
-  {
-    QMessageBox::critical(&_window,
-                          tr("Unable to add a visibility control"),
-                          tr("Unknown error"));
-  }
+  _addModificator<VisibilityControlObject>(
+                                      tr("Visibility control"),
+                                      tr("Unable to add a visibility control"));
 }
 
 void EditMenu::_addGravity() noexcept
 {
-  try
-  {
-    EditorScene* scene = _commonData.scene();
-    if (scene == nullptr) return;
-
-    std::unique_ptr<GravityModificator> newModificator(
-                                  new GravityModificator(tr("Gravity"), true));
-    newModificator->fieldRef().set(&scene->root().particleField());
-    _addHierarhical(std::move(newModificator));
-  }
-  catch(std::exception& error)
-  {
-    QMessageBox::critical(&_window,
-                          tr("Unable to add a gravity"),
-                          error.what());
-  }
-  catch(...)
-  {
-    QMessageBox::critical(&_window,
-                          tr("Unable to add a gravity"),
-                          tr("Unknown error"));
-  }
+  _addModificator<GravityModificator>(tr("Gravity"),
+                                      tr("Unable to add a gravity"));
 }
 
 void EditMenu::_addBlocker() noexcept
 {
-  try
-  {
-    EditorScene* scene = _commonData.scene();
-    if (scene == nullptr) return;
-
-    std::unique_ptr<BlockerObject> newModificator(
-                                        new BlockerObject(tr("Blocker"), true));
-    newModificator->fieldRef().set(&scene->root().particleField());
-    _addHierarhical(std::move(newModificator));
-  }
-  catch(std::exception& error)
-  {
-    QMessageBox::critical(&_window,
-                          tr("Unable to add a blocker"),
-                          error.what());
-  }
-  catch(...)
-  {
-    QMessageBox::critical(&_window,
-                          tr("Unable to add a blocker"),
-                          tr("Unknown error"));
-  }
+  _addModificator<BlockerObject>( tr("Blocker"),
+                                  tr("Unable to add a blocker"));
 }
 
 void EditMenu::_addHeater() noexcept
 {
-  try
-  {
-    EditorScene* scene = _commonData.scene();
-    if (scene == nullptr) return;
-
-    std::unique_ptr<HeaterObject> newModificator(
-                                          new HeaterObject(tr("Heater"), true));
-    newModificator->fieldRef().set(&scene->root().particleField());
-    _addHierarhical(std::move(newModificator));
-  }
-  catch(std::exception& error)
-  {
-    QMessageBox::critical(&_window,
-                          tr("Unable to add a heater"),
-                          error.what());
-  }
-  catch(...)
-  {
-    QMessageBox::critical(&_window,
-                          tr("Unable to add a heater"),
-                          tr("Unknown error"));
-  }
+  _addModificator<HeaterObject>(tr("Heater"),
+                                tr("Unable to add a heater"));
 }
 
 void EditMenu::_addAnimationFromFbx() noexcept
