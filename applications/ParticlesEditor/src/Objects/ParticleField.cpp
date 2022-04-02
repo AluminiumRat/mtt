@@ -219,10 +219,13 @@ void ParticleField::_deleteParticles()
     ParticleData& particle = _particlesData[*currentCursor];
     float particleRadius = particle.size / 2.f;
     if( particle.currentTime >= particle.maxTime ||
+        !isfinite(particle.position.x) ||
         particle.position.x > halfsize.x - particleRadius ||
         particle.position.x < -halfsize.x + particleRadius ||
+        !isfinite(particle.position.y) ||
         particle.position.y > halfsize.y - particleRadius ||
         particle.position.y < -halfsize.y + particleRadius ||
+        !isfinite(particle.position.z) ||
         particle.position.z > halfsize.z - particleRadius ||
         particle.position.z < -halfsize.z + particleRadius)
     {
