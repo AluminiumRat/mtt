@@ -5,6 +5,8 @@
 
 #include <glm/vec3.hpp>
 
+#include <mtt/utilities/Box.h>
+
 #include <Objects/Fluid/FluidMatrix.h>
 #include <Objects/ModificatorObject.h>
 
@@ -76,6 +78,15 @@ public:
   inline glm::vec3 toFieldCoord(const glm::vec3& matrixCoord) const noexcept;
 
   inline float getCellMass(size_t x, size_t y, size_t z) const noexcept;
+
+  /// area in field coords
+  /// theDelegate should have signature void (size_t xCellIndex,
+  ///                                         size_t yCellIndex,
+  ///                                         size_t zCellIndex,
+  ///                                         const glm::vec3& cellPosition)
+  /// cellPosition in field coords
+  template <typename Delegate>
+  inline void passCells(const mtt::Box& area, Delegate theDelegate);
 
 signals:
   void typeMaskChanged(uint32_t newValue);
@@ -202,4 +213,42 @@ inline float FluidObject::getCellMass(size_t x,
   float pressure = _pressureMatrix->get(x, y, z);
   float density = pressure / (gasConstant * temperature);
   return _cellVolume * density;
+}
+
+template <typename Delegate>
+inline void FluidObject::passCells(const mtt::Box& area, Delegate theDelegate)
+{
+  if (!area.valid()) return;
+  if (!_velocityMatrix.has_value()) _rebuildMatrices();
+  if (!_velocityMatrix.has_value()) return;
+
+  glm::vec3 startCorner = glm::floor(toMatrixCoord(area.minCorner));
+  startCorner = glm::max(startCorner, glm::vec3(1.f));
+  size_t startX = glm::min(size_t(startCorner.x), _blockMatrix->xSize() - 2);
+  size_t startY = glm::min(size_t(startCorner.y), _blockMatrix->ySize() - 2);
+  size_t startZ = glm::min(size_t(startCorner.z), _blockMatrix->zSize() - 2);
+
+  glm::vec3 endCorner = glm::floor(toMatrixCoord(area.maxCorner));
+  endCorner += glm::vec3(1.f);
+  endCorner = glm::max(endCorner, glm::vec3(1.f));
+  size_t endX = glm::min(size_t(endCorner.x), _blockMatrix->xSize() - 1);
+  size_t endY = glm::min(size_t(endCorner.y), _blockMatrix->ySize() - 1);
+  size_t endZ = glm::min(size_t(endCorner.z), _blockMatrix->zSize() - 1);
+
+  glm::vec3 cellPosition(startX + .5f, startY + .5f, startZ + .5f);
+  for (size_t x = startX; x < endX; x++)
+  {
+    cellPosition.y = startY + .5f;
+    for (size_t y = startY; y < endY; y++)
+    {
+      cellPosition.z = startZ + .5f;
+      for (size_t z = startZ; z < endZ; z++)
+      {
+        theDelegate(x, y, z, toFieldCoord(cellPosition));
+        cellPosition.z += 1.f;
+      }
+      cellPosition.y += 1.f;
+    }
+    cellPosition.x += 1.f;
+  }
 }

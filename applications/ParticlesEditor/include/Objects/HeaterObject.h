@@ -63,7 +63,7 @@ private:
     float weight;
   };
   using Cells = std::vector<CellRecord>;
-  void collectCells(Cells& targetCells, float& totalWeight) const;
+  void _collectCells(Cells& targetCells, float& totalWeight) const;
 
 private:
   float _size;

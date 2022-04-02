@@ -29,64 +29,33 @@ void HeaterObject::setPower(float newValue) noexcept
   emit powerChanged(newValue);
 }
 
-void HeaterObject::collectCells( Cells& targetCells, float& totalWeight) const
+void HeaterObject::_collectCells( Cells& targetCells, float& totalWeight) const
 {
   ParticleField* field = fieldRef().get();
-  FluidObject& fluid = field->fluid();
-
-  float radius = _size / 2.f;
-
   glm::mat4 toField = glm::inverse(field->localToWorldTransform()) *
                                                         localToWorldTransform();
+
+  float radius = _size / 2.f;
   mtt::Box localBound(glm::vec3(-radius), glm::vec3(radius));
   mtt::Box boundInField = localBound.translated(toField);
-  if(!boundInField.valid()) return;
-
-  FluidMatrix<float>* temperatureMatrix = fluid.temperatureMatrix();
-
-  glm::vec3 startCorner =
-                        glm::round(fluid.toMatrixCoord(boundInField.minCorner));
-  startCorner = glm::max(startCorner, glm::vec3(1.f));
-  size_t startX = glm::min( size_t(startCorner.x),
-                            temperatureMatrix->xSize() - 2);
-  size_t startY = glm::min( size_t(startCorner.y),
-                            temperatureMatrix->ySize() - 2);
-  size_t startZ = glm::min( size_t(startCorner.z),
-                            temperatureMatrix->zSize() - 2);
-
-  glm::vec3 endCorner = glm::round(fluid.toMatrixCoord(boundInField.maxCorner));
-  endCorner = glm::max(endCorner, glm::vec3(1.f));
-  size_t endX = glm::min(size_t(endCorner.x), temperatureMatrix->xSize() - 1);
-  size_t endY = glm::min(size_t(endCorner.y), temperatureMatrix->xSize() - 1);
-  size_t endZ = glm::min(size_t(endCorner.z), temperatureMatrix->xSize() - 1);
 
   glm::mat4 fromField = glm::inverse(toField);
 
-  glm::vec3 cellPosition(startX + .5f, startY + .5f, startZ + .5f);
-  for (size_t x = startX; x < endX; x++)
-  {
-    cellPosition.y = startY + .5f;
-    for (size_t y = startY; y < endY; y++)
+  auto heaterDelegate =
+    [&](size_t x, size_t y, size_t z, const glm::vec3& fieldCoord)
     {
-      cellPosition.z = startZ + .5f;
-      for (size_t z = startZ; z < endZ; z++)
-      {
-        glm::vec4 filedCoord = glm::vec4(fluid.toFieldCoord(cellPosition), 1.f);
-        glm::vec3 localCoord = fromField * filedCoord;
+      glm::vec3 localCoord = fromField * glm::vec4(fieldCoord, 1.f);
 
-        float distance = glm::length(localCoord);
-        float weight = 1.f - distance / radius;
-        if (weight > 0.f)
-        {
-          targetCells.push_back({x,y,z,weight});
-          totalWeight += weight;
-        }
-        cellPosition.z += 1.f;
+      float distance = glm::length(localCoord);
+      float weight = 1.f - distance / radius;
+      if (weight > 0.f)
+      {
+        targetCells.push_back({x,y,z,weight});
+        totalWeight += weight;
       }
-      cellPosition.y += 1.f;
-    }
-    cellPosition.x += 1.f;
-  }
+    };
+
+  field->fluid().passCells(boundInField, heaterDelegate);
 }
 
 void HeaterObject::simulationStep(mtt::TimeT currentTime, mtt::TimeT deltaT)
@@ -102,7 +71,7 @@ void HeaterObject::simulationStep(mtt::TimeT currentTime, mtt::TimeT deltaT)
 
   Cells cells;
   float totalWeight = 0.f;
-  collectCells(cells, totalWeight);
+  _collectCells(cells, totalWeight);
 
   using FloatTime = std::chrono::duration<float>;
   float floatDeltaTime = std::chrono::duration_cast<FloatTime>(deltaT).count();

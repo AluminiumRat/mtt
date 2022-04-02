@@ -172,52 +172,17 @@ void FluidObject::_applyBlocker(BlockerObject& blocker)
   glm::mat4 fromBlocker = glm::inverse(toBlocker);
 
   float halfSize = blocker.size() / 2.f;
-  const glm::vec4 corners[8] =
-                            { glm::vec4(-halfSize, -halfSize, -halfSize, 1.f),
-                              glm::vec4( halfSize, -halfSize, -halfSize, 1.f),
-                              glm::vec4(-halfSize,  halfSize, -halfSize, 1.f),
-                              glm::vec4( halfSize,  halfSize, -halfSize, 1.f),
-                              glm::vec4(-halfSize, -halfSize,  halfSize, 1.f),
-                              glm::vec4( halfSize, -halfSize,  halfSize, 1.f),
-                              glm::vec4(-halfSize,  halfSize,  halfSize, 1.f),
-                              glm::vec4( halfSize,  halfSize,  halfSize, 1.f)};
-  mtt::Box blockerBox;
-  for (const glm::vec4& corner : corners)
-  {
-    blockerBox.extend(fromBlocker * corner);
-  }
-  if(!blockerBox.valid()) return;
+  mtt::Box blockerBound(glm::vec3(-halfSize), glm::vec3(halfSize));
+  mtt::Box localBlockerBox = blockerBound.translated(fromBlocker);
 
-  glm::vec3 startCorner = glm::round(toMatrixCoord(blockerBox.minCorner));
-  startCorner = glm::max(startCorner, glm::vec3(1.f));
-  size_t startX = glm::min(size_t(startCorner.x), _blockMatrix->xSize() - 2);
-  size_t startY = glm::min(size_t(startCorner.y), _blockMatrix->ySize() - 2);
-  size_t startZ = glm::min(size_t(startCorner.z), _blockMatrix->zSize() - 2);
-
-  glm::vec3 endCorner = glm::round(toMatrixCoord(blockerBox.maxCorner));
-  endCorner = glm::max(endCorner, glm::vec3(1.f));
-  size_t endX = glm::min(size_t(endCorner.x), _blockMatrix->xSize() - 1);
-  size_t endY = glm::min(size_t(endCorner.y), _blockMatrix->ySize() - 1);
-  size_t endZ = glm::min(size_t(endCorner.z), _blockMatrix->zSize() - 1);
-
-  glm::vec3 cellPosition(startX + .5f, startY + .5f, startZ + .5f);
-  for (size_t x = startX; x < endX; x++)
-  {
-    cellPosition.y = startY + .5f;
-    for (size_t y = startY; y < endY; y++)
+  auto blockerDelegate =
+    [&](size_t x, size_t y, size_t z, const glm::vec3& fieldCoord)
     {
-      cellPosition.z = startZ + .5f;
-      for (size_t z = startZ; z < endZ; z++)
-      {
-        glm::vec4 filedCoord = glm::vec4(toFieldCoord(cellPosition), 1.f);
-        glm::vec3 blockerCoord = toBlocker * filedCoord;
-        if(blocker.isPointInside(blockerCoord)) _blockMatrix->set(x, y, z, 1);
-        cellPosition.z += 1.f;
-      }
-      cellPosition.y += 1.f;
-    }
-    cellPosition.x += 1.f;
-  }
+      glm::vec3 blockerCoord = toBlocker * glm::vec4(fieldCoord, 1.f);
+      if (blocker.isPointInside(blockerCoord)) _blockMatrix->set(x, y, z, 1);
+    };
+
+  passCells(localBlockerBox, blockerDelegate);
 }
 
 void FluidObject::_rebuildBlockMatrix()
