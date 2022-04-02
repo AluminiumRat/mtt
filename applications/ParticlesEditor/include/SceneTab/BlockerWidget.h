@@ -8,7 +8,7 @@
 #include <mtt/application/Widgets/PropertiesWidgets/EnumComboConnection.h>
 #include <mtt/application/Widgets/PropertiesWidgets/FloatSpinConnection.h>
 
-#include <Objects/BlockerObject.h>
+#include <Objects/Fluid/BlockerObject.h>
 
 namespace mtt
 {

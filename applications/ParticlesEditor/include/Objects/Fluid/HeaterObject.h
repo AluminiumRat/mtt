@@ -1,27 +1,15 @@
 #pragma once
 
-#include <vector>
+#include <Objects/Fluid/FluidModificator.h>
 
-#include <Objects/ModificatorObject.h>
-
-class HeaterObject : public ModificatorObject
+class HeaterObject : public FluidModificator
 {
   Q_OBJECT
 
   DEFINE_EXTENSION_ACCEPT(PEVisitorExtension,
                           visitHeaterObject,
                           visitConstHeaterObject,
-                          ModificatorObject)
-
-  Q_PROPERTY( float size
-              READ size
-              WRITE setSize
-              RESET resetSize
-              NOTIFY sizeChanged
-              DESIGNABLE true
-              SCRIPTABLE true
-              STORED true
-              USER false)
+                          FluidModificator)
 
   Q_PROPERTY( float power
               READ power
@@ -41,10 +29,6 @@ public:
   HeaterObject& operator = (const HeaterObject&) = delete;
   virtual ~HeaterObject() noexcept = default;
 
-  inline float size() const noexcept;
-  void setSize(float newValue) noexcept;
-  inline void resetSize() noexcept;
-
   inline float power() const noexcept;
   void setPower(float newValue) noexcept;
   inline void resetPower() noexcept;
@@ -53,32 +37,11 @@ public:
                               mtt::TimeT deltaT) override;
 
 signals:
-  void sizeChanged(float newValue);
   void powerChanged(float newValue);
 
 private:
-  struct CellRecord
-  {
-    size_t x, y, z;
-    float weight;
-  };
-  using Cells = std::vector<CellRecord>;
-  void _collectCells(Cells& targetCells, float& totalWeight) const;
-
-private:
-  float _size;
   float _power;
 };
-
-inline float HeaterObject::size() const noexcept
-{
-  return _size;
-}
-
-inline void HeaterObject::resetSize() noexcept
-{
-  setSize(1.f);
-}
 
 inline float HeaterObject::power() const noexcept
 {

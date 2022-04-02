@@ -43,6 +43,12 @@ class FluidObject : public mtt::Object
               USER false)
 
 public:
+  static constexpr float defaultTemperature = 273.15f;
+  static constexpr float defaultPressure = 100000.f;
+  static constexpr float frictionFactor = .02f;
+  static constexpr float heatCapacity = 1000.f;
+
+public:
   FluidObject(const QString& name,
               bool canBeRenamed,
               ParticleField& parent,
@@ -58,6 +64,8 @@ public:
   inline float cellSize() const noexcept;
   void setCellSize(float newValue) noexcept;
   inline void resetCellSize() noexcept;
+
+  inline float cellVolume() noexcept;
 
   inline const glm::vec3& wind() const noexcept;
   void setWind(const glm::vec3& newValue) noexcept;
@@ -77,6 +85,9 @@ public:
   inline glm::vec3 toMatrixCoord(const glm::vec3& fieldCoord) const noexcept;
   inline glm::vec3 toFieldCoord(const glm::vec3& matrixCoord) const noexcept;
 
+  inline float getGasMass(float volume,
+                          float pressure,
+                          float temperature) const noexcept;
   inline float getCellMass(size_t x, size_t y, size_t z) const noexcept;
 
   /// area in field coords
@@ -147,6 +158,11 @@ inline float FluidObject::cellSize() const noexcept
   return _cellSize;
 }
 
+inline float FluidObject::cellVolume() noexcept
+{
+  return _cellVolume;
+}
+
 inline void FluidObject::resetCellSize() noexcept
 {
   setCellSize(1.f);
@@ -204,15 +220,22 @@ inline glm::vec3 FluidObject::toFieldCoord(
   return fieldCoord;
 }
 
+inline float FluidObject::getGasMass( float volume,
+                                      float pressure,
+                                      float temperature) const noexcept
+{
+  constexpr float gasConstant = 287.058f;
+  float density = pressure / (gasConstant * temperature);
+  return density * volume;
+}
+
 inline float FluidObject::getCellMass(size_t x,
                                       size_t y,
                                       size_t z) const noexcept
 {
-  constexpr float gasConstant = 287.058f;
   float temperature = _temperatureMatrix->get(x, y, z);
   float pressure = _pressureMatrix->get(x, y, z);
-  float density = pressure / (gasConstant * temperature);
-  return _cellVolume * density;
+  return getGasMass(_cellVolume, pressure, temperature);
 }
 
 template <typename Delegate>

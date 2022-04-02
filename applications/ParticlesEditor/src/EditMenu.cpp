@@ -9,11 +9,12 @@
 #include <mtt/editorLib/EditorApplication.h>
 
 #include <AsyncTasks/ImportAnimationTask.h>
-#include <Objects/BlockerObject.h>
+#include <Objects/Fluid/BlockerObject.h>
+#include <Objects/Fluid/GasSource.h>
+#include <Objects/Fluid/HeaterObject.h>
 #include <Objects/EmitterObject.h>
 #include <Objects/FrameObject.h>
 #include <Objects/GravityModificator.h>
-#include <Objects/HeaterObject.h>
 #include <Objects/ParticleAnimation.h>
 #include <Objects/VisibilityControlObject.h>
 #include <EditMenu.h>
@@ -91,6 +92,12 @@ void EditMenu::setupUI()
           &QAction::triggered,
           this,
           &EditMenu::_addHeater,
+          Qt::DirectConnection);
+
+  connect(_ui.actionAdd_gas_source,
+          &QAction::triggered,
+          this,
+          &EditMenu::_addGasSource,
           Qt::DirectConnection);
 
   connect(_ui.actionAdd_animation_from_fbx,
@@ -278,6 +285,12 @@ void EditMenu::_addHeater() noexcept
 {
   _addModificator<HeaterObject>(tr("Heater"),
                                 tr("Unable to add a heater"));
+}
+
+void EditMenu::_addGasSource() noexcept
+{
+  _addModificator<GasSource>( tr("Gas source"),
+                              tr("Unable to add a gas source"));
 }
 
 void EditMenu::_addAnimationFromFbx() noexcept

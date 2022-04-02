@@ -40,6 +40,7 @@ private:
   void _addGravity() noexcept;
   void _addBlocker() noexcept;
   void _addHeater() noexcept;
+  void _addGasSource() noexcept;
   void _addAnimationFromFbx() noexcept;
 
 private:

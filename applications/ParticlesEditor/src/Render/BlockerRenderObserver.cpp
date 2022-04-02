@@ -1,6 +1,6 @@
 #include <mtt/utilities/Log.h>
 
-#include <Objects/BlockerObject.h>
+#include <Objects/Fluid/BlockerObject.h>
 #include <Render/BlockerRenderObserver.h>
 
 #define ICON_FILE ":/particlesEditor/blocker.png"

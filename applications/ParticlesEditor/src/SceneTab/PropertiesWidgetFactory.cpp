@@ -5,6 +5,7 @@
 #include <SceneTab/BlockerWidget.h>
 #include <SceneTab/EmitterWidget.h>
 #include <SceneTab/FluidWidget.h>
+#include <SceneTab/GasSourceWidget.h>
 #include <SceneTab/GravityWidget.h>
 #include <SceneTab/HeaterWidget.h>
 #include <SceneTab/ParticleAnimationWidget.h>
@@ -48,6 +49,13 @@ void PropertiesWidgetFactory::visitFluidObject(FluidObject& object)
   widgetsLayout().addWidget(new FluidWidget(object, _commonData.undoStack()));
   widgetsLayout().addWidget(
                           new TypeMaskWidget(object, _commonData.undoStack()));
+}
+
+void PropertiesWidgetFactory::visitGasSource(GasSource& object)
+{
+  PEVisitorT::visitGasSource(object);
+  widgetsLayout().addWidget(
+                          new GasSourceWidget(object, _commonData.undoStack()));
 }
 
 void PropertiesWidgetFactory::visitGravityModificator(

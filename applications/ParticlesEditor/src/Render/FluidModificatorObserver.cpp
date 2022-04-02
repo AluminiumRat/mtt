@@ -1,16 +1,17 @@
-#include <Objects/HeaterObject.h>
-#include <Render/HeaterRenderObserver.h>
+#include <Objects/Fluid/FluidModificator.h>
+#include <Render/FluidModificatorObserver.h>
 
-#define ICON_FILE ":/particlesEditor/heater.png"
 #define ICON_SIZE 32
 
 #define CAP_SEGMENTS 32
 
-HeaterRenderObserver::HeaterRenderObserver( HeaterObject& object,
+FluidModificatorObserver::FluidModificatorObserver(
+                                            FluidModificator& object,
+                                            const QString& iconFilename,
                                             mtt::CommonEditData& commonData) :
   Object3DRenderObserver(object, commonData),
   _object(object),
-  _iconNode(ICON_FILE, ICON_SIZE)
+  _iconNode(iconFilename, ICON_SIZE)
 {
   registerUnculledDrawable(_iconNode);
   positionJoint().addChild(_iconNode);
@@ -25,15 +26,15 @@ HeaterRenderObserver::HeaterRenderObserver( HeaterObject& object,
   _hullNode.addModificator(selectionModificator());
 
   connect(&_object,
-          &HeaterObject::sizeChanged,
+          &FluidModificator::sizeChanged,
           this,
-          &HeaterRenderObserver::_updateHull,
+          &FluidModificatorObserver::_updateHull,
           Qt::DirectConnection);
 
   _updateHull();
 }
 
-void HeaterRenderObserver::_updateHull() noexcept
+void FluidModificatorObserver::_updateHull() noexcept
 {
   try
   {

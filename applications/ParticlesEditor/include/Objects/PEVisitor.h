@@ -2,12 +2,14 @@
 
 #include <mtt/editorLib/Objects/CEVisitor.h>
 
+#include <Objects/Fluid/BlockerObject.h>
+#include <Objects/Fluid/FluidModificator.h>
 #include <Objects/Fluid/FluidObject.h>
-#include <Objects/BlockerObject.h>
+#include <Objects/Fluid/GasSource.h>
+#include <Objects/Fluid/HeaterObject.h>
 #include <Objects/EmitterObject.h>
 #include <Objects/FrameObject.h>
 #include <Objects/GravityModificator.h>
-#include <Objects/HeaterObject.h>
 #include <Objects/HierarhicalObject.h>
 #include <Objects/ModificatorGroup.h>
 #include <Objects/ModificatorObject.h>
@@ -36,11 +38,18 @@ public:
                                           const EmitterObject& object) override;
   inline virtual void visitEmitterObject(EmitterObject& object) override;
 
+  inline virtual void visitConstFluidModificator(
+                                      const FluidModificator& object) override;
+  inline virtual void visitFluidModificator(FluidModificator& object) override;
+
   inline virtual void visitConstFluidObject(const FluidObject& object) override;
   inline virtual void visitFluidObject(FluidObject& object) override;
 
   inline virtual void visitConstFrameObject(const FrameObject& object) override;
   inline virtual void visitFrameObject(FrameObject& object) override;
+
+  inline virtual void visitConstGasSource(const GasSource& object) override;
+  inline virtual void visitGasSource(GasSource& object) override;
 
   inline  virtual void visitConstGravityModificator(
                                     const GravityModificator& object) override;
@@ -123,6 +132,20 @@ inline void PEVisitorT<BaseVisitor>::visitEmitterObject(EmitterObject& object)
 }
 
 template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitConstFluidModificator(
+                                                const FluidModificator& object)
+{
+  visitConstModificatorObject(object);
+}
+
+template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitFluidModificator(
+                                                      FluidModificator& object)
+{
+  visitModificatorObject(object);
+}
+
+template <typename BaseVisitor>
 inline void PEVisitorT<BaseVisitor>::visitConstFluidObject(
                                                       const FluidObject& object)
 {
@@ -149,6 +172,19 @@ inline void PEVisitorT<BaseVisitor>::visitFrameObject(FrameObject& object)
 }
 
 template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitConstGasSource(
+                                                        const GasSource& object)
+{
+  visitConstFluidModificator(object);
+}
+
+template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitGasSource(GasSource& object)
+{
+  visitFluidModificator(object);
+}
+
+template <typename BaseVisitor>
 inline void PEVisitorT<BaseVisitor>::visitConstGravityModificator(
                                               const GravityModificator& object)
 {
@@ -166,13 +202,13 @@ template <typename BaseVisitor>
 inline void PEVisitorT<BaseVisitor>::visitConstHeaterObject(
                                                     const HeaterObject& object)
 {
-  visitConstModificatorObject(object);
+  visitConstFluidModificator(object);
 }
 
 template <typename BaseVisitor>
 inline void PEVisitorT<BaseVisitor>::visitHeaterObject(HeaterObject& object)
 {
-  visitModificatorObject(object);
+  visitFluidModificator(object);
 }
 
 template <typename BaseVisitor>

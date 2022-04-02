@@ -3,15 +3,11 @@
 #include <mtt/utilities/Abort.h>
 #include <mtt/utilities/Box.h>
 
+#include <Objects/Fluid/BlockerObject.h>
 #include <Objects/Fluid/FluidObject.h>
-#include <Objects/BlockerObject.h>
 #include <Objects/ParticleField.h>
 
 #define PROJECT_ITERATIONS 30
-
-constexpr float defaultTemperature = 273.15f;
-constexpr float defaultPressure = 100000.f;
-constexpr float frictionFactor = .02f;
 
 FluidObject::FluidObject( const QString& name,
                           bool canBeRenamed,

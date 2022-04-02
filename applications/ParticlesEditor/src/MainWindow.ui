@@ -41,6 +41,7 @@
     <addaction name="actionAdd_gravity"/>
     <addaction name="actionAdd_blocker"/>
     <addaction name="actionAdd_heater"/>
+    <addaction name="actionAdd_gas_source"/>
     <addaction name="separator"/>
     <addaction name="actionAdd_animation_from_fbx"/>
    </widget>
@@ -269,6 +270,11 @@
   <action name="actionAdd_heater">
    <property name="text">
     <string>Add heater</string>
+   </property>
+  </action>
+  <action name="actionAdd_gas_source">
+   <property name="text">
+    <string>Add gas source</string>
    </property>
   </action>
  </widget>

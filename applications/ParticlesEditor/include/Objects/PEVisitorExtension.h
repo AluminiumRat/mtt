@@ -4,8 +4,10 @@
 
 class BlockerObject;
 class EmitterObject;
+class FluidModificator;
 class FluidObject;
 class FrameObject;
+class GasSource;
 class GravityModificator;
 class HeaterObject;
 class HierarhicalObject;
@@ -28,11 +30,17 @@ public:
   virtual void visitConstEmitterObject(const EmitterObject& object) = 0;
   virtual void visitEmitterObject(EmitterObject& object) = 0;
 
+  virtual void visitConstFluidModificator(const FluidModificator& object) = 0;
+  virtual void visitFluidModificator(FluidModificator& object) = 0;
+
   virtual void visitConstFluidObject(const FluidObject& object) = 0;
   virtual void visitFluidObject(FluidObject& object) = 0;
 
   virtual void visitConstFrameObject(const FrameObject& object) = 0;
   virtual void visitFrameObject(FrameObject& object) = 0;
+
+  virtual void visitConstGasSource(const GasSource& object) = 0;
+  virtual void visitGasSource(GasSource& object) = 0;
 
   virtual void visitConstGravityModificator(
                                           const GravityModificator& object) = 0;

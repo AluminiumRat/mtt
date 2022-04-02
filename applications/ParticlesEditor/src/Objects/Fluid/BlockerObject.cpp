@@ -1,5 +1,5 @@
+#include <Objects/Fluid/BlockerObject.h>
 #include <Objects/Fluid/FluidObject.h>
-#include <Objects/BlockerObject.h>
 #include <Objects/ParticleField.h>
 
 const std::map<BlockerObject::Shape, QString> BlockerObject::shapeNames =

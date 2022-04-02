@@ -3,7 +3,7 @@
 #include <Render/BlockerRenderObserver.h>
 #include <Render/EmitterRenderObserver.h>
 #include <Render/FieldRenderObserver.h>
-#include <Render/HeaterRenderObserver.h>
+#include <Render/FluidModificatorObserver.h>
 #include <Render/ObserverWithIcon.h>
 #include <Render/RenderObserverFactory.h>
 
@@ -38,9 +38,20 @@ void RenderObserverFactory::visitGravityModificator(GravityModificator& object)
                                       ICON_SIZE));
 }
 
+void RenderObserverFactory::visitGasSource(GasSource& object)
+{
+  setResult(std::make_unique<FluidModificatorObserver>(
+                                                object,
+                                                ":/particlesEditor/source.png",
+                                                commonData()));
+}
+
 void RenderObserverFactory::visitHeaterObject(HeaterObject& object)
 {
-  setResult(std::make_unique<HeaterRenderObserver>(object, commonData()));
+  setResult(std::make_unique<FluidModificatorObserver>(
+                                                object,
+                                                ":/particlesEditor/heater.png",
+                                                commonData()));
 }
 
 void RenderObserverFactory::visitParticleField(ParticleField& object)
