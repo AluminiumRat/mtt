@@ -86,16 +86,23 @@ void AnimationPlayer::_playNextFrame() noexcept
     std::chrono::system_clock::time_point now =
                                               std::chrono::system_clock::now();
     std::chrono::system_clock::duration systemDelta = now - _lastSystemTime;
-    _lastSystemTime = now;
 
     TimeT animationDelta = std::chrono::duration_cast<TimeT>(systemDelta);
-    if(animationDelta < TimeT(0)) animationDelta = TimeT(0);
+    if(animationDelta < TimeT(0))
+    {
+      _lastSystemTime = now;
+      return;
+    }
+
     if(animationDelta > maxTimeDelta) animationDelta = maxTimeDelta;
 
-    _currentAnimationTime += animationDelta;
-
-    if(_currentAnimationTime > _currentAnimation->finishTime()) stop();
-    else _currentAnimation->update(_currentAnimationTime);
+    if(animationDelta > TimeT(0))
+    {
+      _currentAnimationTime += animationDelta;
+      if(_currentAnimationTime > _currentAnimation->finishTime()) stop();
+      else _currentAnimation->update(_currentAnimationTime);
+      _lastSystemTime = now;
+    }
   }
   catch(std::exception& error)
   {
