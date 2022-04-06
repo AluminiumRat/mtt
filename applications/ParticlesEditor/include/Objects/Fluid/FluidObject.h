@@ -111,15 +111,11 @@ private:
   void _applyBlocker(BlockerObject& blocker);
   void _rebuildBlockMatrix();
   void _calculateMassMatrix() noexcept;
-  template<int direction>
-  float _getVelocity(size_t x, size_t y, size_t z);
-  template<int direction, int normal1, int normal2>
-  glm::vec3 _getFrictionForce(size_t x, size_t y, size_t z);
   void _applyArchimedesForce(float dTime) noexcept;
   void _applyFriction(float dTime) noexcept;
   void _blockVelocity();
-  void _projectVelocity();
-  void _buildDivirgence(FluidMatrix<float>& target);
+  void _applyContinuityEquation(float dTime);
+  void _buildCorrectFieldDivirgence(FluidMatrix<float>& target, float dTime);
   void _buildProjPressure(FluidMatrix<float>& target,
                           const FluidMatrix<float>& divirgence);
   void _moveMatrices(float dTime);

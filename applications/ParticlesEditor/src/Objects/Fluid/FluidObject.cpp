@@ -209,13 +209,18 @@ void FluidObject::simulationStep(mtt::TimeT currentTime, mtt::TimeT delta)
   float dTime =
         std::chrono::duration_cast<std::chrono::duration<float>>(delta).count();
 
-  _calculateMassMatrix();
-  _applyArchimedesForce(dTime);
-  _applyFriction(dTime),
-  _blockVelocity();
-  _projectVelocity();
-  _moveMatrices(dTime);
-  _projectVelocity();
+  if(dTime != 0.f)
+  {
+    _calculateMassMatrix();
+    //_applyArchimedesForce(dTime);
+    _applyFriction(dTime),
+    _blockVelocity();
+    _applyContinuityEquation(dTime);
+    _moveMatrices(dTime);
+    _applyContinuityEquation(dTime);
+
+    _pressureMatrix->clear(defaultPressure);
+  }
 
   _updateParticles(dTime);
 }
@@ -281,60 +286,58 @@ void FluidObject::_applyArchimedesForce(float dTime) noexcept
   }
 }
 
-template<int direction>
-float FluidObject::_getVelocity(size_t x, size_t y, size_t z)
-{
-  if (_blockMatrix->get(x, y, z) != 0) return 0;
-  return _velocityMatrix->get(x, y, z)[direction];
-}
-
-template<int direction, int normal1, int normal2>
-glm::vec3 FluidObject::_getFrictionForce(size_t x, size_t y, size_t z)
-{
-  float velocity = 0;
-
-  size_t coords[3] = { x, y, z };
-  coords[normal1] += 1;
-  velocity += _getVelocity<direction>(coords[0], coords[1], coords[2]);
-  coords[normal1] -= 2;
-  velocity += _getVelocity<direction>(coords[0], coords[1], coords[2]);
-
-  coords[normal1] += 2;
-  coords[normal2] += 1;
-  velocity += _getVelocity<direction>(coords[0], coords[1], coords[2]);
-  coords[normal2] -= 2;
-  velocity += _getVelocity<direction>(coords[0], coords[1], coords[2]);
-
-  velocity /= 4.f;
-
-  velocity -= _getVelocity<direction>(x, y, z);
-
-  glm::vec3 force(0.f);
-  force[direction] = velocity * frictionFactor * _cellSize;
-
-  return force;
-}
-
 void FluidObject::_applyFriction(float dTime) noexcept
 {
+  FluidMatrix<glm::vec3> newVelocity( _velocityMatrix->xSize(),
+                                      _velocityMatrix->ySize(),
+                                      _velocityMatrix->zSize());
+  newVelocity.clear(_wind);
+
   for (size_t x = 1; x < _velocityMatrix->xSize() - 1; x++)
   {
     for (size_t y = 1; y < _velocityMatrix->ySize() - 1; y++)
     {
       for (size_t z = 1; z < _velocityMatrix->zSize() - 1; z++)
       {
-        if (_blockMatrix->get(x, y, z) != 0) continue;
-        glm::vec3 force = _getFrictionForce<0, 1, 2>(x, y, z) +
-                          _getFrictionForce<1, 0, 2>(x, y, z) +
-                          _getFrictionForce<2, 0, 1>(x, y, z);
+        if(_blockMatrix->get(x, y, z) != 0) continue;
 
+        glm::vec3 envVelocity(0.f);
+        if (_blockMatrix->get(x - 1, y, z) == 0)
+        {
+          envVelocity += _velocityMatrix->get(x - 1, y, z);
+        }
+        if (_blockMatrix->get(x + 1, y, z) == 0)
+        {
+          envVelocity += _velocityMatrix->get(x + 1, y, z);
+        }
+        if (_blockMatrix->get(x, y - 1, z) == 0)
+        {
+          envVelocity += _velocityMatrix->get(x, y - 1, z);
+        }
+        if (_blockMatrix->get(x, y + 1, z) == 0)
+        {
+          envVelocity += _velocityMatrix->get(x, y + 1, z);
+        }
+        if (_blockMatrix->get(x, y, z - 1) == 0)
+        {
+          envVelocity += _velocityMatrix->get(x, y, z - 1);
+        }
+        if (_blockMatrix->get(x, y, z + 1) == 0)
+        {
+          envVelocity += _velocityMatrix->get(x, y, z + 1);
+        }
+        envVelocity /= 6.f;
+        envVelocity -= _velocityMatrix->get(x, y, z);
+
+        glm::vec3 force = frictionFactor * _cellSize * envVelocity;
         float mass = _massMatrix->get(x, y, z);
         glm::vec3 dVelocity = force / mass * dTime;
-        const glm::vec3& currentVelocity = _velocityMatrix->get(x, y, z);
-        _velocityMatrix->set(x, y, z, currentVelocity + dVelocity);
+        newVelocity(x, y, z) = _velocityMatrix->get(x, y, z) + dVelocity;
       }
     }
   }
+
+  _velocityMatrix->swap(newVelocity);
 }
 
 void FluidObject::_blockVelocity()
@@ -346,23 +349,23 @@ void FluidObject::_blockVelocity()
       for (size_t z = 1; z < _velocityMatrix->zSize() - 1; z++)
       {
         glm::vec3& velocityRef = (*_velocityMatrix)(x, y, z);
-        if (_blockMatrix->get(x, y, z) == 1)
+        if (_blockMatrix->get(x, y, z) != 0)
         {
           velocityRef = glm::vec3(0.f);
         }
 
-        if (_blockMatrix->get(x + 1, y, z) == 1 ||
-            _blockMatrix->get(x - 1, y, z) == 1)
+        if (_blockMatrix->get(x + 1, y, z) != 0 ||
+            _blockMatrix->get(x - 1, y, z) != 0)
         {
           velocityRef.x = 0;
         }
-        if (_blockMatrix->get(x, y - 1, z) == 1 ||
-            _blockMatrix->get(x, y + 1, z) == 1)
+        if (_blockMatrix->get(x, y - 1, z) != 0 ||
+            _blockMatrix->get(x, y + 1, z) != 0)
         {
           velocityRef.y = 0;
         }
-        if (_blockMatrix->get(x, y, z - 1) == 1 ||
-            _blockMatrix->get(x, y, z + 1) == 1)
+        if (_blockMatrix->get(x, y, z - 1) != 0 ||
+            _blockMatrix->get(x, y, z + 1) != 0)
         {
           velocityRef.z = 0;
         }
@@ -371,7 +374,8 @@ void FluidObject::_blockVelocity()
   }
 }
 
-void FluidObject::_buildDivirgence(FluidMatrix<float>& target)
+void FluidObject::_buildCorrectFieldDivirgence( FluidMatrix<float>& target,
+                                                float dTime)
 {
   for (size_t x = 0; x < _velocityMatrix->xSize(); x++)
   {
@@ -393,28 +397,41 @@ void FluidObject::_buildDivirgence(FluidMatrix<float>& target)
           float divirgence = 0;
           if (_blockMatrix->get(x + 1, y, z) == 0)
           {
-            divirgence += _velocityMatrix->get(x + 1, y, z).x;
+            divirgence += _velocityMatrix->get(x + 1, y, z).x *
+                                              _pressureMatrix->get(x + 1, y, z);
           }
           if (_blockMatrix->get(x - 1, y, z) == 0)
           {
-            divirgence -= _velocityMatrix->get(x - 1, y, z).x;
+            divirgence -= _velocityMatrix->get(x - 1, y, z).x *
+                                              _pressureMatrix->get(x - 1, y, z);
           }
           if (_blockMatrix->get(x, y + 1, z) == 0)
           {
-            divirgence += _velocityMatrix->get(x, y + 1, z).y;
+            divirgence += _velocityMatrix->get(x, y + 1, z).y *
+                                              _pressureMatrix->get(x, y + 1, z);
           }
           if (_blockMatrix->get(x, y - 1, z) == 0)
           {
-            divirgence -= _velocityMatrix->get(x, y - 1, z).y;
+            divirgence -= _velocityMatrix->get(x, y - 1, z).y *
+                                              _pressureMatrix->get(x, y - 1, z);
           }
           if (_blockMatrix->get(x, y, z + 1) == 0)
           {
-            divirgence += _velocityMatrix->get(x, y, z + 1).z;
+            divirgence += _velocityMatrix->get(x, y, z + 1).z *
+                                              _pressureMatrix->get(x, y, z + 1);
           }
           if (_blockMatrix->get(x, y, z - 1) == 0)
           {
-            divirgence -= _velocityMatrix->get(x, y, z - 1).z;
+            divirgence -= _velocityMatrix->get(x, y, z - 1).z *
+                                              _pressureMatrix->get(x, y, z - 1);
           }
+          divirgence /= _cellSize;
+
+          float dPressure = defaultPressure - _pressureMatrix->get(x, y, z);
+          dPressure /= dTime;
+
+          divirgence += dPressure;
+
           target(x, y, z) = divirgence;
         }
       }
@@ -472,10 +489,11 @@ void FluidObject::_buildProjPressure( FluidMatrix<float>& target,
             pressureAccum += prew(x, y, z + 1);
             divider += 1.f;
           }
+
           if(divider == 0.f) next(x, y, z) = 0.f;
           else
           {
-            next(x, y, z) = (pressureAccum - divirgence(x, y, z)) / divider;
+            next(x, y, z) = (pressureAccum + divirgence(x, y, z)) / divider;
           }
         }
       }
@@ -486,12 +504,12 @@ void FluidObject::_buildProjPressure( FluidMatrix<float>& target,
   target.swap(prew);
 }
 
-void FluidObject::_projectVelocity()
+void FluidObject::_applyContinuityEquation(float dTime)
 {
   FluidMatrix<float> divirgence(_velocityMatrix->xSize(),
                                 _velocityMatrix->ySize(),
                                 _velocityMatrix->zSize());
-  _buildDivirgence(divirgence);
+  _buildCorrectFieldDivirgence(divirgence, dTime);
   FluidMatrix<float> projPressure(_velocityMatrix->xSize(),
                                   _velocityMatrix->ySize(),
                                   _velocityMatrix->zSize());
@@ -509,24 +527,29 @@ void FluidObject::_projectVelocity()
           continue;
         }
 
-        glm::vec3 deltaV(0.f);
+        glm::vec3 pVCorrection(0.f);
         if (_blockMatrix->get(x - 1, y, z) == 0 &&
             _blockMatrix->get(x + 1, y, z) == 0)
         {
-          deltaV.x = projPressure(x - 1, y, z) - projPressure(x + 1, y, z);
+          pVCorrection.x =
+                          projPressure(x - 1, y, z) - projPressure(x + 1, y, z);
         }
         if (_blockMatrix->get(x, y - 1, z) == 0 &&
             _blockMatrix->get(x, y + 1, z) == 0)
         {
-          deltaV.y = projPressure(x, y - 1, z) - projPressure(x, y + 1, z);
+          pVCorrection.y =
+                          projPressure(x, y - 1, z) - projPressure(x, y + 1, z);
         }
         if (_blockMatrix->get(x, y, z - 1) == 0 &&
             _blockMatrix->get(x, y, z + 1) == 0)
         {
-          deltaV.z = projPressure(x, y, z - 1) - projPressure(x, y, z + 1);
+          pVCorrection.z =
+                          projPressure(x, y, z - 1) - projPressure(x, y, z + 1);
         }
-        deltaV /= 2.f;
-        (*_velocityMatrix)(x, y, z) += deltaV;
+        pVCorrection *= _cellSize;
+        pVCorrection /= 2.f;
+        glm::vec3 vCorrection = pVCorrection / _pressureMatrix->get(x, y, z);
+        (*_velocityMatrix)(x, y, z) -= vCorrection;
       }
     }
   }
