@@ -7,8 +7,6 @@
 #include <Objects/Fluid/FluidObject.h>
 #include <Objects/ParticleField.h>
 
-#define PROJECT_ITERATIONS 30
-
 FluidObject::FluidObject( const QString& name,
                           bool canBeRenamed,
                           ParticleField& parent,
@@ -18,7 +16,8 @@ FluidObject::FluidObject( const QString& name,
   _typeMask(1),
   _cellSize(1.f),
   _cellVolume(1.f),
-  _wind(0.f)
+  _wind(0.f),
+  _solverIterations(30)
 {
   connect(&parent,
           &ParticleField::sizeChanged,
@@ -50,6 +49,14 @@ void FluidObject::setWind(const glm::vec3& newValue) noexcept
   _wind = newValue;
   _resetMatrices();
   emit windChanged(newValue);
+}
+
+void FluidObject::setSolverIterations(size_t newValue) noexcept
+{
+  if(newValue < 1) newValue = 1;
+  if(_solverIterations == newValue) return;
+  _solverIterations = newValue;
+  emit solverIterationsChanged(newValue);
 }
 
 void FluidObject::registerBlocker(BlockerObject& blocker)
@@ -452,7 +459,7 @@ void FluidObject::_buildProjPressure( FluidMatrix<float>& target,
   FluidMatrix<float> next(target.xSize(), target.ySize(), target.zSize());
 
   for(int iteration = 0;
-      iteration < PROJECT_ITERATIONS;
+      iteration < _solverIterations;
       iteration++)
   {
     for (size_t x = 1; x < _velocityMatrix->xSize() - 1; x++)

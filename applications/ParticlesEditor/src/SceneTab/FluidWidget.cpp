@@ -8,13 +8,6 @@ FluidWidget::FluidWidget( FluidObject& object,
 {
   _ui->setupUi(this);
 
-  _cellSizeConnection.emplace(*_ui->cellSizeSpin,
-                              object,
-                              &FluidObject::cellSize,
-                              &FluidObject::setCellSize,
-                              &FluidObject::cellSizeChanged,
-                              undoStack);
-
   _windConnection.emplace(*_ui->windXSpin,
                           *_ui->windYSpin,
                           *_ui->windZSpin,
@@ -23,6 +16,20 @@ FluidWidget::FluidWidget( FluidObject& object,
                           &FluidObject::setWind,
                           &FluidObject::windChanged,
                           undoStack);
+
+  _cellSizeConnection.emplace(*_ui->cellSizeSpin,
+                              object,
+                              &FluidObject::cellSize,
+                              &FluidObject::setCellSize,
+                              &FluidObject::cellSizeChanged,
+                              undoStack);
+
+  _iterationsConnection.emplace(*_ui->iterationsSpin,
+                                object,
+                                &FluidObject::solverIterations,
+                                &FluidObject::setSolverIterations,
+                                &FluidObject::solverIterationsChanged,
+                                undoStack);
 }
 
 FluidWidget::~FluidWidget() noexcept = default;

@@ -42,6 +42,26 @@ class FluidObject : public mtt::Object
               STORED true
               USER false)
 
+  Q_PROPERTY( glm::vec3 wind
+              READ wind
+              WRITE setWind
+              RESET resetWind
+              NOTIFY windChanged
+              DESIGNABLE true
+              SCRIPTABLE true
+              STORED true
+              USER false)
+
+  Q_PROPERTY( size_t solverIterations
+              READ solverIterations
+              WRITE setSolverIterations
+              RESET resetSolverIterations
+              NOTIFY solverIterationsChanged
+              DESIGNABLE true
+              SCRIPTABLE true
+              STORED true
+              USER false)
+
 public:
   static constexpr float defaultTemperature = 273.15f;
   static constexpr float defaultPressure = 100000.f;
@@ -70,6 +90,10 @@ public:
   inline const glm::vec3& wind() const noexcept;
   void setWind(const glm::vec3& newValue) noexcept;
   inline void resetWind() noexcept;
+
+  inline size_t solverIterations() const noexcept;
+  void setSolverIterations(size_t newValue) noexcept;
+  inline void resetSolverIterations() noexcept;
 
   virtual void simulationStep(mtt::TimeT currentTime, mtt::TimeT delta);
   void clear() noexcept;
@@ -103,6 +127,7 @@ signals:
   void typeMaskChanged(uint32_t newValue);
   void cellSizeChanged(float newValue);
   void windChanged(glm::vec3 newValue);
+  void solverIterationsChanged(size_t newValue);
 
 private:
   void _resetMatrices() noexcept;
@@ -128,6 +153,8 @@ private:
   float _cellSize;
   float _cellVolume;
   glm::vec3 _wind;
+
+  size_t _solverIterations;
 
   std::optional<FluidMatrix<glm::vec3>> _velocityMatrix;
   std::optional<FluidMatrix<float>> _temperatureMatrix;
@@ -172,6 +199,16 @@ inline const glm::vec3& FluidObject::wind() const noexcept
 inline void FluidObject::resetWind() noexcept
 {
   setWind(glm::vec3(0.f));
+}
+
+inline size_t FluidObject::solverIterations() const noexcept
+{
+  return _solverIterations;
+}
+
+inline void FluidObject::resetSolverIterations() noexcept
+{
+  setSolverIterations(30);
 }
 
 inline FluidMatrix<float>* FluidObject::temperatureMatrix() noexcept
