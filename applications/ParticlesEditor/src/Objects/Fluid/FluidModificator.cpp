@@ -29,11 +29,14 @@ FluidModificator::Cells FluidModificator::collectCells() const
   glm::mat4 toField = glm::inverse(field->localToWorldTransform()) *
                                                         localToWorldTransform();
 
-  float radius = _size / 2.f;
-  mtt::Box localBound(glm::vec3(-radius), glm::vec3(radius));
-  mtt::Box boundInField = localBound.translated(toField);
-
   glm::mat4 fromField = glm::inverse(toField);
+  float cellSize = field->fluid().cellSize();
+  glm::vec3 cellDiagonal(cellSize, cellSize, cellSize);
+  cellDiagonal = fromField * glm::vec4(cellDiagonal, 0.f);
+  float cellDiagonalLength = glm::length(cellDiagonal);
+
+  float radius = _size / 2.f;
+  float extRadius = radius + cellDiagonalLength / 2.f;
 
   auto heaterDelegate =
     [&](size_t x, size_t y, size_t z, const glm::vec3& fieldCoord)
@@ -41,7 +44,7 @@ FluidModificator::Cells FluidModificator::collectCells() const
       glm::vec3 localCoord = fromField * glm::vec4(fieldCoord, 1.f);
 
       float distance = glm::length(localCoord);
-      float weight = 1.f - distance / radius;
+      float weight = 1.f - distance / extRadius;
       if (weight > 0.f)
       {
         cells.push_back({x,y,z,weight});
@@ -49,9 +52,11 @@ FluidModificator::Cells FluidModificator::collectCells() const
       }
     };
 
+  mtt::Box localBound(glm::vec3(-radius), glm::vec3(radius));
+  mtt::Box boundInField = localBound.translated(toField);
   field->fluid().passCells(boundInField, heaterDelegate);
 
-  for (CellRecord cell : cells)
+  for (CellRecord& cell : cells)
   {
     cell.weight /= totalWeight;
   }
