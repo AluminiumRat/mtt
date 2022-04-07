@@ -212,7 +212,7 @@ void FluidObject::simulationStep(mtt::TimeT currentTime, mtt::TimeT delta)
   if(dTime != 0.f)
   {
     _calculateMassMatrix();
-    //_applyArchimedesForce(dTime);
+    _applyArchimedesForce(dTime);
     _applyFriction(dTime),
     _blockVelocity();
     _applyContinuityEquation(dTime);
@@ -233,7 +233,13 @@ void FluidObject::_calculateMassMatrix() noexcept
     {
       for (size_t z = 0; z < _velocityMatrix->zSize(); z++)
       {
-        _massMatrix->set(x, y, z, getCellMass(x, y, z));
+        float temperature = _temperatureMatrix->get(x, y, z);
+        _massMatrix->set( x,
+                          y,
+                          z,
+                          getGasMass( _cellVolume,
+                                      defaultPressure,
+                                      temperature));
       }
     }
   }
