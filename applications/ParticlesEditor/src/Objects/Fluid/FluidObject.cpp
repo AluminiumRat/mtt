@@ -206,8 +206,7 @@ void FluidObject::simulationStep(mtt::TimeT currentTime, mtt::TimeT delta)
 
   if(!_blockMatrix.has_value()) _rebuildBlockMatrix();
 
-  float dTime =
-        std::chrono::duration_cast<std::chrono::duration<float>>(delta).count();
+  float dTime = mtt::toFloatTime(delta);
 
   if(dTime != 0.f)
   {

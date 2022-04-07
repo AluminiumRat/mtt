@@ -27,8 +27,7 @@ void GravityModificator::simulationStep(mtt::TimeT currentTime,
   glm::vec3 accelerationVector = toField * glm::vec4(0.f, 0.f, -1.f, 0.f);
   accelerationVector *= _acceleration;
 
-  using FloatTime = std::chrono::duration<float>;
-  float floatDeltaTime = std::chrono::duration_cast<FloatTime>(delta).count();
+  float floatDeltaTime = mtt::toFloatTime(delta);
   glm::vec3 deltaV = accelerationVector * floatDeltaTime;
 
   auto theDelegate =

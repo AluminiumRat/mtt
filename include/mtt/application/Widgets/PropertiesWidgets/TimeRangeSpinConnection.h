@@ -109,16 +109,11 @@ namespace mtt
     {
       Range<TimeT> oldValue = (_object.*_getter)();
 
-      using FloatTimeType = std::chrono::duration<float>;
-
-      FloatTimeType minTime(_minWidget.value() / _multiplier);
-      FloatTimeType maxTime =
-                      std::chrono::duration_cast<FloatTimeType>(oldValue.max());
+      float minTime = _minWidget.value() / _multiplier;
+      float maxTime = toFloatTime(oldValue.max());
       if(maxTime < minTime) maxTime = minTime;
+      Range<TimeT> newValue = Range<TimeT>(toTimeT(minTime), toTimeT(maxTime));
 
-      Range<TimeT> newValue = Range<TimeT>(
-                                    std::chrono::duration_cast<TimeT>(minTime),
-                                    std::chrono::duration_cast<TimeT>(maxTime));
       if (oldValue == newValue) return;
 
       _undoStack.addAndMake(makeSetPropertyCommand( _object,
@@ -126,7 +121,7 @@ namespace mtt
                                                     _setter,
                                                     newValue));
 
-      _maxWidget.setValue(maxTime.count() * _multiplier);
+      _maxWidget.setValue(maxTime * _multiplier);
     }
     catch (std::exception& error)
     {
@@ -151,17 +146,12 @@ namespace mtt
     {
       Range<TimeT> oldValue = (_object.*_getter)();
 
-      using FloatTimeType = std::chrono::duration<float>;
-
-      FloatTimeType minTime =
-                      std::chrono::duration_cast<FloatTimeType>(oldValue.min());
-      FloatTimeType maxTime(_maxWidget.value() / _multiplier);
+      float minTime = toFloatTime(oldValue.min());
+      float maxTime = _maxWidget.value() / _multiplier;
 
       if(minTime > maxTime) minTime = maxTime;
 
-      Range<TimeT> newValue = Range<TimeT>(
-                                    std::chrono::duration_cast<TimeT>(minTime),
-                                    std::chrono::duration_cast<TimeT>(maxTime));
+      Range<TimeT> newValue = Range<TimeT>(toTimeT(minTime), toTimeT(maxTime));
       if (oldValue == newValue) return;
 
       _undoStack.addAndMake(makeSetPropertyCommand( _object,
@@ -169,7 +159,7 @@ namespace mtt
                                                     _setter,
                                                     newValue));
 
-      _minWidget.setValue(minTime.count() * _multiplier);
+      _minWidget.setValue(minTime * _multiplier);
     }
     catch (std::exception& error)
     {
@@ -207,14 +197,8 @@ namespace mtt
     try
     {
       Range<TimeT> value = (_object.*_getter)();
-      using FloatTimeType = std::chrono::duration<float>;
-      FloatTimeType minTime(
-                        std::chrono::duration_cast<FloatTimeType>(value.min()));
-      FloatTimeType maxTime(
-                        std::chrono::duration_cast<FloatTimeType>(value.max()));
-
-      _minWidget.setValue(minTime.count() * _multiplier);
-      _maxWidget.setValue(maxTime.count() * _multiplier);
+      _minWidget.setValue(toFloatTime(value.min()) * _multiplier);
+      _maxWidget.setValue(toFloatTime(value.max()) * _multiplier);
     }
     catch (std::exception& error)
     {

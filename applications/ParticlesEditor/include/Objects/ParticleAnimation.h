@@ -67,7 +67,7 @@ inline mtt::TimeT ParticleAnimation::duration() const noexcept
 
 inline void ParticleAnimation::resetDuration() noexcept
 {
-  setDuration(std::chrono::duration_cast<mtt::TimeT>(std::chrono::seconds(10)));
+  setDuration(10 * mtt::second);
 }
 
 inline mtt::ObjectRef<ParticleField>& ParticleAnimation::fieldRef() noexcept

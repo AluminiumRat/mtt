@@ -95,9 +95,8 @@ namespace mtt
 
     try
     {
-      using FloatTimeType = std::chrono::duration<float>;
-      FloatTimeType floatTime(_widget.value() / _multiplier);
-      TimeT newValue = std::chrono::duration_cast<TimeT>(floatTime);
+      float floatTime = _widget.value() / _multiplier;
+      TimeT newValue = mtt::toTimeT(floatTime);
       if ((_object.*_getter)() == newValue) return;
 
       _undoStack.addAndMake(makeSetPropertyCommand( _object,
@@ -140,11 +139,8 @@ namespace mtt
 
     try
     {
-      using FloatTimeType = std::chrono::duration<float>;
-      FloatTimeType floatTime =
-                std::chrono::duration_cast<FloatTimeType>((_object.*_getter)());
-
-      _widget.setValue(floatTime.count() * _multiplier);
+       float floatTime = mtt::toFloatTime((_object.*_getter)());
+      _widget.setValue(floatTime * _multiplier);
     }
     catch (std::exception& error)
     {

@@ -190,8 +190,7 @@ void ParticleField::_addParticles()
 
 void ParticleField::_updateParticlesData(mtt::TimeT delta)
 {
-  using FloatTime = std::chrono::duration<float>;
-  float floatDelta = std::chrono::duration_cast<FloatTime>(delta).count();
+  float floatDelta = mtt::toFloatTime(delta);
 
   for (ParticleIndex index : _workIndices)
   {

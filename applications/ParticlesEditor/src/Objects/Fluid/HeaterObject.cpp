@@ -31,8 +31,7 @@ void HeaterObject::simulationStep(mtt::TimeT currentTime, mtt::TimeT deltaT)
   FluidMatrix<float>* temperatureMatrix = fluid.temperatureMatrix();
   if (temperatureMatrix == nullptr) return;
 
-  using FloatTime = std::chrono::duration<float>;
-  float floatDeltaTime = std::chrono::duration_cast<FloatTime>(deltaT).count();
+  float floatDeltaTime = mtt::toFloatTime(deltaT);
   if(floatDeltaTime <= 0.f) return;
 
   Cells cells = collectCells();

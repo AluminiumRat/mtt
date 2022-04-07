@@ -609,9 +609,7 @@ inline const mtt::Range<mtt::TimeT>&
 
 inline void EmitterObject::resetLifetimeRange() noexcept
 {
-  setLifetimeRange(mtt::Range<mtt::TimeT>(
-              std::chrono::duration_cast<mtt::TimeT>(std::chrono::seconds(1)),
-              std::chrono::duration_cast<mtt::TimeT>(std::chrono::seconds(1))));
+  setLifetimeRange(mtt::Range<mtt::TimeT>(mtt::second,mtt::second));
 }
 
 inline const mtt::Range<float>& EmitterObject::massRange() const noexcept

@@ -4,7 +4,7 @@ ParticleAnimation::ParticleAnimation( const QString& name,
                                       bool canBeRenamed,
                                       const mtt::UID& id) :
   AnimationObject(name, canBeRenamed, id),
-  _duration(std::chrono::duration_cast<mtt::TimeT>(std::chrono::seconds(10))),
+  _duration(10 * mtt::second),
   _fieldRef(*this),
   _lastTime(0)
 {

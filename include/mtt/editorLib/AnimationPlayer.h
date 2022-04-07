@@ -14,8 +14,7 @@ namespace mtt
     Q_OBJECT
 
   public:
-    static constexpr TimeT maxTimeDelta =
-              std::chrono::duration_cast<TimeT>(std::chrono::milliseconds(100));
+    static constexpr TimeT maxTimeDelta = 100 * mtt::millisecond;
 
   public:
     AnimationPlayer();

@@ -33,9 +33,7 @@ EmitterObject::EmitterObject( const QString& name,
   _brightnessRange(1.f, 1.f),
   _textureIndex(0),
   _tileIndex(0),
-  _lifetimeRange(
-              std::chrono::duration_cast<mtt::TimeT>(std::chrono::seconds(1)),
-              std::chrono::duration_cast<mtt::TimeT>(std::chrono::seconds(1))),
+  _lifetimeRange(mtt::second, mtt::second),
   _massRange(0.f, 0.f),
   _frictionFactorRange(0.f, 0.f),
   _randomEngine(
@@ -210,9 +208,7 @@ void EmitterObject::simulationStep(mtt::TimeT currentTime, mtt::TimeT delta)
 {
   if(_intensity <= 0.f) return;
 
-  using FloatTime = std::chrono::duration<float>;
-  float floatDelta = std::chrono::duration_cast<FloatTime>(delta).count();
-
+  float floatDelta = mtt::toFloatTime(delta);
   float floatParticlesNumber = _intensity * floatDelta;
   size_t particlesNumber = size_t(floatParticlesNumber);
 
