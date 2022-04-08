@@ -23,6 +23,7 @@ public:
   virtual void visitModificatorObject(ModificatorObject& object) override;
   virtual void visitParticleAnimation(ParticleAnimation& object) override;
   virtual void visitParticleField(ParticleField& object) override;
+  virtual void visitSizeControlObject(SizeControlObject& object) override;
   virtual void visitVisibilityControlObject(
                                       VisibilityControlObject& object) override;
 };

@@ -27,7 +27,7 @@ public:
   VisibilityControlObject(const QString& name,
                           bool canBeRenamed,
                           const mtt::UID& id = mtt::UID());
-  VisibilityControlObject(const ModificatorObject&) = delete;
+  VisibilityControlObject(const VisibilityControlObject&) = delete;
   VisibilityControlObject& operator = (const VisibilityControlObject&) = delete;
   virtual ~VisibilityControlObject() noexcept = default;
 

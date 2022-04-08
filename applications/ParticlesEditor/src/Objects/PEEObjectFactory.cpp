@@ -9,6 +9,7 @@
 #include <Objects/ParticleAnimation.h>
 #include <Objects/ParticleField.h>
 #include <Objects/PEEObjectFactory.h>
+#include <Objects/SizeControlObject.h>
 #include <Objects/VisibilityControlObject.h>
 
 PEEObjectFactory::PEEObjectFactory()
@@ -23,4 +24,5 @@ PEEObjectFactory::PEEObjectFactory()
   registerType<BlockerObject, blockerObjectIndex>();
   registerType<GasSource, gasSourceIndex>();
   registerType<HeaterObject, heaterObjectIndex>();
+  registerType<SizeControlObject, sizeControlIndex>();
 }

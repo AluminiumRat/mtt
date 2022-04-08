@@ -130,6 +130,14 @@ void ObjectSaver::visitConstParticleField(const ParticleField& object)
   saveObjectData(object.fluid(), stream(), fileDirectory(), objectFactory());
 }
 
+void ObjectSaver::visitConstSizeControlObject(const SizeControlObject& object)
+{
+  PEVisitorT::visitConstSizeControlObject(object);
+
+  stream() << object.startSize();
+  stream() << object.endSize();
+}
+
 void ObjectSaver::visitConstVisibilityControlObject(
                                           const VisibilityControlObject& object)
 {

@@ -11,6 +11,7 @@
 #include <SceneTab/ParticleAnimationWidget.h>
 #include <SceneTab/ParticleFieldWidget.h>
 #include <SceneTab/PropertiesWidgetFactory.h>
+#include <SceneTab/SizeControlWidget.h>
 #include <SceneTab/TypeMaskWidget.h>
 #include <SceneTab/VisibilityControlWidget.h>
 #include <EditorCommonData.h>
@@ -102,6 +103,15 @@ void PropertiesWidgetFactory::visitParticleField(ParticleField& object)
                                                     _commonData.undoStack()));
 }
 
+void PropertiesWidgetFactory::visitSizeControlObject(SizeControlObject& object)
+{
+  PEVisitorT::visitSizeControlObject(object);
+  widgetsLayout().addWidget(new SizeControlWidget(object,
+                                                  _commonData.undoStack()));
+  widgetsLayout().addWidget(
+                          new TypeMaskWidget(object, _commonData.undoStack()));
+}
+
 void PropertiesWidgetFactory::visitVisibilityControlObject(
                                                 VisibilityControlObject& object)
 {
@@ -109,5 +119,6 @@ void PropertiesWidgetFactory::visitVisibilityControlObject(
   widgetsLayout().addWidget(new VisibilityControlWidget(
                                                       object,
                                                       _commonData.undoStack()));
-  widgetsLayout().addWidget(new TypeMaskWidget(object, _commonData.undoStack()));
+  widgetsLayout().addWidget(
+                          new TypeMaskWidget(object, _commonData.undoStack()));
 }

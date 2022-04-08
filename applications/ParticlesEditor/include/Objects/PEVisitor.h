@@ -17,6 +17,7 @@
 #include <Objects/ParticleField.h>
 #include <Objects/PEVisitorExtension.h>
 #include <Objects/RootObject.h>
+#include <Objects/SizeControlObject.h>
 #include <Objects/VisibilityControlObject.h>
 
 template <typename BaseVisitor>
@@ -85,6 +86,11 @@ public:
 
   inline virtual void visitConstRootObject(const RootObject& object) override;
   inline virtual void visitRootObject(RootObject& object) override;
+
+  inline virtual void visitConstSizeControlObject(
+                                      const SizeControlObject& object) override;
+  inline virtual void visitSizeControlObject(
+                                            SizeControlObject& object) override;
 
   inline virtual void visitConstVisibilityControlObject(
                                 const VisibilityControlObject& object) override;
@@ -291,6 +297,20 @@ template <typename BaseVisitor>
 inline void PEVisitorT<BaseVisitor>::visitRootObject(RootObject& object)
 {
   static_cast<BaseVisitor*>(this)->visitObject(object);
+}
+
+template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitConstSizeControlObject(
+                                                const SizeControlObject& object)
+{
+  visitConstModificatorObject(object);
+}
+
+template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitSizeControlObject(
+                                                      SizeControlObject& object)
+{
+  visitModificatorObject(object);
 }
 
 template <typename BaseVisitor>

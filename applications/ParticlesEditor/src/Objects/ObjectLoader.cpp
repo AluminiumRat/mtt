@@ -131,6 +131,14 @@ void ObjectLoader::visitParticleField(ParticleField& object)
                       objectFactory());
 }
 
+void ObjectLoader::visitSizeControlObject(SizeControlObject& object)
+{
+  PEVisitorT::visitSizeControlObject(object);
+
+  object.setStartSize(stream().readFloat());
+  object.setEndSize(stream().readFloat());
+}
+
 void ObjectLoader::visitVisibilityControlObject(VisibilityControlObject& object)
 {
   PEVisitorT::visitVisibilityControlObject(object);

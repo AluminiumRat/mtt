@@ -73,6 +73,7 @@ set(HEADERS
     "include/Objects/PEVisitor.h"
     "include/Objects/PEVisitorExtension.h"
     "include/Objects/RootObject.h"
+    "include/Objects/SizeControlObject.h"
     "include/Objects/VisibilityControlObject.h"
 
     "include/Render/BlockerRenderObserver.h"
@@ -94,6 +95,7 @@ set(HEADERS
     "include/SceneTab/ParticleFieldWidget.h"
     "include/SceneTab/PropertiesWidgetFactory.h"
     "include/SceneTab/SceneTab.h"
+    "include/SceneTab/SizeControlWidget.h"
     "include/SceneTab/TypeMaskWidget.h"
     "include/SceneTab/VisibilityControlWidget.h"
 
@@ -130,6 +132,7 @@ set(SOURCES
     "src/Objects/PEEObjectFactory.cpp"
     "src/Objects/PEVisitorExtension.cpp"
     "src/Objects/RootObject.cpp"
+    "src/Objects/SizeControlObject.cpp"
     "src/Objects/VisibilityControlObject.cpp"
 
     "src/Render/BlockerRenderObserver.cpp"
@@ -151,6 +154,7 @@ set(SOURCES
     "src/SceneTab/ParticleFieldWidget.cpp"
     "src/SceneTab/PropertiesWidgetFactory.cpp"
     "src/SceneTab/SceneTab.cpp"
+    "src/SceneTab/SizeControlWidget.cpp"
     "src/SceneTab/TypeMaskWidget.cpp"
     "src/SceneTab/VisibilityControlWidget.cpp"
 
@@ -171,6 +175,7 @@ set(UI_FILES
     "src/SceneTab/HeaterWidget.ui"
     "src/SceneTab/ParticleAnimationWidget.ui"
     "src/SceneTab/ParticleFieldWidget.ui"
+    "src/SceneTab/SizeControlWidget.ui"
     "src/SceneTab/TypeMaskWidget.ui"
     "src/SceneTab/VisibilityControlWidget.ui"
     "src/MainWindow.ui"

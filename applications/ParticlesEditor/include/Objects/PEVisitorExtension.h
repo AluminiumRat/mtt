@@ -16,6 +16,7 @@ class ModificatorObject;
 class ParticleAnimation;
 class ParticleField;
 class RootObject;
+class SizeControlObject;
 class VisibilityControlObject;
 
 class PEVisitorExtension
@@ -66,6 +67,10 @@ public:
 
   virtual void visitConstRootObject(const RootObject& object) = 0;
   virtual void visitRootObject(RootObject& object) = 0;
+
+  virtual void visitConstSizeControlObject(
+                                          const SizeControlObject& object) = 0;
+  virtual void visitSizeControlObject(SizeControlObject& object) = 0;
 
   virtual void visitConstVisibilityControlObject(
                                     const VisibilityControlObject& object) = 0;

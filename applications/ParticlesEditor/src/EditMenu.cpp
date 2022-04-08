@@ -16,6 +16,7 @@
 #include <Objects/FrameObject.h>
 #include <Objects/GravityModificator.h>
 #include <Objects/ParticleAnimation.h>
+#include <Objects/SizeControlObject.h>
 #include <Objects/VisibilityControlObject.h>
 #include <EditMenu.h>
 #include <MainWindow.h>
@@ -74,6 +75,12 @@ void EditMenu::setupUI()
           &QAction::triggered,
           this,
           &EditMenu::_addVisibilityControl,
+          Qt::DirectConnection);
+
+  connect(_ui.actionAdd_size_control,
+          &QAction::triggered,
+          this,
+          &EditMenu::_addSizeControl,
           Qt::DirectConnection);
 
   connect(_ui.actionAdd_gravity,
@@ -267,6 +274,12 @@ void EditMenu::_addVisibilityControl() noexcept
   _addModificator<VisibilityControlObject>(
                                       tr("Visibility control"),
                                       tr("Unable to add a visibility control"));
+}
+
+void EditMenu::_addSizeControl() noexcept
+{
+  _addModificator<SizeControlObject>( tr("Size control"),
+                                      tr("Unable to add a size control"));
 }
 
 void EditMenu::_addGravity() noexcept

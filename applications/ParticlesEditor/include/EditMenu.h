@@ -37,6 +37,7 @@ private:
                         const QString& errorString) noexcept;
   void _addEmitter() noexcept;
   void _addVisibilityControl() noexcept;
+  void _addSizeControl() noexcept;
   void _addGravity() noexcept;
   void _addBlocker() noexcept;
   void _addHeater() noexcept;

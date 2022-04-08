@@ -15,6 +15,7 @@ public:
   static constexpr TypeIndex blockerObjectIndex = 8;
   static constexpr TypeIndex gasSourceIndex = 9;
   static constexpr TypeIndex heaterObjectIndex = 10;
+  static constexpr TypeIndex sizeControlIndex = 11;
 
 public:
   PEEObjectFactory();

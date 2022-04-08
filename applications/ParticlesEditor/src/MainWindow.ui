@@ -38,6 +38,7 @@
     <addaction name="actionAdd_frame"/>
     <addaction name="actionAdd_emitter"/>
     <addaction name="actionAdd_visibility_control"/>
+    <addaction name="actionAdd_size_control"/>
     <addaction name="actionAdd_gravity"/>
     <addaction name="actionAdd_blocker"/>
     <addaction name="actionAdd_heater"/>
@@ -275,6 +276,11 @@
   <action name="actionAdd_gas_source">
    <property name="text">
     <string>Add gas source</string>
+   </property>
+  </action>
+  <action name="actionAdd_size_control">
+   <property name="text">
+    <string>Add size control</string>
    </property>
   </action>
  </widget>
