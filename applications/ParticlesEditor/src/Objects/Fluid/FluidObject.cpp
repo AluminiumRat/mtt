@@ -217,6 +217,7 @@ void FluidObject::simulationStep(mtt::TimeT currentTime, mtt::TimeT delta)
 
   if(dTime != 0.f)
   {
+    _applyMixing(dTime);
     _calculateMassMatrix();
     _applyArchimedesForce(dTime);
     _applyFriction(dTime),
@@ -229,6 +230,61 @@ void FluidObject::simulationStep(mtt::TimeT currentTime, mtt::TimeT delta)
   }
 
   _updateParticles(dTime);
+}
+
+void FluidObject::_applyNeighbourTemp(size_t x,
+                                      size_t y,
+                                      size_t z,
+                                      const glm::vec3& flowSpeed,
+                                      float dTime,
+                                      float& temperatureAccumulator,
+                                      float& weightAccumulator) noexcept
+{
+  if (_blockMatrix->get(x, y, z) != 0) return;
+
+  glm::vec3 currentSpeed = _velocityMatrix->get(x,y,z);
+  float dSpeed = glm::length(flowSpeed - currentSpeed);
+
+  float weight = dTime * mixingFactor * dSpeed / _cellSize;
+  weight = glm::clamp(0.f, 1.f, weight);
+
+  temperatureAccumulator += _temperatureMatrix->get(x, y, z) * weight;
+  weightAccumulator += weight;
+}
+
+void FluidObject::_applyMixing(float dTime)
+{
+  FluidMatrix<float> newTemperature(_velocityMatrix->xSize(),
+                                    _velocityMatrix->ySize(),
+                                    _velocityMatrix->zSize());
+  newTemperature.clear(defaultTemperature);
+
+  for (size_t x = 1; x < _velocityMatrix->xSize() - 1; x++)
+  {
+    for (size_t y = 1; y < _velocityMatrix->ySize() - 1; y++)
+    {
+      for (size_t z = 1; z < _velocityMatrix->zSize() - 1; z++)
+      {
+        if (_blockMatrix->get(x, y, z) != 0) continue;
+
+        glm::vec3 flowSpeed = _velocityMatrix->get(x, y, z);
+
+        float avgTemp = _temperatureMatrix->get(x,y ,z);
+        float totalWeght = 1.f;
+
+        _applyNeighbourTemp(x - 1, y, z, flowSpeed, dTime, avgTemp, totalWeght);
+        _applyNeighbourTemp(x + 1, y, z, flowSpeed, dTime, avgTemp, totalWeght);
+        _applyNeighbourTemp(x, y - 1, z, flowSpeed, dTime, avgTemp, totalWeght);
+        _applyNeighbourTemp(x, y + 1, z, flowSpeed, dTime, avgTemp, totalWeght);
+        _applyNeighbourTemp(x, y, z - 1, flowSpeed, dTime, avgTemp, totalWeght);
+        _applyNeighbourTemp(x, y, z + 1, flowSpeed, dTime, avgTemp, totalWeght);
+
+        newTemperature(x, y, z) = avgTemp / totalWeght;
+      }
+    }
+  }
+
+  _temperatureMatrix->swap(newTemperature);
 }
 
 void FluidObject::_calculateMassMatrix() noexcept
@@ -311,7 +367,11 @@ void FluidObject::_applyFriction(float dTime) noexcept
     {
       for (size_t z = 1; z < _velocityMatrix->zSize() - 1; z++)
       {
-        if(_blockMatrix->get(x, y, z) != 0) continue;
+        if(_blockMatrix->get(x, y, z) != 0)
+        {
+          newVelocity(x, y, z) = glm::vec3(0.f);
+          continue;
+        }
 
         glm::vec3 envVelocity(0.f);
         if (_blockMatrix->get(x - 1, y, z) == 0)

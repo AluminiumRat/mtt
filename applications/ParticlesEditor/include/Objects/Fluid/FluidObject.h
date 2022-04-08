@@ -66,6 +66,7 @@ public:
   static constexpr float defaultTemperature = 273.15f;
   static constexpr float defaultPressure = 100000.f;
   static constexpr float frictionFactor = .02f;
+  static constexpr float mixingFactor = 1.f;
   static constexpr float heatCapacity = 1000.f;
 
 public:
@@ -135,6 +136,14 @@ private:
   void _rebuildMatrices();
   void _applyBlocker(BlockerObject& blocker);
   void _rebuildBlockMatrix();
+  void _applyNeighbourTemp( size_t x,
+                            size_t y,
+                            size_t z,
+                            const glm::vec3& flowSpeed,
+                            float dTime,
+                            float& temperatureAccumulator,
+                            float& weightAccumulator) noexcept;
+  void _applyMixing(float dTime);
   void _calculateMassMatrix() noexcept;
   void _applyArchimedesForce(float dTime) noexcept;
   void _applyFriction(float dTime) noexcept;
