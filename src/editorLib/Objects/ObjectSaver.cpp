@@ -21,7 +21,15 @@ void ObjectSaver::saveObject( const mtt::Object& object,
     throw std::runtime_error("Unsupported object type");
   }
   stream << typeIndex;
+  stream << object.id();
+  saveObjectData(object, stream, fileDirectory, objectFactory);
+}
 
+void ObjectSaver::saveObjectData( const Object& object,
+                                  DataStream& stream,
+                                  const QDir& fileDirectory,
+                                  const ObjectFactory& objectFactory)
+{
   DataStream* oldStream = _stream;
   _stream = &stream;
 
@@ -164,7 +172,6 @@ void ObjectSaver::visitConstMovableObject(const mtt::MovableObject& object)
 
 void ObjectSaver::visitConstObject(const mtt::Object& object)
 {
-  *_stream << object.id();
   *_stream << object.name();
 }
 

@@ -14,7 +14,7 @@ PEEObjectFactory::PEEObjectFactory()
   registerType<mtt::AnimationTrack, animationTrackIndex>();
   registerType<EmitterObject, emitterIndex>();
   registerType<FrameObject, frameIndex>();
-  registerType<GravityModificator, gravityModificatorIndex>();
   registerType<ParticleField, particleFieldIndex>();
   registerType<VisibilityControlObject, visibilityControlIndex>();
+  registerType<GravityModificator, gravityModificatorIndex>();
 }

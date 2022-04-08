@@ -28,6 +28,16 @@ void ObjectLoader::visitEmitterObject(EmitterObject& object)
   object.setFrictionFactorRange(stream().readRange<float>());
 }
 
+void ObjectLoader::visitFluidObject(FluidObject& object)
+{
+  PEVisitorT::visitFluidObject(object);
+
+  object.setTypeMask(stream().readUint32());
+  object.setCellSize(stream().readFloat());
+  object.setWind(stream().readVec3());
+  object.setSolverIterations(stream().readUint16());
+}
+
 void ObjectLoader::visitFrameObject(FrameObject& object)
 {
   PEVisitorT::visitFrameObject(object);
@@ -83,6 +93,12 @@ void ObjectLoader::visitParticleField(ParticleField& object)
     descriptions.push_back(description);
   }
   object.setTextureDescriptions(descriptions);
+
+  loadEmbeddedObject( object.fluid(),
+                      stream(),
+                      fileDirectory(),
+                      mixUIDValue(),
+                      objectFactory());
 }
 
 void ObjectLoader::visitVisibilityControlObject(VisibilityControlObject& object)

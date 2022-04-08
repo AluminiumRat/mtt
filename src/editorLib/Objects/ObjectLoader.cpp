@@ -8,6 +8,44 @@ ObjectLoader::ObjectLoader() :
 {
 }
 
+void ObjectLoader::loadEmbeddedObject(Object& object,
+                                      DataStream& stream,
+                                      const QDir& fileDirectory,
+                                      UID::ValueType mixUIDValue,
+                                      const ObjectFactory& objectFactory)
+{
+  QString name;
+  stream >> name;
+  object.tryRename(name);
+  _readObjectData(object, stream, fileDirectory, mixUIDValue, objectFactory);
+}
+
+void ObjectLoader::_readObjectData( Object& object,
+                                    DataStream& stream,
+                                    const QDir& fileDirectory,
+                                    UID::ValueType mixUIDValue,
+                                    const ObjectFactory& objectFactory)
+{
+  DataStream* oldStream = _stream;
+  _stream = &stream;
+
+  QDir oldFileDirectory = _fileDirectory;
+  _fileDirectory = fileDirectory;
+
+  UID::ValueType oldMixUIDValue = _mixUIDValue;
+  _mixUIDValue = mixUIDValue;
+
+  const ObjectFactory* oldFactory = _objectFactory;
+  _objectFactory = &objectFactory;
+
+  process(object);
+
+  _stream = oldStream;
+  _fileDirectory = oldFileDirectory;
+  _mixUIDValue = oldMixUIDValue;
+  _objectFactory = oldFactory;
+}
+
 QString ObjectLoader::readFilename()
 {
   QString relativePath;

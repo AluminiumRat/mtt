@@ -22,6 +22,12 @@ namespace mtt
                     DataStream& stream,
                     const QDir& fileDirectory,
                     const ObjectFactory& objectFactory);
+    /// Save without type index and id.
+    /// For embedded objects.
+    void saveObjectData(const Object& object,
+                        DataStream& stream,
+                        const QDir& fileDirectory,
+                        const ObjectFactory& objectFactory);
 
     virtual void visitConstAmbientLightObject(
                                     const AmbientLightObject& object) override;
@@ -39,8 +45,8 @@ namespace mtt
     virtual void visitConstEnvironmentModel(
                                       const EnvironmentModel& object) override;
     virtual void visitConstLightObject(const LightObject& object) override;
+    virtual void visitConstObject(const mtt::Object& object) override;
     virtual void visitConstMovableObject(const MovableObject& object) override;
-    virtual void visitConstObject(const Object& object) override;
     virtual void visitConstRotatableObject(
                                         const RotatableObject& object) override;
     virtual void visitConstScalableObject(

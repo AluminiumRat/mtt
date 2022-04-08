@@ -43,6 +43,16 @@ void ObjectSaver::visitConstFrameObject(const FrameObject& object)
   }
 }
 
+void ObjectSaver::visitConstFluidObject(const FluidObject& object)
+{
+  PEVisitorT::visitConstFluidObject(object);
+
+  stream() << object.typeMask();
+  stream() << object.cellSize();
+  stream() << object.wind();
+  stream() << (uint16_t)(object.solverIterations());
+}
+
 void ObjectSaver::visitConstGravityModificator(
                                               const GravityModificator& object)
 {
@@ -86,6 +96,8 @@ void ObjectSaver::visitConstParticleField(const ParticleField& object)
     stream() << description.filename;
     stream() << uint8_t(description.extent);
   }
+
+  saveObjectData(object.fluid(), stream(), fileDirectory(), objectFactory());
 }
 
 void ObjectSaver::visitConstVisibilityControlObject(

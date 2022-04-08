@@ -29,6 +29,12 @@ namespace mtt
                                             const QDir& fileDirectory,
                                             UID::ValueType mixUIDValue,
                                             const ObjectFactory& objectFactory);
+    /// Load object data without type index and id
+    void loadEmbeddedObject(Object& object,
+                            DataStream& stream,
+                            const QDir& fileDirectory,
+                            UID::ValueType mixUIDValue,
+                            const ObjectFactory& objectFactory);
 
     inline DataStream& stream() const noexcept;
     inline const QDir& fileDirectory() const noexcept;
@@ -55,6 +61,13 @@ namespace mtt
     inline void readKeypoint(ValueKeypoint<ValueType, TimeT>& keypoint);
     void readCubemapData(CubemapObject& object);
     UID readUID();
+
+  private:
+    void _readObjectData( Object& object,
+                          DataStream& stream,
+                          const QDir& fileDirectory,
+                          UID::ValueType mixUIDValue,
+                          const ObjectFactory& objectFactory);
 
   private:
     DataStream* _stream;
@@ -88,24 +101,7 @@ namespace mtt
       throw std::runtime_error("Object type index does not match requested class");
     }
 
-    DataStream* oldStream = _stream;
-    _stream = &stream;
-
-    QDir oldFileDirectory = _fileDirectory;
-    _fileDirectory = fileDirectory;
-
-    UID::ValueType oldMixUIDValue = _mixUIDValue;
-    _mixUIDValue = mixUIDValue;
-
-    const ObjectFactory* oldFactory = _objectFactory;
-    _objectFactory = &objectFactory;
-
-    process(*object);
-
-    _stream = oldStream;
-    _fileDirectory = oldFileDirectory;
-    _mixUIDValue = oldMixUIDValue;
-    _objectFactory = oldFactory;
+    _readObjectData(*object, stream, fileDirectory, mixUIDValue, objectFactory);
 
     return static_cast_unique_ptr<ObjectType>(std::move(object));
   }
