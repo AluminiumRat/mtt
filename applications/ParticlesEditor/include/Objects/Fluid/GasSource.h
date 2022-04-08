@@ -11,6 +11,27 @@ class GasSource : public FluidModificator
                           visitGasSource,
                           visitConstGasSource,
                           FluidModificator)
+
+  Q_PROPERTY( float flowRate
+              READ flowRate
+              WRITE setFlowRate
+              RESET resetFlowRate
+              NOTIFY flowRateChanged
+              DESIGNABLE true
+              SCRIPTABLE true
+              STORED true
+              USER false)
+
+  Q_PROPERTY( float temperature
+              READ temperature
+              WRITE setTemperature
+              RESET resetTemperature
+              NOTIFY temperatureChanged
+              DESIGNABLE true
+              SCRIPTABLE true
+              STORED true
+              USER false)
+
 public:
   GasSource(const QString& name,
             bool canBeRenamed,

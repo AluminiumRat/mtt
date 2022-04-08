@@ -1,5 +1,13 @@
 #include <Objects/ObjectLoader.h>
 
+void ObjectLoader::visitBlockerObject(BlockerObject& object)
+{
+  PEVisitorT::visitBlockerObject(object);
+
+  object.setShape(BlockerObject::Shape(stream().readUint8()));
+  object.setSize(stream().readFloat());
+}
+
 void ObjectLoader::visitEmitterObject(EmitterObject& object)
 {
   PEVisitorT::visitEmitterObject(object);
@@ -28,16 +36,6 @@ void ObjectLoader::visitEmitterObject(EmitterObject& object)
   object.setFrictionFactorRange(stream().readRange<float>());
 }
 
-void ObjectLoader::visitFluidObject(FluidObject& object)
-{
-  PEVisitorT::visitFluidObject(object);
-
-  object.setTypeMask(stream().readUint32());
-  object.setCellSize(stream().readFloat());
-  object.setWind(stream().readVec3());
-  object.setSolverIterations(stream().readUint16());
-}
-
 void ObjectLoader::visitFrameObject(FrameObject& object)
 {
   PEVisitorT::visitFrameObject(object);
@@ -53,11 +51,43 @@ void ObjectLoader::visitFrameObject(FrameObject& object)
   }
 }
 
+void ObjectLoader::visitFluidModificator(FluidModificator& object)
+{
+  PEVisitorT::visitFluidModificator(object);
+
+  object.setSize(stream().readFloat());
+}
+
+void ObjectLoader::visitFluidObject(FluidObject& object)
+{
+  PEVisitorT::visitFluidObject(object);
+
+  object.setTypeMask(stream().readUint32());
+  object.setCellSize(stream().readFloat());
+  object.setWind(stream().readVec3());
+  object.setSolverIterations(stream().readUint16());
+}
+
+void ObjectLoader::visitGasSource(GasSource& object)
+{
+  PEVisitorT::visitGasSource(object);
+
+  object.setFlowRate(stream().readFloat());
+  object.setTemperature(stream().readFloat());
+}
+
 void ObjectLoader::visitGravityModificator(GravityModificator& object)
 {
   PEVisitorT::visitGravityModificator(object);
 
   object.setAcceleration(stream().readFloat());
+}
+
+void ObjectLoader::visitHeaterObject(HeaterObject& object)
+{
+  PEVisitorT::visitHeaterObject(object);
+
+  object.setPower(stream().readFloat());
 }
 
 void ObjectLoader::visitModificatorObject(ModificatorObject& object)

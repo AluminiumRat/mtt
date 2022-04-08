@@ -1,5 +1,13 @@
 #include <Objects/ObjectSaver.h>
 
+void ObjectSaver::visitConstBlockerObject(const BlockerObject& object)
+{
+  PEVisitorT::visitConstBlockerObject(object);
+
+  stream() << (uint8_t)(object.shape());
+  stream() << object.size();
+}
+
 void ObjectSaver::visitConstEmitterObject(const EmitterObject& object)
 {
   PEVisitorT::visitConstEmitterObject(object);
@@ -43,6 +51,13 @@ void ObjectSaver::visitConstFrameObject(const FrameObject& object)
   }
 }
 
+void ObjectSaver::visitConstFluidModificator(const FluidModificator& object)
+{
+  PEVisitorT::visitConstFluidModificator(object);
+
+  stream() << object.size();
+}
+
 void ObjectSaver::visitConstFluidObject(const FluidObject& object)
 {
   PEVisitorT::visitConstFluidObject(object);
@@ -53,12 +68,27 @@ void ObjectSaver::visitConstFluidObject(const FluidObject& object)
   stream() << (uint16_t)(object.solverIterations());
 }
 
+void ObjectSaver::visitConstGasSource(const GasSource& object)
+{
+  PEVisitorT::visitConstGasSource(object);
+
+  stream() << object.flowRate();
+  stream() << object.temperature();
+}
+
 void ObjectSaver::visitConstGravityModificator(
                                               const GravityModificator& object)
 {
   PEVisitorT::visitConstGravityModificator(object);
 
   stream() << object.acceleration();
+}
+
+void ObjectSaver::visitConstHeaterObject(const HeaterObject& object)
+{
+  PEVisitorT::visitConstHeaterObject(object);
+
+  stream() << object.power();
 }
 
 void ObjectSaver::visitConstModificatorObject(const ModificatorObject& object)

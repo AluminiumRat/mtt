@@ -12,11 +12,16 @@ public:
   ObjectSaver& operator = (const ObjectSaver&) = delete;
   virtual ~ObjectSaver() noexcept = default;
 
+  virtual void visitConstBlockerObject(const BlockerObject& object) override;
   virtual void visitConstEmitterObject(const EmitterObject& object) override;
   virtual void visitConstFrameObject(const FrameObject& object) override;
+  virtual void visitConstFluidModificator(
+                                      const FluidModificator& object) override;
   virtual void visitConstFluidObject(const FluidObject& object) override;
+  virtual void visitConstGasSource(const GasSource& object) override;
   virtual void visitConstGravityModificator(
                                     const GravityModificator& object) override;
+  virtual void visitConstHeaterObject(const HeaterObject& object) override;
   virtual void visitConstModificatorObject(
                                       const ModificatorObject& object) override;
   virtual void visitConstParticleAnimation(

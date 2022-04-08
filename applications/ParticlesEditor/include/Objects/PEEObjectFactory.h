@@ -12,6 +12,9 @@ public:
   static constexpr TypeIndex particleFieldIndex = 5;
   static constexpr TypeIndex visibilityControlIndex = 6;
   static constexpr TypeIndex gravityModificatorIndex = 7;
+  static constexpr TypeIndex blockerObjectIndex = 8;
+  static constexpr TypeIndex gasSourceIndex = 9;
+  static constexpr TypeIndex heaterObjectIndex = 10;
 
 public:
   PEEObjectFactory();
