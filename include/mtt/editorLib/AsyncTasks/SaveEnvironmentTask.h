@@ -2,20 +2,14 @@
 
 #include <string>
 
-#include <QtCore/QDir>
-#include <QtCore/QString>
-
-#include <mtt/application/AsyncTasks/AbstractAsyncTask.h>
-#include <mtt/application/DataStream.h>
-
-class QFile;
+#include <mtt/application/AsyncTasks/SaveToFileTask.h>
 
 namespace mtt
 {
   class BackgroundObject;
   class EnvironmentGroup;
 
-  class SaveEnvironmentTask : public AbstractAsyncTask
+  class SaveEnvironmentTask : public SaveToFileTask
   {
   public:
     static const inline std::string fileHead = "OEEnvironmentFile";
@@ -30,25 +24,16 @@ namespace mtt
     virtual ~SaveEnvironmentTask() noexcept = default;
 
   protected:
-    inline const QString& filename() const noexcept;
-
-    virtual void asyncPart() override;
+    virtual void saveData(QFile& file,
+                          mtt::DataStream& stream,
+                          const QFileInfo& targetFileInfo,
+                          const QFileInfo& tmpFileInfo) override;
 
   private:
-    void _writeHead();
+    void _writeHead(QFile& file, mtt::DataStream& stream);
 
   private:
     const EnvironmentGroup& _environment;
     const BackgroundObject& _background;
-
-    QString _filename;
-    QFile* _file;
-    DataStream* _stream;
-    QDir _fileDirectory;
   };
-
-  inline const QString& SaveEnvironmentTask::filename() const noexcept
-  {
-    return _filename;
-  }
 }

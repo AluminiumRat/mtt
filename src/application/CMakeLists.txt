@@ -44,6 +44,7 @@ add_definitions(${Qt5Core_DEFINITIONS}
 set(HEADERS
     "../../include/mtt/application/AsyncTasks/AbstractAsyncTask.h"
     "../../include/mtt/application/AsyncTasks/AsyncTaskQueue.h"
+    "../../include/mtt/application/AsyncTasks/SaveToFileTask.h"
 
     "../../include/mtt/application/DrawModel/DrawModelAnimation.h"
     "../../include/mtt/application/DrawModel/FbxModelLoader.h"
@@ -156,6 +157,7 @@ set(UI_FILES
 set(SOURCES
     "AsyncTasks/AbstractAsyncTask.cpp"
     "AsyncTasks/AsyncTaskQueue.cpp"
+    "AsyncTasks/SaveToFileTask.cpp"
 
     "DrawModel/DrawModelAnimation.cpp"
     "DrawModel/DrawModelAnimationTrack.cpp"

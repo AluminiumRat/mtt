@@ -13,51 +13,39 @@ using namespace mtt;
 SaveEnvironmentTask::SaveEnvironmentTask( const QString& filename,
                                           const EnvironmentGroup& environment,
                                           const BackgroundObject& background) :
-  AbstractAsyncTask(QCoreApplication::tr("Environment saving"),
-                    AbstractAsyncTask::DEPENDENT,
-                    AbstractAsyncTask::EXPLICIT),
+  SaveToFileTask(QCoreApplication::tr("Environment saving"), filename),
   _environment(environment),
-  _background(background),
-  _filename(filename),
-  _file(nullptr),
-  _fileDirectory(QFileInfo(_filename).dir()),
-  _stream(nullptr)
+  _background(background)
 {
 }
 
-void SaveEnvironmentTask::asyncPart()
+void SaveEnvironmentTask::saveData( QFile& file,
+                                    mtt::DataStream& stream,
+                                    const QFileInfo& targetFileInfo,
+                                    const QFileInfo& tmpFileInfo)
 {
-  if(!_fileDirectory.exists()) throw std::runtime_error("The file directory does not exist");
-
-  QFile file(_filename);
-  if(!file.open(QFile::WriteOnly)) throw std::runtime_error("Unable to open model file");
-  _file = &file;
-
-  DataStream stream(&file);
-  _stream = &stream;
-
-  _writeHead();
+  _writeHead(file, stream);
 
   ObjectSaver saver;
   EnvironmentObjectFactory factory;
 
-  saver.saveObject(_background, *_stream, _fileDirectory, factory);
+  saver.saveObject(_background, stream, targetFileInfo.dir(), factory);
 
   uint32_t objectsNumber = uint32_t(_environment.childsNumber());
-  *_stream << objectsNumber;
+  stream << objectsNumber;
   for(uint32_t objectIndex = 0;
       objectIndex < objectsNumber;
       objectIndex++)
   {
     saver.saveObject( _environment.child(objectIndex),
-                      *_stream,
-                      _fileDirectory,
+                      stream,
+                      targetFileInfo.dir(),
                       factory);
   }
 }
 
-void SaveEnvironmentTask::_writeHead()
+void SaveEnvironmentTask::_writeHead(QFile& file, mtt::DataStream& stream)
 {
-  _file->write(fileHead.c_str(), fileHead.length());
-  *_stream << fileVersion;
+  file.write(fileHead.c_str(), fileHead.length());
+  stream << fileVersion;
 }

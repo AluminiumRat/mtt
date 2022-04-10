@@ -13,115 +13,107 @@
 SaveModelTask::SaveModelTask( const EditorScene& scene,
                               const QString& filename,
                               EditorCommonData& commonData) :
-  AbstractAsyncTask(QObject::tr("Saving"),
-                    mtt::AbstractAsyncTask::DEPENDENT,
-                    mtt::AbstractAsyncTask::EXPLICIT),
+  SaveToFileTask(QObject::tr("Saving"), filename),
   _scene(scene),
-  _filename(filename),
-  _file(nullptr),
-  _fileDirectory(QFileInfo(_filename).dir()),
-  _stream(nullptr),
   _commonData(commonData)
 {
 }
 
-void SaveModelTask::asyncPart()
+void SaveModelTask::saveData( QFile& file,
+                              mtt::DataStream& stream,
+                              const QFileInfo& targetFileInfo,
+                              const QFileInfo& tmpFileInfo)
 {
-  if(!_fileDirectory.exists()) throw std::runtime_error("The file directory does not exist");
-
-  QFile file(_filename);
-  if(!file.open(QFile::WriteOnly)) throw std::runtime_error("Unable to open model file");
-  _file = &file;
-
-  mtt::DataStream stream(&file);
-  _stream = &stream;
-
-  _writeHead();
-  _writeMaterials();
-  _writeSkeletons();
-  _writeGeometry();
-  _writeAnimations();
+  _writeHead(file, stream);
+  _writeMaterials(stream, targetFileInfo.dir());
+  _writeSkeletons(stream, targetFileInfo.dir());
+  _writeGeometry(stream, targetFileInfo.dir());
+  _writeAnimations(stream, targetFileInfo.dir());
 }
 
-void SaveModelTask::_writeHead()
+void SaveModelTask::_writeHead(QFile& file, mtt::DataStream& stream)
 {
-  _file->write(fileHead.c_str(), fileHead.length());
-  *_stream << fileVersion;
+  file.write(fileHead.c_str(), fileHead.length());
+  stream << fileVersion;
 }
 
-void SaveModelTask::_writeMaterials()
+void SaveModelTask::_writeMaterials(mtt::DataStream& stream,
+                                    const QDir& fileDirectory)
 {
   ObjectSaver saver;
   MMDObjectFactory factory;
 
   uint32_t materialsNumber = _scene.root().materialsGroup().childsNumber();
-  *_stream << materialsNumber;
+  stream << materialsNumber;
   for(uint32_t materialIndex = 0;
       materialIndex < materialsNumber;
       materialIndex++)
   {
     saver.saveObject( _scene.root().materialsGroup().child(materialIndex),
-                      *_stream,
-                      _fileDirectory,
+                      stream,
+                      fileDirectory,
                       factory);
   }
 }
 
-void SaveModelTask::_writeSkeletons()
+void SaveModelTask::_writeSkeletons(mtt::DataStream& stream,
+                                    const QDir& fileDirectory)
 {
   ObjectSaver saver;
   MMDObjectFactory factory;
 
   uint32_t skeletonsNumber = _scene.root().skeletonGroup().childsNumber();
-  *_stream << skeletonsNumber;
+  stream << skeletonsNumber;
   for(uint32_t skeletonIndex = 0;
       skeletonIndex < skeletonsNumber;
       skeletonIndex++)
   {
     saver.saveObject( _scene.root().skeletonGroup().child(skeletonIndex),
-                      *_stream,
-                      _fileDirectory,
+                      stream,
+                      fileDirectory,
                       factory);
   }
 }
 
-void SaveModelTask::_writeGeometry()
+void SaveModelTask::_writeGeometry( mtt::DataStream& stream,
+                                    const QDir& fileDirectory)
 {
   ObjectSaver saver;
   MMDObjectFactory factory;
 
   uint32_t lodsNumber = _scene.root().geometryGroup().childsNumber();
-  *_stream << lodsNumber;
+  stream << lodsNumber;
   for(uint32_t lodIndex = 0;
       lodIndex < lodsNumber;
       lodIndex++)
   {
     saver.saveObject( _scene.root().geometryGroup().child(lodIndex),
-                      *_stream,
-                      _fileDirectory,
+                      stream,
+                      fileDirectory,
                       factory);
   }
 }
 
-void SaveModelTask::_writeAnimations()
+void SaveModelTask::_writeAnimations( mtt::DataStream& stream,
+                                      const QDir& fileDirectory)
 {
   ObjectSaver saver;
   MMDObjectFactory factory;
 
   uint32_t animationsNumber = _scene.root().animationGroup().childsNumber();
-  *_stream << animationsNumber;
+  stream << animationsNumber;
   for(uint32_t animationIndex = 0;
       animationIndex < animationsNumber;
       animationIndex++)
   {
     saver.saveObject( _scene.root().animationGroup().child(animationIndex),
-                      *_stream,
-                      _fileDirectory,
+                      stream,
+                      fileDirectory,
                       factory);
   }
 }
 
 void SaveModelTask::finalizePart()
 {
-  _commonData.setModelFilename(_filename);
+  _commonData.setModelFilename(filename());
 }

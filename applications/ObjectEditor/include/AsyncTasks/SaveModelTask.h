@@ -2,23 +2,12 @@
 
 #include <string>
 
-#include <QtCore/QDir>
-#include <QtCore/QString>
-
-#include <mtt/application/AsyncTasks/AbstractAsyncTask.h>
-#include <mtt/application/DataStream.h>
-
-namespace mtt
-{
-  class Object;
-}
-
-class QFile;
+#include <mtt/application/AsyncTasks/SaveToFileTask.h>
 
 class EditorCommonData;
 class EditorScene;
 
-class SaveModelTask : public mtt::AbstractAsyncTask
+class SaveModelTask : public mtt::SaveToFileTask
 {
 public:
   static const inline std::string fileHead = "MMDModelFile";
@@ -33,21 +22,20 @@ public:
   virtual ~SaveModelTask() noexcept = default;
 
 protected:
-  virtual void asyncPart() override;
+  virtual void saveData(QFile& file,
+                        mtt::DataStream& stream,
+                        const QFileInfo& targetFileInfo,
+                        const QFileInfo& tmpFileInfo) override;
   virtual void finalizePart() override;
 
 private:
-  void _writeHead();
-  void _writeMaterials();
-  void _writeSkeletons();
-  void _writeGeometry();
-  void _writeAnimations();
+  void _writeHead(QFile& file, mtt::DataStream& stream);
+  void _writeMaterials(mtt::DataStream& stream, const QDir& fileDirectory);
+  void _writeSkeletons(mtt::DataStream& stream, const QDir& fileDirectory);
+  void _writeGeometry(mtt::DataStream& stream, const QDir& fileDirectory);
+  void _writeAnimations(mtt::DataStream& stream, const QDir& fileDirectory);
 
 private:
   const EditorScene& _scene;
-  QString _filename;
-  QFile* _file;
-  mtt::DataStream* _stream;
-  QDir _fileDirectory;
   EditorCommonData& _commonData;
 };
