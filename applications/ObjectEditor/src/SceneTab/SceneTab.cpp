@@ -9,18 +9,6 @@ SceneTab::SceneTab(ObjectEditorCommonData& commonEditData) :
   mtt::SceneTab(commonEditData),
   _commonEditData(commonEditData)
 {
-  connect(&_commonEditData,
-          &ObjectEditorCommonData::sceneChanged,
-          this,
-          &SceneTab::_setScene,
-          Qt::DirectConnection);
-  _setScene(_commonEditData.scene());
-}
-
-void SceneTab::_setScene(ObjectEditorScene* scene)
-{
-  if(scene == nullptr) setRootObject(nullptr);
-  else setRootObject(&scene->dataRoot());
 }
 
 std::unique_ptr<mtt::PropertiesWidgetFactory>

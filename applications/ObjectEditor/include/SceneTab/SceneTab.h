@@ -20,8 +20,5 @@ protected:
                       createWidgetsFactory(QVBoxLayout& widgetsLayout) override;
 
 private:
-  void _setScene(ObjectEditorScene* scene);
-
-private:
   ObjectEditorCommonData& _commonEditData;
 };

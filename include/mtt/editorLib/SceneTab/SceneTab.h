@@ -14,48 +14,54 @@ class QVBoxLayout;
 
 namespace Ui
 {
-  class sceneTab;
+  class SceneTab;
 }
 
 namespace mtt
 {
-  class CommonEditData;
+  class EditorCommonData;
+  class EditorScene;
 
   class SceneTab : public QWidget
   {
     Q_OBJECT
 
   public:
-    explicit SceneTab(CommonEditData& commonEditData);
+    explicit SceneTab(EditorCommonData& commonData);
     SceneTab(const SceneTab&) = delete;
     SceneTab& operator = (const SceneTab&) = delete;
     virtual ~SceneTab() noexcept;
 
   protected:
-    inline CommonEditData& commonEditData() const noexcept;
-
-    void setRootObject(Object* newRoot);
+    inline EditorCommonData& commonData() const noexcept;
 
     /// The return value should not be nullptr
     virtual std::unique_ptr<PropertiesWidgetFactory> createWidgetsFactory(
                                                     QVBoxLayout& widgetsLayout);
 
   private:
+    void _setRootObjects(Object* dataRoot, Object* environmentRoot);
+    void _setScene(EditorScene* scene);
     void _updatePropertiesWidgets() noexcept;
     void _clearPropertiesWidgets() noexcept;
 
   private:
-    Ui::sceneTab* _ui;
-    CommonEditData& _commonEditData;
-    SceneTreeView* _treeView;
-    std::optional<EditorObjectsItemModel> _itemModel;
-    QSortFilterProxyModel _sortModel;
+    Ui::SceneTab* _ui;
+    EditorCommonData& _commonData;
+
+    SceneTreeView* _dataTreeView;
+    std::optional<EditorObjectsItemModel> _dataItemModel;
+    QSortFilterProxyModel _dataSortModel;
+
+    SceneTreeView* _environmentTreeView;
+    std::optional<EditorObjectsItemModel> _environmentItemModel;
+    QSortFilterProxyModel _environmentSortModel;
 
     QVBoxLayout* _widgetsPlace;
   };
 
-  inline CommonEditData& SceneTab::commonEditData() const noexcept
+  inline EditorCommonData& SceneTab::commonData() const noexcept
   {
-    return _commonEditData;
+    return _commonData;
   }
 }

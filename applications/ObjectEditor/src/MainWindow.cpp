@@ -31,14 +31,11 @@ MainWindow::MainWindow() :
   _updateSceneRenderObserver();
 
   std::unique_ptr<QDockWidget> dockWidget(new QDockWidget(this));
-  QDockWidget* dock = dockWidget.get();
-  addDockWidget(Qt::RightDockWidgetArea, dock);
-  dockWidget.release();
-  dock->setFeatures(QDockWidget::NoDockWidgetFeatures);
-  dock->setWindowTitle(tr("Properties"));
-  dock->show();
-  dock->setWidget(&_sceneTab);
-  _sceneTab.show();
+  dockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
+  dockWidget->setWindowTitle(tr("Properties"));
+  dockWidget->show();
+  dockWidget->setWidget(&_sceneTab);
+  addDockWidget(Qt::RightDockWidgetArea, dockWidget.release());
 
   setCentralWidget(&_renderWidget);
 

@@ -250,7 +250,7 @@ QModelIndex ObjectItemTreeModel::getIndex(const Object& object) const noexcept
   _initIfNeeded();
   DescriptionsMap::const_iterator iDescrition =
                                             _descriptionsMap.find(object.id());
-  if(iDescrition == _descriptionsMap.end()) Abort("ObjectItemTreeModel::getIndex: objects description is not found.");
+  if(iDescrition == _descriptionsMap.end()) return QModelIndex();
 
   ObjectDescription* description = iDescrition->second;
   if(description == _rootDescription.get()) return QModelIndex();

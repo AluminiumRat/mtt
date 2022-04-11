@@ -59,10 +59,11 @@ void Scene::registerObject(Object& object)
 void Scene::unregisterObject(Object& object) noexcept
 {
   if(object.scene() != this) Abort("Scene::unregisterObject: the object is not registered in scene.");
+  if(inDestruction()) return;
 
   try
   {
-    if(!inDestruction()) _objectsMap.erase(object.id());
+    _objectsMap.erase(object.id());
     object._setScene(nullptr);
   }
   catch(...)

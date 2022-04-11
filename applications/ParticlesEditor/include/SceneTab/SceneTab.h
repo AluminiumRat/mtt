@@ -20,8 +20,5 @@ protected:
                       createWidgetsFactory(QVBoxLayout& widgetsLayout) override;
 
 private:
-  void _setScene(ParticlesEditorScene* scene);
-
-private:
   ParticlesEditorCommonData& _commonEditData;
 };
