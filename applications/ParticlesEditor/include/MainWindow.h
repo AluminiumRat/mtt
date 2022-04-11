@@ -8,9 +8,10 @@
 #include <mtt/application/Widgets/StatisticWidget.h>
 #include <mtt/editorLib/Render/EditorRenderWidget.h>
 #include <mtt/editorLib/Render/SceneRenderObserver.h>
+#include <mtt/editorLib/SceneTreeWidget/SceneTreeWidget.h>
 
+#include <PropertiesWidget/PropertiesWidget.h>
 #include <Render/RenderObserverFactory.h>
-#include <SceneTab/SceneTab.h>
 #include <EditMenu.h>
 #include <ParticlesEditorCommonData.h>
 #include <FileMenu.h>
@@ -46,7 +47,8 @@ private:
   RenderObserverFactory _observerFactory;
   std::optional<mtt::SceneRenderObserver> _sceneRenderObserver;
 
-  SceneTab _sceneTab;
+  mtt::SceneTreeWidget _treeWidget;
+  PropertiesWidget _propertiesWidget;
   mtt::EditorRenderWidget _renderWidget;
 
   FileMenu _fileMenu;

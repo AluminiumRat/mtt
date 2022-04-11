@@ -67,19 +67,19 @@ set(HEADERS
     "include/Objects/OEVisitorExtension.h"
     "include/Objects/RootObject.h"
 
+    "include/PropertiesWidget/GeometryObjectWidget.h"
+    "include/PropertiesWidget/LODObjectWidget.h"
+    "include/PropertiesWidget/MaterialWidget.h"
+    "include/PropertiesWidget/MeshWidget.h"
+    "include/PropertiesWidget/PropertiesWidgetFactory.h"
+    "include/PropertiesWidget/PropertiesWidget.h"
+    "include/PropertiesWidget/VertexDataWidget.h"
+
     "include/Render/BonesObserver.h"
     "include/Render/LODRenderObserver.h"
     "include/Render/MaterialObserver.h"
     "include/Render/MeshRenderObserver.h"
     "include/Render/RenderObserverFactory.h"
-
-    "include/SceneTab/GeometryObjectWidget.h"
-    "include/SceneTab/LODObjectWidget.h"
-    "include/SceneTab/MaterialWidget.h"
-    "include/SceneTab/MeshWidget.h"
-    "include/SceneTab/PropertiesWidgetFactory.h"
-    "include/SceneTab/SceneTab.h"
-    "include/SceneTab/VertexDataWidget.h"
 
     "include/EditMenu.h"
     "include/FbxDrawableImporter.h"
@@ -110,19 +110,19 @@ set(SOURCES
     "src/Objects/OEVisitorExtension.cpp"
     "src/Objects/RootObject.cpp"
 
+    "src/PropertiesWidget/GeometryObjectWidget.cpp"
+    "src/PropertiesWidget/LODObjectWidget.cpp"
+    "src/PropertiesWidget/MaterialWidget.cpp"
+    "src/PropertiesWidget/MeshWidget.cpp"
+    "src/PropertiesWidget/PropertiesWidgetFactory.cpp"
+    "src/PropertiesWidget/PropertiesWidget.cpp"
+    "src/PropertiesWidget/VertexDataWidget.cpp"
+
     "src/Render/BonesObserver.cpp"
     "src/Render/LODRenderObserver.cpp"
     "src/Render/MaterialObserver.cpp"
     "src/Render/MeshRenderObserver.cpp"
     "src/Render/RenderObserverFactory.cpp"
-
-    "src/SceneTab/GeometryObjectWidget.cpp"
-    "src/SceneTab/LODObjectWidget.cpp"
-    "src/SceneTab/MaterialWidget.cpp"
-    "src/SceneTab/MeshWidget.cpp"
-    "src/SceneTab/PropertiesWidgetFactory.cpp"
-    "src/SceneTab/SceneTab.cpp"
-    "src/SceneTab/VertexDataWidget.cpp"
 
     "src/EditMenu.cpp"
     "src/FbxDrawableImporter.cpp"
@@ -135,10 +135,10 @@ set(SOURCES
     )
 
 set(UI_FILES
-    "src/SceneTab/GeometryObjectWidget.ui"
-    "src/SceneTab/LODObjectWidget.ui"
-    "src/SceneTab/MaterialWidget.ui"
-    "src/SceneTab/MeshWidget.ui"
+    "src/PropertiesWidget/GeometryObjectWidget.ui"
+    "src/PropertiesWidget/LODObjectWidget.ui"
+    "src/PropertiesWidget/MaterialWidget.ui"
+    "src/PropertiesWidget/MeshWidget.ui"
     "src/MainWindow.ui"
     )
 

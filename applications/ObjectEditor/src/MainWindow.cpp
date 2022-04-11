@@ -14,7 +14,8 @@
 MainWindow::MainWindow() :
   _ui(new Ui_MainWindow),
   _observerFactory(_commonEditData),
-  _sceneTab(_commonEditData),
+  _treeWidget(_commonEditData),
+  _propertiesWidget(_commonEditData),
   _renderWidget(_commonEditData.renderScene(), _commonEditData),
   _fileMenu(*this, *_ui, _commonEditData),
   _editMenu(*this, *_ui, _commonEditData),
@@ -30,12 +31,17 @@ MainWindow::MainWindow() :
           Qt::DirectConnection);
   _updateSceneRenderObserver();
 
-  std::unique_ptr<QDockWidget> dockWidget(new QDockWidget(this));
-  dockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
-  dockWidget->setWindowTitle(tr("Properties"));
-  dockWidget->show();
-  dockWidget->setWidget(&_sceneTab);
-  addDockWidget(Qt::RightDockWidgetArea, dockWidget.release());
+  std::unique_ptr<QDockWidget> treeDock(new QDockWidget(this));
+  treeDock->setFeatures(QDockWidget::NoDockWidgetFeatures);
+  treeDock->setWindowTitle(tr("Scene"));
+  treeDock->setWidget(&_treeWidget);
+  addDockWidget(Qt::RightDockWidgetArea, treeDock.release());
+
+  std::unique_ptr<QDockWidget> propertiesDock(new QDockWidget(this));
+  propertiesDock->setFeatures(QDockWidget::NoDockWidgetFeatures);
+  propertiesDock->setWindowTitle(tr("Properties"));
+  propertiesDock->setWidget(&_propertiesWidget);
+  addDockWidget(Qt::RightDockWidgetArea, propertiesDock.release());
 
   setCentralWidget(&_renderWidget);
 
