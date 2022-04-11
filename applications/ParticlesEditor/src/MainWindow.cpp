@@ -1,5 +1,6 @@
 #include <memory>
 
+#include <QtCore/QSettings>
 #include <QtWidgets/QDockWidget>
 #include <QtWidgets/QMessageBox>
 
@@ -32,15 +33,22 @@ MainWindow::MainWindow() :
   _updateSceneRenderObserver();
 
   std::unique_ptr<QDockWidget> treeDock(new QDockWidget(this));
-  treeDock->setFeatures(QDockWidget::NoDockWidgetFeatures);
+  treeDock->setObjectName("TreeDock");
+  treeDock->setFeatures(
+            QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
   treeDock->setWindowTitle(tr("Scene"));
   treeDock->setWidget(&_treeWidget);
+  treeDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
   addDockWidget(Qt::RightDockWidgetArea, treeDock.release());
 
   std::unique_ptr<QDockWidget> propertiesDock(new QDockWidget(this));
-  propertiesDock->setFeatures(QDockWidget::NoDockWidgetFeatures);
+  propertiesDock->setObjectName("PropertiesDock");
+  propertiesDock->setFeatures(
+            QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
   propertiesDock->setWindowTitle(tr("Properties"));
   propertiesDock->setWidget(&_propertiesWidget);
+  propertiesDock->setAllowedAreas(
+                              Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
   addDockWidget(Qt::RightDockWidgetArea, propertiesDock.release());
 
   setCentralWidget(&_renderWidget);
@@ -87,11 +95,28 @@ MainWindow::MainWindow() :
           this,
           &MainWindow::_showStatistic,
           Qt::DirectConnection);
+
+  _restoreGeometry();
 }
 
 MainWindow::~MainWindow() noexcept
 {
   delete _ui;
+}
+
+void MainWindow::_restoreGeometry()
+{
+  QSettings settings("MTT", "ParticlesEditor");
+  restoreGeometry(settings.value("mainWindowGeometry").toByteArray());
+  restoreState(settings.value("mainWindowState").toByteArray());
+}
+
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+  QSettings settings("MTT", "ParticlesEditor");
+  settings.setValue("mainWindowGeometry", saveGeometry());
+  settings.setValue("mainWindowState", saveState());
+  QMainWindow::closeEvent(event);
 }
 
 void MainWindow::_updateSceneRenderObserver() noexcept

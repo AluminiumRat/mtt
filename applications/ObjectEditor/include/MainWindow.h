@@ -29,7 +29,11 @@ public:
   MainWindow& operator = (const MainWindow&) = delete;
   virtual ~MainWindow() noexcept;
 
+protected:
+  virtual void closeEvent(QCloseEvent* event) override;
+
 private:
+  void _restoreGeometry();
   void _updateSceneRenderObserver() noexcept;
   void _showAsyncTaskDialog(mtt::AbstractAsyncTask& task);
   void _checkAsyncTaskDialog();
