@@ -5,7 +5,7 @@
 #include <Objects/OEVisitor.h>
 
 class EditorCommonData;
-class EditorScene;
+class ObjectEditorScene;
 
 class PropertiesWidgetFactory : public OEVisitorT<mtt::PropertiesWidgetFactory>
 {
@@ -25,5 +25,5 @@ public:
 
 private:
   EditorCommonData& _commonData;
-  EditorScene& _scene;
+  ObjectEditorScene& _scene;
 };

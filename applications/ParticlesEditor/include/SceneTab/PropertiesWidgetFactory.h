@@ -5,7 +5,6 @@
 #include <Objects/PEVisitor.h>
 
 class EditorCommonData;
-class EditorScene;
 
 class PropertiesWidgetFactory : public PEVisitorT<mtt::PropertiesWidgetFactory>
 {

@@ -7,9 +7,9 @@
 #include <Objects/ObjectSaver.h>
 #include <Objects/PEEObjectFactory.h>
 #include <EditorCommonData.h>
-#include <EditorScene.h>
+#include <ParticlesEditorScene.h>
 
-SaveEffectTask::SaveEffectTask( const EditorScene& scene,
+SaveEffectTask::SaveEffectTask( const ParticlesEditorScene& scene,
                                 const QString& filename,
                                 EditorCommonData& commonData) :
   SaveToFileTask(QObject::tr("Saving"), filename),
@@ -27,14 +27,14 @@ void SaveEffectTask::saveData(QFile& file,
   ObjectSaver saver;
   PEEObjectFactory factory;
 
-  saver.saveObject( _scene.root().particleField(),
+  saver.saveObject( _scene.dataRoot().particleField(),
                     stream,
                     targetFileInfo.dir(),
                     factory);
 
   _writeModificators(stream, targetFileInfo.dir());
 
-  saver.saveObject( _scene.root().animation(),
+  saver.saveObject( _scene.dataRoot().animation(),
                     stream,
                     targetFileInfo.dir(),
                     factory);
@@ -53,16 +53,17 @@ void SaveEffectTask::_writeModificators(mtt::DataStream& stream,
   PEEObjectFactory factory;
 
   uint32_t modificatorsNumber =
-                              _scene.root().modificatorsGroup().childsNumber();
+                          _scene.dataRoot().modificatorsGroup().childsNumber();
   stream << modificatorsNumber;
   for(uint32_t modificatorIndex = 0;
       modificatorIndex < modificatorsNumber;
       modificatorIndex++)
   {
-    saver.saveObject( _scene.root().modificatorsGroup().child(modificatorIndex),
-                      stream,
-                      fileDirectory,
-                      factory);
+    saver.saveObject( 
+                  _scene.dataRoot().modificatorsGroup().child(modificatorIndex),
+                  stream,
+                  fileDirectory,
+                  factory);
   }
 }
 

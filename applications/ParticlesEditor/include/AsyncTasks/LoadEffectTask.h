@@ -16,12 +16,12 @@
 class QFile;
 
 class EditorCommonData;
-class EditorScene;
+class ParticlesEditorScene;
 
 class LoadEffectTask : public mtt::AbstractAsyncTask
 {
 public:
-  LoadEffectTask( EditorScene& scene,
+  LoadEffectTask( ParticlesEditorScene& scene,
                   const QString& filename,
                   EditorCommonData& commonData);
   LoadEffectTask(const LoadEffectTask&) = delete;
@@ -38,7 +38,7 @@ private:
   void _clearScene() noexcept;
 
 private:
-  EditorScene& _scene;
+  ParticlesEditorScene& _scene;
   QString _filename;
   QFile* _file;
   mtt::DataStream* _stream;

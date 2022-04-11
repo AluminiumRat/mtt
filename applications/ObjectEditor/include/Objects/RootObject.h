@@ -39,23 +39,11 @@ public:
   inline mtt::AnimationGroup& animationGroup() noexcept;
   inline const mtt::AnimationGroup& animationGroup() const noexcept;
 
-  inline mtt::BackgroundObject& background() noexcept;
-  inline const mtt::BackgroundObject& background() const noexcept;
-  void changeBackground(std::unique_ptr<mtt::BackgroundObject> newBackground);
-
-  inline mtt::EnvironmentGroup& environment() noexcept;
-  inline const mtt::EnvironmentGroup& environment() const noexcept;
-
-signals:
-  void backgroundChanged(mtt::BackgroundObject& newBackground);
-
 private:
   mtt::SkeletonGroup* _skeletonGroup;
   GeometryGroup* _geometryGroup;
   MaterialsGroup* _materialsGroup;
   mtt::AnimationGroup* _animationGroup;
-  mtt::BackgroundObject* _background;
-  mtt::EnvironmentGroup* _environment;
 };
 
 inline mtt::SkeletonGroup& RootObject::skeletonGroup() noexcept
@@ -96,24 +84,4 @@ inline mtt::AnimationGroup& RootObject::animationGroup() noexcept
 inline const mtt::AnimationGroup& RootObject::animationGroup() const noexcept
 {
   return *_animationGroup;
-}
-
-inline mtt::BackgroundObject& RootObject::background() noexcept
-{
-  return *_background;
-}
-
-inline const mtt::BackgroundObject& RootObject::background() const noexcept
-{
-  return *_background;
-}
-
-inline mtt::EnvironmentGroup& RootObject::environment() noexcept
-{
-  return *_environment;
-}
-
-inline const mtt::EnvironmentGroup& RootObject::environment() const noexcept
-{
-  return *_environment;
 }

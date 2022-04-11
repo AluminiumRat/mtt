@@ -35,14 +35,6 @@ public:
   /// newAnimation must be not null
   void changeAnimation(std::unique_ptr<ParticleAnimation> newAnimation);
 
-  inline mtt::BackgroundObject& background() noexcept;
-  inline const mtt::BackgroundObject& background() const noexcept;
-  /// newBackground must be not null
-  void changeBackground(std::unique_ptr<mtt::BackgroundObject> newBackground);
-
-  inline mtt::EnvironmentGroup& environment() noexcept;
-  inline const mtt::EnvironmentGroup& environment() const noexcept;
-
   inline ParticleField& particleField() noexcept;
   inline const ParticleField& particleField() const noexcept;
   /// newField must be not null
@@ -50,14 +42,11 @@ public:
 
 signals:
   void animationChanged(ParticleAnimation& newAnimation);
-  void backgroundChanged(mtt::BackgroundObject& newBackground);
   void particleFieldChanged(ParticleField& newField);
 
 private:
   ModificatorGroup* _modificatorsGroup;
   ParticleAnimation* _animation;
-  mtt::BackgroundObject* _background;
-  mtt::EnvironmentGroup* _environment;
   ParticleField* _particleField;
 };
 
@@ -79,26 +68,6 @@ inline ParticleAnimation& RootObject::animation() noexcept
 inline const ParticleAnimation& RootObject::animation() const noexcept
 {
   return *_animation;
-}
-
-inline mtt::BackgroundObject& RootObject::background() noexcept
-{
-  return *_background;
-}
-
-inline const mtt::BackgroundObject& RootObject::background() const noexcept
-{
-  return *_background;
-}
-
-inline mtt::EnvironmentGroup& RootObject::environment() noexcept
-{
-  return *_environment;
-}
-
-inline const mtt::EnvironmentGroup& RootObject::environment() const noexcept
-{
-  return *_environment;
 }
 
 inline ParticleField& RootObject::particleField() noexcept

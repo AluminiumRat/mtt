@@ -83,11 +83,11 @@ set(HEADERS
 
     "include/EditMenu.h"
     "include/EditorCommonData.h"
-    "include/EditorScene.h"
     "include/FbxDrawableImporter.h"
     "include/FileMenu.h"
     "include/MainWindow.h"
     "include/ManipulatorMenu.h"
+    "include/ObjectEditorScene.h"
     )
 
 set(SOURCES
@@ -126,12 +126,12 @@ set(SOURCES
 
     "src/EditMenu.cpp"
     "src/EditorCommonData.cpp"
-    "src/EditorScene.cpp"
     "src/FbxDrawableImporter.cpp"
     "src/FileMenu.cpp"
     "src/MainWindow.cpp"
     "src/ManipulatorMenu.cpp"
     "src/ObjectEditor.cpp"
+    "src/ObjectEditorScene.cpp"
     )
 
 set(UI_FILES

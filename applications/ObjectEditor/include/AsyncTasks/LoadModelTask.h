@@ -17,12 +17,12 @@
 class QFile;
 
 class EditorCommonData;
-class EditorScene;
+class ObjectEditorScene;
 
 class LoadModelTask : public mtt::AbstractAsyncTask
 {
 public:
-  LoadModelTask(EditorScene& scene,
+  LoadModelTask(ObjectEditorScene& scene,
                 const QString& filename,
                 EditorCommonData& commonData);
   LoadModelTask(const LoadModelTask&) = delete;
@@ -42,7 +42,7 @@ private:
   void _clearScene() noexcept;
 
 private:
-  EditorScene& _scene;
+  ObjectEditorScene& _scene;
   QString _filename;
   QFile* _file;
   mtt::DataStream* _stream;

@@ -7,7 +7,7 @@
 #include <mtt/editorLib/AnimationPlayer.h>
 #include <mtt/editorLib/EditorUndoStack.h>
 
-#include <EditorScene.h>
+#include <ObjectEditorScene.h>
 
 class EditorCommonData : public mtt::CommonEditData
 {
@@ -19,10 +19,10 @@ public:
   EditorCommonData& operator = (const EditorCommonData&) = delete;
   virtual ~EditorCommonData() noexcept = default;
 
-  inline EditorScene* scene() const noexcept;
+  inline ObjectEditorScene* scene() const noexcept;
   /// Returns old scene
-  virtual std::unique_ptr<EditorScene> setScene(
-                                        std::unique_ptr<EditorScene> newScene);
+  virtual std::unique_ptr<ObjectEditorScene> setScene(
+                                    std::unique_ptr<ObjectEditorScene> newScene);
 
   inline mtt::AnimationPlayer& animationPlayer() noexcept;
   inline const mtt::AnimationPlayer& animationPlayer() const noexcept;
@@ -37,7 +37,7 @@ public:
   void setEnvironmentFilename(const QString& newValue) noexcept;
 
 signals:
-  void sceneChanged(EditorScene* newScene);
+  void sceneChanged(ObjectEditorScene* newScene);
   void modelFilenameChanged(const QString& newValue);
   void environmentFilenameChanged(const QString& newValue);
 
@@ -49,9 +49,9 @@ private:
   QString _environmentFilename;
 };
 
-inline EditorScene* EditorCommonData::scene() const noexcept
+inline ObjectEditorScene* EditorCommonData::scene() const noexcept
 {
-  return static_cast<EditorScene*>(CommonEditData::scene());
+  return static_cast<ObjectEditorScene*>(CommonEditData::scene());
 }
 
 inline mtt::AnimationPlayer& EditorCommonData::animationPlayer() noexcept

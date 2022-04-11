@@ -37,7 +37,7 @@ void AddModelFromFbxTask::finalizePart()
 {
   AbstractAsyncTask::finalizePart();
 
-  EditorScene* scene = _commonData.scene();
+  ObjectEditorScene* scene = _commonData.scene();
   if(scene == nullptr) return;
 
   QFileInfo fileInfo(_filename);
@@ -53,18 +53,18 @@ void AddModelFromFbxTask::finalizePart()
     lod->addChild(std::move(mesh));
   }
   std::unique_ptr<mtt::AddObjectCommand> addLodCommand(
-                                new mtt::AddObjectCommand(
-                                                std::move(lod),
-                                                scene->root().geometryGroup()));
+                            new mtt::AddObjectCommand(
+                                            std::move(lod),
+                                            scene->dataRoot().geometryGroup()));
   compositeCommand->addSubcommand(std::move(addLodCommand));
 
   for(std::unique_ptr<MaterialObject>& material : _data.materials)
   {
     toSelect.push_back(material.get());
     std::unique_ptr<mtt::AddObjectCommand> subCommand(
-                                  new mtt::AddObjectCommand(
-                                              std::move(material),
-                                              scene->root().materialsGroup()));
+                              new mtt::AddObjectCommand(
+                                          std::move(material),
+                                          scene->dataRoot().materialsGroup()));
     compositeCommand->addSubcommand(std::move(subCommand));
   }
 
@@ -72,9 +72,9 @@ void AddModelFromFbxTask::finalizePart()
   {
     toSelect.push_back(skeleton.get());
     std::unique_ptr<mtt::AddObjectCommand> subCommand(
-                                  new mtt::AddObjectCommand(
-                                                std::move(skeleton),
-                                                scene->root().skeletonGroup()));
+                              new mtt::AddObjectCommand(
+                                            std::move(skeleton),
+                                            scene->dataRoot().skeletonGroup()));
     compositeCommand->addSubcommand(std::move(subCommand));
   }
 

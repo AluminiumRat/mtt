@@ -9,12 +9,12 @@ EditorCommonData::EditorCommonData() :
 {
 }
 
-std::unique_ptr<EditorScene> EditorCommonData::setScene(
-                                          std::unique_ptr<EditorScene> newScene)
+std::unique_ptr<ParticlesEditorScene> EditorCommonData::setScene(
+                                std::unique_ptr<ParticlesEditorScene> newScene)
 {
-  EditorScene* newScenePtr = newScene.get();
-  std::unique_ptr<EditorScene> oldScene =
-                          static_cast_unique_ptr<EditorScene>(
+  ParticlesEditorScene* newScenePtr = newScene.get();
+  std::unique_ptr<ParticlesEditorScene> oldScene =
+                          static_cast_unique_ptr<ParticlesEditorScene>(
                                 CommonEditData::setScene(std::move(newScene)));
   setEffectFilename(QString());
   emit sceneChanged(newScenePtr);

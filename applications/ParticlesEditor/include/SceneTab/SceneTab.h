@@ -3,7 +3,7 @@
 #include <mtt/editorLib/SceneTab/SceneTab.h>
 
 class EditorCommonData;
-class EditorScene;
+class ParticlesEditorScene;
 
 class SceneTab : public mtt::SceneTab
 {
@@ -20,7 +20,7 @@ protected:
                       createWidgetsFactory(QVBoxLayout& widgetsLayout) override;
 
 private:
-  void _setScene(EditorScene* scene);
+  void _setScene(ParticlesEditorScene* scene);
 
 private:
   EditorCommonData& _commonEditData;

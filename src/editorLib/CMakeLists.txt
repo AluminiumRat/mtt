@@ -122,6 +122,7 @@ set(HEADERS
 
     "../../include/mtt/editorLib/AnimationPlayer.h"
     "../../include/mtt/editorLib/EditorApplication.h"
+    "../../include/mtt/editorLib/EditorScene.h"
     "../../include/mtt/editorLib/EditorUndoStack.h"
     "../../include/mtt/editorLib/FbxAnimationImporter.h"
     )
@@ -220,6 +221,7 @@ set(SOURCES
 
     "AnimationPlayer.cpp"
     "EditorApplication.cpp"
+    "EditorScene.cpp"
     "EditorUndoStack.cpp"
     "FbxAnimationImporter.cpp"
     )

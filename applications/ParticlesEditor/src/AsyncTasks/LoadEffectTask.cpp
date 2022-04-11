@@ -6,9 +6,9 @@
 #include <Objects/PEEObjectFactory.h>
 #include <Objects/ObjectLoader.h>
 #include <EditorCommonData.h>
-#include <EditorScene.h>
+#include <ParticlesEditorScene.h>
 
-LoadEffectTask::LoadEffectTask( EditorScene& scene,
+LoadEffectTask::LoadEffectTask( ParticlesEditorScene& scene,
                                 const QString& filename,
                                 EditorCommonData& commonData) :
   AbstractAsyncTask(QObject::tr("Loading"),
@@ -90,12 +90,12 @@ void LoadEffectTask::finalizePart()
 
   try
   {
-    _scene.root().changeParticleField(std::move(_field));
+    _scene.dataRoot().changeParticleField(std::move(_field));
     for (std::unique_ptr<HierarhicalObject>& modificator : _modificators)
     {
-      _scene.root().modificatorsGroup().addChild(std::move(modificator));
+      _scene.dataRoot().modificatorsGroup().addChild(std::move(modificator));
     }
-    _scene.root().changeAnimation(std::move(_animation));
+    _scene.dataRoot().changeAnimation(std::move(_animation));
 
     _commonData.setEffectFilename(_filename);
   }
@@ -108,7 +108,7 @@ void LoadEffectTask::finalizePart()
 
 void LoadEffectTask::_clearScene() noexcept
 {
-  ModificatorGroup& modificators = _scene.root().modificatorsGroup();
+  ModificatorGroup& modificators = _scene.dataRoot().modificatorsGroup();
   while (modificators.childsNumber() != 0)
   {
     modificators.removeChild(modificators.child(0), true);

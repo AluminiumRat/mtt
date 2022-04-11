@@ -208,7 +208,7 @@ void EditMenu::_addBone() noexcept
 {
   try
   {
-    EditorScene* scene = _commonData.scene();
+    ObjectEditorScene* scene = _commonData.scene();
     if(scene == nullptr) return;
 
     std::unique_ptr<mtt::SkeletonObject> newBone(
@@ -221,7 +221,7 @@ void EditMenu::_addBone() noexcept
       target = _commonData.selectedObjects()[0];
       if(!target->subobjectCanBeAddedAndRemoved(*newBone)) target = nullptr;
     }
-    if(target == nullptr) target = &scene->root().skeletonGroup();
+    if(target == nullptr) target = &scene->dataRoot().skeletonGroup();
     
     std::unique_ptr<mtt::AddObjectCommand> command(
                         new mtt::AddObjectCommand(std::move(newBone), *target));
@@ -246,16 +246,16 @@ void EditMenu::_addLOD() noexcept
 {
   try
   {
-    EditorScene* scene = _commonData.scene();
+    ObjectEditorScene* scene = _commonData.scene();
     if(scene == nullptr) return;
 
     std::unique_ptr<LODObject> newLOD(new LODObject(tr("LOD"), true));
     LODObject* lodPtr = newLOD.get();
 
     std::unique_ptr<mtt::AddObjectCommand> command(
-                                new mtt::AddObjectCommand(
-                                                std::move(newLOD),
-                                                scene->root().geometryGroup()));
+                            new mtt::AddObjectCommand(
+                                            std::move(newLOD),
+                                            scene->dataRoot().geometryGroup()));
     _commonData.undoStack().addAndMake(std::move(command));
     _commonData.selectObjects({ lodPtr });
   }
@@ -277,7 +277,7 @@ void EditMenu::_addMaterial() noexcept
 {
   try
   {
-    EditorScene* scene = _commonData.scene();
+    ObjectEditorScene* scene = _commonData.scene();
     if(scene == nullptr) return;
 
     std::unique_ptr<MaterialObject> newObject(
@@ -285,9 +285,9 @@ void EditMenu::_addMaterial() noexcept
     MaterialObject* objectPtr = newObject.get();
 
     std::unique_ptr<mtt::AddObjectCommand> command(
-                                new mtt::AddObjectCommand(
-                                              std::move(newObject),
-                                              scene->root().materialsGroup()));
+                            new mtt::AddObjectCommand(
+                                          std::move(newObject),
+                                          scene->dataRoot().materialsGroup()));
     _commonData.undoStack().addAndMake(std::move(command));
     _commonData.selectObjects({ objectPtr });
   }
@@ -309,7 +309,7 @@ void EditMenu::_addModelFromBlender() noexcept
 {
   try
   {
-    EditorScene* scene = _commonData.scene();
+    ObjectEditorScene* scene = _commonData.scene();
     if (scene == nullptr) return;
 
     QString fileName = QFileDialog::getOpenFileName(&_window,
@@ -341,7 +341,7 @@ void EditMenu::_addModelFrom3DMax() noexcept
 {
   try
   {
-    EditorScene* scene = _commonData.scene();
+    ObjectEditorScene* scene = _commonData.scene();
     if (scene == nullptr) return;
 
     QString fileName = QFileDialog::getOpenFileName(&_window,
@@ -367,7 +367,7 @@ void EditMenu::_addModelFromObj() noexcept
 {
   try
   {
-    EditorScene* scene = _commonData.scene();
+    ObjectEditorScene* scene = _commonData.scene();
     if (scene == nullptr) return;
 
     QString fileName = QFileDialog::getOpenFileName(&_window,
@@ -395,7 +395,7 @@ void EditMenu::_addAnimationFromFbx() noexcept
 {
   try
   {
-    EditorScene* scene = _commonData.scene();
+    ObjectEditorScene* scene = _commonData.scene();
     if (scene == nullptr) return;
 
     QString fileName = QFileDialog::getOpenFileName(&_window,
@@ -405,11 +405,11 @@ void EditMenu::_addAnimationFromFbx() noexcept
     if(fileName.isEmpty()) return;
 
     std::unique_ptr<mtt::AddAnimationFromFbxTask> task(
-                                  new mtt::AddAnimationFromFbxTask(
-                                                fileName,
-                                                scene->root().animationGroup(),
-                                                &scene->root().skeletonGroup(),
-                                                _commonData));
+                              new mtt::AddAnimationFromFbxTask(
+                                            fileName,
+                                            scene->dataRoot().animationGroup(),
+                                            &scene->dataRoot().skeletonGroup(),
+                                            _commonData));
     mtt::EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
   }
   catch (...)
@@ -422,7 +422,7 @@ void EditMenu::_addAmbientLight() noexcept
 {
   try
   {
-    EditorScene* scene = _commonData.scene();
+    ObjectEditorScene* scene = _commonData.scene();
     if(scene == nullptr) return;
 
     std::unique_ptr<mtt::AmbientLightObject> newLight(
@@ -430,8 +430,8 @@ void EditMenu::_addAmbientLight() noexcept
     mtt::AmbientLightObject* lightPtr = newLight.get();
 
     std::unique_ptr<mtt::AddObjectCommand> command(
-                        new mtt::AddObjectCommand(std::move(newLight),
-                                                  scene->root().environment()));
+                new mtt::AddObjectCommand(std::move(newLight),
+                                          scene->environmentRoot().objects()));
     _commonData.undoStack().addAndMake(std::move(command));
     _commonData.selectObjects({lightPtr});
   }
@@ -453,7 +453,7 @@ void EditMenu::_addDirectLight() noexcept
 {
   try
   {
-    EditorScene* scene = _commonData.scene();
+    ObjectEditorScene* scene = _commonData.scene();
     if(scene == nullptr) return;
 
     std::unique_ptr<mtt::DirectLightObject> newLight(
@@ -461,8 +461,8 @@ void EditMenu::_addDirectLight() noexcept
     mtt::DirectLightObject* lightPtr = newLight.get();
 
     std::unique_ptr<mtt::AddObjectCommand> command(
-                        new mtt::AddObjectCommand(std::move(newLight),
-                                                  scene->root().environment()));
+                new mtt::AddObjectCommand(std::move(newLight),
+                                          scene->environmentRoot().objects()));
     _commonData.undoStack().addAndMake(std::move(command));
     _commonData.selectObjects({lightPtr});
   }
@@ -484,7 +484,7 @@ void EditMenu::_addEnvironmentModel() noexcept
 {
   try
   {
-    EditorScene* scene = _commonData.scene();
+    ObjectEditorScene* scene = _commonData.scene();
     if (scene == nullptr) return;
 
     QString fileName = QFileDialog::getOpenFileName(
@@ -500,8 +500,8 @@ void EditMenu::_addEnvironmentModel() noexcept
     mtt::EnvironmentModel* modelPtr = newModel.get();
 
     std::unique_ptr<mtt::AddObjectCommand> command(
-                        new mtt::AddObjectCommand(std::move(newModel),
-                                                  scene->root().environment()));
+                new mtt::AddObjectCommand(std::move(newModel),
+                                          scene->environmentRoot().objects()));
     _commonData.undoStack().addAndMake(std::move(command));
     _commonData.selectObjects({modelPtr});
   }

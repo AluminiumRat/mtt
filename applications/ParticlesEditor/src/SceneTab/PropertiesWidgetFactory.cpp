@@ -15,14 +15,14 @@
 #include <SceneTab/TypeMaskWidget.h>
 #include <SceneTab/VisibilityControlWidget.h>
 #include <EditorCommonData.h>
-#include <EditorScene.h>
+#include <ParticlesEditorScene.h>
 
 PropertiesWidgetFactory::PropertiesWidgetFactory(
                                                 QVBoxLayout& widgetsLayout,
                                                 EditorCommonData& commonData) :
   PEVisitorT( widgetsLayout,
               commonData,
-              &commonData.scene()->root().modificatorsGroup(),
+              &commonData.scene()->dataRoot().modificatorsGroup(),
               &commonData.animationPlayer()),
   _commonData(commonData)
 {

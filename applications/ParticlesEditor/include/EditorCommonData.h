@@ -7,7 +7,7 @@
 #include <mtt/editorLib/AnimationPlayer.h>
 #include <mtt/editorLib/EditorUndoStack.h>
 
-#include <EditorScene.h>
+#include <ParticlesEditorScene.h>
 
 class EditorCommonData : public mtt::CommonEditData
 {
@@ -19,10 +19,10 @@ public:
   EditorCommonData& operator = (const EditorCommonData&) = delete;
   virtual ~EditorCommonData() noexcept = default;
 
-  inline EditorScene* scene() const noexcept;
+  inline ParticlesEditorScene* scene() const noexcept;
   /// Returns old scene
-  virtual std::unique_ptr<EditorScene> setScene(
-                                        std::unique_ptr<EditorScene> newScene);
+  virtual std::unique_ptr<ParticlesEditorScene> setScene(
+                                std::unique_ptr<ParticlesEditorScene> newScene);
 
   inline mtt::AnimationPlayer& animationPlayer() noexcept;
   inline const mtt::AnimationPlayer& animationPlayer() const noexcept;
@@ -34,7 +34,7 @@ public:
   void setEffectFilename(const QString& newValue) noexcept;
 
 signals:
-  void sceneChanged(EditorScene* newScene);
+  void sceneChanged(ParticlesEditorScene* newScene);
   void effectFilenameChanged(const QString& newValue);
 
 private:
@@ -44,9 +44,9 @@ private:
   QString _effectFilename;
 };
 
-inline EditorScene* EditorCommonData::scene() const noexcept
+inline ParticlesEditorScene* EditorCommonData::scene() const noexcept
 {
-  return static_cast<EditorScene*>(CommonEditData::scene());
+  return static_cast<ParticlesEditorScene*>(CommonEditData::scene());
 }
 
 inline mtt::AnimationPlayer& EditorCommonData::animationPlayer() noexcept

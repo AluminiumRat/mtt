@@ -3,12 +3,12 @@
 #include <mtt/editorLib/AsyncTasks/LoadEnvironmentTask.h>
 
 class EditorCommonData;
-class EditorScene;
+class ObjectEditorScene;
 
 class LoadEnvironmentTask : public mtt::LoadEnvironmentTask
 {
 public:
-  LoadEnvironmentTask(EditorScene& scene,
+  LoadEnvironmentTask(ObjectEditorScene& scene,
                       const QString& filename,
                       EditorCommonData& commonData);
   LoadEnvironmentTask(const LoadEnvironmentTask&) = delete;
@@ -24,6 +24,6 @@ private:
   void _clearScene() noexcept;
 
 private:
-  EditorScene& _scene;
+  ObjectEditorScene& _scene;
   EditorCommonData& _commonData;
 };

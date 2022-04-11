@@ -3,12 +3,12 @@
 #include <mtt/editorLib/AsyncTasks/SaveEnvironmentTask.h>
 
 class EditorCommonData;
-class EditorScene;
+class ObjectEditorScene;
 
 class SaveEnvironmentTask : public mtt::SaveEnvironmentTask
 {
 public:
-  SaveEnvironmentTask(const EditorScene& scene,
+  SaveEnvironmentTask(const ObjectEditorScene& scene,
                       const QString& filename,
                       EditorCommonData& commonData);
   SaveEnvironmentTask(const SaveEnvironmentTask&) = delete;

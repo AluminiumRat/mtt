@@ -3,7 +3,7 @@
 #include <SceneTab/PropertiesWidgetFactory.h>
 #include <SceneTab/SceneTab.h>
 #include <EditorCommonData.h>
-#include <EditorScene.h>
+#include <ObjectEditorScene.h>
 
 SceneTab::SceneTab(EditorCommonData& commonEditData) :
   mtt::SceneTab(commonEditData),
@@ -17,10 +17,10 @@ SceneTab::SceneTab(EditorCommonData& commonEditData) :
   _setScene(_commonEditData.scene());
 }
 
-void SceneTab::_setScene(EditorScene* scene)
+void SceneTab::_setScene(ObjectEditorScene* scene)
 {
   if(scene == nullptr) setRootObject(nullptr);
-  else setRootObject(&scene->root());
+  else setRootObject(&scene->dataRoot());
 }
 
 std::unique_ptr<mtt::PropertiesWidgetFactory>

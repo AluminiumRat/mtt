@@ -32,7 +32,8 @@ void ImportAnimationTask::finalizePart()
   AbstractAsyncTask::finalizePart();
 
   if (_commonData.scene() == nullptr) mtt::Abort("ImportAnimationTask::finalizePart: scene is null.");
-  ParticleAnimation& targetAnimation = _commonData.scene()->root().animation();
+  ParticleAnimation& targetAnimation =
+                                    _commonData.scene()->dataRoot().animation();
 
   std::vector<mtt::Object*> selection;
   std::unique_ptr<mtt::CompositeCommand> compositeCommand(

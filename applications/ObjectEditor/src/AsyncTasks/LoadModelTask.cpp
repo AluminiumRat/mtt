@@ -7,9 +7,9 @@
 #include <Objects/MMDObjectFactory.h>
 #include <Objects/ObjectLoader.h>
 #include <EditorCommonData.h>
-#include <EditorScene.h>
+#include <ObjectEditorScene.h>
 
-LoadModelTask::LoadModelTask( EditorScene& scene,
+LoadModelTask::LoadModelTask( ObjectEditorScene& scene,
                               const QString& filename,
                               EditorCommonData& commonData) :
   AbstractAsyncTask(QCoreApplication::tr("Loading"),
@@ -121,28 +121,28 @@ void LoadModelTask::asyncPart()
 
 void LoadModelTask::_clearScene() noexcept
 {
-  mtt::AnimationGroup& animations = _scene.root().animationGroup();
+  mtt::AnimationGroup& animations = _scene.dataRoot().animationGroup();
   while (animations.childsNumber() != 0)
   {
     animations.removeChild( animations.child(animations.childsNumber() -1),
                             true);
   }
 
-  GeometryGroup& geometry = _scene.root().geometryGroup();
+  GeometryGroup& geometry = _scene.dataRoot().geometryGroup();
   while (geometry.childsNumber() != 0)
   {
     geometry.removeChild( geometry.child(geometry.childsNumber() -1),
                           true);
   }
 
-  MaterialsGroup& materials = _scene.root().materialsGroup();
+  MaterialsGroup& materials = _scene.dataRoot().materialsGroup();
   while (materials.childsNumber() != 0)
   {
     materials.removeChild(materials.child(materials.childsNumber() -1),
                           true);
   }
 
-  mtt::SkeletonGroup& skeletons = _scene.root().skeletonGroup();
+  mtt::SkeletonGroup& skeletons = _scene.dataRoot().skeletonGroup();
   while (skeletons.childsNumber() != 0)
   {
     skeletons.removeChild(skeletons.child(skeletons.childsNumber() -1),
@@ -160,22 +160,22 @@ void LoadModelTask::finalizePart()
   {
     for (std::unique_ptr<mtt::AnimationObject>& animation : _animations)
     {
-      _scene.root().animationGroup().addChild(std::move(animation));
+      _scene.dataRoot().animationGroup().addChild(std::move(animation));
     }
 
     for (std::unique_ptr<LODObject>& lod : _lods)
     {
-      _scene.root().geometryGroup().addChild(std::move(lod));
+      _scene.dataRoot().geometryGroup().addChild(std::move(lod));
     }
 
     for (std::unique_ptr<MaterialObject>& material : _materials)
     {
-      _scene.root().materialsGroup().addChild(std::move(material));
+      _scene.dataRoot().materialsGroup().addChild(std::move(material));
     }
 
     for (std::unique_ptr<mtt::SkeletonObject>& skeleton : _skeletons)
     {
-      _scene.root().skeletonGroup().addChild(std::move(skeleton));
+      _scene.dataRoot().skeletonGroup().addChild(std::move(skeleton));
     }
 
     _commonData.setModelFilename(_filename);

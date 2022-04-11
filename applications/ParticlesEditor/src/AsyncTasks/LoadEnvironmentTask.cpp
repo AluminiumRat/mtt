@@ -1,8 +1,8 @@
 #include <AsyncTasks/LoadEnvironmentTask.h>
 #include <EditorCommonData.h>
-#include <EditorScene.h>
+#include <ParticlesEditorScene.h>
 
-LoadEnvironmentTask::LoadEnvironmentTask( EditorScene& scene,
+LoadEnvironmentTask::LoadEnvironmentTask( ParticlesEditorScene& scene,
                                           const QString& filename,
                                           EditorCommonData& commonData) :
   mtt::LoadEnvironmentTask(filename),
@@ -13,7 +13,7 @@ LoadEnvironmentTask::LoadEnvironmentTask( EditorScene& scene,
 
 void LoadEnvironmentTask::_clearScene() noexcept
 {
-  mtt::EnvironmentGroup& environment = _scene.root().environment();
+  mtt::EnvironmentGroup& environment = _scene.environmentRoot().objects();
   while (environment.childsNumber() != 0)
   {
     environment.removeChild(environment.child(environment.childsNumber() -1),
@@ -32,9 +32,9 @@ void LoadEnvironmentTask::mergeToScene(
   {
     for (std::unique_ptr<mtt::EnvironmentObject>& object : newObjects)
     {
-      _scene.root().environment().addChild(std::move(object));
+      _scene.environmentRoot().objects().addChild(std::move(object));
     }
-    _scene.root().changeBackground(std::move(newBackground));
+    _scene.environmentRoot().changeBackground(std::move(newBackground));
   }
   catch (...)
   {

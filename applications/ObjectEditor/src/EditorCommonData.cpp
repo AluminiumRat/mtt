@@ -9,12 +9,12 @@ EditorCommonData::EditorCommonData() :
 {
 }
 
-std::unique_ptr<EditorScene> EditorCommonData::setScene(
-                                          std::unique_ptr<EditorScene> newScene)
+std::unique_ptr<ObjectEditorScene> EditorCommonData::setScene(
+                                    std::unique_ptr<ObjectEditorScene> newScene)
 {
-  EditorScene* newScenePtr = newScene.get();
-  std::unique_ptr<EditorScene> oldScene =
-                          static_cast_unique_ptr<EditorScene>(
+  ObjectEditorScene* newScenePtr = newScene.get();
+  std::unique_ptr<ObjectEditorScene> oldScene =
+                          static_cast_unique_ptr<ObjectEditorScene>(
                                 CommonEditData::setScene(std::move(newScene)));
   setModelFilename(QString());
   emit sceneChanged(newScenePtr);

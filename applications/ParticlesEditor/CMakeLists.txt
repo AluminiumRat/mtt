@@ -101,10 +101,10 @@ set(HEADERS
 
     "include/EditMenu.h"
     "include/EditorCommonData.h"
-    "include/EditorScene.h"
     "include/FileMenu.h"
     "include/MainWindow.h"
     "include/ManipulatorMenu.h"
+    "include/ParticlesEditorScene.h"
     )
 
 set(SOURCES
@@ -160,11 +160,11 @@ set(SOURCES
 
     "src/EditMenu.cpp"
     "src/EditorCommonData.cpp"
-    "src/EditorScene.cpp"
     "src/FileMenu.cpp"
     "src/MainWindow.cpp"
     "src/ManipulatorMenu.cpp"
     "src/ParticlesEditor.cpp"
+    "src/ParticlesEditorScene.cpp"
     )
 
 set(UI_FILES

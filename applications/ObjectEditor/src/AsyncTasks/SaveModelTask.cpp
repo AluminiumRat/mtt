@@ -7,10 +7,10 @@
 #include <Objects/ObjectSaver.h>
 #include <Objects/MMDObjectFactory.h>
 #include <EditorCommonData.h>
-#include <EditorScene.h>
+#include <ObjectEditorScene.h>
 
 
-SaveModelTask::SaveModelTask( const EditorScene& scene,
+SaveModelTask::SaveModelTask( const ObjectEditorScene& scene,
                               const QString& filename,
                               EditorCommonData& commonData) :
   SaveToFileTask(QObject::tr("Saving"), filename),
@@ -43,13 +43,13 @@ void SaveModelTask::_writeMaterials(mtt::DataStream& stream,
   ObjectSaver saver;
   MMDObjectFactory factory;
 
-  uint32_t materialsNumber = _scene.root().materialsGroup().childsNumber();
+  uint32_t materialsNumber = _scene.dataRoot().materialsGroup().childsNumber();
   stream << materialsNumber;
   for(uint32_t materialIndex = 0;
       materialIndex < materialsNumber;
       materialIndex++)
   {
-    saver.saveObject( _scene.root().materialsGroup().child(materialIndex),
+    saver.saveObject( _scene.dataRoot().materialsGroup().child(materialIndex),
                       stream,
                       fileDirectory,
                       factory);
@@ -62,13 +62,13 @@ void SaveModelTask::_writeSkeletons(mtt::DataStream& stream,
   ObjectSaver saver;
   MMDObjectFactory factory;
 
-  uint32_t skeletonsNumber = _scene.root().skeletonGroup().childsNumber();
+  uint32_t skeletonsNumber = _scene.dataRoot().skeletonGroup().childsNumber();
   stream << skeletonsNumber;
   for(uint32_t skeletonIndex = 0;
       skeletonIndex < skeletonsNumber;
       skeletonIndex++)
   {
-    saver.saveObject( _scene.root().skeletonGroup().child(skeletonIndex),
+    saver.saveObject( _scene.dataRoot().skeletonGroup().child(skeletonIndex),
                       stream,
                       fileDirectory,
                       factory);
@@ -81,13 +81,13 @@ void SaveModelTask::_writeGeometry( mtt::DataStream& stream,
   ObjectSaver saver;
   MMDObjectFactory factory;
 
-  uint32_t lodsNumber = _scene.root().geometryGroup().childsNumber();
+  uint32_t lodsNumber = _scene.dataRoot().geometryGroup().childsNumber();
   stream << lodsNumber;
   for(uint32_t lodIndex = 0;
       lodIndex < lodsNumber;
       lodIndex++)
   {
-    saver.saveObject( _scene.root().geometryGroup().child(lodIndex),
+    saver.saveObject( _scene.dataRoot().geometryGroup().child(lodIndex),
                       stream,
                       fileDirectory,
                       factory);
@@ -100,13 +100,13 @@ void SaveModelTask::_writeAnimations( mtt::DataStream& stream,
   ObjectSaver saver;
   MMDObjectFactory factory;
 
-  uint32_t animationsNumber = _scene.root().animationGroup().childsNumber();
+  uint32_t animationsNumber = _scene.dataRoot().animationGroup().childsNumber();
   stream << animationsNumber;
   for(uint32_t animationIndex = 0;
       animationIndex < animationsNumber;
       animationIndex++)
   {
-    saver.saveObject( _scene.root().animationGroup().child(animationIndex),
+    saver.saveObject( _scene.dataRoot().animationGroup().child(animationIndex),
                       stream,
                       fileDirectory,
                       factory);

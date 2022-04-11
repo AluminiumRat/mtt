@@ -47,8 +47,8 @@ MainWindow::MainWindow() :
   directLight->setPosition(glm::vec3(0, -2, 4));
   directLight->setRotation(glm::quat(glm::vec3(.5f, 0.f, 0.f)));
 
-  std::unique_ptr<EditorScene> scene(new EditorScene);
-  scene->root().environment().addChild(std::move(directLight));
+  std::unique_ptr<ParticlesEditorScene> scene(new ParticlesEditorScene);
+  scene->environmentRoot().objects().addChild(std::move(directLight));
   _commonEditData.setScene(std::move(scene));
 
   _fileMenu.setupUI();

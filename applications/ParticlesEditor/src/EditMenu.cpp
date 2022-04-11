@@ -201,7 +201,7 @@ void EditMenu::_deleteObject() noexcept
 
 void EditMenu::_addHierarhical(std::unique_ptr<HierarhicalObject> object)
 {
-  EditorScene* scene = _commonData.scene();
+  ParticlesEditorScene* scene = _commonData.scene();
   if (scene == nullptr) return;
 
   HierarhicalObject* objectPtr = object.get();
@@ -212,7 +212,7 @@ void EditMenu::_addHierarhical(std::unique_ptr<HierarhicalObject> object)
     target = _commonData.selectedObjects()[0];
     if(!target->subobjectCanBeAddedAndRemoved(*object)) target = nullptr;
   }
-  if(target == nullptr) target = &scene->root().modificatorsGroup();
+  if(target == nullptr) target = &scene->dataRoot().modificatorsGroup();
     
   std::unique_ptr<mtt::AddObjectCommand> command(
                         new mtt::AddObjectCommand(std::move(object), *target));
@@ -247,11 +247,11 @@ void EditMenu::_addModificator( const QString& name,
 {
   try
   {
-    EditorScene* scene = _commonData.scene();
+    ParticlesEditorScene* scene = _commonData.scene();
     if (scene == nullptr) return;
 
     std::unique_ptr<Modificator> newObject(new Modificator(name, true));
-    newObject->fieldRef().set(&scene->root().particleField());
+    newObject->fieldRef().set(&scene->dataRoot().particleField());
     _addHierarhical(std::move(newObject));
   }
   catch(std::exception& error)
@@ -310,7 +310,7 @@ void EditMenu::_addAnimationFromFbx() noexcept
 {
   try
   {
-    EditorScene* scene = _commonData.scene();
+    ParticlesEditorScene* scene = _commonData.scene();
     if (scene == nullptr) return;
 
     QString fileName = QFileDialog::getOpenFileName(&_window,
