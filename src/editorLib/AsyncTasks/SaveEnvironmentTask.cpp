@@ -7,15 +7,18 @@
 #include <mtt/editorLib/AsyncTasks/SaveEnvironmentTask.h>
 #include <mtt/editorLib/Objects/EnvironmentObjectFactory.h>
 #include <mtt/editorLib/Objects/ObjectSaver.h>
+#include <mtt/editorLib/EditorCommonData.h>
+#include <mtt/editorLib/EditorScene.h>
 
 using namespace mtt;
 
-SaveEnvironmentTask::SaveEnvironmentTask( const QString& filename,
-                                          const EnvironmentGroup& environment,
-                                          const BackgroundObject& background) :
+SaveEnvironmentTask::SaveEnvironmentTask( const EditorScene& scene,
+                                          const QString& filename,
+                                          EditorCommonData& commonData) :
   SaveToFileTask(QCoreApplication::tr("Environment saving"), filename),
-  _environment(environment),
-  _background(background)
+  _environment(scene.environmentRoot().objects()),
+  _background(scene.environmentRoot().background()),
+  _commonData(commonData)
 {
 }
 
@@ -48,4 +51,9 @@ void SaveEnvironmentTask::_writeHead(QFile& file, mtt::DataStream& stream)
 {
   file.write(fileHead.c_str(), fileHead.length());
   stream << fileVersion;
+}
+
+void SaveEnvironmentTask::finalizePart()
+{
+  _commonData.setEnvironmentFilename(filename());
 }

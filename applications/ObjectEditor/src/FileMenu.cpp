@@ -1,11 +1,11 @@
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMessageBox>
 
+#include <mtt/editorLib/AsyncTasks/LoadEnvironmentTask.h>
+#include <mtt/editorLib/AsyncTasks/SaveEnvironmentTask.h>
 #include <mtt/editorLib/EditorApplication.h>
 
-#include <AsyncTasks/LoadEnvironmentTask.h>
 #include <AsyncTasks/LoadModelTask.h>
-#include <AsyncTasks/SaveEnvironmentTask.h>
 #include <AsyncTasks/SaveModelTask.h>
 #include <FileMenu.h>
 #include <MainWindow.h>
@@ -167,10 +167,10 @@ void FileMenu::_saveEnvironmentToFile(const QString& file) noexcept
 
   try
   {
-    std::unique_ptr<SaveEnvironmentTask> task;
-    task.reset(new SaveEnvironmentTask( *_commonData.scene(),
-                                        file,
-                                        _commonData));
+    std::unique_ptr<mtt::SaveEnvironmentTask> task;
+    task.reset(new mtt::SaveEnvironmentTask(*_commonData.scene(),
+                                            file,
+                                            _commonData));
     mtt::EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
   }
   catch (...)
@@ -197,10 +197,10 @@ void FileMenu::_loadEnvironment() noexcept
                                                     tr("enm (*.enm)"));
     if(fileName.isEmpty()) return;
 
-    std::unique_ptr<LoadEnvironmentTask> task;
-    task.reset(new LoadEnvironmentTask( *_commonData.scene(),
-                                        fileName,
-                                        _commonData));
+    std::unique_ptr<mtt::LoadEnvironmentTask> task;
+    task.reset(new mtt::LoadEnvironmentTask(*_commonData.scene(),
+                                            fileName,
+                                            _commonData));
     mtt::EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
   }
   catch (...)

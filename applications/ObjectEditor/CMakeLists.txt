@@ -47,9 +47,7 @@ set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 
 set(HEADERS
     "include/AsyncTasks/AddModelFromFbxTask.h"
-    "include/AsyncTasks/LoadEnvironmentTask.h"
     "include/AsyncTasks/LoadModelTask.h"
-    "include/AsyncTasks/SaveEnvironmentTask.h"
     "include/AsyncTasks/SaveModelTask.h"
 
     "include/Objects/BoneRefBatch.h"
@@ -92,9 +90,7 @@ set(HEADERS
 
 set(SOURCES
     "src/AsyncTasks/AddModelFromFbxTask.cpp"
-    "src/AsyncTasks/LoadEnvironmentTask.cpp"
     "src/AsyncTasks/LoadModelTask.cpp"
-    "src/AsyncTasks/SaveEnvironmentTask.cpp"
     "src/AsyncTasks/SaveModelTask.cpp"
 
     "src/Objects/BoneRefBatch.cpp"

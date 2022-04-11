@@ -1,10 +1,10 @@
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMessageBox>
 
+#include <mtt/editorLib/AsyncTasks/LoadEnvironmentTask.h>
 #include <mtt/editorLib/EditorApplication.h>
 
 #include <AsyncTasks/LoadEffectTask.h>
-#include <AsyncTasks/LoadEnvironmentTask.h>
 #include <AsyncTasks/SaveEffectTask.h>
 #include <FileMenu.h>
 #include <MainWindow.h>
@@ -137,10 +137,10 @@ void FileMenu::_loadEnvironment() noexcept
                                                     tr("enm (*.enm)"));
     if(fileName.isEmpty()) return;
 
-    std::unique_ptr<LoadEnvironmentTask> task;
-    task.reset(new LoadEnvironmentTask( *_commonData.scene(),
-                                        fileName,
-                                        _commonData));
+    std::unique_ptr<mtt::LoadEnvironmentTask> task;
+    task.reset(new mtt::LoadEnvironmentTask(*_commonData.scene(),
+                                            fileName,
+                                            _commonData));
     mtt::EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
   }
   catch (...)

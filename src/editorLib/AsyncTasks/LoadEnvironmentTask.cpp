@@ -8,10 +8,14 @@
 #include <mtt/editorLib/Objects/EnvironmentObjectFactory.h>
 #include <mtt/editorLib/Objects/EnvironmentGroup.h>
 #include <mtt/editorLib/Objects/ObjectLoader.h>
+#include <mtt/editorLib/EditorCommonData.h>
+#include <mtt/editorLib/EditorScene.h>
 
 using namespace mtt;
 
-LoadEnvironmentTask::LoadEnvironmentTask( const QString& filename) :
+LoadEnvironmentTask::LoadEnvironmentTask( EditorScene& scene,
+                                          const QString& filename,
+                                          EditorCommonData& commonData) :
   AbstractAsyncTask(QCoreApplication::tr("Environment loading"),
                     AbstractAsyncTask::DEPENDENT,
                     AbstractAsyncTask::EXPLICIT),
@@ -19,7 +23,9 @@ LoadEnvironmentTask::LoadEnvironmentTask( const QString& filename) :
   _file(nullptr),
   _stream(nullptr),
   _fileDirectory(QFileInfo(_filename).dir()),
-  _mixUIDValue(UID::randomValue())
+  _mixUIDValue(UID::randomValue()),
+  _scene(scene),
+  _commonData(commonData)
 {
 }
 
@@ -67,7 +73,36 @@ void LoadEnvironmentTask::asyncPart()
   }
 }
 
+void LoadEnvironmentTask::_clearScene() noexcept
+{
+  mtt::EnvironmentGroup& environment = _scene.environmentRoot().objects();
+  while (environment.childsNumber() != 0)
+  {
+    environment.removeChild(environment.child(environment.childsNumber() -1),
+                            true);
+  }
+}
+
 void LoadEnvironmentTask::finalizePart()
 {
-  mergeToScene(std::move(_newBackground), std::move(_newObjects));
+  _commonData.undoStack().clear();
+  _commonData.setEnvironmentFilename("");
+  _clearScene();
+
+  try
+  {
+    for (std::unique_ptr<mtt::EnvironmentObject>& object : _newObjects)
+    {
+      _scene.environmentRoot().objects().addChild(std::move(object));
+    }
+
+    _scene.environmentRoot().changeBackground(std::move(_newBackground));
+
+    _commonData.setEnvironmentFilename(_filename);
+  }
+  catch (...)
+  {
+    _clearScene();
+    throw;
+  }
 }

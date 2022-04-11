@@ -15,30 +15,26 @@ class QFile;
 
 namespace mtt
 {
-  class EnvironmentGroup;
-  class UndoStack;
+  class EditorCommonData;
+  class EditorScene;
 
   class LoadEnvironmentTask : public mtt::AbstractAsyncTask
   {
   public:
-    LoadEnvironmentTask(const QString& filename);
+    LoadEnvironmentTask(EditorScene& scene,
+                        const QString& filename,
+                        EditorCommonData& commonData);
     LoadEnvironmentTask(const LoadEnvironmentTask&) = delete;
     LoadEnvironmentTask& operator = (const LoadEnvironmentTask&) = delete;
     virtual ~LoadEnvironmentTask() noexcept = default;
 
   protected:
-    inline const QString& filename() const noexcept;
-
-    /// Called in main thread
-    virtual void mergeToScene(
-                std::unique_ptr<BackgroundObject> newBackground,
-                std::vector<std::unique_ptr<EnvironmentObject>> newObjects) = 0;
-
     virtual void asyncPart() override;
     virtual void finalizePart() override;
 
   private:
     void _checkHead();
+    void _clearScene() noexcept;
 
   private:
     QString _filename;
@@ -49,10 +45,8 @@ namespace mtt
 
     std::unique_ptr<BackgroundObject> _newBackground;
     std::vector<std::unique_ptr<EnvironmentObject>> _newObjects;
-  };
 
-  inline const QString& LoadEnvironmentTask::filename() const noexcept
-  {
-    return _filename;
-  }
+    EditorScene& _scene;
+    EditorCommonData& _commonData;
+  };
 };
