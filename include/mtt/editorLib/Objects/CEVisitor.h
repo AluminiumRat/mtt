@@ -13,6 +13,7 @@
 #include <mtt/editorLib/Objects/EnvironmentGroup.h>
 #include <mtt/editorLib/Objects/EnvironmentModel.h>
 #include <mtt/editorLib/Objects/EnvironmentObject.h>
+#include <mtt/editorLib/Objects/EnvironmentRootObject.h>
 #include <mtt/editorLib/Objects/LightObject.h>
 #include <mtt/editorLib/Objects/MovableObject.h>
 #include <mtt/editorLib/Objects/Object3D.h>
@@ -83,6 +84,11 @@ namespace mtt
                                       const EnvironmentObject& object) override;
     inline virtual void visitEnvironmentObject(
                                             EnvironmentObject& object) override;
+
+    inline virtual void visitConstEnvironmentRootObject(
+                                  const EnvironmentRootObject& object) override;
+    inline virtual void visitEnvironmentRootObject(
+                                        EnvironmentRootObject& object) override;
 
     inline virtual void visitConstLightObject(
                                             const LightObject& object) override;
@@ -279,6 +285,20 @@ namespace mtt
                                                       EnvironmentObject& object)
   {
     visitMovableObject(object);
+  }
+
+  template <typename BaseVisitor>
+  inline void CEVisitorT<BaseVisitor>::visitConstEnvironmentRootObject(
+                                            const EnvironmentRootObject& object)
+  {
+    static_cast<BaseVisitor*>(this)->visitConstObject(object);
+  }
+
+  template <typename BaseVisitor>
+  inline void CEVisitorT<BaseVisitor>::visitEnvironmentRootObject(
+                                                  EnvironmentRootObject& object)
+  {
+    static_cast<BaseVisitor*>(this)->visitObject(object);
   }
 
   template <typename BaseVisitor>
