@@ -4,7 +4,7 @@
 
 #include <mtt/application/AsyncTasks/SaveToFileTask.h>
 
-class EditorCommonData;
+class ObjectEditorCommonData;
 class ObjectEditorScene;
 
 class SaveModelTask : public mtt::SaveToFileTask
@@ -16,7 +16,7 @@ public:
 public:
   SaveModelTask(const ObjectEditorScene& scene,
                 const QString& filename,
-                EditorCommonData& commonData);
+                ObjectEditorCommonData& commonData);
   SaveModelTask(const SaveModelTask&) = delete;
   SaveModelTask& operator = (const SaveModelTask&) = delete;
   virtual ~SaveModelTask() noexcept = default;
@@ -37,5 +37,5 @@ private:
 
 private:
   const ObjectEditorScene& _scene;
-  EditorCommonData& _commonData;
+  ObjectEditorCommonData& _commonData;
 };

@@ -6,12 +6,12 @@
 #include <AsyncTasks/SaveEffectTask.h>
 #include <Objects/ObjectSaver.h>
 #include <Objects/PEEObjectFactory.h>
-#include <EditorCommonData.h>
+#include <ParticlesEditorCommonData.h>
 #include <ParticlesEditorScene.h>
 
 SaveEffectTask::SaveEffectTask( const ParticlesEditorScene& scene,
                                 const QString& filename,
-                                EditorCommonData& commonData) :
+                                ParticlesEditorCommonData& commonData) :
   SaveToFileTask(QObject::tr("Saving"), filename),
   _scene(scene),
   _commonData(commonData)
@@ -69,5 +69,5 @@ void SaveEffectTask::_writeModificators(mtt::DataStream& stream,
 
 void SaveEffectTask::finalizePart()
 {
-  _commonData.setEffectFilename(filename());
+  _commonData.setDataFilename(filename());
 }

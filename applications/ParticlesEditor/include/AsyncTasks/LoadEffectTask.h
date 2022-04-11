@@ -15,7 +15,7 @@
 
 class QFile;
 
-class EditorCommonData;
+class ParticlesEditorCommonData;
 class ParticlesEditorScene;
 
 class LoadEffectTask : public mtt::AbstractAsyncTask
@@ -23,7 +23,7 @@ class LoadEffectTask : public mtt::AbstractAsyncTask
 public:
   LoadEffectTask( ParticlesEditorScene& scene,
                   const QString& filename,
-                  EditorCommonData& commonData);
+                  ParticlesEditorCommonData& commonData);
   LoadEffectTask(const LoadEffectTask&) = delete;
   LoadEffectTask& operator = (const LoadEffectTask&) = delete;
   virtual ~LoadEffectTask() noexcept = default;
@@ -43,7 +43,7 @@ private:
   QFile* _file;
   mtt::DataStream* _stream;
   QDir _fileDirectory;
-  EditorCommonData& _commonData;
+  ParticlesEditorCommonData& _commonData;
   mtt::UID::ValueType _mixUIDValue;
 
   std::unique_ptr<ParticleField> _field;

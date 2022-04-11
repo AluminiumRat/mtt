@@ -6,12 +6,12 @@
 #include <AsyncTasks/SaveModelTask.h>
 #include <Objects/MMDObjectFactory.h>
 #include <Objects/ObjectLoader.h>
-#include <EditorCommonData.h>
+#include <ObjectEditorCommonData.h>
 #include <ObjectEditorScene.h>
 
 LoadModelTask::LoadModelTask( ObjectEditorScene& scene,
                               const QString& filename,
-                              EditorCommonData& commonData) :
+                              ObjectEditorCommonData& commonData) :
   AbstractAsyncTask(QCoreApplication::tr("Loading"),
                     mtt::AbstractAsyncTask::DEPENDENT,
                     mtt::AbstractAsyncTask::EXPLICIT),
@@ -153,7 +153,7 @@ void LoadModelTask::_clearScene() noexcept
 void LoadModelTask::finalizePart()
 {
   _commonData.undoStack().clear();
-  _commonData.setModelFilename("");
+  _commonData.setDataFilename("");
   _clearScene();
 
   try
@@ -178,7 +178,7 @@ void LoadModelTask::finalizePart()
       _scene.dataRoot().skeletonGroup().addChild(std::move(skeleton));
     }
 
-    _commonData.setModelFilename(_filename);
+    _commonData.setDataFilename(_filename);
   }
   catch (...)
   {

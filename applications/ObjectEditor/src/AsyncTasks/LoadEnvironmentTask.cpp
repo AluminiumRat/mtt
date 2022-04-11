@@ -1,10 +1,10 @@
 #include <AsyncTasks/LoadEnvironmentTask.h>
-#include <EditorCommonData.h>
+#include <ObjectEditorCommonData.h>
 #include <ObjectEditorScene.h>
 
 LoadEnvironmentTask::LoadEnvironmentTask( ObjectEditorScene& scene,
                                           const QString& filename,
-                                          EditorCommonData& commonData) :
+                                          ObjectEditorCommonData& commonData) :
   mtt::LoadEnvironmentTask(filename),
   _scene(scene),
   _commonData(commonData)

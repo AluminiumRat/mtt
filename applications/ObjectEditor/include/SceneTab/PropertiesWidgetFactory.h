@@ -4,14 +4,14 @@
 
 #include <Objects/OEVisitor.h>
 
-class EditorCommonData;
+class ObjectEditorCommonData;
 class ObjectEditorScene;
 
 class PropertiesWidgetFactory : public OEVisitorT<mtt::PropertiesWidgetFactory>
 {
 public:
   PropertiesWidgetFactory(QVBoxLayout& widgetsLayout,
-                          EditorCommonData& commonData);
+                          ObjectEditorCommonData& commonData);
   PropertiesWidgetFactory(const PropertiesWidgetFactory&) = delete;
   PropertiesWidgetFactory& operator = (
                                       const PropertiesWidgetFactory&) = delete;
@@ -24,6 +24,6 @@ public:
   virtual void visitMeshObject(MeshObject& object) override;
 
 private:
-  EditorCommonData& _commonData;
+  ObjectEditorCommonData& _commonData;
   ObjectEditorScene& _scene;
 };

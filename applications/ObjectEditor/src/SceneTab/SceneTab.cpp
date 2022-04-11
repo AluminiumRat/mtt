@@ -2,15 +2,15 @@
 
 #include <SceneTab/PropertiesWidgetFactory.h>
 #include <SceneTab/SceneTab.h>
-#include <EditorCommonData.h>
+#include <ObjectEditorCommonData.h>
 #include <ObjectEditorScene.h>
 
-SceneTab::SceneTab(EditorCommonData& commonEditData) :
+SceneTab::SceneTab(ObjectEditorCommonData& commonEditData) :
   mtt::SceneTab(commonEditData),
   _commonEditData(commonEditData)
 {
   connect(&_commonEditData,
-          &EditorCommonData::sceneChanged,
+          &ObjectEditorCommonData::sceneChanged,
           this,
           &SceneTab::_setScene,
           Qt::DirectConnection);

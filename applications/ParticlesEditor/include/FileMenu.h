@@ -2,7 +2,7 @@
 
 #include <QtCore/QObject>
 
-class EditorCommonData;
+class ParticlesEditorCommonData;
 class MainWindow;
 
 class Ui_MainWindow;
@@ -14,7 +14,7 @@ class FileMenu : public QObject
 public:
   FileMenu( MainWindow& window,
             Ui_MainWindow& ui,
-            EditorCommonData& commonData);
+            ParticlesEditorCommonData& commonData);
   FileMenu(const FileMenu&) = delete;
   FileMenu& operator = (const FileMenu&) = delete;
   virtual ~FileMenu() noexcept = default;
@@ -32,5 +32,5 @@ private:
 private:
   MainWindow& _window;
   Ui_MainWindow& _ui;
-  EditorCommonData& _commonData;
+  ParticlesEditorCommonData& _commonData;
 };

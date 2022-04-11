@@ -25,7 +25,7 @@
 
 EditMenu::EditMenu( MainWindow& window,
                     Ui_MainWindow& ui,
-                    EditorCommonData& commonData) :
+                    ParticlesEditorCommonData& commonData) :
   _window(window),
   _ui(ui),
   _commonData(commonData)
@@ -47,7 +47,7 @@ void EditMenu::setupUI()
           Qt::DirectConnection);
 
   connect(&_commonData,
-          &EditorCommonData::selectedObjectsChanged,
+          &ParticlesEditorCommonData::selectedObjectsChanged,
           this,
           &EditMenu::_updateDeleteAction,
           Qt::DirectConnection);

@@ -24,7 +24,7 @@
 
 EditMenu::EditMenu( MainWindow& window,
                     Ui_MainWindow& ui,
-                    EditorCommonData& commonData) :
+                    ObjectEditorCommonData& commonData) :
   _window(window),
   _ui(ui),
   _commonData(commonData)
@@ -46,7 +46,7 @@ void EditMenu::setupUI()
           Qt::DirectConnection);
 
   connect(&_commonData,
-          &EditorCommonData::selectedObjectsChanged,
+          &ObjectEditorCommonData::selectedObjectsChanged,
           this,
           &EditMenu::_updateDeleteAction,
           Qt::DirectConnection);

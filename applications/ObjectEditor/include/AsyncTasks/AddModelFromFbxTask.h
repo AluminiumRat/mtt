@@ -6,7 +6,7 @@
 
 #include <FbxDrawableImporter.h>
 
-class EditorCommonData;
+class ObjectEditorCommonData;
 
 class AddModelFromFbxTask : public mtt::AbstractAsyncTask
 {
@@ -14,7 +14,7 @@ public:
   AddModelFromFbxTask(
                 const QString& filename,
                 const mtt::BaseFbxImporter::MaterialOptions& materialOptions,
-                EditorCommonData& commonData);
+                ObjectEditorCommonData& commonData);
   AddModelFromFbxTask(const AddModelFromFbxTask&) = delete;
   AddModelFromFbxTask& operator = (const AddModelFromFbxTask&) = delete;
   virtual ~AddModelFromFbxTask() noexcept = default;
@@ -26,7 +26,7 @@ protected:
 private:
   QString _filename;
   mtt::BaseFbxImporter::MaterialOptions _materialOptions;
-  EditorCommonData& _commonData;
+  ObjectEditorCommonData& _commonData;
 
   FbxDrawableImporter::Result _data;
 };

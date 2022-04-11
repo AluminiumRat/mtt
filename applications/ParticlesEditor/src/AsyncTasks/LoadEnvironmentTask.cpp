@@ -1,10 +1,11 @@
 #include <AsyncTasks/LoadEnvironmentTask.h>
-#include <EditorCommonData.h>
+#include <ParticlesEditorCommonData.h>
 #include <ParticlesEditorScene.h>
 
-LoadEnvironmentTask::LoadEnvironmentTask( ParticlesEditorScene& scene,
-                                          const QString& filename,
-                                          EditorCommonData& commonData) :
+LoadEnvironmentTask::LoadEnvironmentTask(
+                                        ParticlesEditorScene& scene,
+                                        const QString& filename,
+                                        ParticlesEditorCommonData& commonData) :
   mtt::LoadEnvironmentTask(filename),
   _scene(scene),
   _commonData(commonData)

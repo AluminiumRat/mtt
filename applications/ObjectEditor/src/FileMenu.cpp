@@ -7,15 +7,15 @@
 #include <AsyncTasks/LoadModelTask.h>
 #include <AsyncTasks/SaveEnvironmentTask.h>
 #include <AsyncTasks/SaveModelTask.h>
-#include <EditorCommonData.h>
 #include <FileMenu.h>
 #include <MainWindow.h>
+#include <ObjectEditorCommonData.h>
 
 #include <GeneratedFiles/ui_MainWindow.h>
 
 FileMenu::FileMenu( MainWindow& window,
                     Ui_MainWindow& ui,
-                    EditorCommonData& commonData) :
+                    ObjectEditorCommonData& commonData) :
   _window(window),
   _ui(ui),
   _commonData(commonData)
@@ -63,8 +63,8 @@ void FileMenu::setupUI()
 
 void FileMenu::_saveModel() noexcept
 {
-  if(_commonData.modelFilename().isEmpty()) _saveModelAs();
-  else _saveModelToFile(_commonData.modelFilename());
+  if(_commonData.dataFilename().isEmpty()) _saveModelAs();
+  else _saveModelToFile(_commonData.dataFilename());
 }
 
 void FileMenu::_saveModelAs() noexcept

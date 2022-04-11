@@ -12,7 +12,7 @@
 #include <Render/RenderObserverFactory.h>
 #include <SceneTab/SceneTab.h>
 #include <EditMenu.h>
-#include <EditorCommonData.h>
+#include <ParticlesEditorCommonData.h>
 #include <FileMenu.h>
 #include <ManipulatorMenu.h>
 
@@ -41,7 +41,7 @@ private:
 private:
   Ui_MainWindow* _ui;
 
-  EditorCommonData _commonEditData;
+  ParticlesEditorCommonData _commonEditData;
 
   RenderObserverFactory _observerFactory;
   std::optional<mtt::SceneRenderObserver> _sceneRenderObserver;

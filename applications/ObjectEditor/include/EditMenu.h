@@ -2,7 +2,7 @@
 
 #include <QtCore/QObject>
 
-class EditorCommonData;
+class ObjectEditorCommonData;
 class MainWindow;
 
 class Ui_MainWindow;
@@ -14,7 +14,7 @@ class EditMenu : public QObject
 public:
   EditMenu( MainWindow& window,
             Ui_MainWindow& ui,
-            EditorCommonData& commonData);
+            ObjectEditorCommonData& commonData);
   EditMenu(const EditMenu&) = delete;
   EditMenu& operator = (const EditMenu&) = delete;
   virtual ~EditMenu() noexcept = default;
@@ -40,5 +40,5 @@ private:
 private:
   MainWindow& _window;
   Ui_MainWindow& _ui;
-  EditorCommonData& _commonData;
+  ObjectEditorCommonData& _commonData;
 };

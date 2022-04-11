@@ -100,10 +100,10 @@ set(HEADERS
     "include/SceneTab/VisibilityControlWidget.h"
 
     "include/EditMenu.h"
-    "include/EditorCommonData.h"
     "include/FileMenu.h"
     "include/MainWindow.h"
     "include/ManipulatorMenu.h"
+    "include/ParticlesEditorCommonData.h"
     "include/ParticlesEditorScene.h"
     )
 
@@ -159,11 +159,11 @@ set(SOURCES
     "src/SceneTab/VisibilityControlWidget.cpp"
 
     "src/EditMenu.cpp"
-    "src/EditorCommonData.cpp"
     "src/FileMenu.cpp"
     "src/MainWindow.cpp"
     "src/ManipulatorMenu.cpp"
     "src/ParticlesEditor.cpp"
+    "src/ParticlesEditorCommonData.cpp"
     "src/ParticlesEditorScene.cpp"
     )
 

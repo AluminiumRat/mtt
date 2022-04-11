@@ -8,12 +8,12 @@
 
 #include <AsyncTasks/AddModelFromFbxTask.h>
 #include <Objects/LODObject.h>
-#include <EditorCommonData.h>
+#include <ObjectEditorCommonData.h>
 
 AddModelFromFbxTask::AddModelFromFbxTask(
                   const QString& filename,
                   const mtt::BaseFbxImporter::MaterialOptions& materialOptions,
-                  EditorCommonData& commonData) :
+                  ObjectEditorCommonData& commonData) :
   AbstractAsyncTask(QObject::tr("Load from fbx"),
                     AbstractAsyncTask::INDEPENDENT,
                     AbstractAsyncTask::EXPLICIT),

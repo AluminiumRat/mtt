@@ -6,15 +6,15 @@
 #include <AsyncTasks/LoadEffectTask.h>
 #include <AsyncTasks/LoadEnvironmentTask.h>
 #include <AsyncTasks/SaveEffectTask.h>
-#include <EditorCommonData.h>
 #include <FileMenu.h>
 #include <MainWindow.h>
+#include <ParticlesEditorCommonData.h>
 
 #include <GeneratedFiles/ui_MainWindow.h>
 
 FileMenu::FileMenu( MainWindow& window,
                     Ui_MainWindow& ui,
-                    EditorCommonData& commonData) :
+                    ParticlesEditorCommonData& commonData) :
   _window(window),
   _ui(ui),
   _commonData(commonData)
@@ -50,8 +50,8 @@ void FileMenu::setupUI()
 
 void FileMenu::_saveEffect() noexcept
 {
-  if(_commonData.effectFilename().isEmpty()) _saveEffectAs();
-  else _saveToFile(_commonData.effectFilename());
+  if(_commonData.dataFilename().isEmpty()) _saveEffectAs();
+  else _saveToFile(_commonData.dataFilename());
 }
 
 void FileMenu::_saveEffectAs() noexcept

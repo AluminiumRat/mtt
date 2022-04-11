@@ -2,7 +2,7 @@
 
 #include <mtt/editorLib/AsyncTasks/LoadEnvironmentTask.h>
 
-class EditorCommonData;
+class ParticlesEditorCommonData;
 class ParticlesEditorScene;
 
 class LoadEnvironmentTask : public mtt::LoadEnvironmentTask
@@ -10,7 +10,7 @@ class LoadEnvironmentTask : public mtt::LoadEnvironmentTask
 public:
   LoadEnvironmentTask(ParticlesEditorScene& scene,
                       const QString& filename,
-                      EditorCommonData& commonData);
+                      ParticlesEditorCommonData& commonData);
   LoadEnvironmentTask(const LoadEnvironmentTask&) = delete;
   LoadEnvironmentTask& operator = (const LoadEnvironmentTask&) = delete;
   virtual ~LoadEnvironmentTask() noexcept = default;
@@ -25,5 +25,5 @@ private:
 
 private:
   ParticlesEditorScene& _scene;
-  EditorCommonData& _commonData;
+  ParticlesEditorCommonData& _commonData;
 };

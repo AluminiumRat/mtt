@@ -8,12 +8,12 @@
 #include <SceneTab/MeshWidget.h>
 #include <SceneTab/PropertiesWidgetFactory.h>
 #include <SceneTab/VertexDataWidget.h>
-#include <EditorCommonData.h>
+#include <ObjectEditorCommonData.h>
 #include <ObjectEditorScene.h>
 
 PropertiesWidgetFactory::PropertiesWidgetFactory(
                                         QVBoxLayout& widgetsLayout,
-                                        EditorCommonData& commonData) :
+                                        ObjectEditorCommonData& commonData) :
   OEVisitorT( widgetsLayout,
               commonData,
               &commonData.scene()->dataRoot().skeletonGroup(),

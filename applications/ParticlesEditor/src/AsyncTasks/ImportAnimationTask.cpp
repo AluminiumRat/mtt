@@ -1,16 +1,16 @@
-#include <AsyncTasks/ImportAnimationTask.h>
-
 #include <mtt/application/EditCommands/AddObjectCommand.h>
 #include <mtt/application/EditCommands/CompositeCommand.h>
 #include <mtt/application/EditCommands/UndoStack.h>
 #include <mtt/editorLib/FbxAnimationImporter.h>
 #include <mtt/utilities/Abort.h>
 
+#include <AsyncTasks/ImportAnimationTask.h>
 #include <Objects/ParticleAnimation.h>
-#include <EditorCommonData.h>
+#include <ParticlesEditorCommonData.h>
 
-ImportAnimationTask::ImportAnimationTask( const QString& filename,
-                                          EditorCommonData& commonData) :
+ImportAnimationTask::ImportAnimationTask(
+                                        const QString& filename,
+                                        ParticlesEditorCommonData& commonData) :
   AbstractAsyncTask(QObject::tr("Loading from fbx"),
                     AbstractAsyncTask::INDEPENDENT,
                     AbstractAsyncTask::EXPLICIT),

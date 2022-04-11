@@ -4,13 +4,13 @@
 
 #include <Objects/PEVisitor.h>
 
-class EditorCommonData;
+class ParticlesEditorCommonData;
 
 class PropertiesWidgetFactory : public PEVisitorT<mtt::PropertiesWidgetFactory>
 {
 public:
   PropertiesWidgetFactory(QVBoxLayout& widgetsLayout,
-                          EditorCommonData& commonData);
+                          ParticlesEditorCommonData& commonData);
   PropertiesWidgetFactory(const PropertiesWidgetFactory&) = delete;
   PropertiesWidgetFactory& operator = (
                                       const PropertiesWidgetFactory&) = delete;
@@ -30,5 +30,5 @@ public:
                                       VisibilityControlObject& object) override;
 
 private:
-  EditorCommonData& _commonData;
+  ParticlesEditorCommonData& _commonData;
 };

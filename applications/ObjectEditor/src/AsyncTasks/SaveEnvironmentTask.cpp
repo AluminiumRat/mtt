@@ -1,10 +1,10 @@
 #include <AsyncTasks/SaveEnvironmentTask.h>
-#include <EditorCommonData.h>
+#include <ObjectEditorCommonData.h>
 #include <ObjectEditorScene.h>
 
 SaveEnvironmentTask::SaveEnvironmentTask( const ObjectEditorScene& scene,
                                           const QString& filename,
-                                          EditorCommonData& commonData) :
+                                          ObjectEditorCommonData& commonData) :
   mtt::SaveEnvironmentTask( filename,
                             scene.environmentRoot().objects(),
                             scene.environmentRoot().background()),

@@ -6,13 +6,13 @@
 #include <AsyncTasks/SaveModelTask.h>
 #include <Objects/ObjectSaver.h>
 #include <Objects/MMDObjectFactory.h>
-#include <EditorCommonData.h>
+#include <ObjectEditorCommonData.h>
 #include <ObjectEditorScene.h>
 
 
 SaveModelTask::SaveModelTask( const ObjectEditorScene& scene,
                               const QString& filename,
-                              EditorCommonData& commonData) :
+                              ObjectEditorCommonData& commonData) :
   SaveToFileTask(QObject::tr("Saving"), filename),
   _scene(scene),
   _commonData(commonData)
@@ -115,5 +115,5 @@ void SaveModelTask::_writeAnimations( mtt::DataStream& stream,
 
 void SaveModelTask::finalizePart()
 {
-  _commonData.setModelFilename(filename());
+  _commonData.setDataFilename(filename());
 }

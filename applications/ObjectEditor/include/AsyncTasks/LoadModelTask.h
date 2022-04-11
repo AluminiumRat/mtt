@@ -16,7 +16,7 @@
 
 class QFile;
 
-class EditorCommonData;
+class ObjectEditorCommonData;
 class ObjectEditorScene;
 
 class LoadModelTask : public mtt::AbstractAsyncTask
@@ -24,7 +24,7 @@ class LoadModelTask : public mtt::AbstractAsyncTask
 public:
   LoadModelTask(ObjectEditorScene& scene,
                 const QString& filename,
-                EditorCommonData& commonData);
+                ObjectEditorCommonData& commonData);
   LoadModelTask(const LoadModelTask&) = delete;
   LoadModelTask& operator = (const LoadModelTask&) = delete;
   virtual ~LoadModelTask() noexcept = default;
@@ -47,7 +47,7 @@ private:
   QFile* _file;
   mtt::DataStream* _stream;
   QDir _fileDirectory;
-  EditorCommonData& _commonData;
+  ObjectEditorCommonData& _commonData;
   mtt::UID::ValueType _mixUIDValue;
 
   std::vector<std::unique_ptr<mtt::AnimationObject>> _animations;

@@ -7,13 +7,13 @@
 #include <mtt/application/AsyncTasks/AbstractAsyncTask.h>
 #include <mtt/editorLib/Objects/AnimationObject.h>
 
-class EditorCommonData;
+class ParticlesEditorCommonData;
 
 class ImportAnimationTask : public mtt::AbstractAsyncTask
 {
 public:
   ImportAnimationTask(const QString& filename,
-                      EditorCommonData& commonData);
+                      ParticlesEditorCommonData& commonData);
   ImportAnimationTask(const ImportAnimationTask&) = delete;
   ImportAnimationTask& operator = ( const ImportAnimationTask&) = delete;
   virtual ~ImportAnimationTask() noexcept = default;
@@ -24,6 +24,6 @@ protected:
 
 private:
   QString _filename;
-  EditorCommonData& _commonData;
+  ParticlesEditorCommonData& _commonData;
   std::unique_ptr<mtt::AnimationObject> _animation;
 };

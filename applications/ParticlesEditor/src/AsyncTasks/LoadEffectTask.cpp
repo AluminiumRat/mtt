@@ -5,12 +5,12 @@
 #include <AsyncTasks/SaveEffectTask.h>
 #include <Objects/PEEObjectFactory.h>
 #include <Objects/ObjectLoader.h>
-#include <EditorCommonData.h>
+#include <ParticlesEditorCommonData.h>
 #include <ParticlesEditorScene.h>
 
 LoadEffectTask::LoadEffectTask( ParticlesEditorScene& scene,
                                 const QString& filename,
-                                EditorCommonData& commonData) :
+                                ParticlesEditorCommonData& commonData) :
   AbstractAsyncTask(QObject::tr("Loading"),
                     mtt::AbstractAsyncTask::DEPENDENT,
                     mtt::AbstractAsyncTask::EXPLICIT),
@@ -85,7 +85,7 @@ void LoadEffectTask::_loadModificators()
 void LoadEffectTask::finalizePart()
 {
   _commonData.undoStack().clear();
-  _commonData.setEffectFilename("");
+  _commonData.setDataFilename("");
   _clearScene();
 
   try
@@ -97,7 +97,7 @@ void LoadEffectTask::finalizePart()
     }
     _scene.dataRoot().changeAnimation(std::move(_animation));
 
-    _commonData.setEffectFilename(_filename);
+    _commonData.setDataFilename(_filename);
   }
   catch (...)
   {

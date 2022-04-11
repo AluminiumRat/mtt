@@ -2,7 +2,7 @@
 
 #include <mtt/editorLib/SceneTab/SceneTab.h>
 
-class EditorCommonData;
+class ObjectEditorCommonData;
 class ObjectEditorScene;
 
 class SceneTab : public mtt::SceneTab
@@ -10,7 +10,7 @@ class SceneTab : public mtt::SceneTab
   Q_OBJECT
 
 public:
-  explicit SceneTab(EditorCommonData& commonEditData);
+  explicit SceneTab(ObjectEditorCommonData& commonEditData);
   SceneTab(const SceneTab&) = delete;
   SceneTab& operator = (const SceneTab&) = delete;
   virtual ~SceneTab() noexcept = default;
@@ -23,5 +23,5 @@ private:
   void _setScene(ObjectEditorScene* scene);
 
 private:
-  EditorCommonData& _commonEditData;
+  ObjectEditorCommonData& _commonEditData;
 };

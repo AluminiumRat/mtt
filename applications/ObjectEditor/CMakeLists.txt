@@ -82,11 +82,11 @@ set(HEADERS
     "include/SceneTab/VertexDataWidget.h"
 
     "include/EditMenu.h"
-    "include/EditorCommonData.h"
     "include/FbxDrawableImporter.h"
     "include/FileMenu.h"
     "include/MainWindow.h"
     "include/ManipulatorMenu.h"
+    "include/ObjectEditorCommonData.h"
     "include/ObjectEditorScene.h"
     )
 
@@ -125,12 +125,12 @@ set(SOURCES
     "src/SceneTab/VertexDataWidget.cpp"
 
     "src/EditMenu.cpp"
-    "src/EditorCommonData.cpp"
     "src/FbxDrawableImporter.cpp"
     "src/FileMenu.cpp"
     "src/MainWindow.cpp"
     "src/ManipulatorMenu.cpp"
     "src/ObjectEditor.cpp"
+    "src/ObjectEditorCommonData.cpp"
     "src/ObjectEditorScene.cpp"
     )
 

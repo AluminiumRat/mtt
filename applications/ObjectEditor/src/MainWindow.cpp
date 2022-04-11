@@ -24,7 +24,7 @@ MainWindow::MainWindow() :
   _ui->setupUi(this);
 
   connect(&_commonEditData,
-          &EditorCommonData::sceneChanged,
+          &ObjectEditorCommonData::sceneChanged,
           this,
           &MainWindow::_updateSceneRenderObserver,
           Qt::DirectConnection);
