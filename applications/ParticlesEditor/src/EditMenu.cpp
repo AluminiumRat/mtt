@@ -4,8 +4,6 @@
 #include <QtWidgets/QMessageBox>
 
 #include <mtt/application/EditCommands/AddObjectCommand.h>
-#include <mtt/application/EditCommands/CompositeCommand.h>
-#include <mtt/application/EditCommands/RemoveObjectCommand.h>
 #include <mtt/editorLib/EditorApplication.h>
 
 #include <AsyncTasks/ImportAnimationTask.h>
@@ -19,184 +17,31 @@
 #include <Objects/SizeControlObject.h>
 #include <Objects/VisibilityControlObject.h>
 #include <EditMenu.h>
-#include <MainWindow.h>
+#include <ParticlesEditorCommonData.h>
 
-#include <GeneratedFiles/ui_MainWindow.h>
-
-EditMenu::EditMenu( MainWindow& window,
-                    Ui_MainWindow& ui,
+EditMenu::EditMenu( QWidget& window,
                     ParticlesEditorCommonData& commonData) :
-  _window(window),
-  _ui(ui),
+  mtt::EditMenu(window, commonData),
   _commonData(commonData)
 {
-}
+  addSeparator();
 
-void EditMenu::setupUI()
-{
-  connect(_ui.actionUndo,
-          &QAction::triggered,
-          this,
-          &EditMenu::_undo,
-          Qt::DirectConnection);
+  addAction(tr("Add frame"), this, &EditMenu::_addFrame);
+  addAction(tr("Add emitter"), this, &EditMenu::_addEmitter);
+  addAction(tr("Add visibility control"),
+            this,
+            &EditMenu::_addVisibilityControl);
+  addAction(tr("Add size control"), this, &EditMenu::_addSizeControl);
+  addAction(tr("Add gravity"), this, &EditMenu::_addGravity);
+  addAction(tr("Add blocker"), this, &EditMenu::_addBlocker);
+  addAction(tr("Add heater"), this, &EditMenu::_addHeater);
+  addAction(tr("Add gas source"), this, &EditMenu::_addGasSource);
 
-  connect(_ui.actionRedo,
-          &QAction::triggered,
-          this,
-          &EditMenu::_redo,
-          Qt::DirectConnection);
+  addSeparator();
 
-  connect(&_commonData,
-          &ParticlesEditorCommonData::selectedObjectsChanged,
-          this,
-          &EditMenu::_updateDeleteAction,
-          Qt::DirectConnection);
-  _updateDeleteAction();
-
-  connect(_ui.actionDelete,
-          &QAction::triggered,
-          this,
-          &EditMenu::_deleteObject,
-          Qt::DirectConnection);
-
-  connect(_ui.actionAdd_frame,
-          &QAction::triggered,
-          this,
-          &EditMenu::_addFrame,
-          Qt::DirectConnection);
-
-  connect(_ui.actionAdd_emitter,
-          &QAction::triggered,
-          this,
-          &EditMenu::_addEmitter,
-          Qt::DirectConnection);
-
-  connect(_ui.actionAdd_visibility_control,
-          &QAction::triggered,
-          this,
-          &EditMenu::_addVisibilityControl,
-          Qt::DirectConnection);
-
-  connect(_ui.actionAdd_size_control,
-          &QAction::triggered,
-          this,
-          &EditMenu::_addSizeControl,
-          Qt::DirectConnection);
-
-  connect(_ui.actionAdd_gravity,
-          &QAction::triggered,
-          this,
-          &EditMenu::_addGravity,
-          Qt::DirectConnection);
-
-  connect(_ui.actionAdd_blocker,
-          &QAction::triggered,
-          this,
-          &EditMenu::_addBlocker,
-          Qt::DirectConnection);
-
-  connect(_ui.actionAdd_heater,
-          &QAction::triggered,
-          this,
-          &EditMenu::_addHeater,
-          Qt::DirectConnection);
-
-  connect(_ui.actionAdd_gas_source,
-          &QAction::triggered,
-          this,
-          &EditMenu::_addGasSource,
-          Qt::DirectConnection);
-
-  connect(_ui.actionAdd_animation_from_fbx,
-          &QAction::triggered,
-          this,
-          &EditMenu::_addAnimationFromFbx,
-          Qt::DirectConnection);
-}
-
-void EditMenu::_undo() noexcept
-{
-  try
-  {
-    _commonData.undoStack().undoCommand();
-  }
-  catch(std::exception& error)
-  {
-    QMessageBox::critical(&_window, tr("Error"), error.what());
-  }
-  catch(...)
-  {
-    QMessageBox::critical(&_window, tr("Error"), tr("Unknown error"));
-  }
-}
-
-void EditMenu::_redo() noexcept
-{
-  try
-  {
-    _commonData.undoStack().redoCommand();
-  }
-  catch(std::exception& error)
-  {
-    QMessageBox::critical(&_window, tr("Error"), error.what());
-  }
-  catch(...)
-  {
-    QMessageBox::critical(&_window, tr("Error"), tr("Unknown error"));
-  }
-}
-
-void EditMenu::_updateDeleteAction() noexcept
-{
-  bool deleteEnabled = true;
-
-  if(_commonData.selectedObjects().size() == 0) deleteEnabled = false;
-  else
-  {
-    for(mtt::Object* object : _commonData.selectedObjects())
-    {
-      if( object->parent() == nullptr ||
-          !object->parent()->subobjectCanBeAddedAndRemoved(*object))
-      {
-        deleteEnabled = false;
-        break;
-      }
-    }
-  }
-
-  _ui.actionDelete->setEnabled(deleteEnabled);
-}
-
-void EditMenu::_deleteObject() noexcept
-{
-  try
-  {
-    if(_commonData.selectedObjects().empty()) return;
-
-    std::unique_ptr<mtt::CompositeCommand> compositeCommand(
-                                                    new mtt::CompositeCommand);
-
-    for (mtt::Object* object : _commonData.selectedObjects())
-    {
-      if(object->parent() == nullptr) return;
-      mtt::Object& parent = *object->parent();
-
-      if(!parent.subobjectCanBeAddedAndRemoved(*object)) return;
-      std::unique_ptr<mtt::RemoveObjectCommand> removeCommand(
-                                new mtt::RemoveObjectCommand(*object, parent));
-      compositeCommand->addSubcommand(std::move(removeCommand));
-    }
-
-    _commonData.undoStack().addAndMake(std::move(compositeCommand));
-  }
-  catch (std::exception& error)
-  {
-    QMessageBox::critical(&_window, tr("Error"), error.what());
-  }
-  catch (...)
-  {
-    QMessageBox::critical(&_window, tr("Error"), tr("Unknown error"));
-  }
+  addAction(tr("Add animation from fbx"),
+            this,
+            &EditMenu::_addAnimationFromFbx);
 }
 
 void EditMenu::_addHierarhical(std::unique_ptr<HierarhicalObject> object)
@@ -229,13 +74,13 @@ void EditMenu::_addFrame() noexcept
   }
   catch(std::exception& error)
   {
-    QMessageBox::critical(&_window,
+    QMessageBox::critical(&window(),
                           tr("Unable to add a frame"),
                           error.what());
   }
   catch(...)
   {
-    QMessageBox::critical(&_window,
+    QMessageBox::critical(&window(),
                           tr("Unable to add a frame"),
                           tr("Unknown error"));
   }
@@ -256,11 +101,11 @@ void EditMenu::_addModificator( const QString& name,
   }
   catch(std::exception& error)
   {
-    QMessageBox::critical(&_window, errorString, error.what());
+    QMessageBox::critical(&window(), errorString, error.what());
   }
   catch(...)
   {
-    QMessageBox::critical(&_window, errorString, tr("Unknown error"));
+    QMessageBox::critical(&window(), errorString, tr("Unknown error"));
   }
 }
 
@@ -313,7 +158,7 @@ void EditMenu::_addAnimationFromFbx() noexcept
     ParticlesEditorScene* scene = _commonData.scene();
     if (scene == nullptr) return;
 
-    QString fileName = QFileDialog::getOpenFileName(&_window,
+    QString fileName = QFileDialog::getOpenFileName(&window(),
                                                     tr("Import fbx"),
                                                     "",
                                                     tr("fbx (*.fbx)"));
@@ -326,6 +171,6 @@ void EditMenu::_addAnimationFromFbx() noexcept
   }
   catch (...)
   {
-    QMessageBox::critical(&_window, tr("Error"), tr("Unable to import fbx"));
+    QMessageBox::critical(&window(), tr("Error"), tr("Unable to import fbx"));
   }
 }

@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <QtCore/QObject>
+#include <mtt/editorLib/EditMenu.h>
 
 #include <Objects/HierarhicalObject.h>
 
@@ -11,25 +11,17 @@ class MainWindow;
 
 class Ui_MainWindow;
 
-class EditMenu : public QObject
+class EditMenu : public mtt::EditMenu
 {
   Q_OBJECT
 
 public:
-  EditMenu( MainWindow& window,
-            Ui_MainWindow& ui,
-            ParticlesEditorCommonData& commonData);
+  EditMenu(QWidget& window, ParticlesEditorCommonData& commonData);
   EditMenu(const EditMenu&) = delete;
   EditMenu& operator = (const EditMenu&) = delete;
   virtual ~EditMenu() noexcept = default;
 
-  void setupUI();
-
 private:
-  void _undo() noexcept;
-  void _redo() noexcept;
-  void _updateDeleteAction() noexcept;
-  void _deleteObject() noexcept;
   void _addHierarhical(std::unique_ptr<HierarhicalObject> object);
   void _addFrame() noexcept;
   template <typename Modificator>
@@ -45,7 +37,5 @@ private:
   void _addAnimationFromFbx() noexcept;
 
 private:
-  MainWindow& _window;
-  Ui_MainWindow& _ui;
   ParticlesEditorCommonData& _commonData;
 };

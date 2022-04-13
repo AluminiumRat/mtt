@@ -5,19 +5,18 @@
 #include <QtWidgets/QMainWindow>
 
 #include <mtt/application/Widgets/AsyncTaskDialog/AsyncTaskDialog.h>
-#include <mtt/application/Widgets/StatisticWidget.h>
 #include <mtt/editorLib/Render/EditorRenderWidget.h>
 #include <mtt/editorLib/Render/SceneRenderObserver.h>
 #include <mtt/editorLib/SceneTreeWidget/SceneTreeWidget.h>
+#include <mtt/editorLib/EnvironmentMenu.h>
+#include <mtt/editorLib/ManipulatorMenu.h>
+#include <mtt/editorLib/RenderMenu.h>
 
 #include <PropertiesWidget/PropertiesWidget.h>
 #include <Render/RenderObserverFactory.h>
 #include <EditMenu.h>
 #include <FileMenu.h>
-#include <ManipulatorMenu.h>
 #include <ObjectEditorCommonData.h>
-
-class Ui_MainWindow;
 
 class MainWindow : public QMainWindow
 {
@@ -27,7 +26,7 @@ public:
   MainWindow();
   MainWindow(const MainWindow&) = delete;
   MainWindow& operator = (const MainWindow&) = delete;
-  virtual ~MainWindow() noexcept;
+  virtual ~MainWindow() noexcept = default;
 
 protected:
   virtual void closeEvent(QCloseEvent* event) override;
@@ -41,11 +40,8 @@ private:
                         const QString& message) noexcept;
   void _processError( mtt::AbstractAsyncTask& task,
                       const std::exception& error) noexcept;
-  void _showStatistic() noexcept;
 
 private:
-  Ui_MainWindow* _ui;
-
   ObjectEditorCommonData _commonEditData;
 
   RenderObserverFactory _observerFactory;
@@ -57,9 +53,9 @@ private:
 
   FileMenu _fileMenu;
   EditMenu _editMenu;
-  ManipulatorMenu _manipulatorMenu;
+  mtt::EnvironmentMenu _environmentMenu;
+  mtt::ManipulatorMenu _manipulatorMenu;
+  mtt::RenderMenu _renderMenu;
 
   mtt::AsyncTaskDialog _asyncTaskDialog;
-
-  mtt::StatisticWidget _statisticWidget;
 };

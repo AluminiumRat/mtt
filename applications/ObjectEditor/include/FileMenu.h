@@ -1,39 +1,27 @@
 #pragma once
 
-#include <QtCore/QObject>
+#include <QtWidgets/QMenu>
 
 class ObjectEditorCommonData;
-class MainWindow;
 
-class Ui_MainWindow;
-
-class FileMenu : public QObject
+class FileMenu : public QMenu
 {
   Q_OBJECT
 
 public:
-  FileMenu( MainWindow& window,
-            Ui_MainWindow& ui,
-            ObjectEditorCommonData& commonData);
+  FileMenu(QWidget& window, ObjectEditorCommonData& commonData);
   FileMenu(const FileMenu&) = delete;
   FileMenu& operator = (const FileMenu&) = delete;
   virtual ~FileMenu() noexcept = default;
 
-  void setupUI();
-
 private:
+  void _loadModel() noexcept;
+
   void _saveModel() noexcept;
   void _saveModelAs() noexcept;
   void _saveModelToFile(const QString& file) noexcept;
-  void _loadModel() noexcept;
-
-  void _saveEnvironment() noexcept;
-  void _saveEnvironmentAs() noexcept;
-  void _saveEnvironmentToFile(const QString& file) noexcept;
-  void _loadEnvironment() noexcept;
 
 private:
-  MainWindow& _window;
-  Ui_MainWindow& _ui;
+  QWidget& _window;
   ObjectEditorCommonData& _commonData;
 };

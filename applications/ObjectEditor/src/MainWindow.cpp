@@ -2,6 +2,7 @@
 
 #include <QtCore/Qsettings>
 #include <QtWidgets/QDockWidget>
+#include <QtWidgets/QMenuBar>
 #include <QtWidgets/QMessageBox>
 
 #include <mtt/editorLib/Objects/DirectLightObject.h>
@@ -10,20 +11,24 @@
 
 #include <MainWindow.h>
 
-#include <GeneratedFiles/ui_MainWindow.h>
-
 MainWindow::MainWindow() :
-  _ui(new Ui_MainWindow),
   _observerFactory(_commonEditData),
   _treeWidget(_commonEditData),
   _propertiesWidget(_commonEditData),
   _renderWidget(_commonEditData.renderScene(), _commonEditData),
-  _fileMenu(*this, *_ui, _commonEditData),
-  _editMenu(*this, *_ui, _commonEditData),
-  _manipulatorMenu(*this, _renderWidget.manipulatorController(), *_ui),
+  _fileMenu(*this, _commonEditData),
+  _editMenu(*this, _commonEditData),
+  _environmentMenu(*this, _commonEditData),
+  _manipulatorMenu(*this, _renderWidget.manipulatorController()),
   _asyncTaskDialog(mtt::EditorApplication::instance().asyncTaskQueue)
 {
-  _ui->setupUi(this);
+  setWindowTitle(tr("Object editor"));
+
+  menuBar()->addMenu(&_fileMenu);
+  menuBar()->addMenu(&_editMenu);
+  menuBar()->addMenu(&_environmentMenu);
+  menuBar()->addMenu(&_manipulatorMenu);
+  menuBar()->addMenu(&_renderMenu);
 
   connect(&_commonEditData,
           &ObjectEditorCommonData::sceneChanged,
@@ -62,10 +67,6 @@ MainWindow::MainWindow() :
   scene->environmentRoot().objects().addChild(std::move(directLight));
   _commonEditData.setScene(std::move(scene));
 
-  _fileMenu.setupUI();
-  _editMenu.setupUI();
-  _manipulatorMenu.setupUI();
-
   _asyncTaskDialog.setModal(true);
 
   connect(&mtt::EditorApplication::instance().asyncTaskQueue,
@@ -90,18 +91,7 @@ MainWindow::MainWindow() :
           this,
           &MainWindow::_processError);
 
-  connect(_ui->actionStatistic,
-          &QAction::triggered,
-          this,
-          &MainWindow::_showStatistic,
-          Qt::DirectConnection);
-
   _restoreGeometry();
-}
-
-MainWindow::~MainWindow() noexcept
-{
-  delete _ui;
 }
 
 void MainWindow::_restoreGeometry()
@@ -178,10 +168,4 @@ void MainWindow::_processError( mtt::AbstractAsyncTask& task,
   errorDialog->setIcon(QMessageBox::Critical);
   errorDialog->setModal(true);
   errorDialog->show();
-}
-
-void MainWindow::_showStatistic() noexcept
-{
-  _statisticWidget.show();
-  _statisticWidget.setFixedSize(_statisticWidget.size());
 }

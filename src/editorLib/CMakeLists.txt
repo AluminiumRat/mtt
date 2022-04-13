@@ -123,11 +123,15 @@ set(HEADERS
     "../../include/mtt/editorLib/SceneTreeWidget/SceneTreeWidget.h"
 
     "../../include/mtt/editorLib/AnimationPlayer.h"
+    "../../include/mtt/editorLib/EditMenu.h"
     "../../include/mtt/editorLib/EditorApplication.h"
     "../../include/mtt/editorLib/EditorCommonData.h"
     "../../include/mtt/editorLib/EditorScene.h"
     "../../include/mtt/editorLib/EditorUndoStack.h"
+    "../../include/mtt/editorLib/EnvironmentMenu.h"
     "../../include/mtt/editorLib/FbxAnimationImporter.h"
+    "../../include/mtt/editorLib/ManipulatorMenu.h"
+    "../../include/mtt/editorLib/RenderMenu.h"
     )
 
 set(UI_FILES
@@ -226,11 +230,15 @@ set(SOURCES
     "SceneTreeWidget/SceneTreeWidget.cpp"
 
     "AnimationPlayer.cpp"
+    "EditMenu.cpp"
     "EditorApplication.cpp"
     "EditorCommonData.cpp"
     "EditorScene.cpp"
     "EditorUndoStack.cpp"
+    "EnvironmentMenu.cpp"
     "FbxAnimationImporter.cpp"
+    "ManipulatorMenu.cpp"
+    "RenderMenu.cpp"
     )
 
 set(QRC_FILES

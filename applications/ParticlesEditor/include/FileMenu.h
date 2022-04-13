@@ -1,36 +1,27 @@
 #pragma once
 
-#include <QtCore/QObject>
+#include <QtWidgets/QMenu>
 
 class ParticlesEditorCommonData;
-class MainWindow;
 
-class Ui_MainWindow;
-
-class FileMenu : public QObject
+class FileMenu : public QMenu
 {
   Q_OBJECT
 
 public:
-  FileMenu( MainWindow& window,
-            Ui_MainWindow& ui,
-            ParticlesEditorCommonData& commonData);
+  FileMenu(QWidget& window, ParticlesEditorCommonData& commonData);
   FileMenu(const FileMenu&) = delete;
   FileMenu& operator = (const FileMenu&) = delete;
   virtual ~FileMenu() noexcept = default;
 
-  void setupUI();
-
 private:
+  void _load() noexcept;
+
   void _saveEffect() noexcept;
   void _saveEffectAs() noexcept;
   void _saveToFile(const QString& file) noexcept;
-  void _load() noexcept;
-
-  void _loadEnvironment() noexcept;
 
 private:
-  MainWindow& _window;
-  Ui_MainWindow& _ui;
+  QWidget& _window;
   ParticlesEditorCommonData& _commonData;
 };

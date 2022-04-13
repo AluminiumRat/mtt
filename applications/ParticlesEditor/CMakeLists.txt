@@ -101,7 +101,6 @@ set(HEADERS
     "include/EditMenu.h"
     "include/FileMenu.h"
     "include/MainWindow.h"
-    "include/ManipulatorMenu.h"
     "include/ParticlesEditorCommonData.h"
     "include/ParticlesEditorScene.h"
     )
@@ -159,7 +158,6 @@ set(SOURCES
     "src/EditMenu.cpp"
     "src/FileMenu.cpp"
     "src/MainWindow.cpp"
-    "src/ManipulatorMenu.cpp"
     "src/ParticlesEditor.cpp"
     "src/ParticlesEditorCommonData.cpp"
     "src/ParticlesEditorScene.cpp"
@@ -176,7 +174,6 @@ set(UI_FILES
     "src/PropertiesWidget/SizeControlWidget.ui"
     "src/PropertiesWidget/TypeMaskWidget.ui"
     "src/PropertiesWidget/VisibilityControlWidget.ui"
-    "src/MainWindow.ui"
     )
 
 set(QRC_FILES

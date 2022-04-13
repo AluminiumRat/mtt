@@ -83,7 +83,6 @@ set(HEADERS
     "include/FbxDrawableImporter.h"
     "include/FileMenu.h"
     "include/MainWindow.h"
-    "include/ManipulatorMenu.h"
     "include/ObjectEditorCommonData.h"
     "include/ObjectEditorScene.h"
     )
@@ -124,7 +123,6 @@ set(SOURCES
     "src/FbxDrawableImporter.cpp"
     "src/FileMenu.cpp"
     "src/MainWindow.cpp"
-    "src/ManipulatorMenu.cpp"
     "src/ObjectEditor.cpp"
     "src/ObjectEditorCommonData.cpp"
     "src/ObjectEditorScene.cpp"
@@ -135,7 +133,6 @@ set(UI_FILES
     "src/PropertiesWidget/LODObjectWidget.ui"
     "src/PropertiesWidget/MaterialWidget.ui"
     "src/PropertiesWidget/MeshWidget.ui"
-    "src/MainWindow.ui"
     )
 
 add_executable (ObjectEditor

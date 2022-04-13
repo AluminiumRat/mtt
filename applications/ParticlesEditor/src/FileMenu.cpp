@@ -1,51 +1,27 @@
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMessageBox>
 
-#include <mtt/editorLib/AsyncTasks/LoadEnvironmentTask.h>
 #include <mtt/editorLib/EditorApplication.h>
 
 #include <AsyncTasks/LoadEffectTask.h>
 #include <AsyncTasks/SaveEffectTask.h>
 #include <FileMenu.h>
-#include <MainWindow.h>
 #include <ParticlesEditorCommonData.h>
 
-#include <GeneratedFiles/ui_MainWindow.h>
-
-FileMenu::FileMenu( MainWindow& window,
-                    Ui_MainWindow& ui,
-                    ParticlesEditorCommonData& commonData) :
+FileMenu::FileMenu( QWidget& window, ParticlesEditorCommonData& commonData) :
+  QMenu(tr("&File")),
   _window(window),
-  _ui(ui),
   _commonData(commonData)
 {
-}
+  QAction* openAction = addAction(tr("&Open"), this, &FileMenu::_load);
+  openAction->setShortcut(Qt::CTRL + Qt::Key_O);
 
-void FileMenu::setupUI()
-{
-  connect(_ui.actionSave,
-          &QAction::triggered,
-          this,
-          &FileMenu::_saveEffect,
-          Qt::DirectConnection);
+  addSeparator();
 
-  connect(_ui.actionSave_as,
-          &QAction::triggered,
-          this,
-          &FileMenu::_saveEffectAs,
-          Qt::DirectConnection);
+  QAction* saveAction = addAction(tr("&Save"), this, &FileMenu::_saveEffect);
+  saveAction->setShortcut(Qt::CTRL + Qt::Key_S);
 
-  connect(_ui.actionLoad,
-          &QAction::triggered,
-          this,
-          &FileMenu::_load,
-          Qt::DirectConnection);
-
-  connect(_ui.actionLoad_environment,
-          &QAction::triggered,
-          this,
-          &FileMenu::_loadEnvironment,
-          Qt::DirectConnection);
+  addAction(tr("Save &As ..."), this, &FileMenu::_saveEffectAs);
 }
 
 void FileMenu::_saveEffect() noexcept
@@ -118,35 +94,5 @@ void FileMenu::_load() noexcept
   catch (...)
   {
     QMessageBox::critical(&_window, tr("Error"), tr("Unable to load effect"));
-  }
-}
-
-void FileMenu::_loadEnvironment() noexcept
-{
-  if (_commonData.scene() == nullptr)
-  {
-    QMessageBox::critical(&_window, tr("Error"), tr("Scene is empty."));
-    return;
-  }
-
-  try
-  {
-    QString fileName = QFileDialog::getOpenFileName(&_window,
-                                                    tr("Load environment"),
-                                                    "",
-                                                    tr("enm (*.enm)"));
-    if(fileName.isEmpty()) return;
-
-    std::unique_ptr<mtt::LoadEnvironmentTask> task;
-    task.reset(new mtt::LoadEnvironmentTask(*_commonData.scene(),
-                                            fileName,
-                                            _commonData));
-    mtt::EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
-  }
-  catch (...)
-  {
-    QMessageBox::critical(&_window,
-                          tr("Error"),
-                          tr("Unable to load environment"));
   }
 }
