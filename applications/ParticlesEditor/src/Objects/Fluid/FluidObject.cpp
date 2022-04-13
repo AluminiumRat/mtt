@@ -259,11 +259,11 @@ void FluidObject::_applyMixing(float dTime)
                                     _velocityMatrix->zSize());
   newTemperature.clear(defaultTemperature);
 
-  for (size_t x = 1; x < _velocityMatrix->xSize() - 1; x++)
+  for (size_t z = 1; z < _velocityMatrix->zSize() - 1; z++)
   {
     for (size_t y = 1; y < _velocityMatrix->ySize() - 1; y++)
     {
-      for (size_t z = 1; z < _velocityMatrix->zSize() - 1; z++)
+      for (size_t x = 1; x < _velocityMatrix->xSize() - 1; x++)
       {
         if (_blockMatrix->get(x, y, z) != 0) continue;
 
@@ -289,11 +289,11 @@ void FluidObject::_applyMixing(float dTime)
 
 void FluidObject::_calculateMassMatrix() noexcept
 {
-  for (size_t x = 0; x < _velocityMatrix->xSize(); x++)
+  for (size_t z = 0; z < _velocityMatrix->zSize(); z++)
   {
     for (size_t y = 0; y < _velocityMatrix->ySize(); y++)
     {
-      for (size_t z = 0; z < _velocityMatrix->zSize(); z++)
+      for (size_t x = 0; x < _velocityMatrix->xSize(); x++)
       {
         float temperature = _temperatureMatrix->get(x, y, z);
         _massMatrix->set( x,
@@ -309,11 +309,11 @@ void FluidObject::_calculateMassMatrix() noexcept
 
 void FluidObject::_applyArchimedesForce(float dTime) noexcept
 {
-  for (size_t x = 1; x < _velocityMatrix->xSize() - 1; x++)
+  for (size_t z = 1; z < _velocityMatrix->zSize() - 1; z++)
   {
     for (size_t y = 1; y < _velocityMatrix->ySize() - 1; y++)
     {
-      for (size_t z = 1; z < _velocityMatrix->zSize() - 1; z++)
+      for (size_t x = 1; x < _velocityMatrix->xSize() - 1; x++)
       {
         if(_blockMatrix->get(x, y, z) != 0) continue;
 
@@ -361,11 +361,11 @@ void FluidObject::_applyFriction(float dTime) noexcept
                                       _velocityMatrix->zSize());
   newVelocity.clear(_wind);
 
-  for (size_t x = 1; x < _velocityMatrix->xSize() - 1; x++)
+  for (size_t z = 1; z < _velocityMatrix->zSize() - 1; z++)
   {
     for (size_t y = 1; y < _velocityMatrix->ySize() - 1; y++)
     {
-      for (size_t z = 1; z < _velocityMatrix->zSize() - 1; z++)
+      for (size_t x = 1; x < _velocityMatrix->xSize() - 1; x++)
       {
         if(_blockMatrix->get(x, y, z) != 0)
         {
@@ -414,11 +414,11 @@ void FluidObject::_applyFriction(float dTime) noexcept
 
 void FluidObject::_blockVelocity()
 {
-  for (size_t x = 1; x < _velocityMatrix->xSize() - 1; x++)
+  for (size_t z = 1; z < _velocityMatrix->zSize() - 1; z++)
   {
     for (size_t y = 1; y < _velocityMatrix->ySize() - 1; y++)
     {
-      for (size_t z = 1; z < _velocityMatrix->zSize() - 1; z++)
+      for (size_t x = 1; x < _velocityMatrix->xSize() - 1; x++)
       {
         glm::vec3& velocityRef = (*_velocityMatrix)(x, y, z);
         if (_blockMatrix->get(x, y, z) != 0)
@@ -449,11 +449,11 @@ void FluidObject::_blockVelocity()
 void FluidObject::_buildCorrectFieldDivirgence( FluidMatrix<float>& target,
                                                 float dTime)
 {
-  for (size_t x = 0; x < _velocityMatrix->xSize(); x++)
+  for (size_t z = 0; z < _velocityMatrix->zSize(); z++)
   {
     for (size_t y = 0; y < _velocityMatrix->ySize(); y++)
     {
-      for (size_t z = 0; z < _velocityMatrix->zSize(); z++)
+      for (size_t x = 0; x < _velocityMatrix->xSize(); x++)
       {
         if( x == 0 ||
             x == _velocityMatrix->xSize() - 1 ||
@@ -522,11 +522,11 @@ void FluidObject::_buildProjPressure( FluidMatrix<float>& target,
       iteration < _solverIterations;
       iteration++)
   {
-    for (size_t x = 1; x < _velocityMatrix->xSize() - 1; x++)
+    for (size_t z = 1; z < _velocityMatrix->zSize() - 1; z++)
     {
       for (size_t y = 1; y < _velocityMatrix->ySize() - 1; y++)
       {
-        for (size_t z = 1; z < _velocityMatrix->zSize() - 1; z++)
+        for (size_t x = 1; x < _velocityMatrix->xSize() - 1; x++)
         {
           float pressureAccum = 0;
           float divider = 0;
@@ -587,11 +587,11 @@ void FluidObject::_applyContinuityEquation(float dTime)
                                   _velocityMatrix->zSize());
   _buildProjPressure(projPressure, divirgence);
 
-  for (size_t x = 1; x < _velocityMatrix->xSize() - 1; x++)
+  for (size_t z = 1; z < _velocityMatrix->zSize() - 1; z++)
   {
     for (size_t y = 1; y < _velocityMatrix->ySize() - 1; y++)
     {
-      for (size_t z = 1; z < _velocityMatrix->zSize() - 1; z++)
+      for (size_t x = 1; x < _velocityMatrix->xSize() - 1; x++)
       {
         if (_blockMatrix->get(x, y, z) != 0)
         {
@@ -644,11 +644,11 @@ void FluidObject::_moveMatrices(float dTime)
                                         _velocityMatrix->zSize());
   newPpressureMatrix.clear(defaultPressure);
 
-  for (size_t x = 1; x < newVelocity.xSize() - 1; x++)
+  for (size_t z = 1; z < newVelocity.zSize() - 1; z++)
   {
     for (size_t y = 1; y < newVelocity.ySize() - 1; y++)
     {
-      for (size_t z = 1; z < newVelocity.zSize() - 1; z++)
+      for (size_t x = 1; x < newVelocity.xSize() - 1; x++)
       {
         glm::vec3 currentVelocity = _velocityMatrix->get(x, y, z);
         glm::vec3 shift = -currentVelocity / _cellSize * dTime;

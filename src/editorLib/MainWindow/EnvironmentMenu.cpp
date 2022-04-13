@@ -5,12 +5,12 @@
 #include <mtt/application/EditCommands/UndoStack.h>
 #include <mtt/editorLib/AsyncTasks/LoadEnvironmentTask.h>
 #include <mtt/editorLib/AsyncTasks/SaveEnvironmentTask.h>
+#include <mtt/editorLib/MainWindow/EnvironmentMenu.h>
 #include <mtt/editorLib/Objects/AmbientLightObject.h>
 #include <mtt/editorLib/Objects/DirectLightObject.h>
 #include <mtt/editorLib/Objects/EnvironmentModel.h>
 #include <mtt/editorLib/EditorApplication.h>
 #include <mtt/editorLib/EditorCommonData.h>
-#include <mtt/editorLib/EnvironmentMenu.h>
 
 using namespace mtt;
 

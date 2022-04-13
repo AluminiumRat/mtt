@@ -5,7 +5,7 @@
 #include <mtt/application/EditCommands/CompositeCommand.h>
 #include <mtt/application/EditCommands/RemoveObjectCommand.h>
 #include <mtt/application/EditCommands/UndoStack.h>
-#include <mtt/editorLib/EditMenu.h>
+#include <mtt/editorLib/MainWindow/EditMenu.h>
 #include <mtt/editorLib/EditorCommonData.h>
 
 using namespace mtt;

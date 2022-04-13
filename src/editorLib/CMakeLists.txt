@@ -51,6 +51,12 @@ set(HEADERS
     "../../include/mtt/editorLib/AsyncTasks/UploadCubetextureTask.h"
     "../../include/mtt/editorLib/AsyncTasks/UploadTextureTask.h"
 
+    "../../include/mtt/editorLib/MainWindow/EditMenu.h"
+    "../../include/mtt/editorLib/MainWindow/EditorMainWindow.h"
+    "../../include/mtt/editorLib/MainWindow/EnvironmentMenu.h"
+    "../../include/mtt/editorLib/MainWindow/ManipulatorMenu.h"
+    "../../include/mtt/editorLib/MainWindow/RenderMenu.h"
+
     "../../include/mtt/editorLib/Manipulator/AxisManipulator.h"
     "../../include/mtt/editorLib/Manipulator/EditorManipulatorController.h"
     "../../include/mtt/editorLib/Manipulator/MoveManipulator.h"
@@ -123,15 +129,11 @@ set(HEADERS
     "../../include/mtt/editorLib/SceneTreeWidget/SceneTreeWidget.h"
 
     "../../include/mtt/editorLib/AnimationPlayer.h"
-    "../../include/mtt/editorLib/EditMenu.h"
     "../../include/mtt/editorLib/EditorApplication.h"
     "../../include/mtt/editorLib/EditorCommonData.h"
     "../../include/mtt/editorLib/EditorScene.h"
     "../../include/mtt/editorLib/EditorUndoStack.h"
-    "../../include/mtt/editorLib/EnvironmentMenu.h"
     "../../include/mtt/editorLib/FbxAnimationImporter.h"
-    "../../include/mtt/editorLib/ManipulatorMenu.h"
-    "../../include/mtt/editorLib/RenderMenu.h"
     )
 
 set(UI_FILES
@@ -158,6 +160,12 @@ set(SOURCES
     "AsyncTasks/SaveEnvironmentTask.cpp"
     "AsyncTasks/UploadCubetextureTask.cpp"
     "AsyncTasks/UploadTextureTask.cpp"
+
+    "MainWindow/EditMenu.cpp"
+    "MainWindow/EditorMainWindow.cpp"
+    "MainWindow/EnvironmentMenu.cpp"
+    "MainWindow/ManipulatorMenu.cpp"
+    "MainWindow/RenderMenu.cpp"
 
     "Manipulator/AxisManipulator.cpp"
     "Manipulator/EditorManipulatorController.cpp"
@@ -230,15 +238,11 @@ set(SOURCES
     "SceneTreeWidget/SceneTreeWidget.cpp"
 
     "AnimationPlayer.cpp"
-    "EditMenu.cpp"
     "EditorApplication.cpp"
     "EditorCommonData.cpp"
     "EditorScene.cpp"
     "EditorUndoStack.cpp"
-    "EnvironmentMenu.cpp"
     "FbxAnimationImporter.cpp"
-    "ManipulatorMenu.cpp"
-    "RenderMenu.cpp"
     )
 
 set(QRC_FILES

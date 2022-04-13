@@ -22,7 +22,7 @@ public:
 
   inline void clear(const ValueType& newValue) noexcept;
 
-  inline const ValueType& get ( size_t x, size_t y, size_t z) const noexcept;
+  inline const ValueType& get( size_t x, size_t y, size_t z) const noexcept;
   inline void set(size_t x,
                   size_t y,
                   size_t z,
@@ -37,6 +37,11 @@ public:
   inline ValueType interpolate(float x, float y, float z) const noexcept;
 
   inline void swap(FluidMatrix<ValueType>& other) noexcept;
+
+private:
+  inline const ValueType& _clampedGet(size_t x,
+                                      size_t y,
+                                      size_t z) const noexcept;
 
 private:
   size_t _xSize;
@@ -90,9 +95,6 @@ inline void FluidMatrix<ValueType>::set(size_t x,
                                         size_t z,
                                         const ValueType& newValue) noexcept
 {
-  x = glm::min(x, _xSize - 1);
-  y = glm::min(y, _ySize - 1);
-  z = glm::min(z, _zSize - 1);
   size_t position = x + _xSize * y + _xyPlaneSize * z;
   _data[position] = newValue;
 }
@@ -102,9 +104,6 @@ inline const ValueType& FluidMatrix<ValueType>::get(size_t x,
                                                     size_t y,
                                                     size_t z) const noexcept
 {
-  x = glm::min(x, _xSize - 1);
-  y = glm::min(y, _ySize - 1);
-  z = glm::min(z, _zSize - 1);
   size_t position = x + _xSize * y + _xyPlaneSize * z;
   return _data[position];
 }
@@ -114,9 +113,6 @@ inline ValueType& FluidMatrix<ValueType>::operator () ( size_t x,
                                                         size_t y,
                                                         size_t z) noexcept
 {
-  x = glm::min(x, _xSize - 1);
-  y = glm::min(y, _ySize - 1);
-  z = glm::min(z, _zSize - 1);
   size_t position = x + _xSize * y + _xyPlaneSize * z;
   return _data[position];
 }
@@ -155,26 +151,39 @@ inline ValueType FluidMatrix<ValueType>::interpolate( float x,
   size_t intZ = size_t(z);
   float fractZ = glm::fract(z);
 
-  ValueType xInter0 = glm::mix( get(intX, intY, intZ),
-                                get(intX + 1, intY, intZ),
+  ValueType xInter0 = glm::mix( _clampedGet(intX, intY, intZ),
+                                _clampedGet(intX + 1, intY, intZ),
                                 fractX);
 
-  ValueType xInter1 = glm::mix( get(intX, intY + 1, intZ),
-                                get(intX + 1, intY + 1, intZ),
+  ValueType xInter1 = glm::mix( _clampedGet(intX, intY + 1, intZ),
+                                _clampedGet(intX + 1, intY + 1, intZ),
                                 fractX);
 
-  ValueType xInter2 = glm::mix( get(intX, intY, intZ + 1),
-                                get(intX + 1, intY, intZ + 1),
+  ValueType xInter2 = glm::mix(_clampedGet(intX, intY, intZ + 1),
+                                _clampedGet(intX + 1, intY, intZ + 1),
                                 fractX);
 
-  ValueType xInter3= glm::mix(get(intX, intY + 1, intZ + 1),
-                              get(intX + 1, intY + 1, intZ + 1),
+  ValueType xInter3= glm::mix(_clampedGet(intX, intY + 1, intZ + 1),
+                              _clampedGet(intX + 1, intY + 1, intZ + 1),
                               fractX);
 
   ValueType yInter0 = glm::mix(xInter0, xInter1, fractY);
   ValueType yInter1 = glm::mix(xInter2, xInter3, fractY);
 
   return glm::mix(yInter0, yInter1, fractZ);
+}
+
+template <typename ValueType>
+inline const ValueType& FluidMatrix<ValueType>::_clampedGet(
+                                                        size_t x,
+                                                        size_t y,
+                                                        size_t z) const noexcept
+{
+  x = glm::min(x, _xSize - 1);
+  y = glm::min(y, _ySize - 1);
+  z = glm::min(z, _zSize - 1);
+  size_t position = x + _xSize * y + _xyPlaneSize * z;
+  return _data[position];
 }
 
 template <typename ValueType>

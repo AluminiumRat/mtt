@@ -2,7 +2,7 @@
 
 #include <QtWidgets/QMessageBox>
 
-#include <mtt/editorLib/ManipulatorMenu.h>
+#include <mtt/editorLib/MainWindow/ManipulatorMenu.h>
 #include <mtt/utilities/ScopedSetter.h>
 
 using namespace mtt;

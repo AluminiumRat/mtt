@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mtt/editorLib/EditMenu.h>
+#include <mtt/editorLib/MainWindow/EditMenu.h>
 
 class ObjectEditorCommonData;
 

@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <mtt/editorLib/EditMenu.h>
+#include <mtt/editorLib/MainWindow/EditMenu.h>
 
 #include <Objects/HierarhicalObject.h>
 
