@@ -1,4 +1,6 @@
 #include <algorithm>
+#include <future>
+#include <thread>
 
 #include <mtt/utilities/Abort.h>
 #include <mtt/utilities/Box.h>
@@ -155,9 +157,6 @@ void FluidObject::_rebuildMatrices()
 
     _pressureMatrix.emplace(fieldExtentX, fieldExtentY, fieldExtentZ);
     _pressureMatrix->clear(defaultPressure);
-
-    _massMatrix.emplace(fieldExtentX, fieldExtentY, fieldExtentZ);
-    _massMatrix->clear(0.f);
   }
   catch(...)
   {
@@ -217,11 +216,7 @@ void FluidObject::simulationStep(mtt::TimeT currentTime, mtt::TimeT delta)
 
   if(dTime != 0.f)
   {
-    _applyMixing(dTime);
-    _calculateMassMatrix();
-    _applyArchimedesForce(dTime);
-    _applyFriction(dTime),
-    _blockVelocity();
+    _applyForces(dTime);
     _applyContinuityEquation(dTime);
     _moveMatrices(dTime);
     _applyContinuityEquation(dTime);
@@ -240,8 +235,6 @@ void FluidObject::_applyNeighbourTemp(size_t x,
                                       float& temperatureAccumulator,
                                       float& weightAccumulator) noexcept
 {
-  if (_blockMatrix->get(x, y, z) != 0) return;
-
   glm::vec3 currentSpeed = _velocityMatrix->get(x,y,z);
   float dSpeed = glm::length(flowSpeed - currentSpeed);
 
@@ -252,204 +245,226 @@ void FluidObject::_applyNeighbourTemp(size_t x,
   weightAccumulator += weight;
 }
 
-void FluidObject::_applyMixing(float dTime)
+void FluidObject::_applyForcesStep( FluidMatrix<float>& newTemperature,
+                                    FluidMatrix<glm::vec3>& newVelocity,
+                                    size_t startZ,
+                                    size_t finishZ,
+                                    float dTime)
+{
+  for (size_t z = startZ; z < finishZ; z++)
+  {
+    for (size_t y = 1; y < _velocityMatrix->ySize() - 1; y++)
+    {
+      for (size_t x = 1; x < _velocityMatrix->xSize() - 1; x++)
+      {
+        if (_blockMatrix->get(x, y, z) != 0)
+        {
+          newVelocity(x, y, z) = glm::vec3(0.f);
+          continue;
+        }
+
+        glm::vec3 flowSpeed = _velocityMatrix->get(x, y, z);
+
+        float avgTemp = _temperatureMatrix->get(x, y, z);
+        float totalTempWeght = 1.f;
+
+        float neighbourMass = 0.f;
+        float arhimedesNeighbours = 0.f;
+
+        glm::vec3 envVelocity(0.f);
+
+        if (_blockMatrix->get(x - 1, y, z) == 0)
+        {
+          _applyNeighbourTemp(x - 1,
+                              y,
+                              z,
+                              flowSpeed,
+                              dTime,
+                              avgTemp,
+                              totalTempWeght);
+          neighbourMass += getGasMass(_cellVolume,
+                                      defaultPressure,
+                                      _temperatureMatrix->get(x - 1, y, z));
+          arhimedesNeighbours += 1;
+          envVelocity += _velocityMatrix->get(x - 1, y, z);
+        }
+        else flowSpeed.x = 0;
+
+        if (_blockMatrix->get(x + 1, y, z) == 0)
+        {
+          _applyNeighbourTemp(x + 1,
+                              y,
+                              z,
+                              flowSpeed,
+                              dTime,
+                              avgTemp,
+                              totalTempWeght);
+          neighbourMass += getGasMass(_cellVolume,
+                                      defaultPressure,
+                                      _temperatureMatrix->get(x + 1, y, z));
+          arhimedesNeighbours += 1;
+          envVelocity += _velocityMatrix->get(x + 1, y, z);
+        }
+        else flowSpeed.x = 0;
+
+        if (_blockMatrix->get(x, y - 1, z) == 0)
+        {
+          _applyNeighbourTemp(x,
+                              y - 1,
+                              z,
+                              flowSpeed,
+                              dTime,
+                              avgTemp,
+                              totalTempWeght);
+          neighbourMass += getGasMass(_cellVolume,
+                                      defaultPressure,
+                                      _temperatureMatrix->get(x, y - 1, z));
+          arhimedesNeighbours += 1;
+          envVelocity += _velocityMatrix->get(x, y - 1, z);
+        }
+        else flowSpeed.y = 0;
+
+        if (_blockMatrix->get(x, y + 1, z) == 0)
+        {
+          _applyNeighbourTemp(x,
+                              y + 1,
+                              z,
+                              flowSpeed,
+                              dTime,
+                              avgTemp,
+                              totalTempWeght);
+          neighbourMass += getGasMass(_cellVolume,
+                                      defaultPressure,
+                                      _temperatureMatrix->get(x, y + 1, z));
+          arhimedesNeighbours += 1;
+          envVelocity += _velocityMatrix->get(x, y + 1, z);
+        }
+        else flowSpeed.y = 0;
+
+        if (_blockMatrix->get(x, y, z - 1) == 0)
+        {
+          _applyNeighbourTemp(x,
+                              y,
+                              z - 1,
+                              flowSpeed,
+                              dTime,
+                              avgTemp,
+                              totalTempWeght);
+          envVelocity += _velocityMatrix->get(x, y, z - 1);
+        }
+        else flowSpeed.z = 0;
+
+        if (_blockMatrix->get(x, y, z + 1) == 0)
+        {
+          _applyNeighbourTemp(x,
+                              y,
+                              z + 1,
+                              flowSpeed,
+                              dTime,
+                              avgTemp,
+                              totalTempWeght);
+          envVelocity += _velocityMatrix->get(x, y, z + 1);
+        }
+        else flowSpeed.z = 0;
+
+        newTemperature(x, y, z) = avgTemp / totalTempWeght;
+
+        glm::vec3 dVelocity(0.f);
+
+        float currentMass = getGasMass( _cellVolume,
+                                        defaultPressure,
+                                        _temperatureMatrix->get(x, y, z));
+
+        if(arhimedesNeighbours != 0.f)
+        {
+          float force = neighbourMass / arhimedesNeighbours - currentMass;
+          force *= 9.8f;
+          float acceleration = force / currentMass;
+          dVelocity += glm::vec3(0.f, 0.f, 1.f) * acceleration * dTime;
+        }
+
+        envVelocity /= 6.f;
+        envVelocity -= flowSpeed;
+
+        glm::vec3 frictionForce = frictionFactor * _cellSize * envVelocity;
+        dVelocity += frictionForce / currentMass * dTime;
+
+        newVelocity.set(x, y, z, flowSpeed + dVelocity);
+      }
+    }
+  }
+}
+
+void FluidObject::_applyForces(float dTime)
 {
   FluidMatrix<float> newTemperature(_velocityMatrix->xSize(),
                                     _velocityMatrix->ySize(),
                                     _velocityMatrix->zSize());
   newTemperature.clear(defaultTemperature);
 
-  for (size_t z = 1; z < _velocityMatrix->zSize() - 1; z++)
-  {
-    for (size_t y = 1; y < _velocityMatrix->ySize() - 1; y++)
-    {
-      for (size_t x = 1; x < _velocityMatrix->xSize() - 1; x++)
-      {
-        if (_blockMatrix->get(x, y, z) != 0) continue;
-
-        glm::vec3 flowSpeed = _velocityMatrix->get(x, y, z);
-
-        float avgTemp = _temperatureMatrix->get(x,y ,z);
-        float totalWeght = 1.f;
-
-        _applyNeighbourTemp(x - 1, y, z, flowSpeed, dTime, avgTemp, totalWeght);
-        _applyNeighbourTemp(x + 1, y, z, flowSpeed, dTime, avgTemp, totalWeght);
-        _applyNeighbourTemp(x, y - 1, z, flowSpeed, dTime, avgTemp, totalWeght);
-        _applyNeighbourTemp(x, y + 1, z, flowSpeed, dTime, avgTemp, totalWeght);
-        _applyNeighbourTemp(x, y, z - 1, flowSpeed, dTime, avgTemp, totalWeght);
-        _applyNeighbourTemp(x, y, z + 1, flowSpeed, dTime, avgTemp, totalWeght);
-
-        newTemperature(x, y, z) = avgTemp / totalWeght;
-      }
-    }
-  }
-
-  _temperatureMatrix->swap(newTemperature);
-}
-
-void FluidObject::_calculateMassMatrix() noexcept
-{
-  for (size_t z = 0; z < _velocityMatrix->zSize(); z++)
-  {
-    for (size_t y = 0; y < _velocityMatrix->ySize(); y++)
-    {
-      for (size_t x = 0; x < _velocityMatrix->xSize(); x++)
-      {
-        float temperature = _temperatureMatrix->get(x, y, z);
-        _massMatrix->set( x,
-                          y,
-                          z,
-                          getGasMass( _cellVolume,
-                                      defaultPressure,
-                                      temperature));
-      }
-    }
-  }
-}
-
-void FluidObject::_applyArchimedesForce(float dTime) noexcept
-{
-  for (size_t z = 1; z < _velocityMatrix->zSize() - 1; z++)
-  {
-    for (size_t y = 1; y < _velocityMatrix->ySize() - 1; y++)
-    {
-      for (size_t x = 1; x < _velocityMatrix->xSize() - 1; x++)
-      {
-        if(_blockMatrix->get(x, y, z) != 0) continue;
-
-        float neighbourMass = 0.f;
-        float neighbourCount = 0.f;
-        if (_blockMatrix->get(x + 1, y, z) == 0)
-        {
-          neighbourMass += _massMatrix->get(x + 1, y, z);
-          neighbourCount += 1;
-        }
-        if (_blockMatrix->get(x - 1, y, z) == 0)
-        {
-          neighbourMass += _massMatrix->get(x - 1, y, z);
-          neighbourCount += 1;
-        }
-        if (_blockMatrix->get(x, y + 1, z) == 0)
-        {
-          neighbourMass += _massMatrix->get(x, y + 1, z);
-          neighbourCount += 1;
-        }
-        if (_blockMatrix->get(x, y - 1, z) == 0)
-        {
-          neighbourMass += _massMatrix->get(x, y - 1, z);
-          neighbourCount += 1;
-        }
-
-        if(neighbourCount == 0.f) continue;
-
-        float currentMass = _massMatrix->get(x, y, z);
-        float force = neighbourMass / neighbourCount - currentMass;
-        force *= 9.8f;
-        float acceleration = force / currentMass;
-        glm::vec3 dVelocity = glm::vec3(0.f, 0.f, 1.f) * acceleration * dTime;
-        const glm::vec3& currentVelocity = _velocityMatrix->get(x, y, z);
-        _velocityMatrix->set(x, y, z, currentVelocity + dVelocity);
-      }
-    }
-  }
-}
-
-void FluidObject::_applyFriction(float dTime) noexcept
-{
   FluidMatrix<glm::vec3> newVelocity( _velocityMatrix->xSize(),
                                       _velocityMatrix->ySize(),
                                       _velocityMatrix->zSize());
   newVelocity.clear(_wind);
 
-  for (size_t z = 1; z < _velocityMatrix->zSize() - 1; z++)
-  {
-    for (size_t y = 1; y < _velocityMatrix->ySize() - 1; y++)
+  auto stepFunc =
+    [&](size_t zIndex, size_t nextZIndex)
     {
-      for (size_t x = 1; x < _velocityMatrix->xSize() - 1; x++)
-      {
-        if(_blockMatrix->get(x, y, z) != 0)
-        {
-          newVelocity(x, y, z) = glm::vec3(0.f);
-          continue;
-        }
+      _applyForcesStep( newTemperature,
+                        newVelocity,
+                        zIndex,
+                        nextZIndex,
+                        dTime);
+    };
+  _makeAsync(stepFunc);
 
-        glm::vec3 envVelocity(0.f);
-        if (_blockMatrix->get(x - 1, y, z) == 0)
-        {
-          envVelocity += _velocityMatrix->get(x - 1, y, z);
-        }
-        if (_blockMatrix->get(x + 1, y, z) == 0)
-        {
-          envVelocity += _velocityMatrix->get(x + 1, y, z);
-        }
-        if (_blockMatrix->get(x, y - 1, z) == 0)
-        {
-          envVelocity += _velocityMatrix->get(x, y - 1, z);
-        }
-        if (_blockMatrix->get(x, y + 1, z) == 0)
-        {
-          envVelocity += _velocityMatrix->get(x, y + 1, z);
-        }
-        if (_blockMatrix->get(x, y, z - 1) == 0)
-        {
-          envVelocity += _velocityMatrix->get(x, y, z - 1);
-        }
-        if (_blockMatrix->get(x, y, z + 1) == 0)
-        {
-          envVelocity += _velocityMatrix->get(x, y, z + 1);
-        }
-        envVelocity /= 6.f;
-        envVelocity -= _velocityMatrix->get(x, y, z);
-
-        glm::vec3 force = frictionFactor * _cellSize * envVelocity;
-        float mass = _massMatrix->get(x, y, z);
-        glm::vec3 dVelocity = force / mass * dTime;
-        newVelocity(x, y, z) = _velocityMatrix->get(x, y, z) + dVelocity;
-      }
-    }
-  }
-
+  _temperatureMatrix->swap(newTemperature);
   _velocityMatrix->swap(newVelocity);
 }
 
-void FluidObject::_blockVelocity()
+template <typename Func>
+void FluidObject::_makeAsync(Func func)
 {
-  for (size_t z = 1; z < _velocityMatrix->zSize() - 1; z++)
-  {
-    for (size_t y = 1; y < _velocityMatrix->ySize() - 1; y++)
-    {
-      for (size_t x = 1; x < _velocityMatrix->xSize() - 1; x++)
-      {
-        glm::vec3& velocityRef = (*_velocityMatrix)(x, y, z);
-        if (_blockMatrix->get(x, y, z) != 0)
-        {
-          velocityRef = glm::vec3(0.f);
-        }
+  constexpr size_t threadsNumber = 16;
 
-        if (_blockMatrix->get(x + 1, y, z) != 0 ||
-            _blockMatrix->get(x - 1, y, z) != 0)
-        {
-          velocityRef.x = 0;
-        }
-        if (_blockMatrix->get(x, y - 1, z) != 0 ||
-            _blockMatrix->get(x, y + 1, z) != 0)
-        {
-          velocityRef.y = 0;
-        }
-        if (_blockMatrix->get(x, y, z - 1) != 0 ||
-            _blockMatrix->get(x, y, z + 1) != 0)
-        {
-          velocityRef.z = 0;
-        }
-      }
+  std::future<void> futures[threadsNumber];
+
+  size_t zLayersNumber = _velocityMatrix->zSize() - 2;
+  size_t layerPerThread = zLayersNumber / threadsNumber;
+  size_t remainder = zLayersNumber % threadsNumber;
+
+  size_t zIndex = 1;
+
+  for (size_t threadIndex = 0; threadIndex < threadsNumber; threadIndex++)
+  {
+    size_t layersNumber = layerPerThread;
+    if(remainder != 0)
+    {
+      layersNumber++;
+      remainder--;
     }
+
+    size_t nextZIndex = zIndex + layersNumber;
+
+    auto stepFunc =
+      [&, zIndex, nextZIndex]()
+      {
+        func(zIndex, nextZIndex);
+      };
+    futures[threadIndex] = std::async(stepFunc);
+
+    zIndex = nextZIndex;
   }
+
+  for(std::future<void>& future : futures) future.get();
 }
 
-void FluidObject::_buildCorrectFieldDivirgence( FluidMatrix<float>& target,
-                                                float dTime)
+void FluidObject::_buildDivirgenceStep( FluidMatrix<float>& target,
+                                        size_t startZ,
+                                        size_t finishZ,
+                                        float dTime)
 {
-  for (size_t z = 0; z < _velocityMatrix->zSize(); z++)
+  for (size_t z = startZ; z < finishZ; z++)
   {
     for (size_t y = 0; y < _velocityMatrix->ySize(); y++)
     {
@@ -511,6 +526,76 @@ void FluidObject::_buildCorrectFieldDivirgence( FluidMatrix<float>& target,
   }
 }
 
+void FluidObject::_buildCorrectFieldDivirgence( FluidMatrix<float>& target,
+                                                float dTime)
+{
+  auto stepFunc =
+    [&](size_t zIndex, size_t nextZIndex)
+    {
+      _buildDivirgenceStep( target,
+                            zIndex,
+                            nextZIndex,
+                            dTime);
+    };
+  _makeAsync(stepFunc);
+}
+
+void FluidObject::_resolvePressureStep( const FluidMatrix<float>& prew,
+                                        FluidMatrix<float>& next,
+                                        const FluidMatrix<float>& divirgence,
+                                        size_t startZ,
+                                        size_t finishZ) const
+{
+  for (size_t z = startZ; z < finishZ - 1; z++)
+  {
+    for (size_t y = 1; y < _velocityMatrix->ySize() - 1; y++)
+    {
+      for (size_t x = 1; x < _velocityMatrix->xSize() - 1; x++)
+      {
+        float pressureAccum = 0;
+        float divider = 0;
+
+        if (_blockMatrix->get(x - 1, y, z) == 0)
+        {
+          pressureAccum += prew(x - 1, y, z);
+          divider += 1.f;
+        }
+        if (_blockMatrix->get(x + 1, y, z) == 0)
+        {
+          pressureAccum += prew(x + 1, y, z);
+          divider += 1.f;
+        }
+        if (_blockMatrix->get(x, y - 1, z) == 0)
+        {
+          pressureAccum += prew(x, y - 1, z);
+          divider += 1.f;
+        }
+        if (_blockMatrix->get(x, y + 1, z) == 0)
+        {
+          pressureAccum += prew(x, y + 1, z);
+          divider += 1.f;
+        }
+        if (_blockMatrix->get(x, y, z - 1) == 0)
+        {
+          pressureAccum += prew(x, y, z - 1);
+          divider += 1.f;
+        }
+        if (_blockMatrix->get(x, y, z + 1) == 0)
+        {
+          pressureAccum += prew(x, y, z + 1);
+          divider += 1.f;
+        }
+
+        if(divider == 0.f) next(x, y, z) = 0.f;
+        else
+        {
+          next(x, y, z) = (pressureAccum + divirgence(x, y, z)) / divider;
+        }
+      }
+    }
+  }
+}
+
 void FluidObject::_buildProjPressure( FluidMatrix<float>& target,
                                       const FluidMatrix<float>& divirgence)
 {
@@ -522,54 +607,13 @@ void FluidObject::_buildProjPressure( FluidMatrix<float>& target,
       iteration < _solverIterations;
       iteration++)
   {
-    for (size_t z = 1; z < _velocityMatrix->zSize() - 1; z++)
-    {
-      for (size_t y = 1; y < _velocityMatrix->ySize() - 1; y++)
+    auto stepFunc =
+      [&](size_t zIndex, size_t nextZIndex)
       {
-        for (size_t x = 1; x < _velocityMatrix->xSize() - 1; x++)
-        {
-          float pressureAccum = 0;
-          float divider = 0;
+        _resolvePressureStep(prew, next, divirgence, zIndex, nextZIndex);
+      };
+    _makeAsync(stepFunc);
 
-          if (_blockMatrix->get(x - 1, y, z) == 0)
-          {
-            pressureAccum += prew(x - 1, y, z);
-            divider += 1.f;
-          }
-          if (_blockMatrix->get(x + 1, y, z) == 0)
-          {
-            pressureAccum += prew(x + 1, y, z);
-            divider += 1.f;
-          }
-          if (_blockMatrix->get(x, y - 1, z) == 0)
-          {
-            pressureAccum += prew(x, y - 1, z);
-            divider += 1.f;
-          }
-          if (_blockMatrix->get(x, y + 1, z) == 0)
-          {
-            pressureAccum += prew(x, y + 1, z);
-            divider += 1.f;
-          }
-          if (_blockMatrix->get(x, y, z - 1) == 0)
-          {
-            pressureAccum += prew(x, y, z - 1);
-            divider += 1.f;
-          }
-          if (_blockMatrix->get(x, y, z + 1) == 0)
-          {
-            pressureAccum += prew(x, y, z + 1);
-            divider += 1.f;
-          }
-
-          if(divider == 0.f) next(x, y, z) = 0.f;
-          else
-          {
-            next(x, y, z) = (pressureAccum + divirgence(x, y, z)) / divider;
-          }
-        }
-      }
-    }
     prew.swap(next);
   }
 

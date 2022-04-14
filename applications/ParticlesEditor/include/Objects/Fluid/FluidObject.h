@@ -143,13 +143,26 @@ private:
                             float dTime,
                             float& temperatureAccumulator,
                             float& weightAccumulator) noexcept;
-  void _applyMixing(float dTime);
-  void _calculateMassMatrix() noexcept;
-  void _applyArchimedesForce(float dTime) noexcept;
-  void _applyFriction(float dTime) noexcept;
-  void _blockVelocity();
+  void _applyForcesStep(FluidMatrix<float>& newTemperature,
+                        FluidMatrix<glm::vec3>& newVelocity,
+                        size_t startZ,
+                        size_t finishZ,
+                        float dTime);
+  void _applyForces(float dTime);
+  template <typename Func>
+  void _makeAsync(Func func);
   void _applyContinuityEquation(float dTime);
+
+  void _buildDivirgenceStep(FluidMatrix<float>&target,
+                            size_t startZ,
+                            size_t finishZ,
+                            float dTime);
   void _buildCorrectFieldDivirgence(FluidMatrix<float>& target, float dTime);
+  void _resolvePressureStep(const FluidMatrix<float>& prew,
+                            FluidMatrix<float>& next,
+                            const FluidMatrix<float>& divirgence,
+                            size_t startZ,
+                            size_t finishZ) const;
   void _buildProjPressure(FluidMatrix<float>& target,
                           const FluidMatrix<float>& divirgence);
   void _moveMatrices(float dTime);
@@ -168,7 +181,6 @@ private:
   std::optional<FluidMatrix<glm::vec3>> _velocityMatrix;
   std::optional<FluidMatrix<float>> _temperatureMatrix;
   std::optional<FluidMatrix<float>> _pressureMatrix;
-  std::optional<FluidMatrix<float>> _massMatrix;
   std::optional<FluidMatrix<int>> _blockMatrix;
 
   using Blockers = std::vector<BlockerObject*>;
