@@ -420,12 +420,12 @@ void FluidObject::_applyForces(float dTime)
   _nextVelocityMatrix->clear(_wind);
 
   auto stepFunc =
-    [&](size_t zIndex, size_t nextZIndex)
+    [&](size_t startZ, size_t finishZ)
     {
       _applyForcesStep( *_nextTemperatureMatrix,
                         *_nextVelocityMatrix,
-                        zIndex,
-                        nextZIndex,
+                        startZ,
+                        finishZ,
                         dTime);
     };
   _makeAsync(stepFunc);
@@ -542,11 +542,11 @@ void FluidObject::_buildCorrectFieldDivirgence( FluidMatrix<float>& target,
                                                 float dTime)
 {
   auto stepFunc =
-    [&](size_t zIndex, size_t nextZIndex)
+    [&](size_t startZ, size_t finishZ)
     {
       _buildDivirgenceStep( target,
-                            zIndex,
-                            nextZIndex,
+                            startZ,
+                            finishZ,
                             dTime);
     };
   _makeAsync(stepFunc);
@@ -618,13 +618,13 @@ void FluidObject::_buildProjPressure( FluidMatrix<float>& target,
       iteration++)
   {
     auto stepFunc =
-      [&](size_t zIndex, size_t nextZIndex)
+      [&](size_t startZ, size_t finishZ)
       {
         _resolvePressureStep( *_resolveMatrix1,
                               *_resolveMatrix2,
                               divirgence,
-                              zIndex,
-                              nextZIndex);
+                              startZ,
+                              finishZ);
       };
     _makeAsync(stepFunc);
 
@@ -634,12 +634,11 @@ void FluidObject::_buildProjPressure( FluidMatrix<float>& target,
   target.swap(*_resolveMatrix1);
 }
 
-void FluidObject::_applyContinuityEquation(float dTime)
+void FluidObject::_applyProjPressureStep( size_t startZ,
+                                          size_t finishZ,
+                                          float dTime)
 {
-  _buildCorrectFieldDivirgence(*_divirgenceMatrix, dTime);
-  _buildProjPressure(*_projPressureMatrix, *_divirgenceMatrix);
-
-  for (size_t z = 1; z < _velocityMatrix->zSize() - 1; z++)
+  for (size_t z = startZ; z < finishZ; z++)
   {
     for (size_t y = 1; y < _velocityMatrix->ySize() - 1; y++)
     {
@@ -679,12 +678,22 @@ void FluidObject::_applyContinuityEquation(float dTime)
   }
 }
 
-void FluidObject::_moveMatrices(float dTime)
+void FluidObject::_applyContinuityEquation(float dTime)
 {
-  _movedVelocityMatrix->clear(_wind);
-  _movedTemperatureMatrix->clear(defaultTemperature);
+  _buildCorrectFieldDivirgence(*_divirgenceMatrix, dTime);
+  _buildProjPressure(*_projPressureMatrix, *_divirgenceMatrix);
 
-  for (size_t z = 1; z < _movedVelocityMatrix->zSize() - 1; z++)
+  auto stepFunc =
+    [&](size_t startZ, size_t finishZ)
+    {
+      _applyProjPressureStep(startZ, finishZ, dTime);
+    };
+  _makeAsync(stepFunc);
+}
+
+void FluidObject::_moveMatricesStep(size_t startZ, size_t finishZ, float dTime)
+{
+  for (size_t z = startZ; z < finishZ; z++)
   {
     for (size_t y = 1; y < _movedVelocityMatrix->ySize() - 1; y++)
     {
@@ -705,6 +714,19 @@ void FluidObject::_moveMatrices(float dTime)
       }
     }
   }
+}
+
+void FluidObject::_moveMatrices(float dTime)
+{
+  _movedVelocityMatrix->clear(_wind);
+  _movedTemperatureMatrix->clear(defaultTemperature);
+
+  auto stepFunc =
+    [&](size_t startZ, size_t finishZ)
+    {
+      _moveMatricesStep(startZ, finishZ, dTime);
+    };
+  _makeAsync(stepFunc);
 
   _velocityMatrix->swap(*_movedVelocityMatrix);
   _temperatureMatrix->swap(*_movedTemperatureMatrix);

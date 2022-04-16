@@ -151,6 +151,10 @@ private:
   void _applyForces(float dTime);
   template <typename Func>
   void _makeAsync(Func func);
+
+  void _applyProjPressureStep(size_t startZ,
+                              size_t finishZ,
+                              float dTime);
   void _applyContinuityEquation(float dTime);
 
   void _buildDivirgenceStep(FluidMatrix<float>&target,
@@ -165,6 +169,7 @@ private:
                             size_t finishZ) const;
   void _buildProjPressure(FluidMatrix<float>& target,
                           const FluidMatrix<float>& divirgence);
+  void _moveMatricesStep(size_t startZ, size_t finishZ, float dTime);
   void _moveMatrices(float dTime);
   void _updateParticles(float dTime);
 
