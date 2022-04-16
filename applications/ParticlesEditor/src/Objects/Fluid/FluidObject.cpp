@@ -127,8 +127,16 @@ void FluidObject::_resetBlockMatrix() noexcept
 void FluidObject::_resetMatrices() noexcept
 {
   _velocityMatrix.reset();
+  _nextVelocityMatrix.reset();
   _temperatureMatrix.reset();
+  _nextTemperatureMatrix.reset();
   _pressureMatrix.reset();
+  _divirgenceMatrix.reset();
+  _projPressureMatrix.reset();
+  _resolveMatrix1.reset();
+  _resolveMatrix2.reset();
+  _movedVelocityMatrix.reset();
+  _movedTemperatureMatrix.reset();
   _resetBlockMatrix();
 }
 
@@ -152,11 +160,22 @@ void FluidObject::_rebuildMatrices()
     _velocityMatrix.emplace(fieldExtentX, fieldExtentY, fieldExtentZ);
     _velocityMatrix->clear(_wind);
 
+    _nextVelocityMatrix.emplace(fieldExtentX, fieldExtentY, fieldExtentZ);
+
     _temperatureMatrix.emplace(fieldExtentX, fieldExtentY, fieldExtentZ);
     _temperatureMatrix->clear(defaultTemperature);
 
+    _nextTemperatureMatrix.emplace(fieldExtentX, fieldExtentY, fieldExtentZ);
+
     _pressureMatrix.emplace(fieldExtentX, fieldExtentY, fieldExtentZ);
     _pressureMatrix->clear(defaultPressure);
+
+    _divirgenceMatrix.emplace(fieldExtentX, fieldExtentY, fieldExtentZ);
+    _projPressureMatrix.emplace(fieldExtentX, fieldExtentY, fieldExtentZ);
+    _resolveMatrix1.emplace(fieldExtentX, fieldExtentY, fieldExtentZ);
+    _resolveMatrix2.emplace(fieldExtentX, fieldExtentY, fieldExtentZ);
+    _movedVelocityMatrix.emplace(fieldExtentX, fieldExtentY, fieldExtentZ);
+    _movedTemperatureMatrix.emplace(fieldExtentX, fieldExtentY, fieldExtentZ);
   }
   catch(...)
   {
@@ -397,29 +416,22 @@ void FluidObject::_applyForcesStep( FluidMatrix<float>& newTemperature,
 
 void FluidObject::_applyForces(float dTime)
 {
-  FluidMatrix<float> newTemperature(_velocityMatrix->xSize(),
-                                    _velocityMatrix->ySize(),
-                                    _velocityMatrix->zSize());
-  newTemperature.clear(defaultTemperature);
-
-  FluidMatrix<glm::vec3> newVelocity( _velocityMatrix->xSize(),
-                                      _velocityMatrix->ySize(),
-                                      _velocityMatrix->zSize());
-  newVelocity.clear(_wind);
+  _nextTemperatureMatrix->clear(defaultTemperature);
+  _nextVelocityMatrix->clear(_wind);
 
   auto stepFunc =
     [&](size_t zIndex, size_t nextZIndex)
     {
-      _applyForcesStep( newTemperature,
-                        newVelocity,
+      _applyForcesStep( *_nextTemperatureMatrix,
+                        *_nextVelocityMatrix,
                         zIndex,
                         nextZIndex,
                         dTime);
     };
   _makeAsync(stepFunc);
 
-  _temperatureMatrix->swap(newTemperature);
-  _velocityMatrix->swap(newVelocity);
+  _temperatureMatrix->swap(*_nextTemperatureMatrix);
+  _velocityMatrix->swap(*_nextVelocityMatrix);
 }
 
 template <typename Func>
@@ -599,9 +611,7 @@ void FluidObject::_resolvePressureStep( const FluidMatrix<float>& prew,
 void FluidObject::_buildProjPressure( FluidMatrix<float>& target,
                                       const FluidMatrix<float>& divirgence)
 {
-  FluidMatrix<float> prew(target.xSize(), target.ySize(), target.zSize());
-  prew.clear(0.f);
-  FluidMatrix<float> next(target.xSize(), target.ySize(), target.zSize());
+  _resolveMatrix1->clear(0.f);
 
   for(int iteration = 0;
       iteration < _solverIterations;
@@ -610,26 +620,24 @@ void FluidObject::_buildProjPressure( FluidMatrix<float>& target,
     auto stepFunc =
       [&](size_t zIndex, size_t nextZIndex)
       {
-        _resolvePressureStep(prew, next, divirgence, zIndex, nextZIndex);
+        _resolvePressureStep( *_resolveMatrix1,
+                              *_resolveMatrix2,
+                              divirgence,
+                              zIndex,
+                              nextZIndex);
       };
     _makeAsync(stepFunc);
 
-    prew.swap(next);
+    _resolveMatrix1->swap(*_resolveMatrix2);
   }
 
-  target.swap(prew);
+  target.swap(*_resolveMatrix1);
 }
 
 void FluidObject::_applyContinuityEquation(float dTime)
 {
-  FluidMatrix<float> divirgence(_velocityMatrix->xSize(),
-                                _velocityMatrix->ySize(),
-                                _velocityMatrix->zSize());
-  _buildCorrectFieldDivirgence(divirgence, dTime);
-  FluidMatrix<float> projPressure(_velocityMatrix->xSize(),
-                                  _velocityMatrix->ySize(),
-                                  _velocityMatrix->zSize());
-  _buildProjPressure(projPressure, divirgence);
+  _buildCorrectFieldDivirgence(*_divirgenceMatrix, dTime);
+  _buildProjPressure(*_projPressureMatrix, *_divirgenceMatrix);
 
   for (size_t z = 1; z < _velocityMatrix->zSize() - 1; z++)
   {
@@ -647,20 +655,20 @@ void FluidObject::_applyContinuityEquation(float dTime)
         if (_blockMatrix->get(x - 1, y, z) == 0 &&
             _blockMatrix->get(x + 1, y, z) == 0)
         {
-          pVCorrection.x =
-                          projPressure(x - 1, y, z) - projPressure(x + 1, y, z);
+          pVCorrection.x = (* _projPressureMatrix)(x - 1, y, z) -
+                                            (*_projPressureMatrix)(x + 1, y, z);
         }
         if (_blockMatrix->get(x, y - 1, z) == 0 &&
             _blockMatrix->get(x, y + 1, z) == 0)
         {
-          pVCorrection.y =
-                          projPressure(x, y - 1, z) - projPressure(x, y + 1, z);
+          pVCorrection.y = (*_projPressureMatrix)(x, y - 1, z) -
+                                            (*_projPressureMatrix)(x, y + 1, z);
         }
         if (_blockMatrix->get(x, y, z - 1) == 0 &&
             _blockMatrix->get(x, y, z + 1) == 0)
         {
-          pVCorrection.z =
-                          projPressure(x, y, z - 1) - projPressure(x, y, z + 1);
+          pVCorrection.z = (*_projPressureMatrix)(x, y, z - 1) -
+                                            (*_projPressureMatrix)(x, y, z + 1);
         }
         pVCorrection *= _cellSize;
         pVCorrection /= 2.f;
@@ -673,42 +681,33 @@ void FluidObject::_applyContinuityEquation(float dTime)
 
 void FluidObject::_moveMatrices(float dTime)
 {
-  FluidMatrix<glm::vec3> newVelocity( _velocityMatrix->xSize(),
-                                      _velocityMatrix->ySize(),
-                                      _velocityMatrix->zSize());
-  newVelocity.clear(_wind);
+  _movedVelocityMatrix->clear(_wind);
+  _movedTemperatureMatrix->clear(defaultTemperature);
 
-  FluidMatrix<float> newTemperatureMatrix(_velocityMatrix->xSize(),
-                                          _velocityMatrix->ySize(),
-                                          _velocityMatrix->zSize());
-  newTemperatureMatrix.clear(defaultTemperature);
-
-  FluidMatrix<float> newPpressureMatrix(_velocityMatrix->xSize(),
-                                        _velocityMatrix->ySize(),
-                                        _velocityMatrix->zSize());
-  newPpressureMatrix.clear(defaultPressure);
-
-  for (size_t z = 1; z < newVelocity.zSize() - 1; z++)
+  for (size_t z = 1; z < _movedVelocityMatrix->zSize() - 1; z++)
   {
-    for (size_t y = 1; y < newVelocity.ySize() - 1; y++)
+    for (size_t y = 1; y < _movedVelocityMatrix->ySize() - 1; y++)
     {
-      for (size_t x = 1; x < newVelocity.xSize() - 1; x++)
+      for (size_t x = 1; x < _movedVelocityMatrix->xSize() - 1; x++)
       {
         glm::vec3 currentVelocity = _velocityMatrix->get(x, y, z);
         glm::vec3 shift = -currentVelocity / _cellSize * dTime;
         glm::vec3 shiftedCoord = glm::vec3(x, y, z) + shift + glm::vec3(.5f);
-        newVelocity(x,y,z) = _velocityMatrix->interpolate(shiftedCoord);
-        newTemperatureMatrix(x, y, z) =
-                                  _temperatureMatrix->interpolate(shiftedCoord);
-        newPpressureMatrix(x, y, z) =
-                                    _pressureMatrix->interpolate(shiftedCoord);
+        _movedVelocityMatrix->set(x,
+                                  y,
+                                  z,
+                                  _velocityMatrix->interpolate(shiftedCoord));
+        _movedTemperatureMatrix->set(
+                                x,
+                                y,
+                                z,
+                                _temperatureMatrix->interpolate(shiftedCoord));
       }
     }
   }
 
-  _velocityMatrix->swap(newVelocity);
-  _temperatureMatrix->swap(newTemperatureMatrix);
-  _pressureMatrix->swap(newPpressureMatrix);
+  _velocityMatrix->swap(*_movedVelocityMatrix);
+  _temperatureMatrix->swap(*_movedTemperatureMatrix);
 }
 
 void FluidObject::_updateParticles(float dTime)

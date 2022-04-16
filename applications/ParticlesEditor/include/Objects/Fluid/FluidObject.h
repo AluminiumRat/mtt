@@ -179,9 +179,19 @@ private:
   size_t _solverIterations;
 
   std::optional<FluidMatrix<glm::vec3>> _velocityMatrix;
+  std::optional<FluidMatrix<glm::vec3>> _nextVelocityMatrix;
   std::optional<FluidMatrix<float>> _temperatureMatrix;
+  std::optional<FluidMatrix<float>> _nextTemperatureMatrix;
   std::optional<FluidMatrix<float>> _pressureMatrix;
   std::optional<FluidMatrix<int>> _blockMatrix;
+
+  std::optional<FluidMatrix<float>> _divirgenceMatrix;
+  std::optional<FluidMatrix<float>> _projPressureMatrix;
+  std::optional<FluidMatrix<float>> _resolveMatrix1;
+  std::optional<FluidMatrix<float>> _resolveMatrix2;
+
+  std::optional<FluidMatrix<glm::vec3>> _movedVelocityMatrix;
+  std::optional<FluidMatrix<float>> _movedTemperatureMatrix;
 
   using Blockers = std::vector<BlockerObject*>;
   Blockers _blockers;
