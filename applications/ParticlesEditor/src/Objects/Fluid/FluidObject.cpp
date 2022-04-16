@@ -437,9 +437,10 @@ void FluidObject::_applyForces(float dTime)
 template <typename Func>
 void FluidObject::_makeAsync(Func func)
 {
-  constexpr size_t threadsNumber = 16;
+  unsigned int threadsNumber = std::thread::hardware_concurrency();
+  threadsNumber = std::max(threadsNumber, 8u);
 
-  std::future<void> futures[threadsNumber];
+  std::vector<std::future<void>> futures;
 
   size_t zLayersNumber = _velocityMatrix->zSize() - 2;
   size_t layerPerThread = zLayersNumber / threadsNumber;
@@ -447,7 +448,7 @@ void FluidObject::_makeAsync(Func func)
 
   size_t zIndex = 1;
 
-  for (size_t threadIndex = 0; threadIndex < threadsNumber; threadIndex++)
+  for (unsigned int threadIndex = 0; threadIndex < threadsNumber; threadIndex++)
   {
     size_t layersNumber = layerPerThread;
     if(remainder != 0)
@@ -463,7 +464,7 @@ void FluidObject::_makeAsync(Func func)
       {
         func(zIndex, nextZIndex);
       };
-    futures[threadIndex] = std::async(stepFunc);
+    futures.push_back(std::async(stepFunc));
 
     zIndex = nextZIndex;
   }
