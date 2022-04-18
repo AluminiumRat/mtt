@@ -1,23 +1,15 @@
 #pragma once
 
-#include <glm/gtc/quaternion.hpp>
-#include <glm/vec3.hpp>
-
-#include <memory>
-
-#include <mtt/animation/ValueKeypoint.h>
-#include <mtt/animation/KeypointsAnimatedTransform.h>
 #include <mtt/application/EditCommands/AbstractEditCommand.h>
 #include <mtt/application/Scene/ObjectLink.h>
 #include <mtt/application/Scene/Object.h>
 #include <mtt/application/TimeT.h>
 #include <mtt/editorLib/Objects/CEVisitorExtension.h>
-#include <mtt/editorLib/Objects/ScalableObject.h>
+#include <mtt/utilities/Range.h>
 
 namespace mtt
 {
-  class AnimationTrack :  public Object,
-                          public KeypointsAnimatedTransform<TimeT>
+  class AnimationTrack :  public Object
   {
     Q_OBJECT
 
@@ -37,9 +29,7 @@ namespace mtt
                 USER false)
 
   public:
-    using PositionKeypoint = ValueKeypoint<glm::vec3, TimeT>;
-    using RotationKeypoint = ValueKeypoint<glm::quat, TimeT>;
-    using ScaleKeypoint = ValueKeypoint<glm::vec3, TimeT>;
+    using TimeRange = Range<TimeT>;
 
   public:
     AnimationTrack( const QString& name,
@@ -53,32 +43,25 @@ namespace mtt
     void setEnabled(bool newValue);
     inline void resetEnabled();
 
-    void update(TimeT time);
+    inline const TimeRange& timeRange() const noexcept;
 
-    inline ObjectRef<ScalableObject>& targetRef() noexcept;
-    inline const ObjectRef<ScalableObject>& targetRef() const noexcept;
+    virtual void update(TimeT time) = 0;
 
     /// Makes a command to restore animated object after the animation has
     /// played. The command has no undo functional.
-    std::unique_ptr<AbstractEditCommand> makeRestoreCommand() const;
+    /// Can be returns nullptr if track have no affect to objects model
+    virtual std::unique_ptr<AbstractEditCommand> makeRestoreCommand() const = 0;
 
   signals:
     void enabledChanged(bool newValue);
-    void timeRangeChanged(const Range<TimeT>& newRange);
-    void targetRefChanged(ScalableObject* target);
+    void timeRangeChanged(const TimeRange& newValue);
 
   protected:
-    virtual void onTimeRangeChanged() noexcept override;
+    void setTimeRange(const TimeRange& newValue) noexcept;
 
   private:
     bool _enabled;
-
-    using TargetLink = ObjectLink<ScalableObject,
-                                  AnimationTrack,
-                                  nullptr,
-                                  nullptr,
-                                  &AnimationTrack::targetRefChanged>;
-    TargetLink _targetLink;
+    TimeRange _timeRange;
   };
 
   inline bool AnimationTrack::enabled() const noexcept
@@ -91,14 +74,9 @@ namespace mtt
     setEnabled(true);
   }
 
-  inline ObjectRef<ScalableObject>& AnimationTrack::targetRef() noexcept
+  inline const AnimationTrack::TimeRange&
+                                      AnimationTrack::timeRange() const noexcept
   {
-    return _targetLink;
-  }
-
-  inline const ObjectRef<ScalableObject>&
-                                      AnimationTrack::targetRef() const noexcept
-  {
-    return _targetLink;
+    return _timeRange;
   }
 }

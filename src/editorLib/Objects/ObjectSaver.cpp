@@ -85,32 +85,6 @@ void ObjectSaver::visitConstAnimationTrack(const mtt::AnimationTrack& object)
 {
   CEVisitor::visitConstAnimationTrack(object);
   *_stream << object.enabled();
-
-  *_stream <<(uint16_t)object.positionKeypointNumber();
-  for ( size_t keypointIndex = 0;
-        keypointIndex < object.positionKeypointNumber();
-        keypointIndex++)
-  {
-    writeKeypoint(object.positionKeypoint(keypointIndex));
-  }
-
-  *_stream <<(uint16_t)object.rotationKeypointNumber();
-  for ( size_t keypointIndex = 0;
-        keypointIndex < object.rotationKeypointNumber();
-        keypointIndex++)
-  {
-    writeKeypoint(object.rotationKeypoint(keypointIndex));
-  }
-
-  *_stream <<(uint16_t)object.scaleKeypointNumber();
-  for ( size_t keypointIndex = 0;
-        keypointIndex < object.scaleKeypointNumber();
-        keypointIndex++)
-  {
-    writeKeypoint(object.scaleKeypoint(keypointIndex));
-  }
-  
-  *_stream << object.targetRef().referencedId();
 }
 
 void ObjectSaver::visitConstBackgroundObject(
@@ -168,6 +142,37 @@ void ObjectSaver::visitConstMovableObject(const mtt::MovableObject& object)
 {
   CEVisitor::visitConstMovableObject(object);
   *_stream << object.position();
+}
+
+void ObjectSaver::visitConstPositionAnimator(const PositionAnimator& object)
+{
+  CEVisitor::visitConstPositionAnimator(object);
+
+  *_stream <<(uint16_t)object.positionKeypointNumber();
+  for ( size_t keypointIndex = 0;
+        keypointIndex < object.positionKeypointNumber();
+        keypointIndex++)
+  {
+    writeKeypoint(object.positionKeypoint(keypointIndex));
+  }
+
+  *_stream <<(uint16_t)object.rotationKeypointNumber();
+  for ( size_t keypointIndex = 0;
+        keypointIndex < object.rotationKeypointNumber();
+        keypointIndex++)
+  {
+    writeKeypoint(object.rotationKeypoint(keypointIndex));
+  }
+
+  *_stream <<(uint16_t)object.scaleKeypointNumber();
+  for ( size_t keypointIndex = 0;
+        keypointIndex < object.scaleKeypointNumber();
+        keypointIndex++)
+  {
+    writeKeypoint(object.scaleKeypoint(keypointIndex));
+  }
+  
+  *_stream << object.targetRef().referencedId();
 }
 
 void ObjectSaver::visitConstObject(const mtt::Object& object)

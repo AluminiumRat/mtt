@@ -14,13 +14,13 @@ FbxAnimationImporter::FbxAnimationImporter() :
 {
 }
 
-std::unique_ptr<mtt::AnimationObject> FbxAnimationImporter::import(
+std::unique_ptr<AnimationObject> FbxAnimationImporter::import(
                                                           const char* filename)
 {
   _baseLayer = nullptr;
 
   QFileInfo file(filename);
-  _result.reset(new mtt::AnimationObject(file.baseName(), true));
+  _result.reset(new AnimationObject(file.baseName(), true));
   startImporting(filename);
 
   return std::move(_result);
@@ -42,13 +42,13 @@ void FbxAnimationImporter::processScene(FbxScene& scene)
 
 void FbxAnimationImporter::pushTranslation(FbxNode& node)
 {
-  if(_baseLayer == nullptr) mtt::Abort("FbxAnimationImporter::pushTranslation: base layer is null.");
+  if(_baseLayer == nullptr) Abort("FbxAnimationImporter::pushTranslation: base layer is null.");
 
   std::set<FbxTime> timeSet = getKeypointTimes(node, *_baseLayer);
   if(!timeSet.empty())
   {
-    std::unique_ptr<mtt::AnimationTrack> track(
-                                new mtt::AnimationTrack(node.GetName(), true));
+    std::unique_ptr<PositionAnimator> track(
+                                    new PositionAnimator(node.GetName(), true));
     _fillTrack(*track, node, timeSet);
     _result->addChild(std::move(track));
   }
@@ -56,7 +56,7 @@ void FbxAnimationImporter::pushTranslation(FbxNode& node)
   BaseFbxImporter::pushTranslation(node);
 }
 
-void FbxAnimationImporter::_fillTrack(mtt::AnimationTrack& track,
+void FbxAnimationImporter::_fillTrack(PositionAnimator& track,
                                       FbxNode& source,
                                       const std::set<FbxTime>& times)
 {
@@ -69,27 +69,27 @@ void FbxAnimationImporter::_fillTrack(mtt::AnimationTrack& track,
     FbxDouble3 fbxPosition = source.LclTranslation.EvaluateValue(fbxTime);
     glm::vec3 position(fbxPosition[0], fbxPosition[1], fbxPosition[2]);
     track.addPositionKeypoint(
-                std::make_unique<mtt::AnimationTrack::PositionKeypoint>(
-                                                    position,
-                                                    time,
-                                                    mtt::LINEAR_INTERPOLATION));
+                std::make_unique<PositionAnimator::PositionKeypoint>(
+                                                        position,
+                                                        time,
+                                                        LINEAR_INTERPOLATION));
 
     FbxDouble3 fbxRotation = source.LclRotation.EvaluateValue(fbxTime);
     glm::quat rotation(glm::vec3( glm::radians(fbxRotation[0]),
                                   glm::radians(fbxRotation[1]),
                                   glm::radians(fbxRotation[2])));
     track.addRotationKeypoint(
-                std::make_unique<mtt::AnimationTrack::RotationKeypoint>(
-                                                    rotation,
-                                                    time,
-                                                    mtt::LINEAR_INTERPOLATION));
+                std::make_unique<PositionAnimator::RotationKeypoint>(
+                                                        rotation,
+                                                        time,
+                                                        LINEAR_INTERPOLATION));
 
     FbxDouble3 fbxScale = source.LclScaling.EvaluateValue(fbxTime);
     glm::vec3 scale(fbxScale[0], fbxScale[1], fbxScale[2]);
     track.addScaleKeypoint(
-                std::make_unique<mtt::AnimationTrack::ScaleKeypoint>(
-                                                    scale,
-                                                    time,
-                                                    mtt::LINEAR_INTERPOLATION));
+                    std::make_unique<PositionAnimator::ScaleKeypoint>(
+                                                        scale,
+                                                        time,
+                                                        LINEAR_INTERPOLATION));
   }
 }

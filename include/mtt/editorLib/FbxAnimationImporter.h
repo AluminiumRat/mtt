@@ -4,12 +4,12 @@
 #include <set>
 
 #include <mtt/editorLib/Objects/AnimationObject.h>
-#include <mtt/editorLib/Objects/AnimationTrack.h>
+#include <mtt/editorLib/Objects/PositionAnimator.h>
 #include <mtt/fbx/BaseFbxImporter.h>
 
 namespace mtt
 {
-  class FbxAnimationImporter : public mtt::BaseFbxImporter
+  class FbxAnimationImporter : public BaseFbxImporter
   {
   public:
     FbxAnimationImporter();
@@ -17,19 +17,19 @@ namespace mtt
     FbxAnimationImporter& operator = (const FbxAnimationImporter&) = delete;
     virtual ~FbxAnimationImporter() noexcept = default;
 
-    std::unique_ptr<mtt::AnimationObject> import(const char* filename);
+    std::unique_ptr<AnimationObject> import(const char* filename);
 
   protected:
     virtual void processScene(FbxScene& scene) override;
     virtual void pushTranslation(FbxNode& node) override;
 
   private:
-    static void _fillTrack( mtt::AnimationTrack& track,
+    static void _fillTrack( PositionAnimator& track,
                             FbxNode& source,
                             const std::set<FbxTime>& times);
 
   private:
-    std::unique_ptr<mtt::AnimationObject> _result;
+    std::unique_ptr<AnimationObject> _result;
     FbxAnimLayer* _baseLayer;
   };
 }

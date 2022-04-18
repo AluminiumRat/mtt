@@ -3,6 +3,7 @@
 #include <mtt/application/CommonEditData.h>
 #include <mtt/editorLib/AsyncTasks/AddAnimationFromFbxTask.h>
 #include <mtt/editorLib/Objects/AnimationGroup.h>
+#include <mtt/editorLib/Objects/PositionAnimator.h>
 #include <mtt/editorLib/FbxAnimationImporter.h>
 
 using namespace mtt;
@@ -67,8 +68,13 @@ void AddAnimationFromFbxTask::finalizePart()
         trackIndex++)
     {
       AnimationTrack& track = _animation->child(trackIndex);
-      ScalableObject* target = findTarget(track.name(), *_targetSearchGroup);
-      if(target != nullptr) track.targetRef().set(target);
+      PositionAnimator* positionAnimator =
+                                        qobject_cast<PositionAnimator*>(&track);
+      if(positionAnimator != nullptr)
+      {
+        ScalableObject* target = findTarget(track.name(), *_targetSearchGroup);
+        if(target != nullptr) positionAnimator->targetRef().set(target);
+      }
     }
   }
 

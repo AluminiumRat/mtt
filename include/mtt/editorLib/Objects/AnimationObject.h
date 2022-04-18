@@ -4,7 +4,6 @@
 
 #include <QtCore/QTimer>
 
-#include <mtt/application/EditCommands/AbstractEditCommand.h>
 #include <mtt/application/Scene/SpecialGroup.h>
 #include <mtt/application/TimeT.h>
 #include <mtt/editorLib/Objects/AnimationTrack.h>
@@ -22,6 +21,9 @@ namespace mtt
                             Object)
 
   public:
+    using TimeRange = Range<TimeT>;
+
+  public:
     AnimationObject(const QString& name,
                     bool canBeRenamed,
                     const UID& id = UID());
@@ -29,7 +31,7 @@ namespace mtt
     AnimationObject& operator = (const AnimationObject&) = delete;
     virtual ~AnimationObject() noexcept = default;
 
-    inline const Range<TimeT>& timeRange() const noexcept;
+    inline const TimeRange& timeRange() const noexcept;
     inline TimeT startTime() const noexcept;
     inline TimeT finishTime() const noexcept;
     inline TimeT duration() const noexcept;
@@ -43,20 +45,21 @@ namespace mtt
   signals:
     void childAdded(AnimationTrack& object);
     void childRemoved(AnimationTrack& object);
-    void timeRangeChanged(const Range<TimeT>& newRange);
+    void timeRangeChanged(const TimeRange& newRange);
 
   protected:
     void updateTiming() noexcept;
-    virtual Range<TimeT> calculateTiming() const noexcept;
+    virtual TimeRange calculateTiming() const noexcept;
 
     virtual void onSubobjectAdded(Object& object) noexcept override;
     virtual void onSubobjectRemoved(Object& object) noexcept override;
 
   private:
-    Range<TimeT> _timeRange;
+    TimeRange _timeRange;
   };
 
-  inline const Range<TimeT>& AnimationObject::timeRange() const noexcept
+  inline const AnimationObject::TimeRange&
+                                    AnimationObject::timeRange() const noexcept
   {
     return _timeRange;
   }

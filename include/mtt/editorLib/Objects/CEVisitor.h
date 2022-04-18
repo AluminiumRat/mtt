@@ -17,6 +17,7 @@
 #include <mtt/editorLib/Objects/LightObject.h>
 #include <mtt/editorLib/Objects/MovableObject.h>
 #include <mtt/editorLib/Objects/Object3D.h>
+#include <mtt/editorLib/Objects/positionAnimator.h>
 #include <mtt/editorLib/Objects/RotatableObject.h>
 #include <mtt/editorLib/Objects/ScalableObject.h>
 #include <mtt/editorLib/Objects/SkeletonGroup.h>
@@ -100,6 +101,11 @@ namespace mtt
 
     inline virtual void visitConstObject3D(const Object3D& object) override;
     inline virtual void visitObject3D(Object3D& object) override;
+
+    inline virtual void visitConstPositionAnimator(
+                                      const PositionAnimator& object) override;
+    inline virtual void visitPositionAnimator(
+                                            PositionAnimator& object) override;
 
     inline virtual void visitConstRotatableObject(
                                         const RotatableObject& object) override;
@@ -339,6 +345,20 @@ namespace mtt
   inline void CEVisitorT<BaseVisitor>::visitObject3D(Object3D& object)
   {
     visitDisplayedObject(object);
+  }
+
+  template <typename BaseVisitor>
+  inline void CEVisitorT<BaseVisitor>::visitConstPositionAnimator(
+                                                const PositionAnimator& object)
+  {
+    visitConstAnimationTrack(object);
+  }
+
+  template <typename BaseVisitor>
+  inline void CEVisitorT<BaseVisitor>::visitPositionAnimator(
+                                                      PositionAnimator& object)
+  {
+    visitAnimationTrack(object);
   }
 
   template <typename BaseVisitor>

@@ -13,6 +13,7 @@
 #include <mtt/editorLib/PropertiesWidget/EnvironmentModelWidget.h>
 #include <mtt/editorLib/PropertiesWidget/LightWidget.h>
 #include <mtt/editorLib/PropertiesWidget/MovableObjectWidget.h>
+#include <mtt/editorLib/PropertiesWidget/PositionAnimatorWidget.h>
 #include <mtt/editorLib/PropertiesWidget/PropertiesWidgetFactory.h>
 #include <mtt/editorLib/PropertiesWidget/RotatableObjectWidget.h>
 #include <mtt/editorLib/PropertiesWidget/ScalableObjectWidget.h>
@@ -113,6 +114,18 @@ void PropertiesWidgetFactory::visitObject(Object& object)
   _widgetsLayout.addWidget(
                         new NamePropertyWidget( object,
                                                 _commonEditData.undoStack()));
+}
+
+void PropertiesWidgetFactory::visitPositionAnimator(PositionAnimator& object)
+{
+  CEVisitor::visitPositionAnimator(object);
+  if (_skeletonSelectArea != nullptr)
+  {
+    _widgetsLayout.addWidget(
+                      new PositionAnimatorWidget( object,
+                                                  *skeletonSelectArea(),
+                                                  _commonEditData.undoStack()));
+  }
 }
 
 void PropertiesWidgetFactory::visitLightObject(LightObject& object)

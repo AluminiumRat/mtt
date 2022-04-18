@@ -47,26 +47,27 @@ void AnimationObject::onSubobjectRemoved(Object& object) noexcept
   updateTiming();
 }
 
-Range<TimeT> AnimationObject::calculateTiming() const noexcept
+AnimationObject::TimeRange AnimationObject::calculateTiming() const noexcept
 {
-  if (childsNumber() == 0) return Range<TimeT>();
+  if (childsNumber() == 0) return TimeRange();
 
-  TimeT newStartTime = child(0).startTime();
-  TimeT newFinishTime = child(0).finishTime();
+  TimeT newStartTime = child(0).timeRange().min();
+  TimeT newFinishTime = child(0).timeRange().max();
 
   for(size_t childIndex = 1; childIndex < childsNumber(); childIndex++)
   {
     const AnimationTrack& track = child(childIndex);
-    newStartTime = std::min(newStartTime, track.startTime());
-    newFinishTime = std::max(newFinishTime, track.finishTime());
+    TimeRange trackTiming = track.timeRange();
+    newStartTime = std::min(newStartTime, trackTiming.min());
+    newFinishTime = std::max(newFinishTime, trackTiming.max());
   }
 
-  return Range<TimeT>(newStartTime, newFinishTime);
+  return TimeRange(newStartTime, newFinishTime);
 }
 
 void AnimationObject::updateTiming() noexcept
 {
-  Range<TimeT> newRange = calculateTiming();
+  TimeRange newRange = calculateTiming();
   if (newRange == _timeRange) return;
   _timeRange = newRange;
   emit timeRangeChanged(_timeRange);

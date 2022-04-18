@@ -2,6 +2,7 @@
 
 #include <mtt/application/TimeT.h>
 #include <mtt/editorLib/AnimationPlayer.h>
+#include <mtt/utilities/Abort.h>
 
 using namespace mtt;
 

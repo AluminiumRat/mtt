@@ -47,6 +47,8 @@ namespace mtt
     virtual void visitConstLightObject(const LightObject& object) override;
     virtual void visitConstObject(const mtt::Object& object) override;
     virtual void visitConstMovableObject(const MovableObject& object) override;
+    virtual void visitConstPositionAnimator(
+                                      const PositionAnimator& object) override;
     virtual void visitConstRotatableObject(
                                         const RotatableObject& object) override;
     virtual void visitConstScalableObject(

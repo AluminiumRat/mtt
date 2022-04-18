@@ -85,35 +85,6 @@ void ObjectLoader::visitAnimationTrack(AnimationTrack& object)
 {
   CEVisitor::visitAnimationTrack(object);
   object.setEnabled(_stream->readBool());
-
-  uint16_t keypointsNumber = _stream->readUint16();
-  for (; keypointsNumber != 0; keypointsNumber--)
-  {
-    std::unique_ptr<AnimationTrack::PositionKeypoint> keypoint(
-                                  new AnimationTrack::PositionKeypoint());
-    readKeypoint(*keypoint);
-    object.addPositionKeypoint(std::move(keypoint));
-  }
-
-  keypointsNumber = _stream->readUint16();
-  for (; keypointsNumber != 0; keypointsNumber--)
-  {
-    std::unique_ptr<AnimationTrack::RotationKeypoint> keypoint(
-                                  new AnimationTrack::RotationKeypoint());
-    readKeypoint(*keypoint);
-    object.addRotationKeypoint(std::move(keypoint));
-  }
-
-  keypointsNumber = _stream->readUint16();
-  for (; keypointsNumber != 0; keypointsNumber--)
-  {
-    std::unique_ptr<AnimationTrack::ScaleKeypoint> keypoint(
-                                      new AnimationTrack::ScaleKeypoint());
-    readKeypoint(*keypoint);
-    object.addScaleKeypoint(std::move(keypoint));
-  }
-
-  object.targetRef().setReferencedId(readUID());
 }
 
 void ObjectLoader::visitBackgroundObject(BackgroundObject& object)
@@ -178,6 +149,40 @@ void ObjectLoader::visitMovableObject(MovableObject& object)
 {
   CEVisitor::visitMovableObject(object);
   object.setPosition(_stream->readVec3());
+}
+
+void ObjectLoader::visitPositionAnimator(PositionAnimator& object)
+{
+  CEVisitor::visitPositionAnimator(object);
+
+  uint16_t keypointsNumber = _stream->readUint16();
+  for (; keypointsNumber != 0; keypointsNumber--)
+  {
+    std::unique_ptr<PositionAnimator::PositionKeypoint> keypoint(
+                                      new PositionAnimator::PositionKeypoint());
+    readKeypoint(*keypoint);
+    object.addPositionKeypoint(std::move(keypoint));
+  }
+
+  keypointsNumber = _stream->readUint16();
+  for (; keypointsNumber != 0; keypointsNumber--)
+  {
+    std::unique_ptr<PositionAnimator::RotationKeypoint> keypoint(
+                                      new PositionAnimator::RotationKeypoint());
+    readKeypoint(*keypoint);
+    object.addRotationKeypoint(std::move(keypoint));
+  }
+
+  keypointsNumber = _stream->readUint16();
+  for (; keypointsNumber != 0; keypointsNumber--)
+  {
+    std::unique_ptr<PositionAnimator::ScaleKeypoint> keypoint(
+                                        new PositionAnimator::ScaleKeypoint());
+    readKeypoint(*keypoint);
+    object.addScaleKeypoint(std::move(keypoint));
+  }
+
+  object.targetRef().setReferencedId(readUID());
 }
 
 void ObjectLoader::visitRotatableObject(RotatableObject& object)

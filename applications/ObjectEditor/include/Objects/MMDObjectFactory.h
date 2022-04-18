@@ -6,7 +6,7 @@ class MMDObjectFactory : public mtt::ObjectFactory
 {
 public:
   static constexpr TypeIndex animationIndex = 5;
-  static constexpr TypeIndex animationTrackIndex = 6;
+  static constexpr TypeIndex positionAnimatorIndex = 6;
   static constexpr TypeIndex lodIndex = 3;
   static constexpr TypeIndex materialIndex = 1;
   static constexpr TypeIndex meshIndex = 4;

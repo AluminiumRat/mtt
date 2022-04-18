@@ -51,6 +51,7 @@ namespace mtt
     virtual void visitEnvironmentModel(EnvironmentModel& object) override;
     virtual void visitLightObject(LightObject& object) override;
     virtual void visitMovableObject(MovableObject& object) override;
+    virtual void visitPositionAnimator(PositionAnimator& object) override;
     virtual void visitRotatableObject(RotatableObject& object) override;
     virtual void visitScalableObject(ScalableObject& object) override;
     virtual void visitSkeletonObject(SkeletonObject& object) override;

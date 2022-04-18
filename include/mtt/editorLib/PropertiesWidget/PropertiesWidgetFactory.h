@@ -35,6 +35,7 @@ namespace mtt
     virtual void visitDisplayedObject(DisplayedObject& object) override;
     virtual void visitEnvironmentModel(EnvironmentModel& object) override;
     virtual void visitObject(Object& object) override;
+    virtual void visitPositionAnimator(PositionAnimator& object) override;
     virtual void visitLightObject(LightObject& object) override;
     virtual void visitMovableObject(MovableObject& object) override;
     virtual void visitRotatableObject(RotatableObject& object) override;

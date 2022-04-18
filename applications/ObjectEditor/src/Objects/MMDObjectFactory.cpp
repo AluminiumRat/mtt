@@ -1,5 +1,5 @@
 #include <mtt/editorLib/Objects/AnimationObject.h>
-#include <mtt/editorLib/Objects/AnimationTrack.h>
+#include <mtt/editorLib/Objects/PositionAnimator.h>
 #include <mtt/editorLib/Objects/SkeletonObject.h>
 
 #include <Objects/LODObject.h>
@@ -10,7 +10,7 @@
 MMDObjectFactory::MMDObjectFactory()
 {
   registerType<mtt::AnimationObject, animationIndex>();
-  registerType<mtt::AnimationTrack, animationTrackIndex>();
+  registerType<mtt::PositionAnimator, positionAnimatorIndex>();
   registerType<LODObject, lodIndex>();
   registerType<MaterialObject, materialIndex>();
   registerType<MeshObject, meshIndex>();

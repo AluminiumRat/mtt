@@ -1,4 +1,4 @@
-#include <mtt/editorLib/Objects/AnimationTrack.h>
+#include <mtt/editorLib/Objects/PositionAnimator.h>
 
 #include <Objects/Fluid/BlockerObject.h>
 #include <Objects/Fluid/GasSource.h>
@@ -15,7 +15,7 @@
 PEEObjectFactory::PEEObjectFactory()
 {
   registerType<ParticleAnimation, animationIndex>();
-  registerType<mtt::AnimationTrack, animationTrackIndex>();
+  registerType<mtt::PositionAnimator, positionAnimatorIndex>();
   registerType<EmitterObject, emitterIndex>();
   registerType<FrameObject, frameIndex>();
   registerType<ParticleField, particleFieldIndex>();

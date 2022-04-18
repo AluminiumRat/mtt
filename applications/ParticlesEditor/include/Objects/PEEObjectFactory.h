@@ -6,7 +6,7 @@ class PEEObjectFactory : public mtt::ObjectFactory
 {
 public:
   static constexpr TypeIndex animationIndex = 1;
-  static constexpr TypeIndex animationTrackIndex = 2;
+  static constexpr TypeIndex positionAnimatorIndex = 2;
   static constexpr TypeIndex emitterIndex = 3;
   static constexpr TypeIndex frameIndex = 4;
   static constexpr TypeIndex particleFieldIndex = 5;
