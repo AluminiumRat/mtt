@@ -23,6 +23,7 @@ EmitterObject::EmitterObject( const QString& name,
   _shape(SPHERE_SHAPE),
   _distribution(UNIFORM_DISTRIBUTION),
   _directionAngle(2.f * glm::pi<float>()),
+  _speedRange(0.f, 0.f),
   _sizeRange(1.f, 1.f),
   _rotationRange(-glm::pi<float>(), glm::pi<float>()),
   _rotationSpeedRange(.0f, .0f),
@@ -104,6 +105,7 @@ void EmitterObject::setDirectionAngle(float newValue) noexcept
 
 void EmitterObject::setSpeedRange(const mtt::Range<float>& newValue) noexcept
 {
+  if(!newValue.isValid()) return;
   if(_speedRange == newValue) return;
   _speedRange = newValue;
   emit speedRangeChanged(newValue);
@@ -111,6 +113,7 @@ void EmitterObject::setSpeedRange(const mtt::Range<float>& newValue) noexcept
 
 void EmitterObject::setSizeRange(const mtt::Range<float>& newValue) noexcept
 {
+  if(!newValue.isValid()) return;
   if(_sizeRange == newValue) return;
   _sizeRange = newValue;
   emit sizeRangeChanged(newValue);
@@ -118,6 +121,7 @@ void EmitterObject::setSizeRange(const mtt::Range<float>& newValue) noexcept
 
 void EmitterObject::setRotationRange(const mtt::Range<float>& newValue) noexcept
 {
+  if(!newValue.isValid()) return;
   if(_rotationRange == newValue) return;
   _rotationRange = newValue;
   emit rotationRangeChanged(newValue);
@@ -126,6 +130,7 @@ void EmitterObject::setRotationRange(const mtt::Range<float>& newValue) noexcept
 void EmitterObject::setRotationSpeedRange(
                                     const mtt::Range<float>& newValue) noexcept
 {
+  if(!newValue.isValid()) return;
   if(_rotationSpeedRange == newValue) return;
   _rotationSpeedRange = newValue;
   emit rotationSpeedRangeChanged(newValue);
@@ -147,6 +152,7 @@ void EmitterObject::setSecondColor(const glm::vec3& newValue) noexcept
 
 void EmitterObject::setOpacityRange(const mtt::Range<float>& newValue) noexcept
 {
+  if(!newValue.isValid()) return;
   if(_opacityRange == newValue) return;
   _opacityRange = newValue;
   emit opacityRangeChanged(newValue);
@@ -184,6 +190,7 @@ void EmitterObject::setTileIndex(uint8_t newValue) noexcept
 void EmitterObject::setLifetimeRange(
                             const mtt::Range<mtt::TimeT>& newValue) noexcept
 {
+  if(!newValue.isValid()) return;
   if(_lifetimeRange == newValue) return;
   _lifetimeRange = newValue;
   emit lifetimeRangeChanged(newValue);
@@ -191,6 +198,7 @@ void EmitterObject::setLifetimeRange(
 
 void EmitterObject::setMassRange(const mtt::Range<float>& newValue) noexcept
 {
+  if(!newValue.isValid()) return;
   if(_massRange == newValue) return;
   _massRange = newValue;
   emit massRangeChanged(newValue);
@@ -199,6 +207,7 @@ void EmitterObject::setMassRange(const mtt::Range<float>& newValue) noexcept
 void EmitterObject::setFrictionFactorRange(
                                     const mtt::Range<float>& newValue) noexcept
 {
+  if(!newValue.isValid()) return;
   if(_frictionFactorRange == newValue) return;
   _frictionFactorRange = newValue;
   emit frictionFactorRangeChanged(newValue);

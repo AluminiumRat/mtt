@@ -44,6 +44,8 @@ namespace mtt
     virtual std::unique_ptr<AbstractEditCommand>
                                               makeRestoreCommand() const override;
 
+    inline const TimeRange& timeRange() const noexcept;
+
   signals:
     void targetRefChanged(ScalableObject* target);
 
@@ -68,5 +70,11 @@ namespace mtt
                                     PositionAnimator::targetRef() const noexcept
   {
     return _targetLink;
+  }
+
+  inline const PositionAnimator::TimeRange&
+                                    PositionAnimator::timeRange() const noexcept
+  {
+    return AnimationTrack::timeRange();
   }
 }

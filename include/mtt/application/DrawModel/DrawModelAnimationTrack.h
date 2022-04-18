@@ -51,7 +51,7 @@ namespace mtt
   inline void DrawModelAnimationTrack::updateTransform( TransformTable& target,
                                                         TimeT time) const
   {
-    if(time < startTime() || time > finishTime()) return;
+    if(!timeRange().contains(time)) return;
     if(_boneIndex == TransformTable::notIndex) return;
     target.setTransform(_boneIndex, value(time));
   }

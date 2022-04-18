@@ -63,9 +63,6 @@ namespace mtt
                                         const ScaleKeypoint& keypoint) noexcept;
 
     inline const Range<TimeType>& timeRange() const noexcept;
-    inline TimeType startTime() const noexcept;
-    inline TimeType finishTime() const noexcept;
-    inline TimeType duration() const noexcept;
 
     inline virtual glm::mat4 value(TimeType time) const override;
 
@@ -231,27 +228,6 @@ namespace mtt
   }
 
   template <typename TimeType>
-  inline TimeType KeypointsAnimatedTransform<TimeType>::
-                                                      startTime() const noexcept
-  {
-    return _timeRange.min();
-  }
-
-  template <typename TimeType>
-  inline TimeType KeypointsAnimatedTransform<TimeType>::
-                                                    finishTime() const noexcept
-  {
-    return _timeRange.max();
-  }
-
-  template <typename TimeType>
-  inline TimeType KeypointsAnimatedTransform<TimeType>::
-                                                      duration() const noexcept
-  {
-    return finishTime() - startTime();
-  }
-
-  template <typename TimeType>
   inline glm::mat4 KeypointsAnimatedTransform<TimeType>::
                                                       value(TimeType time) const
   {
@@ -261,17 +237,13 @@ namespace mtt
   template <typename TimeType>
   inline void KeypointsAnimatedTransform<TimeType>::_updateTiming() noexcept
   {
-    TimeType newStartTime = std::min( _positionAnimation.startTime(),
-                                      _rotationAnimation.startTime());
-    newStartTime = std::min(newStartTime, _scaleAnimation.startTime());
+    Range<TimeType> newTimeRange;
+    newTimeRange.extend(_positionAnimation.timeRange());
+    newTimeRange.extend(_rotationAnimation.timeRange());
+    newTimeRange.extend(_scaleAnimation.timeRange());
 
-    TimeType newFinishTime = std::max(_positionAnimation.finishTime(),
-                                      _rotationAnimation.finishTime());
-    newFinishTime = std::max(newFinishTime, _scaleAnimation.finishTime());
-
-    if (newStartTime == startTime() && newFinishTime == finishTime()) return;
-
-    _timeRange = Range<TimeType>(newStartTime, newFinishTime);
+    if(_timeRange == newTimeRange) return;
+    _timeRange = newTimeRange;
 
     onTimeRangeChanged();
   }

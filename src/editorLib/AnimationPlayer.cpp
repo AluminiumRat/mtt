@@ -100,8 +100,14 @@ void AnimationPlayer::_playNextFrame() noexcept
     if(animationDelta > TimeT(0))
     {
       _currentAnimationTime += animationDelta;
-      if(_currentAnimationTime > _currentAnimation->finishTime()) stop();
+
+      if(_currentAnimation->timeRange().isValid() &&
+          _currentAnimationTime > _currentAnimation->timeRange().finish())
+      {
+        stop();
+      }
       else _currentAnimation->update(_currentAnimationTime);
+
       _lastSystemTime = now;
     }
   }

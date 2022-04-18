@@ -22,7 +22,8 @@ void PositionAnimator::onTimeRangeChanged() noexcept
 void PositionAnimator::update(TimeT time)
 {
   if(!enabled()) return;
-  if(time < startTime() || time > finishTime()) return;
+  if(!timeRange().isValid()) return;
+  if(!timeRange().contains(time)) return;
 
   ScalableObject* target = targetRef().get();
   if(target == nullptr) return;

@@ -27,7 +27,7 @@ mtt::Range<mtt::TimeT> ParticleAnimation::calculateTiming() const noexcept
 
 void ParticleAnimation::update(mtt::TimeT time)
 {
-  if(time < startTime() || time > finishTime()) return;
+  if(!timeRange().contains(time)) return;
 
   AnimationObject::update(time);
 

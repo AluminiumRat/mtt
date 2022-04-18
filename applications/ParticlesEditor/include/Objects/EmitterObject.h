@@ -497,7 +497,7 @@ inline const mtt::Range<float>& EmitterObject::speedRange() const noexcept
 
 inline void EmitterObject::resetSpeedRange() noexcept
 {
-  setSpeedRange(mtt::Range<float>());
+  setSpeedRange(mtt::Range<float>(0.f, 0.f));
 }
 
 inline const mtt::Range<float>& EmitterObject::sizeRange() const noexcept

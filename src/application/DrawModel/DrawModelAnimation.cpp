@@ -41,21 +41,14 @@ std::unique_ptr<DrawModelAnimationTrack> DrawModelAnimation::removeTrack(
 
 void DrawModelAnimation::updateTiming() noexcept
 {
-  if (_tracks.empty())
-  {
-    _timeRange = Range<TimeT>();
-    return;
-  }
+  Range<TimeT> newTimeRange;
 
-  TimeT newStartTime = _tracks[0]->startTime();
-  TimeT newFinishTime = _tracks[0]->finishTime();
-
-  for ( size_t trackIndex = 1;
+  for ( size_t trackIndex = 0;
         trackIndex < _tracks.size();
         trackIndex++)
   {
-    newStartTime = std::min(newStartTime, _tracks[trackIndex]->startTime());
-    newFinishTime = std::min(newFinishTime, _tracks[trackIndex]->startTime());
+    newTimeRange.extend(_tracks[trackIndex]->timeRange());
   }
-  _timeRange = Range<TimeT>(newStartTime, newFinishTime);
+
+  _timeRange = newTimeRange;
 }

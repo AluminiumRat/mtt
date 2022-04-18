@@ -19,9 +19,6 @@ namespace mtt
     virtual ~DrawModelAnimation() noexcept = default;
 
     inline const Range<TimeT>& timeRange() const noexcept;
-    inline TimeT startTime() const noexcept;
-    inline TimeT finishTime() const noexcept;
-    inline TimeT duration() const noexcept;
 
     inline size_t tracksNumber() const noexcept;
     inline DrawModelAnimationTrack& track(size_t trackIndex) noexcept;
@@ -48,21 +45,6 @@ namespace mtt
   inline const Range<TimeT>& DrawModelAnimation::timeRange() const noexcept
   {
     return _timeRange;
-  }
-
-  inline TimeT DrawModelAnimation::startTime() const noexcept
-  {
-    return _timeRange.min();
-  }
-
-  inline TimeT DrawModelAnimation::finishTime() const noexcept
-  {
-    return _timeRange.max();
-  }
-
-  inline TimeT DrawModelAnimation::duration() const noexcept
-  {
-    return finishTime() - startTime();
   }
 
   inline size_t DrawModelAnimation::tracksNumber() const noexcept

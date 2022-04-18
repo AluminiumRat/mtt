@@ -32,9 +32,6 @@ namespace mtt
     virtual ~AnimationObject() noexcept = default;
 
     inline const TimeRange& timeRange() const noexcept;
-    inline TimeT startTime() const noexcept;
-    inline TimeT finishTime() const noexcept;
-    inline TimeT duration() const noexcept;
 
     virtual void update(TimeT time);
 
@@ -62,20 +59,5 @@ namespace mtt
                                     AnimationObject::timeRange() const noexcept
   {
     return _timeRange;
-  }
-
-  inline TimeT AnimationObject::startTime() const noexcept
-  {
-    return _timeRange.min();
-  }
-
-  inline TimeT AnimationObject::finishTime() const noexcept
-  {
-    return _timeRange.max();
-  }
-
-  inline TimeT AnimationObject::duration() const noexcept
-  {
-    return finishTime() - startTime();
   }
 }

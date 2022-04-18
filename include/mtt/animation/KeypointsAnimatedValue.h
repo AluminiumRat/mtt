@@ -37,9 +37,6 @@ namespace mtt
   
     inline virtual ValueT value(TimeT time) const override;
 
-    inline TimeT startTime() const noexcept;
-    inline TimeT finishTime() const noexcept;
-    inline TimeT duration() const noexcept;
     inline Range<TimeT> timeRange() const noexcept;
 
   private:
@@ -164,32 +161,10 @@ namespace mtt
   }
 
   template <typename KeypointType>
-  inline typename KeypointType::TimeT
-                KeypointsAnimatedValue<KeypointType>::startTime() const noexcept
-  {
-    if(_keypoints.empty()) return TimeT(0);
-    return _keypoints.front()->time();
-  }
-
-  template <typename KeypointType>
-  inline typename KeypointType::TimeT
-              KeypointsAnimatedValue<KeypointType>::finishTime() const noexcept
-  {
-    if (_keypoints.empty()) return TimeT(0);
-    return _keypoints.back()->time();
-  }
-
-  template <typename KeypointType>
-  inline typename KeypointType::TimeT
-                KeypointsAnimatedValue<KeypointType>::duration() const noexcept
-  {
-    return finishTime() - startTime();
-  }
-
-  template <typename KeypointType>
   inline Range<typename KeypointType::TimeT>
                 KeypointsAnimatedValue<KeypointType>::timeRange() const noexcept
   {
-    return Range<TimeT>(startTime(), finishTime());
+    if (_keypoints.empty()) return Range<TimeT>();
+    return Range<TimeT>(_keypoints.front()->time(), _keypoints.back()->time());
   }
 };
