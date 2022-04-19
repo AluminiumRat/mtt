@@ -1,5 +1,14 @@
 #include <Objects/ObjectSaver.h>
 
+void ObjectSaver::visitConstAnimationAction(const AnimationAction& object)
+{
+  PEVisitorT::visitConstAnimationAction(object);
+
+  stream() << object.startTime();
+  stream() << object.duration();
+}
+
+
 void ObjectSaver::visitConstBlockerObject(const BlockerObject& object)
 {
   PEVisitorT::visitConstBlockerObject(object);
@@ -68,6 +77,14 @@ void ObjectSaver::visitConstFluidObject(const FluidObject& object)
   stream() << (uint16_t)(object.solverIterations());
 }
 
+void ObjectSaver::visitConstGasEmissionAction(const GasEmissionAction& object)
+{
+  PEVisitorT::visitConstGasEmissionAction(object);
+
+  stream() << object.emittedVolume();
+  stream() << object.gasSourceRef().referencedId();
+}
+
 void ObjectSaver::visitConstGasSource(const GasSource& object)
 {
   PEVisitorT::visitConstGasSource(object);
@@ -89,6 +106,13 @@ void ObjectSaver::visitConstHeaterObject(const HeaterObject& object)
   PEVisitorT::visitConstHeaterObject(object);
 
   stream() << object.power();
+}
+
+void ObjectSaver::visitConstHeatingAction(const HeatingAction& object)
+{
+  PEVisitorT::visitConstHeatingAction(object);
+  stream() << object.emittedEnergy();
+  stream() << object.heaterRef().referencedId();
 }
 
 void ObjectSaver::visitConstModificatorObject(const ModificatorObject& object)
@@ -128,6 +152,15 @@ void ObjectSaver::visitConstParticleField(const ParticleField& object)
   }
 
   saveObjectData(object.fluid(), stream(), fileDirectory(), objectFactory());
+}
+
+void ObjectSaver::visitConstParticlesEmissionAction(
+                                          const ParticlesEmissionAction& object)
+{
+  PEVisitorT::visitConstParticlesEmissionAction(object);
+
+  stream() << uint32_t(object.particlesNumber());
+  stream() << object.emitterRef().referencedId();
 }
 
 void ObjectSaver::visitConstSizeControlObject(const SizeControlObject& object)

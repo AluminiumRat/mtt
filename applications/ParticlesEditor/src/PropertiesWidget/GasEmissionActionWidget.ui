@@ -76,7 +76,10 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Target</string>
+        <string>Gas source</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
        </property>
       </widget>
      </item>

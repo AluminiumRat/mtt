@@ -7,7 +7,7 @@
 FluidModificator::FluidModificator( const QString& name,
                                     bool canBeRenamed,
                                     const mtt::UID& id) :
-  ModificatorObject(name, canBeRenamed, ParticleField::PREFLUID_TIME),
+  ModificatorObject(name, canBeRenamed, ParticleField::PREFLUID_TIME, id),
   _size(1.f)
 {
 }

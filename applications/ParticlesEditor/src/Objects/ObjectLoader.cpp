@@ -1,5 +1,13 @@
 #include <Objects/ObjectLoader.h>
 
+void ObjectLoader::visitAnimationAction(AnimationAction& object)
+{
+  PEVisitorT::visitAnimationAction(object);
+
+  object.setStartTime(stream().readTime());
+  object.setDuration(stream().readTime());
+}
+
 void ObjectLoader::visitBlockerObject(BlockerObject& object)
 {
   PEVisitorT::visitBlockerObject(object);
@@ -68,6 +76,14 @@ void ObjectLoader::visitFluidObject(FluidObject& object)
   object.setSolverIterations(stream().readUint16());
 }
 
+void ObjectLoader::visitGasEmissionAction(GasEmissionAction& object)
+{
+  PEVisitorT::visitGasEmissionAction(object);
+
+  object.setEmittedVolume(stream().readFloat());
+  object.gasSourceRef().setReferencedId(readUID());
+}
+
 void ObjectLoader::visitGasSource(GasSource& object)
 {
   PEVisitorT::visitGasSource(object);
@@ -88,6 +104,14 @@ void ObjectLoader::visitHeaterObject(HeaterObject& object)
   PEVisitorT::visitHeaterObject(object);
 
   object.setPower(stream().readFloat());
+}
+
+void ObjectLoader::visitHeatingAction(HeatingAction& object)
+{
+  PEVisitorT::visitHeatingAction(object);
+
+  object.setEmittedEnergy(stream().readFloat());
+  object.heaterRef().setReferencedId(readUID());
 }
 
 void ObjectLoader::visitModificatorObject(ModificatorObject& object)
@@ -129,6 +153,14 @@ void ObjectLoader::visitParticleField(ParticleField& object)
                       fileDirectory(),
                       mixUIDValue(),
                       objectFactory());
+}
+
+void ObjectLoader::visitParticlesEmissionAction(ParticlesEmissionAction& object)
+{
+  PEVisitorT::visitParticlesEmissionAction(object);
+
+  object.setParticlesNumber(stream().readUint32());
+  object.emitterRef().setReferencedId(readUID());
 }
 
 void ObjectLoader::visitSizeControlObject(SizeControlObject& object)

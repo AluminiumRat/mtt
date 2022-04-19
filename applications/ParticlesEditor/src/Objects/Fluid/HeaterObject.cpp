@@ -7,7 +7,7 @@
 HeaterObject::HeaterObject( const QString& name,
                             bool canBeRenamed,
                             const mtt::UID& id) :
-  FluidModificator(name, canBeRenamed),
+  FluidModificator(name, canBeRenamed, id),
   _power(1000.f)
 {
 }

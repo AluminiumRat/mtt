@@ -79,7 +79,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Target</string>
+        <string>Heater</string>
        </property>
       </widget>
      </item>

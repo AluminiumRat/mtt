@@ -5,9 +5,12 @@
 #include <Objects/Fluid/HeaterObject.h>
 #include <Objects/EmitterObject.h>
 #include <Objects/FrameObject.h>
+#include <Objects/GasEmissionAction.h>
 #include <Objects/GravityModificator.h>
+#include <Objects/HeatingAction.h>
 #include <Objects/ParticleAnimation.h>
 #include <Objects/ParticleField.h>
+#include <Objects/ParticlesEmissionAction.h>
 #include <Objects/PEEObjectFactory.h>
 #include <Objects/SizeControlObject.h>
 #include <Objects/VisibilityControlObject.h>
@@ -25,4 +28,7 @@ PEEObjectFactory::PEEObjectFactory()
   registerType<GasSource, gasSourceIndex>();
   registerType<HeaterObject, heaterObjectIndex>();
   registerType<SizeControlObject, sizeControlIndex>();
+  registerType<ParticlesEmissionAction, ParticlesEmissionActionIndex>();
+  registerType<GasEmissionAction, GasEmissionActionIndex>();
+  registerType<HeatingAction, HeatingActionIndex>();
 }
