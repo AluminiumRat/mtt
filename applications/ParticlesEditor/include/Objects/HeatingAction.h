@@ -38,7 +38,7 @@ public:
   inline const mtt::ObjectRef<HeaterObject>& heaterRef() const noexcept;
 
 signals:
-  void gasSourceChanged(HeaterObject* newValue);
+  void heaterChanged(HeaterObject* newValue);
   void emittedEnergyChanged(float newValue);
 
 protected:
@@ -51,7 +51,7 @@ private:
                   HeatingAction,
                   nullptr,
                   nullptr,
-                  &HeatingAction::gasSourceChanged> _heaterRef;
+                  &HeatingAction::heaterChanged> _heaterRef;
 };
 
 inline float HeatingAction::emittedEnergy() const noexcept

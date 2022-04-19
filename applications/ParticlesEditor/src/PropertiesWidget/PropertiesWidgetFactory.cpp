@@ -6,9 +6,11 @@
 #include <PropertiesWidget/BlockerWidget.h>
 #include <PropertiesWidget/EmitterWidget.h>
 #include <PropertiesWidget/FluidWidget.h>
+#include <PropertiesWidget/GasEmissionActionWidget.h>
 #include <PropertiesWidget/GasSourceWidget.h>
 #include <PropertiesWidget/GravityWidget.h>
 #include <PropertiesWidget/HeaterWidget.h>
+#include <PropertiesWidget/HeatingActionWidget.h>
 #include <PropertiesWidget/ParticleAnimationWidget.h>
 #include <PropertiesWidget/ParticleFieldWidget.h>
 #include <PropertiesWidget/ParticlesEmissionActionWidget.h>
@@ -61,6 +63,21 @@ void PropertiesWidgetFactory::visitFluidObject(FluidObject& object)
                           new TypeMaskWidget(object, _commonData.undoStack()));
 }
 
+void PropertiesWidgetFactory::visitGasEmissionAction(GasEmissionAction& object)
+{
+  PEVisitorT::visitGasEmissionAction(object);
+
+  ParticlesEditorScene* scene = _commonData.scene();
+  if(scene == nullptr) return;
+
+  mtt::Object& targetSelectArea = scene->dataRoot().modificatorsGroup();
+
+  widgetsLayout().addWidget(
+                          new GasEmissionActionWidget(object,
+                                                      targetSelectArea,
+                                                      _commonData.undoStack()));
+}
+
 void PropertiesWidgetFactory::visitGasSource(GasSource& object)
 {
   PEVisitorT::visitGasSource(object);
@@ -81,6 +98,20 @@ void PropertiesWidgetFactory::visitHeaterObject(HeaterObject& object)
 {
   PEVisitorT::visitHeaterObject(object);
   widgetsLayout().addWidget(new HeaterWidget(object, _commonData.undoStack()));
+}
+
+void PropertiesWidgetFactory::visitHeatingAction(HeatingAction& object)
+{
+  PEVisitorT::visitHeatingAction(object);
+
+  ParticlesEditorScene* scene = _commonData.scene();
+  if(scene == nullptr) return;
+
+  mtt::Object& targetSelectArea = scene->dataRoot().modificatorsGroup();
+
+  widgetsLayout().addWidget(new HeatingActionWidget(object,
+                                                    targetSelectArea,
+                                                    _commonData.undoStack()));
 }
 
 void PropertiesWidgetFactory::visitModificatorObject(ModificatorObject& object)

@@ -20,9 +20,11 @@ public:
   virtual void visitBlockerObject(BlockerObject& object) override;
   virtual void visitEmitterObject(EmitterObject& object) override;
   virtual void visitFluidObject(FluidObject& object) override;
+  virtual void visitGasEmissionAction(GasEmissionAction& object) override;
   virtual void visitGasSource(GasSource& object) override;
   virtual void visitGravityModificator(GravityModificator& object) override;
   virtual void visitHeaterObject(HeaterObject& object) override;
+  virtual void visitHeatingAction(HeatingAction& object) override;
   virtual void visitModificatorObject(ModificatorObject& object) override;
   virtual void visitParticleAnimation(ParticleAnimation& object) override;
   virtual void visitParticleField(ParticleField& object) override;
