@@ -342,7 +342,7 @@ public:
 
   virtual void simulationStep(mtt::TimeT currentTime,
                               mtt::TimeT delta);
-  void emitParticles(size_t particlesNumber) noexcept;
+  void emitParticles(float particlesNumber) noexcept;
 
 signals:
   void enabledChanged(bool newValue);

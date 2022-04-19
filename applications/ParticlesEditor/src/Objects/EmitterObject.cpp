@@ -219,12 +219,8 @@ void EmitterObject::simulationStep(mtt::TimeT currentTime, mtt::TimeT delta)
 
   float floatDelta = mtt::toFloatTime(delta);
   float floatParticlesNumber = _intensity * floatDelta;
-  size_t particlesNumber = size_t(floatParticlesNumber);
 
-  float remainder = floatParticlesNumber - particlesNumber;
-  if(_displacedDistribution(_randomEngine) < remainder) particlesNumber++;
-
-  emitParticles(particlesNumber);
+  emitParticles(floatParticlesNumber);
 }
 
 glm::vec4 EmitterObject::_getParticlePosition() const noexcept
@@ -278,10 +274,15 @@ glm::vec4 EmitterObject::_getParticleSpeed() const noexcept
                     0.f);
 }
 
-void EmitterObject::emitParticles(size_t particlesNumber) noexcept
+void EmitterObject::emitParticles(float floatParticlesNumber) noexcept
 {
   if(!_enabled) return;
-  if(particlesNumber == 0) return;
+
+  size_t particlesNumber = size_t(floatParticlesNumber);
+  float remainder = floatParticlesNumber - particlesNumber;
+  if (_displacedDistribution(_randomEngine) < remainder) particlesNumber++;
+
+  if (particlesNumber == 0) return;
 
   ParticleField* field = _fieldRef.get();
   if(field == nullptr) return;

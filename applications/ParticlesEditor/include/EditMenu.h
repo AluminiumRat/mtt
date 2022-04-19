@@ -35,6 +35,10 @@ private:
   void _addHeater() noexcept;
   void _addGasSource() noexcept;
   void _addAnimationFromFbx() noexcept;
+  template <typename Action>
+  void _addAction(const QString& name,
+                  const QString& errorString) noexcept;
+  void _addParticlesEmitterAction() noexcept;
 
 private:
   ParticlesEditorCommonData& _commonData;

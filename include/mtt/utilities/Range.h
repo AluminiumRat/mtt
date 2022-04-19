@@ -31,6 +31,8 @@ namespace mtt
     inline void extend(ValueType value) noexcept;
     inline void extend(const Range<ValueType>& other) noexcept;
 
+    inline Range<ValueType> intersection(Range<ValueType> other) const noexcept;
+
     inline bool operator == (const Range& other) const noexcept;
 
   private:
@@ -159,6 +161,16 @@ namespace mtt
     {
       *this = other;
     }
+  }
+
+  template<typename ValueType>
+  inline Range<ValueType>
+          Range<ValueType>::intersection(Range<ValueType> other) const noexcept
+  {
+    if(!isValid() || !other.isValid()) return Range<ValueType>();
+    if(_max < other._min || _min > other._max) return Range<ValueType>();
+    return Range<ValueType>(std::max(_min, other._min),
+                            std::min(_max, other._max));
   }
 
   template<typename ValueType>

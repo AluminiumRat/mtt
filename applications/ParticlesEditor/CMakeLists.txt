@@ -57,6 +57,8 @@ set(HEADERS
     "include/Objects/Fluid/FluidObject.h"
     "include/Objects/Fluid/GasSource.h"
     "include/Objects/Fluid/HeaterObject.h"
+    "include/Objects/ActionAnimationTrack.h"
+    "include/Objects/EmitParticlesAction.h"
     "include/Objects/EmitterObject.h"
     "include/Objects/FrameObject.h"
     "include/Objects/GravityModificator.h"
@@ -75,7 +77,9 @@ set(HEADERS
     "include/Objects/SizeControlObject.h"
     "include/Objects/VisibilityControlObject.h"
 
+    "include/PropertiesWidget/ActionAnimationTrackWidget.h"
     "include/PropertiesWidget/BlockerWidget.h"
+    "include/PropertiesWidget/EmitParticlesActionWidget.h"
     "include/PropertiesWidget/EmitterWidget.h"
     "include/PropertiesWidget/FluidWidget.h"
     "include/PropertiesWidget/GasSourceWidget.h"
@@ -116,6 +120,8 @@ set(SOURCES
     "src/Objects/Fluid/FluidObject.cpp"
     "src/Objects/Fluid/GasSource.cpp"
     "src/Objects/Fluid/HeaterObject.cpp"
+    "src/Objects/ActionAnimationTrack.cpp"
+    "src/Objects/EmitParticlesAction.cpp"
     "src/Objects/EmitterObject.cpp"
     "src/Objects/FrameObject.cpp"
     "src/Objects/GravityModificator.cpp"
@@ -132,7 +138,9 @@ set(SOURCES
     "src/Objects/SizeControlObject.cpp"
     "src/Objects/VisibilityControlObject.cpp"
 
+    "src/PropertiesWidget/ActionAnimationTrackWidget.cpp"
     "src/PropertiesWidget/BlockerWidget.cpp"
+    "src/PropertiesWidget/EmitParticlesActionWidget.cpp"
     "src/PropertiesWidget/EmitterWidget.cpp"
     "src/PropertiesWidget/FluidWidget.cpp"
     "src/PropertiesWidget/GasSourceWidget.cpp"
@@ -164,6 +172,9 @@ set(SOURCES
     )
 
 set(UI_FILES
+    "src/PropertiesWidget/ActionAnimationTrackWidget.ui"
+    "src/PropertiesWidget/BlockerWidget.ui"
+    "src/PropertiesWidget/EmitParticlesActionWidget.ui"
     "src/PropertiesWidget/EmitterWidget.ui"
     "src/PropertiesWidget/FluidWidget.ui"
     "src/PropertiesWidget/GasSourceWidget.ui"

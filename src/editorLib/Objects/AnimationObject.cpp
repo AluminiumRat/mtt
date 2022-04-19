@@ -11,10 +11,10 @@ AnimationObject::AnimationObject( const QString& name,
 {
 }
 
-void AnimationObject::update(TimeT time)
+void AnimationObject::update(TimeRange time)
 {
-  if( _timeRange.isValid() &&
-      (time < _timeRange.min() || time > _timeRange.max())) return;
+  TimeRange activeTime = _timeRange.intersection(time);
+  if(!activeTime.isValid()) return;
 
   for(size_t trackIndex = 0; trackIndex < childsNumber(); trackIndex++)
   {

@@ -7,6 +7,9 @@
 #include <Objects/Fluid/FluidObject.h>
 #include <Objects/Fluid/GasSource.h>
 #include <Objects/Fluid/HeaterObject.h>
+#include <Objects/ActionAnimationTrack.h>
+#include <Objects/EmitParticlesAction.h>
+#include <Objects/EmitParticlesAction.h>
 #include <Objects/EmitterObject.h>
 #include <Objects/FrameObject.h>
 #include <Objects/GravityModificator.h>
@@ -31,9 +34,19 @@ public:
   PEVisitorT& operator = (const PEVisitorT&) = delete;
   virtual ~PEVisitorT() noexcept = default;
 
+  inline virtual void visitConstActionAnimationTrack(
+                                  const ActionAnimationTrack& object) override;
+  inline virtual void visitActionAnimationTrack(
+                                        ActionAnimationTrack& object) override;
+
   inline virtual void visitConstBlockerObject(
                                           const BlockerObject& object) override;
   inline virtual void visitBlockerObject(BlockerObject& object) override;
+
+  inline virtual void visitConstEmitParticlesAction(
+                                    const EmitParticlesAction& object) override;
+  inline virtual void visitEmitParticlesAction(
+                                          EmitParticlesAction& object) override;
 
   inline virtual void visitConstEmitterObject(
                                           const EmitterObject& object) override;
@@ -112,6 +125,20 @@ inline PEVisitorT<BaseVisitor>::PEVisitorT(Args&&... args) :
 }
 
 template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitConstActionAnimationTrack(
+                                            const ActionAnimationTrack& object)
+{
+  static_cast<BaseVisitor*>(this)->visitConstAnimationTrack(object);
+}
+
+template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitActionAnimationTrack(
+                                                  ActionAnimationTrack& object)
+{
+  static_cast<BaseVisitor*>(this)->visitAnimationTrack(object);
+}
+
+template <typename BaseVisitor>
 inline void PEVisitorT<BaseVisitor>::visitConstBlockerObject(
                                                     const BlockerObject& object)
 {
@@ -122,6 +149,20 @@ template <typename BaseVisitor>
 inline void PEVisitorT<BaseVisitor>::visitBlockerObject(BlockerObject& object)
 {
   visitModificatorObject(object);
+}
+
+template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitConstEmitParticlesAction(
+                                              const EmitParticlesAction& object)
+{
+  visitConstActionAnimationTrack(object);
+}
+
+template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitEmitParticlesAction(
+                                                    EmitParticlesAction& object)
+{
+  visitActionAnimationTrack(object);
 }
 
 template <typename BaseVisitor>

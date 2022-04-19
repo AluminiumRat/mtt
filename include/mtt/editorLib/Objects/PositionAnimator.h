@@ -39,7 +39,7 @@ namespace mtt
     inline ObjectRef<ScalableObject>& targetRef() noexcept;
     inline const ObjectRef<ScalableObject>& targetRef() const noexcept;
 
-    virtual void update(TimeT time) override;
+    virtual void update(TimeRange time) override;
 
     virtual std::unique_ptr<AbstractEditCommand>
                                               makeRestoreCommand() const override;

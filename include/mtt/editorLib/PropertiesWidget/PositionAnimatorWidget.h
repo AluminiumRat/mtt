@@ -1,11 +1,8 @@
 #pragma once
 
 #include <memory>
-#include <optional>
 
 #include <QtWidgets/QWidget>
-
-#include <mtt/application/Widgets/PropertiesWidgets/BoolCheckboxConnection.h>
 
 namespace Ui
 {

@@ -99,14 +99,17 @@ void AnimationPlayer::_playNextFrame() noexcept
 
     if(animationDelta > TimeT(0))
     {
+      mtt::Range<mtt::TimeT> animationTime(
+                                        _currentAnimationTime,
+                                        _currentAnimationTime + animationDelta);
       _currentAnimationTime += animationDelta;
 
-      if(_currentAnimation->timeRange().isValid() &&
-          _currentAnimationTime > _currentAnimation->timeRange().finish())
+      if( _currentAnimation->timeRange().isValid() &&
+          animationTime.start() > _currentAnimation->timeRange().finish())
       {
         stop();
       }
-      else _currentAnimation->update(_currentAnimationTime);
+      else _currentAnimation->update(animationTime);
 
       _lastSystemTime = now;
     }

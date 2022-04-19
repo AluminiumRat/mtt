@@ -10,6 +10,7 @@
 #include <Objects/Fluid/BlockerObject.h>
 #include <Objects/Fluid/GasSource.h>
 #include <Objects/Fluid/HeaterObject.h>
+#include <Objects/EmitParticlesAction.h>
 #include <Objects/EmitterObject.h>
 #include <Objects/FrameObject.h>
 #include <Objects/GravityModificator.h>
@@ -42,6 +43,10 @@ EditMenu::EditMenu( QWidget& window,
   addAction(tr("Add animation from fbx"),
             this,
             &EditMenu::_addAnimationFromFbx);
+
+  addAction(tr("Add particles emitter action"),
+            this,
+            &EditMenu::_addParticlesEmitterAction);
 }
 
 void EditMenu::_addHierarhical(std::unique_ptr<HierarhicalObject> object)
@@ -173,4 +178,38 @@ void EditMenu::_addAnimationFromFbx() noexcept
   {
     QMessageBox::critical(&window(), tr("Error"), tr("Unable to import fbx"));
   }
+}
+
+template <typename Action>
+void EditMenu::_addAction(const QString& name,
+                          const QString& errorString) noexcept
+{
+  try
+  {
+    ParticlesEditorScene* scene = _commonData.scene();
+    if (scene == nullptr) return;
+
+    std::unique_ptr<Action> newObject(new Action(name, true));
+    Action* objectPtr = newObject.get();
+
+    std::unique_ptr<mtt::AddObjectCommand> command(
+                      new mtt::AddObjectCommand(std::move(newObject),
+                                                scene->dataRoot().animation()));
+    _commonData.undoStack().addAndMake(std::move(command));
+    _commonData.selectObjects({objectPtr});
+  }
+  catch(std::exception& error)
+  {
+    QMessageBox::critical(&window(), errorString, error.what());
+  }
+  catch(...)
+  {
+    QMessageBox::critical(&window(), errorString, tr("Unknown error"));
+  }
+}
+
+void EditMenu::_addParticlesEmitterAction() noexcept
+{
+  _addAction<EmitParticlesAction>(tr("Particles emitter action"),
+                                  tr("Unable to add particles emitter action"));
 }

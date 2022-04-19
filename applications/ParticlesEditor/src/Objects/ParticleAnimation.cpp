@@ -5,8 +5,7 @@ ParticleAnimation::ParticleAnimation( const QString& name,
                                       const mtt::UID& id) :
   AnimationObject(name, canBeRenamed, id),
   _duration(10 * mtt::second),
-  _fieldRef(*this),
-  _lastTime(0)
+  _fieldRef(*this)
 {
   updateTiming();
 }
@@ -25,16 +24,12 @@ mtt::Range<mtt::TimeT> ParticleAnimation::calculateTiming() const noexcept
   return mtt::Range<mtt::TimeT>(mtt::TimeT(0), _duration);
 }
 
-void ParticleAnimation::update(mtt::TimeT time)
+void ParticleAnimation::update(TimeRange time)
 {
-  if(!timeRange().contains(time)) return;
+  TimeRange activeTime = timeRange().intersection(time);
+  if(!activeTime.isValid()) return;
 
   AnimationObject::update(time);
 
-  if(_lastTime > time) _lastTime = time;
-  if (_fieldRef != nullptr)
-  {
-    _fieldRef->simulationStep(time, time - _lastTime);
-  }
-  _lastTime = time;
+  _fieldRef->simulationStep(time.finish(), time.length());
 }

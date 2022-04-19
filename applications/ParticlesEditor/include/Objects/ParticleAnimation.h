@@ -39,7 +39,7 @@ public:
   inline mtt::ObjectRef<ParticleField>& fieldRef() noexcept;
   inline const mtt::ObjectRef<ParticleField>& fieldRef() const noexcept;
 
-  virtual void update(mtt::TimeT time) override;
+  virtual void update(TimeRange time) override;
 
 signals:
   void durationChanged(mtt::TimeT newValue);
@@ -56,8 +56,6 @@ private:
                   nullptr,
                   nullptr,
                   &ParticleAnimation::fieldChanged> _fieldRef;
-
-  mtt::TimeT _lastTime;
 };
 
 inline mtt::TimeT ParticleAnimation::duration() const noexcept

@@ -45,7 +45,7 @@ namespace mtt
 
     inline const TimeRange& timeRange() const noexcept;
 
-    virtual void update(TimeT time) = 0;
+    virtual void update(TimeRange time) = 0;
 
     /// Makes a command to restore animated object after the animation has
     /// played. The command has no undo functional.

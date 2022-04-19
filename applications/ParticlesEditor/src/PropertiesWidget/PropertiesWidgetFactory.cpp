@@ -2,7 +2,9 @@
 
 #include <mtt/application/Widgets/PropertiesWidgets/BoolPropertyWidget.h>
 
+#include <PropertiesWidget/ActionAnimationTrackWidget.h>
 #include <PropertiesWidget/BlockerWidget.h>
+#include <PropertiesWidget/EmitParticlesActionWidget.h>
 #include <PropertiesWidget/EmitterWidget.h>
 #include <PropertiesWidget/FluidWidget.h>
 #include <PropertiesWidget/GasSourceWidget.h>
@@ -28,12 +30,36 @@ PropertiesWidgetFactory::PropertiesWidgetFactory(
 {
 }
 
+void PropertiesWidgetFactory::visitActionAnimationTrack(
+                                                  ActionAnimationTrack& object)
+{
+  PEVisitorT::visitActionAnimationTrack(object);
+  widgetsLayout().addWidget(
+              new ActionAnimationTrackWidget(object, _commonData.undoStack()));
+}
+
 void PropertiesWidgetFactory::visitBlockerObject(BlockerObject& object)
 {
   PEVisitorT::visitBlockerObject(object);
   widgetsLayout().addWidget(new BlockerWidget(object, _commonData.undoStack()));
   widgetsLayout().addWidget(
                           new TypeMaskWidget(object, _commonData.undoStack()));
+}
+
+void PropertiesWidgetFactory::visitEmitParticlesAction(
+                                                    EmitParticlesAction& object)
+{
+  PEVisitorT::visitEmitParticlesAction(object);
+
+  ParticlesEditorScene* scene = _commonData.scene();
+  if(scene == nullptr) return;
+
+  mtt::Object& targetSelectArea = scene->dataRoot().modificatorsGroup();
+
+  widgetsLayout().addWidget(
+                        new EmitParticlesActionWidget(object,
+                                                      targetSelectArea,
+                                                      _commonData.undoStack()));
 }
 
 void PropertiesWidgetFactory::visitEmitterObject(EmitterObject& object)

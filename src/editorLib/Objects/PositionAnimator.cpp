@@ -19,18 +19,19 @@ void PositionAnimator::onTimeRangeChanged() noexcept
   setTimeRange(KeypointsAnimatedTransform::timeRange());
 }
 
-void PositionAnimator::update(TimeT time)
+void PositionAnimator::update(TimeRange time)
 {
   if(!enabled()) return;
   if(!timeRange().isValid()) return;
-  if(!timeRange().contains(time)) return;
+  if(!time.isValid()) return;
+  if(!timeRange().contains(time.finish())) return;
 
   ScalableObject* target = targetRef().get();
   if(target == nullptr) return;
 
-  target->setPosition(positionAnimation().value(time));
-  target->setRotation(rotationAnimation().value(time));
-  target->setScale(scaleAnimation().value(time));
+  target->setPosition(positionAnimation().value(time.finish()));
+  target->setRotation(rotationAnimation().value(time.finish()));
+  target->setScale(scaleAnimation().value(time.finish()));
 }
 
 std::unique_ptr<AbstractEditCommand>

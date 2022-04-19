@@ -2,7 +2,9 @@
 
 #include <mtt/application/Scene/ObjectVisitor.h>
 
+class ActionAnimationTrack;
 class BlockerObject;
+class EmitParticlesAction;
 class EmitterObject;
 class FluidModificator;
 class FluidObject;
@@ -25,8 +27,16 @@ public:
   static mtt::ObjectVisitor::ExtensionID extensionID;
 
 public:
+  virtual void visitConstActionAnimationTrack(
+                                        const ActionAnimationTrack& object) = 0;
+  virtual void visitActionAnimationTrack(ActionAnimationTrack& object) = 0;
+
   virtual void visitConstBlockerObject(const BlockerObject& object) = 0;
   virtual void visitBlockerObject(BlockerObject& object) = 0;
+
+  virtual void visitConstEmitParticlesAction(
+                                        const EmitParticlesAction& object) = 0;
+  virtual void visitEmitParticlesAction(EmitParticlesAction& object) = 0;
 
   virtual void visitConstEmitterObject(const EmitterObject& object) = 0;
   virtual void visitEmitterObject(EmitterObject& object) = 0;
