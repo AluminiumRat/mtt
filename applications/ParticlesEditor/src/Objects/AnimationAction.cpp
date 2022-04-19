@@ -1,14 +1,14 @@
-#include <Objects/ActionAnimationTrack.h>
+#include <Objects/AnimationAction.h>
 
-ActionAnimationTrack::ActionAnimationTrack( const QString& name,
-                                            bool canBeRenamed,
-                                            const mtt::UID& id) :
+AnimationAction::AnimationAction( const QString& name,
+                                  bool canBeRenamed,
+                                  const mtt::UID& id) :
   AnimationTrack(name, canBeRenamed, id)
 {
   setTimeRange(TimeRange(_startTime, _startTime + _duration));
 }
 
-void ActionAnimationTrack::setStartTime(mtt::TimeT newValue) noexcept
+void AnimationAction::setStartTime(mtt::TimeT newValue) noexcept
 {
   if(newValue.count() < 0) newValue = mtt::TimeT(0);
   if(_startTime == newValue) return;
@@ -17,7 +17,7 @@ void ActionAnimationTrack::setStartTime(mtt::TimeT newValue) noexcept
   emit startTimeChanged(newValue);
 }
 
-void ActionAnimationTrack::setDuration(mtt::TimeT newValue) noexcept
+void AnimationAction::setDuration(mtt::TimeT newValue) noexcept
 {
   if(newValue.count() < 0) newValue = mtt::TimeT(0);
   if(_duration == newValue) return;
@@ -26,7 +26,7 @@ void ActionAnimationTrack::setDuration(mtt::TimeT newValue) noexcept
   emit durationChanged(newValue);
 }
 
-void ActionAnimationTrack::update(TimeRange time)
+void AnimationAction::update(TimeRange time)
 {
   if(!enabled()) return;
   TimeRange activeTime = timeRange().intersection(time);
@@ -37,7 +37,7 @@ void ActionAnimationTrack::update(TimeRange time)
 }
 
 std::unique_ptr<mtt::AbstractEditCommand>
-                                ActionAnimationTrack::makeRestoreCommand() const
+                                    AnimationAction::makeRestoreCommand() const
 {
   return nullptr;
 }

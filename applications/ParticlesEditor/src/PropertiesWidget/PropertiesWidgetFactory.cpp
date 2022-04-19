@@ -2,9 +2,8 @@
 
 #include <mtt/application/Widgets/PropertiesWidgets/BoolPropertyWidget.h>
 
-#include <PropertiesWidget/ActionAnimationTrackWidget.h>
+#include <PropertiesWidget/AnimationActionWidget.h>
 #include <PropertiesWidget/BlockerWidget.h>
-#include <PropertiesWidget/EmitParticlesActionWidget.h>
 #include <PropertiesWidget/EmitterWidget.h>
 #include <PropertiesWidget/FluidWidget.h>
 #include <PropertiesWidget/GasSourceWidget.h>
@@ -12,6 +11,7 @@
 #include <PropertiesWidget/HeaterWidget.h>
 #include <PropertiesWidget/ParticleAnimationWidget.h>
 #include <PropertiesWidget/ParticleFieldWidget.h>
+#include <PropertiesWidget/ParticlesEmissionActionWidget.h>
 #include <PropertiesWidget/PropertiesWidgetFactory.h>
 #include <PropertiesWidget/SizeControlWidget.h>
 #include <PropertiesWidget/TypeMaskWidget.h>
@@ -30,12 +30,11 @@ PropertiesWidgetFactory::PropertiesWidgetFactory(
 {
 }
 
-void PropertiesWidgetFactory::visitActionAnimationTrack(
-                                                  ActionAnimationTrack& object)
+void PropertiesWidgetFactory::visitAnimationAction(AnimationAction& object)
 {
-  PEVisitorT::visitActionAnimationTrack(object);
+  PEVisitorT::visitAnimationAction(object);
   widgetsLayout().addWidget(
-              new ActionAnimationTrackWidget(object, _commonData.undoStack()));
+                    new AnimationActionWidget(object, _commonData.undoStack()));
 }
 
 void PropertiesWidgetFactory::visitBlockerObject(BlockerObject& object)
@@ -44,22 +43,6 @@ void PropertiesWidgetFactory::visitBlockerObject(BlockerObject& object)
   widgetsLayout().addWidget(new BlockerWidget(object, _commonData.undoStack()));
   widgetsLayout().addWidget(
                           new TypeMaskWidget(object, _commonData.undoStack()));
-}
-
-void PropertiesWidgetFactory::visitEmitParticlesAction(
-                                                    EmitParticlesAction& object)
-{
-  PEVisitorT::visitEmitParticlesAction(object);
-
-  ParticlesEditorScene* scene = _commonData.scene();
-  if(scene == nullptr) return;
-
-  mtt::Object& targetSelectArea = scene->dataRoot().modificatorsGroup();
-
-  widgetsLayout().addWidget(
-                        new EmitParticlesActionWidget(object,
-                                                      targetSelectArea,
-                                                      _commonData.undoStack()));
 }
 
 void PropertiesWidgetFactory::visitEmitterObject(EmitterObject& object)
@@ -127,6 +110,22 @@ void PropertiesWidgetFactory::visitParticleField(ParticleField& object)
   PEVisitorT::visitParticleField(object);
   widgetsLayout().addWidget(new ParticleFieldWidget(object,
                                                     _commonData.undoStack()));
+}
+
+void PropertiesWidgetFactory::visitParticlesEmissionAction(
+                                                ParticlesEmissionAction& object)
+{
+  PEVisitorT::visitParticlesEmissionAction(object);
+
+  ParticlesEditorScene* scene = _commonData.scene();
+  if(scene == nullptr) return;
+
+  mtt::Object& targetSelectArea = scene->dataRoot().modificatorsGroup();
+
+  widgetsLayout().addWidget(
+                        new ParticlesEmissionActionWidget(object,
+                                                      targetSelectArea,
+                                                      _commonData.undoStack()));
 }
 
 void PropertiesWidgetFactory::visitSizeControlObject(SizeControlObject& object)

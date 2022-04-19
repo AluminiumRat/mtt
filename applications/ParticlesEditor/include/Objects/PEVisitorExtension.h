@@ -2,17 +2,17 @@
 
 #include <mtt/application/Scene/ObjectVisitor.h>
 
-class ActionAnimationTrack;
+class AnimationAction;
 class BlockerObject;
-class EmitGasAction;
-class EmitParticlesAction;
+class ParticlesEmissionAction;
 class EmitterObject;
 class FluidModificator;
 class FluidObject;
 class FrameObject;
+class GasEmissionAction;
 class GasSource;
 class GravityModificator;
-class HeatAction;
+class HeatingAction;
 class HeaterObject;
 class HierarhicalObject;
 class ModificatorGroup;
@@ -29,19 +29,11 @@ public:
   static mtt::ObjectVisitor::ExtensionID extensionID;
 
 public:
-  virtual void visitConstActionAnimationTrack(
-                                        const ActionAnimationTrack& object) = 0;
-  virtual void visitActionAnimationTrack(ActionAnimationTrack& object) = 0;
+  virtual void visitConstAnimationAction(const AnimationAction& object) = 0;
+  virtual void visitAnimationAction(AnimationAction& object) = 0;
 
   virtual void visitConstBlockerObject(const BlockerObject& object) = 0;
   virtual void visitBlockerObject(BlockerObject& object) = 0;
-
-  virtual void visitConstEmitGasAction(const EmitGasAction& object) = 0;
-  virtual void visitEmitGasAction(EmitGasAction& object) = 0;
-
-  virtual void visitConstEmitParticlesAction(
-                                        const EmitParticlesAction& object) = 0;
-  virtual void visitEmitParticlesAction(EmitParticlesAction& object) = 0;
 
   virtual void visitConstEmitterObject(const EmitterObject& object) = 0;
   virtual void visitEmitterObject(EmitterObject& object) = 0;
@@ -55,6 +47,9 @@ public:
   virtual void visitConstFrameObject(const FrameObject& object) = 0;
   virtual void visitFrameObject(FrameObject& object) = 0;
 
+  virtual void visitConstGasEmissionAction(const GasEmissionAction& object) = 0;
+  virtual void visitGasEmissionAction(GasEmissionAction& object) = 0;
+
   virtual void visitConstGasSource(const GasSource& object) = 0;
   virtual void visitGasSource(GasSource& object) = 0;
 
@@ -62,8 +57,8 @@ public:
                                           const GravityModificator& object) = 0;
   virtual void visitGravityModificator(GravityModificator& object) = 0;
 
-  virtual void visitConstHeatAction(const HeatAction& object) = 0;
-  virtual void visitHeatAction(HeatAction& object) = 0;
+  virtual void visitConstHeatingAction(const HeatingAction& object) = 0;
+  virtual void visitHeatingAction(HeatingAction& object) = 0;
 
   virtual void visitConstHeaterObject(const HeaterObject& object) = 0;
   virtual void visitHeaterObject(HeaterObject& object) = 0;
@@ -82,6 +77,11 @@ public:
 
   virtual void visitConstParticleField(const ParticleField& object) = 0;
   virtual void visitParticleField(ParticleField& object) = 0;
+
+  virtual void visitConstParticlesEmissionAction(
+                                    const ParticlesEmissionAction& object) = 0;
+  virtual void visitParticlesEmissionAction(
+                                          ParticlesEmissionAction& object) = 0;
 
   virtual void visitConstRootObject(const RootObject& object) = 0;
   virtual void visitRootObject(RootObject& object) = 0;

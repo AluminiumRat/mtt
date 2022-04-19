@@ -4,13 +4,13 @@
 
 #include <Objects/PEVisitorExtension.h>
 
-class ActionAnimationTrack : public mtt::AnimationTrack
+class AnimationAction : public mtt::AnimationTrack
 {
   Q_OBJECT
 
   DEFINE_EXTENSION_ACCEPT(PEVisitorExtension,
-                          visitActionAnimationTrack,
-                          visitConstActionAnimationTrack,
+                          visitAnimationAction,
+                          visitConstAnimationAction,
                           mtt::AnimationTrack)
 
   Q_PROPERTY( mtt::TimeT startTime
@@ -34,12 +34,12 @@ class ActionAnimationTrack : public mtt::AnimationTrack
               USER false)
 
 public:
-  ActionAnimationTrack( const QString& name,
-                        bool canBeRenamed,
-                        const mtt::UID& id = mtt::UID());
-  ActionAnimationTrack(const ActionAnimationTrack&) = delete;
-  ActionAnimationTrack& operator = (const ActionAnimationTrack&) = delete;
-  virtual ~ActionAnimationTrack() noexcept = default;
+  AnimationAction(const QString& name,
+                  bool canBeRenamed,
+                  const mtt::UID& id = mtt::UID());
+  AnimationAction(const AnimationAction&) = delete;
+  AnimationAction& operator = (const AnimationAction&) = delete;
+  virtual ~AnimationAction() noexcept = default;
 
   inline mtt::TimeT startTime() const noexcept;
   void setStartTime(mtt::TimeT newValue) noexcept;
@@ -65,22 +65,22 @@ private:
   mtt::TimeT _duration;
 };
 
-inline mtt::TimeT ActionAnimationTrack::startTime() const noexcept
+inline mtt::TimeT AnimationAction::startTime() const noexcept
 {
   return _startTime;
 }
 
-inline void ActionAnimationTrack::resetStartTime() noexcept
+inline void AnimationAction::resetStartTime() noexcept
 {
   setStartTime(mtt::TimeT(0));
 }
 
-inline mtt::TimeT ActionAnimationTrack::duration() const noexcept
+inline mtt::TimeT AnimationAction::duration() const noexcept
 {
   return _duration;
 }
 
-inline void ActionAnimationTrack::resetDuration() noexcept
+inline void AnimationAction::resetDuration() noexcept
 {
   setDuration(mtt::TimeT(0));
 }

@@ -1,16 +1,16 @@
 #pragma once
 
 #include <Objects/Fluid/HeaterObject.h>
-#include <Objects/ActionAnimationTrack.h>
+#include <Objects/AnimationAction.h>
 
-class HeatAction : public ActionAnimationTrack
+class HeatingAction : public AnimationAction
 {
   Q_OBJECT
 
   DEFINE_EXTENSION_ACCEPT(PEVisitorExtension,
-                          visitHeatAction,
-                          visitConstHeatAction,
-                          ActionAnimationTrack)
+                          visitHeatingAction,
+                          visitConstHeatingAction,
+                          AnimationAction)
 
   Q_PROPERTY( uint emittedEnergy
               READ emittedEnergy
@@ -23,12 +23,12 @@ class HeatAction : public ActionAnimationTrack
               USER false)
 
 public:
-  HeatAction( const QString& name,
-              bool canBeRenamed,
-              const mtt::UID& id = mtt::UID());
-  HeatAction(const HeatAction&) = delete;
-  HeatAction& operator = (const HeatAction&) = delete;
-  virtual ~HeatAction() noexcept = default;
+  HeatingAction(const QString& name,
+                bool canBeRenamed,
+                const mtt::UID& id = mtt::UID());
+  HeatingAction(const HeatingAction&) = delete;
+  HeatingAction& operator = (const HeatingAction&) = delete;
+  virtual ~HeatingAction() noexcept = default;
 
   inline float emittedEnergy() const noexcept;
   void setEmittedEnergy(float newValue) noexcept;
@@ -48,29 +48,29 @@ private:
   float _emittedEnergy;
 
   mtt::ObjectLink<HeaterObject,
-                  HeatAction,
+                  HeatingAction,
                   nullptr,
                   nullptr,
-                  &HeatAction::gasSourceChanged> _heaterRef;
+                  &HeatingAction::gasSourceChanged> _heaterRef;
 };
 
-inline float HeatAction::emittedEnergy() const noexcept
+inline float HeatingAction::emittedEnergy() const noexcept
 {
   return _emittedEnergy;
 }
 
-inline void HeatAction::resetEmittedEnergy() noexcept
+inline void HeatingAction::resetEmittedEnergy() noexcept
 {
   setEmittedEnergy(0.f);
 }
 
-inline mtt::ObjectRef<HeaterObject>& HeatAction::heaterRef() noexcept
+inline mtt::ObjectRef<HeaterObject>& HeatingAction::heaterRef() noexcept
 {
   return _heaterRef;
 }
 
 inline const mtt::ObjectRef<HeaterObject>&
-                                        HeatAction::heaterRef() const noexcept
+                                      HeatingAction::heaterRef() const noexcept
 {
   return _heaterRef;
 }

@@ -10,13 +10,13 @@
 #include <Objects/Fluid/BlockerObject.h>
 #include <Objects/Fluid/GasSource.h>
 #include <Objects/Fluid/HeaterObject.h>
-#include <Objects/EmitGasAction.h>
-#include <Objects/EmitParticlesAction.h>
 #include <Objects/EmitterObject.h>
 #include <Objects/FrameObject.h>
+#include <Objects/GasEmissionAction.h>
 #include <Objects/GravityModificator.h>
-#include <Objects/HeatAction.h>
+#include <Objects/HeatingAction.h>
 #include <Objects/ParticleAnimation.h>
+#include <Objects/ParticlesEmissionAction.h>
 #include <Objects/SizeControlObject.h>
 #include <Objects/VisibilityControlObject.h>
 #include <EditMenu.h>
@@ -48,15 +48,15 @@ EditMenu::EditMenu( QWidget& window,
 
   addAction(tr("Add particles emission action"),
             this,
-            &EditMenu::_addParticlesEmitAction);
+            &EditMenu::_addParticlesEmissionAction);
 
   addAction(tr("Add gas emission action"),
             this,
-            &EditMenu::_addEmitGasAction);
+            &EditMenu::_addGasEmissionAction);
 
   addAction(tr("Add heating action"),
             this,
-            &EditMenu::_addHeatAction);
+            &EditMenu::_addHeatingAction);
 }
 
 void EditMenu::_addHierarhical(std::unique_ptr<HierarhicalObject> object)
@@ -218,21 +218,21 @@ void EditMenu::_addAction(const QString& name,
   }
 }
 
-void EditMenu::_addParticlesEmitAction() noexcept
+void EditMenu::_addParticlesEmissionAction() noexcept
 {
-  _addAction<EmitParticlesAction>(
+  _addAction<ParticlesEmissionAction>(
                                 tr("Particles emission"),
                                 tr("Unable to add particles emission action"));
 }
 
-void EditMenu::_addEmitGasAction() noexcept
+void EditMenu::_addGasEmissionAction() noexcept
 {
-  _addAction<EmitGasAction>(tr("Gas emission"),
+  _addAction<GasEmissionAction>(tr("Gas emission"),
                             tr("Unable to add gas emission action"));
 }
 
-void EditMenu::_addHeatAction() noexcept
+void EditMenu::_addHeatingAction() noexcept
 {
-  _addAction<HeatAction>( tr("Heating action"),
-                          tr("Unable to add heating action"));
+  _addAction<HeatingAction>(tr("Heating action"),
+                            tr("Unable to add heating action"));
 }

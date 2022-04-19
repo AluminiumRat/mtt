@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ActionAnimationTrackWidget</class>
- <widget class="QWidget" name="ActionAnimationTrackWidget">
+ <class>ParticlesEmissionActionWidget</class>
+ <widget class="QWidget" name="ParticlesEmissionActionWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>334</width>
-    <height>50</height>
+    <width>361</width>
+    <height>55</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,9 +30,9 @@
     <number>0</number>
    </property>
    <item>
-    <layout class="QHBoxLayout" name="startTimeLayout">
+    <layout class="QHBoxLayout" name="particlesNumberLayout">
      <item>
-      <widget class="QLabel" name="startTimeLabel">
+      <widget class="QLabel" name="particlesNumberLabel">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>1</horstretch>
@@ -40,7 +40,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Start time</string>
+        <string>Particles number</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -48,7 +48,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="startTimeSpin">
+      <widget class="QSpinBox" name="particlesNumberSpin">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>3</horstretch>
@@ -56,16 +56,19 @@
         </sizepolicy>
        </property>
        <property name="maximum">
-        <double>99999.990000000005239</double>
+        <number>9999</number>
+       </property>
+       <property name="singleStep">
+        <number>100</number>
        </property>
       </widget>
      </item>
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="durationLayout">
+    <layout class="QHBoxLayout" name="targetLayout">
      <item>
-      <widget class="QLabel" name="durationLabel">
+      <widget class="QLabel" name="targetLabel">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>1</horstretch>
@@ -73,17 +76,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Duration</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QDoubleSpinBox" name="durationSpin">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-         <horstretch>3</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
+        <string>Target</string>
        </property>
       </widget>
      </item>

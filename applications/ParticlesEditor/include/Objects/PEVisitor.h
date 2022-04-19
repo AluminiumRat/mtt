@@ -7,19 +7,18 @@
 #include <Objects/Fluid/FluidObject.h>
 #include <Objects/Fluid/GasSource.h>
 #include <Objects/Fluid/HeaterObject.h>
-#include <Objects/ActionAnimationTrack.h>
-#include <Objects/EmitGasAction.h>
-#include <Objects/EmitParticlesAction.h>
-#include <Objects/EmitParticlesAction.h>
+#include <Objects/AnimationAction.h>
 #include <Objects/EmitterObject.h>
 #include <Objects/FrameObject.h>
+#include <Objects/GasEmissionAction.h>
 #include <Objects/GravityModificator.h>
-#include <Objects/HeatAction.h>
+#include <Objects/HeatingAction.h>
 #include <Objects/HierarhicalObject.h>
 #include <Objects/ModificatorGroup.h>
 #include <Objects/ModificatorObject.h>
 #include <Objects/ParticleAnimation.h>
 #include <Objects/ParticleField.h>
+#include <Objects/ParticlesEmissionAction.h>
 #include <Objects/PEVisitorExtension.h>
 #include <Objects/RootObject.h>
 #include <Objects/SizeControlObject.h>
@@ -36,23 +35,13 @@ public:
   PEVisitorT& operator = (const PEVisitorT&) = delete;
   virtual ~PEVisitorT() noexcept = default;
 
-  inline virtual void visitConstActionAnimationTrack(
-                                  const ActionAnimationTrack& object) override;
-  inline virtual void visitActionAnimationTrack(
-                                        ActionAnimationTrack& object) override;
+  inline virtual void visitConstAnimationAction(
+                                      const AnimationAction& object) override;
+  inline virtual void visitAnimationAction(AnimationAction& object) override;
 
   inline virtual void visitConstBlockerObject(
                                           const BlockerObject& object) override;
   inline virtual void visitBlockerObject(BlockerObject& object) override;
-
-  inline virtual void visitConstEmitGasAction(
-                                          const EmitGasAction& object) override;
-  inline virtual void visitEmitGasAction(EmitGasAction& object) override;
-
-  inline virtual void visitConstEmitParticlesAction(
-                                    const EmitParticlesAction& object) override;
-  inline virtual void visitEmitParticlesAction(
-                                          EmitParticlesAction& object) override;
 
   inline virtual void visitConstEmitterObject(
                                           const EmitterObject& object) override;
@@ -68,6 +57,11 @@ public:
   inline virtual void visitConstFrameObject(const FrameObject& object) override;
   inline virtual void visitFrameObject(FrameObject& object) override;
 
+  inline virtual void visitConstGasEmissionAction(
+                                      const GasEmissionAction& object) override;
+  inline virtual void visitGasEmissionAction(
+                                            GasEmissionAction& object) override;
+
   inline virtual void visitConstGasSource(const GasSource& object) override;
   inline virtual void visitGasSource(GasSource& object) override;
 
@@ -76,8 +70,9 @@ public:
   inline virtual void visitGravityModificator(
                                           GravityModificator& object) override;
 
-  inline virtual void visitConstHeatAction(const HeatAction& object) override;
-  inline virtual void visitHeatAction(HeatAction& object) override;
+  inline virtual void visitConstHeatingAction(
+                                          const HeatingAction& object) override;
+  inline virtual void visitHeatingAction(HeatingAction& object) override;
 
   inline virtual void visitConstHeaterObject(
                                           const HeaterObject& object) override;
@@ -105,6 +100,11 @@ public:
   inline virtual void visitConstParticleField(
                                           const ParticleField& object) override;
   inline virtual void visitParticleField(ParticleField& object) override;
+
+  inline virtual void visitConstParticlesEmissionAction(
+                                const ParticlesEmissionAction& object) override;
+  inline virtual void visitParticlesEmissionAction(
+                                      ParticlesEmissionAction& object) override;
 
   inline virtual void visitConstRootObject(const RootObject& object) override;
   inline virtual void visitRootObject(RootObject& object) override;
@@ -134,15 +134,15 @@ inline PEVisitorT<BaseVisitor>::PEVisitorT(Args&&... args) :
 }
 
 template <typename BaseVisitor>
-inline void PEVisitorT<BaseVisitor>::visitConstActionAnimationTrack(
-                                            const ActionAnimationTrack& object)
+inline void PEVisitorT<BaseVisitor>::visitConstAnimationAction(
+                                                  const AnimationAction& object)
 {
   static_cast<BaseVisitor*>(this)->visitConstAnimationTrack(object);
 }
 
 template <typename BaseVisitor>
-inline void PEVisitorT<BaseVisitor>::visitActionAnimationTrack(
-                                                  ActionAnimationTrack& object)
+inline void PEVisitorT<BaseVisitor>::visitAnimationAction(
+                                                        AnimationAction& object)
 {
   static_cast<BaseVisitor*>(this)->visitAnimationTrack(object);
 }
@@ -158,33 +158,6 @@ template <typename BaseVisitor>
 inline void PEVisitorT<BaseVisitor>::visitBlockerObject(BlockerObject& object)
 {
   visitModificatorObject(object);
-}
-
-template <typename BaseVisitor>
-inline void PEVisitorT<BaseVisitor>::visitConstEmitGasAction(
-                                                    const EmitGasAction& object)
-{
-  visitConstActionAnimationTrack(object);
-}
-
-template <typename BaseVisitor>
-inline void PEVisitorT<BaseVisitor>::visitEmitGasAction(EmitGasAction& object)
-{
-  visitActionAnimationTrack(object);
-}
-
-template <typename BaseVisitor>
-inline void PEVisitorT<BaseVisitor>::visitConstEmitParticlesAction(
-                                              const EmitParticlesAction& object)
-{
-  visitConstActionAnimationTrack(object);
-}
-
-template <typename BaseVisitor>
-inline void PEVisitorT<BaseVisitor>::visitEmitParticlesAction(
-                                                    EmitParticlesAction& object)
-{
-  visitActionAnimationTrack(object);
 }
 
 template <typename BaseVisitor>
@@ -241,6 +214,20 @@ inline void PEVisitorT<BaseVisitor>::visitFrameObject(FrameObject& object)
 }
 
 template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitConstGasEmissionAction(
+                                                const GasEmissionAction& object)
+{
+  visitConstAnimationAction(object);
+}
+
+template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitGasEmissionAction(
+                                                      GasEmissionAction& object)
+{
+  visitAnimationAction(object);
+}
+
+template <typename BaseVisitor>
 inline void PEVisitorT<BaseVisitor>::visitConstGasSource(
                                                         const GasSource& object)
 {
@@ -268,16 +255,16 @@ inline void PEVisitorT<BaseVisitor>::visitGravityModificator(
 }
 
 template <typename BaseVisitor>
-inline void PEVisitorT<BaseVisitor>::visitConstHeatAction(
-                                                      const HeatAction& object)
+inline void PEVisitorT<BaseVisitor>::visitConstHeatingAction(
+                                                  const HeatingAction& object)
 {
-  visitConstActionAnimationTrack(object);
+  visitConstAnimationAction(object);
 }
 
 template <typename BaseVisitor>
-inline void PEVisitorT<BaseVisitor>::visitHeatAction(HeatAction& object)
+inline void PEVisitorT<BaseVisitor>::visitHeatingAction(HeatingAction& object)
 {
-  visitActionAnimationTrack(object);
+  visitAnimationAction(object);
 }
 
 template <typename BaseVisitor>
@@ -360,6 +347,20 @@ template <typename BaseVisitor>
 inline void PEVisitorT<BaseVisitor>::visitParticleField(ParticleField& object)
 {
   static_cast<BaseVisitor*>(this)->visitMovableObject(object);
+}
+
+template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitConstParticlesEmissionAction(
+                                          const ParticlesEmissionAction& object)
+{
+  visitConstAnimationAction(object);
+}
+
+template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitParticlesEmissionAction(
+                                                ParticlesEmissionAction& object)
+{
+  visitAnimationAction(object);
 }
 
 template <typename BaseVisitor>

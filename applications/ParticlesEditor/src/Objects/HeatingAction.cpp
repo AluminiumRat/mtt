@@ -1,0 +1,22 @@
+#include <Objects/HeatingAction.h>
+
+HeatingAction::HeatingAction( const QString& name,
+                              bool canBeRenamed,
+                              const mtt::UID& id) :
+  AnimationAction(name, canBeRenamed, id),
+  _emittedEnergy(0),
+  _heaterRef(*this)
+{
+}
+
+void HeatingAction::setEmittedEnergy(float newValue) noexcept
+{
+  if(newValue < 0.f) newValue = 0.f;
+  if(_emittedEnergy == newValue) return;
+  _emittedEnergy = newValue;
+  emit emittedEnergyChanged(newValue);
+}
+
+void HeatingAction::makeAction(float portion)
+{
+}

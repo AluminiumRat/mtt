@@ -16,9 +16,8 @@ public:
                                       const PropertiesWidgetFactory&) = delete;
   virtual ~PropertiesWidgetFactory() noexcept = default;
 
-  virtual void visitActionAnimationTrack(ActionAnimationTrack& object) override;
+  virtual void visitAnimationAction(AnimationAction& object) override;
   virtual void visitBlockerObject(BlockerObject& object) override;
-  virtual void visitEmitParticlesAction(EmitParticlesAction& object) override;
   virtual void visitEmitterObject(EmitterObject& object) override;
   virtual void visitFluidObject(FluidObject& object) override;
   virtual void visitGasSource(GasSource& object) override;
@@ -27,6 +26,8 @@ public:
   virtual void visitModificatorObject(ModificatorObject& object) override;
   virtual void visitParticleAnimation(ParticleAnimation& object) override;
   virtual void visitParticleField(ParticleField& object) override;
+  virtual void visitParticlesEmissionAction(
+                                      ParticlesEmissionAction& object) override;
   virtual void visitSizeControlObject(SizeControlObject& object) override;
   virtual void visitVisibilityControlObject(
                                       VisibilityControlObject& object) override;

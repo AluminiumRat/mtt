@@ -1,16 +1,16 @@
 #pragma once
 
 #include <Objects/Fluid/GasSource.h>
-#include <Objects/ActionAnimationTrack.h>
+#include <Objects/AnimationAction.h>
 
-class EmitGasAction : public ActionAnimationTrack
+class GasEmissionAction : public AnimationAction
 {
   Q_OBJECT
 
   DEFINE_EXTENSION_ACCEPT(PEVisitorExtension,
-                          visitEmitGasAction,
-                          visitConstEmitGasAction,
-                          ActionAnimationTrack)
+                          visitGasEmissionAction,
+                          visitConstGasEmissionAction,
+                          AnimationAction)
 
   Q_PROPERTY( uint emittedVolume
               READ emittedVolume
@@ -23,12 +23,12 @@ class EmitGasAction : public ActionAnimationTrack
               USER false)
 
 public:
-  EmitGasAction(const QString& name,
-                bool canBeRenamed,
-                const mtt::UID& id = mtt::UID());
-  EmitGasAction(const EmitGasAction&) = delete;
-  EmitGasAction& operator = (const EmitGasAction&) = delete;
-  virtual ~EmitGasAction() noexcept = default;
+  GasEmissionAction(const QString& name,
+                    bool canBeRenamed,
+                    const mtt::UID& id = mtt::UID());
+  GasEmissionAction(const GasEmissionAction&) = delete;
+  GasEmissionAction& operator = (const GasEmissionAction&) = delete;
+  virtual ~GasEmissionAction() noexcept = default;
 
   inline float emittedVolume() const noexcept;
   void setEmittedVolume(float newValue) noexcept;
@@ -48,29 +48,29 @@ private:
   float _emittedVolume;
 
   mtt::ObjectLink<GasSource,
-                  EmitGasAction,
+                  GasEmissionAction,
                   nullptr,
                   nullptr,
-                  &EmitGasAction::gasSourceChanged> _gasSourceRef;
+                  &GasEmissionAction::gasSourceChanged> _gasSourceRef;
 };
 
-inline float EmitGasAction::emittedVolume() const noexcept
+inline float GasEmissionAction::emittedVolume() const noexcept
 {
   return _emittedVolume;
 }
 
-inline void EmitGasAction::resetEmittedVolume() noexcept
+inline void GasEmissionAction::resetEmittedVolume() noexcept
 {
   setEmittedVolume(0.f);
 }
 
-inline mtt::ObjectRef<GasSource>& EmitGasAction::gasSourceRef() noexcept
+inline mtt::ObjectRef<GasSource>& GasEmissionAction::gasSourceRef() noexcept
 {
   return _gasSourceRef;
 }
 
 inline const mtt::ObjectRef<GasSource>&
-                                EmitGasAction::gasSourceRef() const noexcept
+                                GasEmissionAction::gasSourceRef() const noexcept
 {
   return _gasSourceRef;
 }
