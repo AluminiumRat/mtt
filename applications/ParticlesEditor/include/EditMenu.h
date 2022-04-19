@@ -38,7 +38,9 @@ private:
   template <typename Action>
   void _addAction(const QString& name,
                   const QString& errorString) noexcept;
-  void _addParticlesEmitterAction() noexcept;
+  void _addParticlesEmitAction() noexcept;
+  void _addEmitGasAction() noexcept;
+  void _addHeatAction() noexcept;
 
 private:
   ParticlesEditorCommonData& _commonData;

@@ -8,11 +8,13 @@
 #include <Objects/Fluid/GasSource.h>
 #include <Objects/Fluid/HeaterObject.h>
 #include <Objects/ActionAnimationTrack.h>
+#include <Objects/EmitGasAction.h>
 #include <Objects/EmitParticlesAction.h>
 #include <Objects/EmitParticlesAction.h>
 #include <Objects/EmitterObject.h>
 #include <Objects/FrameObject.h>
 #include <Objects/GravityModificator.h>
+#include <Objects/HeatAction.h>
 #include <Objects/HierarhicalObject.h>
 #include <Objects/ModificatorGroup.h>
 #include <Objects/ModificatorObject.h>
@@ -43,6 +45,10 @@ public:
                                           const BlockerObject& object) override;
   inline virtual void visitBlockerObject(BlockerObject& object) override;
 
+  inline virtual void visitConstEmitGasAction(
+                                          const EmitGasAction& object) override;
+  inline virtual void visitEmitGasAction(EmitGasAction& object) override;
+
   inline virtual void visitConstEmitParticlesAction(
                                     const EmitParticlesAction& object) override;
   inline virtual void visitEmitParticlesAction(
@@ -69,6 +75,9 @@ public:
                                     const GravityModificator& object) override;
   inline virtual void visitGravityModificator(
                                           GravityModificator& object) override;
+
+  inline virtual void visitConstHeatAction(const HeatAction& object) override;
+  inline virtual void visitHeatAction(HeatAction& object) override;
 
   inline virtual void visitConstHeaterObject(
                                           const HeaterObject& object) override;
@@ -149,6 +158,19 @@ template <typename BaseVisitor>
 inline void PEVisitorT<BaseVisitor>::visitBlockerObject(BlockerObject& object)
 {
   visitModificatorObject(object);
+}
+
+template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitConstEmitGasAction(
+                                                    const EmitGasAction& object)
+{
+  visitConstActionAnimationTrack(object);
+}
+
+template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitEmitGasAction(EmitGasAction& object)
+{
+  visitActionAnimationTrack(object);
 }
 
 template <typename BaseVisitor>
@@ -243,6 +265,19 @@ inline void PEVisitorT<BaseVisitor>::visitGravityModificator(
                                                     GravityModificator& object)
 {
   visitModificatorObject(object);
+}
+
+template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitConstHeatAction(
+                                                      const HeatAction& object)
+{
+  visitConstActionAnimationTrack(object);
+}
+
+template <typename BaseVisitor>
+inline void PEVisitorT<BaseVisitor>::visitHeatAction(HeatAction& object)
+{
+  visitActionAnimationTrack(object);
 }
 
 template <typename BaseVisitor>

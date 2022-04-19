@@ -4,6 +4,7 @@
 
 class ActionAnimationTrack;
 class BlockerObject;
+class EmitGasAction;
 class EmitParticlesAction;
 class EmitterObject;
 class FluidModificator;
@@ -11,6 +12,7 @@ class FluidObject;
 class FrameObject;
 class GasSource;
 class GravityModificator;
+class HeatAction;
 class HeaterObject;
 class HierarhicalObject;
 class ModificatorGroup;
@@ -34,6 +36,9 @@ public:
   virtual void visitConstBlockerObject(const BlockerObject& object) = 0;
   virtual void visitBlockerObject(BlockerObject& object) = 0;
 
+  virtual void visitConstEmitGasAction(const EmitGasAction& object) = 0;
+  virtual void visitEmitGasAction(EmitGasAction& object) = 0;
+
   virtual void visitConstEmitParticlesAction(
                                         const EmitParticlesAction& object) = 0;
   virtual void visitEmitParticlesAction(EmitParticlesAction& object) = 0;
@@ -56,6 +61,9 @@ public:
   virtual void visitConstGravityModificator(
                                           const GravityModificator& object) = 0;
   virtual void visitGravityModificator(GravityModificator& object) = 0;
+
+  virtual void visitConstHeatAction(const HeatAction& object) = 0;
+  virtual void visitHeatAction(HeatAction& object) = 0;
 
   virtual void visitConstHeaterObject(const HeaterObject& object) = 0;
   virtual void visitHeaterObject(HeaterObject& object) = 0;

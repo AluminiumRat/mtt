@@ -10,10 +10,12 @@
 #include <Objects/Fluid/BlockerObject.h>
 #include <Objects/Fluid/GasSource.h>
 #include <Objects/Fluid/HeaterObject.h>
+#include <Objects/EmitGasAction.h>
 #include <Objects/EmitParticlesAction.h>
 #include <Objects/EmitterObject.h>
 #include <Objects/FrameObject.h>
 #include <Objects/GravityModificator.h>
+#include <Objects/HeatAction.h>
 #include <Objects/ParticleAnimation.h>
 #include <Objects/SizeControlObject.h>
 #include <Objects/VisibilityControlObject.h>
@@ -44,9 +46,17 @@ EditMenu::EditMenu( QWidget& window,
             this,
             &EditMenu::_addAnimationFromFbx);
 
-  addAction(tr("Add particles emitter action"),
+  addAction(tr("Add particles emission action"),
             this,
-            &EditMenu::_addParticlesEmitterAction);
+            &EditMenu::_addParticlesEmitAction);
+
+  addAction(tr("Add gas emission action"),
+            this,
+            &EditMenu::_addEmitGasAction);
+
+  addAction(tr("Add heating action"),
+            this,
+            &EditMenu::_addHeatAction);
 }
 
 void EditMenu::_addHierarhical(std::unique_ptr<HierarhicalObject> object)
@@ -208,8 +218,21 @@ void EditMenu::_addAction(const QString& name,
   }
 }
 
-void EditMenu::_addParticlesEmitterAction() noexcept
+void EditMenu::_addParticlesEmitAction() noexcept
 {
-  _addAction<EmitParticlesAction>(tr("Particles emitter action"),
-                                  tr("Unable to add particles emitter action"));
+  _addAction<EmitParticlesAction>(
+                                tr("Particles emission"),
+                                tr("Unable to add particles emission action"));
+}
+
+void EditMenu::_addEmitGasAction() noexcept
+{
+  _addAction<EmitGasAction>(tr("Gas emission"),
+                            tr("Unable to add gas emission action"));
+}
+
+void EditMenu::_addHeatAction() noexcept
+{
+  _addAction<HeatAction>( tr("Heating action"),
+                          tr("Unable to add heating action"));
 }
