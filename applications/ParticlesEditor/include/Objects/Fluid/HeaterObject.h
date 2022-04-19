@@ -33,6 +33,8 @@ public:
   void setPower(float newValue) noexcept;
   inline void resetPower() noexcept;
 
+  void emitEnergy(float energy);
+
   virtual void simulationStep(mtt::TimeT currentTime,
                               mtt::TimeT deltaT) override;
 

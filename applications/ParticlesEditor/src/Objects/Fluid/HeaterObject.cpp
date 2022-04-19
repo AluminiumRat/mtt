@@ -20,25 +20,22 @@ void HeaterObject::setPower(float newValue) noexcept
   emit powerChanged(newValue);
 }
 
-void HeaterObject::simulationStep(mtt::TimeT currentTime, mtt::TimeT deltaT)
+void HeaterObject::emitEnergy(float energy)
 {
-  if(size() <= 0.f) return;
-  if(_power <= 0.f) return;
+  if (!enabled()) return;
+  if (size() <= 0.f) return;
 
   ParticleField* field = fieldRef().get();
+  if(field == nullptr) return;
   FluidObject& fluid = field->fluid();
 
   FluidMatrix<float>* temperatureMatrix = fluid.temperatureMatrix();
   if (temperatureMatrix == nullptr) return;
 
-  float floatDeltaTime = mtt::toFloatTime(deltaT);
-  if(floatDeltaTime <= 0.f) return;
-
   Cells cells = collectCells();
   for (const CellRecord& cell : cells)
   {
-    float cellPower = _power * cell.weight;
-    float cellEnergy = cellPower * floatDeltaTime;
+    float cellEnergy = energy * cell.weight;
     float cellMass = fluid.getCellMass(cell.x, cell.y, cell.z);
     float deltaTemperature = cellEnergy / FluidObject::heatCapacity / cellMass;
 
@@ -48,4 +45,15 @@ void HeaterObject::simulationStep(mtt::TimeT currentTime, mtt::TimeT deltaT)
                             cell.z,
                             oldTemperature + deltaTemperature);
   }
+}
+
+void HeaterObject::simulationStep(mtt::TimeT currentTime, mtt::TimeT deltaT)
+{
+  if(_power <= 0.f) return;
+
+  float floatDeltaTime = mtt::toFloatTime(deltaT);
+  if(floatDeltaTime <= 0.f) return;
+
+  float energy = _power * floatDeltaTime;
+  emitEnergy(energy);
 }

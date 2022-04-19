@@ -19,4 +19,8 @@ void HeatingAction::setEmittedEnergy(float newValue) noexcept
 
 void HeatingAction::makeAction(float portion)
 {
+  if(_heaterRef == nullptr) return;
+  if(!_heaterRef->enabled()) return;
+  if(_emittedEnergy <= 0) return;
+  _heaterRef->emitEnergy(_emittedEnergy * portion);
 }

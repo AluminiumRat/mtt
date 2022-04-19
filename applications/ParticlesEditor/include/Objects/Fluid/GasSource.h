@@ -48,6 +48,8 @@ public:
   void setTemperature(float newValue) noexcept;
   inline void resetTemperature() noexcept;
 
+  void emitGas(float volume);
+
   virtual void simulationStep(mtt::TimeT currentTime,
                               mtt::TimeT deltaT) override;
 

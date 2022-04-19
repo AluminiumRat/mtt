@@ -19,4 +19,8 @@ void GasEmissionAction::setEmittedVolume(float newValue) noexcept
 
 void GasEmissionAction::makeAction(float portion)
 {
+  if(_gasSourceRef == nullptr) return;
+  if(!_gasSourceRef->enabled()) return;
+  if(_emittedVolume <= 0) return;
+  _gasSourceRef->emitGas(_emittedVolume * portion);
 }

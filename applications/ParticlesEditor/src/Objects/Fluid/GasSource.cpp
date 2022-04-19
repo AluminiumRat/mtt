@@ -25,12 +25,13 @@ void GasSource::setTemperature(float newValue) noexcept
   emit temperatureChanged(newValue);
 }
 
-void GasSource::simulationStep(mtt::TimeT currentTime, mtt::TimeT deltaT)
+void GasSource::emitGas(float volume)
 {
+  if(!enabled()) return;
   if(size() <= 0.f) return;
-  if(_flowRate <= 0.f) return;
 
   ParticleField* field = fieldRef().get();
+  if(field == nullptr) return;
   FluidObject& fluid = field->fluid();
 
   FluidMatrix<float>* temperatureMatrix = fluid.temperatureMatrix();
@@ -38,11 +39,7 @@ void GasSource::simulationStep(mtt::TimeT currentTime, mtt::TimeT deltaT)
   FluidMatrix<float>* pressureMatrix = fluid.pressureMatrix();
   if (pressureMatrix == nullptr) return;
 
-  float floatDeltaTime = mtt::toFloatTime(deltaT);
-  if (floatDeltaTime <= 0.f) return;
-
-  float volumeIncrement = _flowRate * floatDeltaTime;
-  float massIncrement = fluid.getGasMass( volumeIncrement,
+  float massIncrement = fluid.getGasMass( volume,
                                           FluidObject::defaultPressure,
                                           _temperature);
   float energyIncrement =
@@ -51,7 +48,7 @@ void GasSource::simulationStep(mtt::TimeT currentTime, mtt::TimeT deltaT)
   Cells cells = collectCells();
   for (const CellRecord& cell : cells)
   {
-    float cellAdditionVolume = volumeIncrement * cell.weight;
+    float cellAdditionVolume = volume * cell.weight;
     float cellAdditionalMass = massIncrement * cell.weight;
     float cellAdditionalEnergy = energyIncrement * cell.weight;
 
@@ -70,4 +67,16 @@ void GasSource::simulationStep(mtt::TimeT currentTime, mtt::TimeT deltaT)
               additionalPressure + pressureMatrix->get(cell.x, cell.y, cell.z);
     pressureMatrix->set(cell.x, cell.y, cell.z, newPressure);
   }
+}
+
+void GasSource::simulationStep(mtt::TimeT currentTime, mtt::TimeT deltaT)
+{
+  if(_flowRate <= 0.f) return;
+
+  float floatDeltaTime = mtt::toFloatTime(deltaT);
+  if (floatDeltaTime <= 0.f) return;
+
+  float volumeIncrement = _flowRate * floatDeltaTime;
+
+  emitGas(volumeIncrement);
 }
