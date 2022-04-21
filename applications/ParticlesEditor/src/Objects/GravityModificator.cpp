@@ -15,7 +15,7 @@ void GravityModificator::setAcceleration(float newValue) noexcept
   emit accelerationChanged(newValue);
 }
 
-void GravityModificator::simulationStep(mtt::Range<mtt::TimeT> time)
+void GravityModificator::simulationStep(mtt::TimeRange time)
 {
   ParticleField* field = fieldRef().get();
   if (field == nullptr) return;

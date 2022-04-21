@@ -7,7 +7,6 @@
 
 #include <mtt/application/Scene/ObjectLink.h>
 #include <mtt/application/TimeT.h>
-#include <mtt/utilities/Range.h>
 
 #include <Objects/HierarhicalObject.h>
 #include <Objects/ParticleField.h>
@@ -214,7 +213,7 @@ public:
               STORED true
               USER false)
 
-  Q_PROPERTY( mtt::Range<mtt::TimeT> lifetimeRange
+  Q_PROPERTY( mtt::TimeRange lifetimeRange
               READ lifetimeRange
               WRITE setLifetimeRange
               RESET resetLifetimeRange
@@ -328,8 +327,8 @@ public:
   void setTileIndex(uint8_t newValue) noexcept;
   inline void resetTileIndex() noexcept;
 
-  inline const mtt::Range<mtt::TimeT>& lifetimeRange() const noexcept;
-  void setLifetimeRange(const mtt::Range<mtt::TimeT>& newValue) noexcept;
+  inline const mtt::TimeRange& lifetimeRange() const noexcept;
+  void setLifetimeRange(const mtt::TimeRange& newValue) noexcept;
   inline void resetLifetimeRange() noexcept;
 
   inline const mtt::Range<float>& massRange() const noexcept;
@@ -340,7 +339,7 @@ public:
   void setFrictionFactorRange(const mtt::Range<float>& newValue) noexcept;
   inline void resetFrictionFactorRange() noexcept;
 
-  virtual void simulationStep(mtt::Range<mtt::TimeT> time);
+  virtual void simulationStep(mtt::TimeRange time);
   void emitParticles(float particlesNumber) noexcept;
 
 signals:
@@ -363,7 +362,7 @@ signals:
   void brightnessRangeChanged(const mtt::Range<float>& newValue);
   void textureIndexChanged(uint8_t newValue);
   void tileIndexChanged(uint8_t newValue);
-  void lifetimeRangeChanged(const mtt::Range<mtt::TimeT>& newValue);
+  void lifetimeRangeChanged(const mtt::TimeRange& newValue);
   void massRangeChanged(const mtt::Range<float>& newValue);
   void frictionFactorRangeChanged(const mtt::Range<float>& newValue);
 
@@ -399,7 +398,7 @@ private:
   mtt::Range<float> _brightnessRange;
   uint8_t _textureIndex;
   uint8_t _tileIndex;
-  mtt::Range<mtt::TimeT> _lifetimeRange;
+  mtt::TimeRange _lifetimeRange;
   mtt::Range<float> _massRange;
   mtt::Range<float> _frictionFactorRange;
 
@@ -600,15 +599,14 @@ inline void EmitterObject::resetTileIndex() noexcept
   setTileIndex(0);
 }
 
-inline const mtt::Range<mtt::TimeT>&
-                                  EmitterObject::lifetimeRange() const noexcept
+inline const mtt::TimeRange& EmitterObject::lifetimeRange() const noexcept
 {
   return _lifetimeRange;
 }
 
 inline void EmitterObject::resetLifetimeRange() noexcept
 {
-  setLifetimeRange(mtt::Range<mtt::TimeT>(mtt::second,mtt::second));
+  setLifetimeRange(mtt::TimeRange(mtt::second,mtt::second));
 }
 
 inline const mtt::Range<float>& EmitterObject::massRange() const noexcept

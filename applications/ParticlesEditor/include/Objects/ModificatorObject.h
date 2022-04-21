@@ -2,7 +2,6 @@
 
 #include <mtt/application/Scene/ObjectLink.h>
 #include <mtt/application/TimeT.h>
-#include <mtt/utilities/Range.h>
 
 #include <Objects/HierarhicalObject.h>
 #include <Objects/ParticleField.h>
@@ -59,7 +58,7 @@ public:
   inline mtt::ObjectRef<ParticleField>& fieldRef() noexcept;
   inline const mtt::ObjectRef<ParticleField>& fieldRef() const noexcept;
 
-  virtual void simulationStep(mtt::Range<mtt::TimeT> time);
+  virtual void simulationStep(mtt::TimeRange time);
 
 signals:
   void enabledChanged(bool newValue);

@@ -72,8 +72,7 @@ namespace mtt
     return _targetLink;
   }
 
-  inline const PositionAnimator::TimeRange&
-                                    PositionAnimator::timeRange() const noexcept
+  inline const TimeRange& PositionAnimator::timeRange() const noexcept
   {
     return AnimationTrack::timeRange();
   }

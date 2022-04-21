@@ -33,7 +33,7 @@ public:
   void setAcceleration(float newValue) noexcept;
   inline void resetAcceleration() noexcept;
 
-  virtual void simulationStep(mtt::Range<mtt::TimeT> time) override;
+  virtual void simulationStep(mtt::TimeRange time) override;
 
 signals:
   void accelerationChanged(float newValue);

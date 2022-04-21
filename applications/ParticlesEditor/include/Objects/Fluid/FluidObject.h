@@ -8,7 +8,6 @@
 #include <mtt/application/Scene/Object.h>
 #include <mtt/application/TimeT.h>
 #include <mtt/utilities/Box.h>
-#include <mtt/utilities/Range.h>
 
 #include <Objects/ParticleField.h>
 #include <Objects/Fluid/FluidMatrix.h>
@@ -99,7 +98,7 @@ public:
   void setSolverIterations(size_t newValue) noexcept;
   inline void resetSolverIterations() noexcept;
 
-  virtual void simulationStep(mtt::Range<mtt::TimeT> time);
+  virtual void simulationStep(mtt::TimeRange time);
   void clear() noexcept;
 
   void registerBlocker(BlockerObject& blocker);

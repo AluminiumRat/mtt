@@ -6,7 +6,6 @@
 #include <mtt/application/DrawModel/DrawModelAnimationTrack.h>
 #include <mtt/application/DrawModel/TransformTable.h>
 #include <mtt/application/TimeT.h>
-#include <mtt/utilities/Range.h>
 
 namespace mtt
 {
@@ -18,7 +17,7 @@ namespace mtt
     DrawModelAnimation& operator = (const DrawModelAnimation&) = delete;
     virtual ~DrawModelAnimation() noexcept = default;
 
-    inline const Range<TimeT>& timeRange() const noexcept;
+    inline const TimeRange& timeRange() const noexcept;
 
     inline size_t tracksNumber() const noexcept;
     inline DrawModelAnimationTrack& track(size_t trackIndex) noexcept;
@@ -36,13 +35,13 @@ namespace mtt
     void updateTiming() noexcept;
 
   private:
-    Range<TimeT> _timeRange;
+    TimeRange _timeRange;
 
     using Tracks = std::vector<std::unique_ptr<DrawModelAnimationTrack>>;
     Tracks _tracks;
   };
 
-  inline const Range<TimeT>& DrawModelAnimation::timeRange() const noexcept
+  inline const TimeRange& DrawModelAnimation::timeRange() const noexcept
   {
     return _timeRange;
   }

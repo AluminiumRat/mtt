@@ -69,7 +69,7 @@ void GasSource::emitGas(float volume)
   }
 }
 
-void GasSource::simulationStep(mtt::Range<mtt::TimeT> time)
+void GasSource::simulationStep(mtt::TimeRange time)
 {
   if(_flowRate <= 0.f) return;
 

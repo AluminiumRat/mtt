@@ -99,7 +99,7 @@ void ParticleField::unregisterModificator(
   _modificators.erase(iModificator);
 }
 
-void ParticleField::_applyModificators( mtt::Range<mtt::TimeT> time,
+void ParticleField::_applyModificators( mtt::TimeRange time,
                                         ModificatorApplyTime applyTime)
 {
   for (ModificatorObject* modificator : _modificators)
@@ -111,7 +111,7 @@ void ParticleField::_applyModificators( mtt::Range<mtt::TimeT> time,
   }
 }
 
-void ParticleField::simulationStep(mtt::Range<mtt::TimeT> time)
+void ParticleField::simulationStep(mtt::TimeRange time)
 {
   emit simulationStepStarted();
 

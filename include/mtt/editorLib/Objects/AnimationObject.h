@@ -7,7 +7,6 @@
 #include <mtt/application/Scene/SpecialGroup.h>
 #include <mtt/application/TimeT.h>
 #include <mtt/editorLib/Objects/AnimationTrack.h>
-#include <mtt/utilities/Range.h>
 
 namespace mtt
 {
@@ -19,9 +18,6 @@ namespace mtt
                             visitAnimationObject,
                             visitConstAnimationObject,
                             Object)
-
-  public:
-    using TimeRange = Range<TimeT>;
 
   public:
     AnimationObject(const QString& name,
@@ -55,8 +51,7 @@ namespace mtt
     TimeRange _timeRange;
   };
 
-  inline const AnimationObject::TimeRange&
-                                    AnimationObject::timeRange() const noexcept
+  inline const TimeRange& AnimationObject::timeRange() const noexcept
   {
     return _timeRange;
   }

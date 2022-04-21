@@ -60,7 +60,7 @@ public:
 
   bool isPointInside(const glm::vec3& point) noexcept;
 
-  virtual void simulationStep(mtt::Range<mtt::TimeT> time) override;
+  virtual void simulationStep(mtt::TimeRange time) override;
 
 signals:
   void shapeChanged(Shape newValue);

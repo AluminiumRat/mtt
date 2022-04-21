@@ -224,7 +224,7 @@ void FluidObject::_rebuildBlockMatrix()
   }
 }
 
-void FluidObject::simulationStep(mtt::Range<mtt::TimeT> time)
+void FluidObject::simulationStep(mtt::TimeRange time)
 {
   if(!_velocityMatrix.has_value()) _rebuildMatrices();
   if(!_velocityMatrix.has_value()) return;

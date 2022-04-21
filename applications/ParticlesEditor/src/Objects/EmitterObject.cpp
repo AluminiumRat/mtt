@@ -187,8 +187,7 @@ void EmitterObject::setTileIndex(uint8_t newValue) noexcept
   emit tileIndexChanged(newValue);
 }
 
-void EmitterObject::setLifetimeRange(
-                            const mtt::Range<mtt::TimeT>& newValue) noexcept
+void EmitterObject::setLifetimeRange(const mtt::TimeRange& newValue) noexcept
 {
   if(!newValue.isValid()) return;
   if(_lifetimeRange == newValue) return;
@@ -213,7 +212,7 @@ void EmitterObject::setFrictionFactorRange(
   emit frictionFactorRangeChanged(newValue);
 }
 
-void EmitterObject::simulationStep(mtt::Range<mtt::TimeT> time)
+void EmitterObject::simulationStep(mtt::TimeRange time)
 {
   if(_intensity <= 0.f) return;
 

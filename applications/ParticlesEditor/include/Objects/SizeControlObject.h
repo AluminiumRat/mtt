@@ -27,7 +27,7 @@ public:
   void setEndSize(float newValue) noexcept;
   inline void resetEndSize() noexcept;
 
-  virtual void simulationStep(mtt::Range<mtt::TimeT> time) override;
+  virtual void simulationStep(mtt::TimeRange time) override;
 
 signals:
   void startSizeChanged(float newValue);

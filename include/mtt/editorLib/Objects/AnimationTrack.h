@@ -5,7 +5,6 @@
 #include <mtt/application/Scene/Object.h>
 #include <mtt/application/TimeT.h>
 #include <mtt/editorLib/Objects/CEVisitorExtension.h>
-#include <mtt/utilities/Range.h>
 
 namespace mtt
 {
@@ -27,9 +26,6 @@ namespace mtt
                 SCRIPTABLE true
                 STORED true
                 USER false)
-
-  public:
-    using TimeRange = Range<TimeT>;
 
   public:
     AnimationTrack( const QString& name,
@@ -74,8 +70,7 @@ namespace mtt
     setEnabled(true);
   }
 
-  inline const AnimationTrack::TimeRange&
-                                      AnimationTrack::timeRange() const noexcept
+  inline const TimeRange& AnimationTrack::timeRange() const noexcept
   {
     return _timeRange;
   }

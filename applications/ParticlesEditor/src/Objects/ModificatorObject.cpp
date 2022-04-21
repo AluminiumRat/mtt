@@ -27,7 +27,7 @@ void ModificatorObject::setTypeMask(uint32_t newValue) noexcept
   emit typeMaskChanged(newValue);
 }
 
-void ModificatorObject::simulationStep(mtt::Range<mtt::TimeT> time)
+void ModificatorObject::simulationStep(mtt::TimeRange time)
 {
 }
 

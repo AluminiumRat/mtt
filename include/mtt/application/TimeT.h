@@ -2,9 +2,13 @@
 
 #include <chrono>
 
+#include <mtt/utilities/Range.h>
+
 namespace mtt
 {
   using TimeT = std::chrono::duration<int32_t, std::ratio<1, 1000>>;
+
+  using TimeRange = Range<TimeT>;
 
   constexpr TimeT millisecond =
                 std::chrono::duration_cast<TimeT>(std::chrono::milliseconds(1));

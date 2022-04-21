@@ -9,7 +9,6 @@
 #include <mtt/application/EditCommands/UndoStack.h>
 #include <mtt/application/TimeT.h>
 #include <mtt/utilities/Log.h>
-#include <mtt/utilities/Range.h>
 #include <mtt/utilities/ScopedSetter.h>
 
 namespace mtt
@@ -18,8 +17,8 @@ namespace mtt
   class TimeRangeSpinConnection : public QObject
   {
   public:
-    using Getter = const Range<TimeT>& (ObjectClass::*)() const noexcept;
-    using Setter = void (ObjectClass::*)(const Range<TimeT>&);
+    using Getter = const TimeRange& (ObjectClass::*)() const noexcept;
+    using Setter = void (ObjectClass::*)(const TimeRange&);
 
   public:
     template<typename Signal>
@@ -107,12 +106,12 @@ namespace mtt
 
     try
     {
-      Range<TimeT> oldValue = (_object.*_getter)();
+      TimeRange oldValue = (_object.*_getter)();
 
       float minTime = _minWidget.value() / _multiplier;
       float maxTime = toFloatTime(oldValue.max());
       if(maxTime < minTime) maxTime = minTime;
-      Range<TimeT> newValue = Range<TimeT>(toTimeT(minTime), toTimeT(maxTime));
+      TimeRange newValue = TimeRange(toTimeT(minTime), toTimeT(maxTime));
 
       if (oldValue == newValue) return;
 
@@ -144,14 +143,14 @@ namespace mtt
 
     try
     {
-      Range<TimeT> oldValue = (_object.*_getter)();
+      TimeRange oldValue = (_object.*_getter)();
 
       float minTime = toFloatTime(oldValue.min());
       float maxTime = _maxWidget.value() / _multiplier;
 
       if(minTime > maxTime) minTime = maxTime;
 
-      Range<TimeT> newValue = Range<TimeT>(toTimeT(minTime), toTimeT(maxTime));
+      TimeRange newValue = TimeRange(toTimeT(minTime), toTimeT(maxTime));
       if (oldValue == newValue) return;
 
       _undoStack.addAndMake(makeSetPropertyCommand( _object,
@@ -196,7 +195,7 @@ namespace mtt
 
     try
     {
-      Range<TimeT> value = (_object.*_getter)();
+      TimeRange value = (_object.*_getter)();
       _minWidget.setValue(toFloatTime(value.min()) * _multiplier);
       _maxWidget.setValue(toFloatTime(value.max()) * _multiplier);
     }

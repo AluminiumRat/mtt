@@ -49,7 +49,7 @@ public:
   void setDuration(mtt::TimeT newValue) noexcept;
   inline void resetDuration() noexcept;
 
-  virtual void update(TimeRange time) override;
+  virtual void update(mtt::TimeRange time) override;
   virtual std::unique_ptr<mtt::AbstractEditCommand>
                                             makeRestoreCommand() const override;
 

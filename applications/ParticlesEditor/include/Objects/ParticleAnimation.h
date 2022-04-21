@@ -39,14 +39,14 @@ public:
   inline mtt::ObjectRef<ParticleField>& fieldRef() noexcept;
   inline const mtt::ObjectRef<ParticleField>& fieldRef() const noexcept;
 
-  virtual void update(TimeRange time) override;
+  virtual void update(mtt::TimeRange time) override;
 
 signals:
   void durationChanged(mtt::TimeT newValue);
   void fieldChanged(ParticleField* newField);
 
 protected:
-  virtual mtt::Range<mtt::TimeT> calculateTiming() const noexcept override;
+  virtual mtt::TimeRange calculateTiming() const noexcept override;
 
 private:
   mtt::TimeT _duration;

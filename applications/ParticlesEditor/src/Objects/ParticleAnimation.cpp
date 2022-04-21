@@ -19,14 +19,14 @@ void ParticleAnimation::setDuration(mtt::TimeT newValue) noexcept
   emit durationChanged(newValue);
 }
 
-mtt::Range<mtt::TimeT> ParticleAnimation::calculateTiming() const noexcept
+mtt::TimeRange ParticleAnimation::calculateTiming() const noexcept
 {
-  return mtt::Range<mtt::TimeT>(mtt::TimeT(0), _duration);
+  return mtt::TimeRange(mtt::TimeT(0), _duration);
 }
 
-void ParticleAnimation::update(TimeRange time)
+void ParticleAnimation::update(mtt::TimeRange time)
 {
-  TimeRange activeTime = timeRange().intersection(time);
+  mtt::TimeRange activeTime = timeRange().intersection(time);
   if(!activeTime.isValid()) return;
 
   AnimationObject::update(time);

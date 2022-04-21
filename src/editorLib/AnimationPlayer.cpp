@@ -99,9 +99,8 @@ void AnimationPlayer::_playNextFrame() noexcept
 
     if(animationDelta > TimeT(0))
     {
-      mtt::Range<mtt::TimeT> animationTime(
-                                        _currentAnimationTime,
-                                        _currentAnimationTime + animationDelta);
+      mtt::TimeRange animationTime( _currentAnimationTime,
+                                    _currentAnimationTime + animationDelta);
       _currentAnimationTime += animationDelta;
 
       if( _currentAnimation->timeRange().isValid() &&

@@ -47,7 +47,7 @@ void HeaterObject::emitEnergy(float energy)
   }
 }
 
-void HeaterObject::simulationStep(mtt::Range<mtt::TimeT> time)
+void HeaterObject::simulationStep(mtt::TimeRange time)
 {
   if(_power <= 0.f) return;
 

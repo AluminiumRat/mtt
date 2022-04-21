@@ -49,7 +49,7 @@ void AnimationObject::onSubobjectRemoved(Object& object) noexcept
   updateTiming();
 }
 
-AnimationObject::TimeRange AnimationObject::calculateTiming() const noexcept
+TimeRange AnimationObject::calculateTiming() const noexcept
 {
   TimeRange newRange;
 
