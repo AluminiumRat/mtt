@@ -15,8 +15,7 @@ void GravityModificator::setAcceleration(float newValue) noexcept
   emit accelerationChanged(newValue);
 }
 
-void GravityModificator::simulationStep(mtt::TimeT currentTime,
-                                        mtt::TimeT delta)
+void GravityModificator::simulationStep(mtt::Range<mtt::TimeT> time)
 {
   ParticleField* field = fieldRef().get();
   if (field == nullptr) return;
@@ -27,7 +26,7 @@ void GravityModificator::simulationStep(mtt::TimeT currentTime,
   glm::vec3 accelerationVector = toField * glm::vec4(0.f, 0.f, -1.f, 0.f);
   accelerationVector *= _acceleration;
 
-  float floatDeltaTime = mtt::toFloatTime(delta);
+  float floatDeltaTime = mtt::toFloatTime(time.length());
   glm::vec3 deltaV = accelerationVector * floatDeltaTime;
 
   auto theDelegate =

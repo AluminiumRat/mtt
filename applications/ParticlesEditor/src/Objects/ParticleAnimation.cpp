@@ -31,5 +31,5 @@ void ParticleAnimation::update(TimeRange time)
 
   AnimationObject::update(time);
 
-  _fieldRef->simulationStep(time.finish(), time.length());
+  _fieldRef->simulationStep(time);
 }

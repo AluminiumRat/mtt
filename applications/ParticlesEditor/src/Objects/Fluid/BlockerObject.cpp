@@ -92,7 +92,7 @@ void BlockerObject::_disconnectFromFluid(FluidObject& fluid) noexcept
   fluid.unregisterBlocker(*this);
 }
 
-void BlockerObject::simulationStep(mtt::TimeT currentTime, mtt::TimeT delta)
+void BlockerObject::simulationStep(mtt::Range<mtt::TimeT> time)
 {
   ParticleField* field = fieldRef().get();
   if (field == nullptr) return;

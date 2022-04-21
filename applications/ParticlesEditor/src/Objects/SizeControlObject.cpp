@@ -25,7 +25,7 @@ void SizeControlObject::setEndSize(float newValue) noexcept
   emit endSizeChanged(newValue);
 }
 
-void SizeControlObject::simulationStep(mtt::TimeT currentTime, mtt::TimeT delta)
+void SizeControlObject::simulationStep(mtt::Range<mtt::TimeT> time)
 {
   ParticleField* field = fieldRef().get();
   if (field == nullptr) return;

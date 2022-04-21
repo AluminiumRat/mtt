@@ -5,13 +5,16 @@
 
 #include <glm/vec3.hpp>
 
+#include <mtt/application/Scene/Object.h>
+#include <mtt/application/TimeT.h>
 #include <mtt/utilities/Box.h>
+#include <mtt/utilities/Range.h>
 
+#include <Objects/ParticleField.h>
 #include <Objects/Fluid/FluidMatrix.h>
-#include <Objects/ModificatorObject.h>
+#include <Objects/PEVisitorExtension.h>
 
 class BlockerObject;
-class ParticleField;
 
 class FluidObject : public mtt::Object
 {
@@ -96,7 +99,7 @@ public:
   void setSolverIterations(size_t newValue) noexcept;
   inline void resetSolverIterations() noexcept;
 
-  virtual void simulationStep(mtt::TimeT currentTime, mtt::TimeT delta);
+  virtual void simulationStep(mtt::Range<mtt::TimeT> time);
   void clear() noexcept;
 
   void registerBlocker(BlockerObject& blocker);

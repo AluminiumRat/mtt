@@ -99,20 +99,19 @@ void ParticleField::unregisterModificator(
   _modificators.erase(iModificator);
 }
 
-void ParticleField::_applyModificators( mtt::TimeT currentTime,
-                                        mtt::TimeT delta, 
+void ParticleField::_applyModificators( mtt::Range<mtt::TimeT> time,
                                         ModificatorApplyTime applyTime)
 {
   for (ModificatorObject* modificator : _modificators)
   {
     if(modificator->enabled() && modificator->applyTime() == applyTime)
     {
-      modificator->simulationStep(currentTime, delta);
+      modificator->simulationStep(time);
     }
   }
 }
 
-void ParticleField::simulationStep(mtt::TimeT currentTime, mtt::TimeT delta)
+void ParticleField::simulationStep(mtt::Range<mtt::TimeT> time)
 {
   emit simulationStepStarted();
 
@@ -120,20 +119,20 @@ void ParticleField::simulationStep(mtt::TimeT currentTime, mtt::TimeT delta)
   {
     for (EmitterObject* emitter : _emitters)
     {
-      if(emitter->enabled()) emitter->simulationStep(currentTime, delta);
+      if(emitter->enabled()) emitter->simulationStep(time);
     }
 
     _addParticles();
 
-    _applyModificators(currentTime, delta, PREFLUID_TIME);
+    _applyModificators(time, PREFLUID_TIME);
 
-    _fluid->simulationStep(currentTime, delta);
+    _fluid->simulationStep(time);
 
-    _applyModificators(currentTime, delta, POSTFLUID_TIME);
+    _applyModificators(time, POSTFLUID_TIME);
 
-    _updateParticlesData(delta);
+    _updateParticlesData(time.length());
 
-    _applyModificators(currentTime, delta, POSTUPDATE_TIME);
+    _applyModificators(time, POSTUPDATE_TIME);
 
     _deleteParticles();
   }

@@ -213,11 +213,11 @@ void EmitterObject::setFrictionFactorRange(
   emit frictionFactorRangeChanged(newValue);
 }
 
-void EmitterObject::simulationStep(mtt::TimeT currentTime, mtt::TimeT delta)
+void EmitterObject::simulationStep(mtt::Range<mtt::TimeT> time)
 {
   if(_intensity <= 0.f) return;
 
-  float floatDelta = mtt::toFloatTime(delta);
+  float floatDelta = mtt::toFloatTime(time.length());
   float floatParticlesNumber = _intensity * floatDelta;
 
   emitParticles(floatParticlesNumber);

@@ -50,8 +50,7 @@ public:
 
   void emitGas(float volume);
 
-  virtual void simulationStep(mtt::TimeT currentTime,
-                              mtt::TimeT deltaT) override;
+  virtual void simulationStep(mtt::Range<mtt::TimeT> time) override;
 
 signals:
   void flowRateChanged(float newValue);

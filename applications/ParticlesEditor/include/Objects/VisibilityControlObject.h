@@ -35,8 +35,7 @@ public:
   void setSaturationRange(const mtt::Range<float>& newValue) noexcept;
   inline void resetSaturationRange() noexcept;
 
-  virtual void simulationStep(mtt::TimeT currentTime,
-                              mtt::TimeT delta) override;
+  virtual void simulationStep(mtt::Range<mtt::TimeT> time) override;
 
 signals:
   void saturationRangeChanged(const mtt::Range<float>& newValue);

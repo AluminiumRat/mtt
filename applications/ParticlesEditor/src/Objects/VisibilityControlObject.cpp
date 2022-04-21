@@ -16,8 +16,7 @@ void VisibilityControlObject::setSaturationRange(
   emit saturationRangeChanged(newValue);
 }
 
-void VisibilityControlObject::simulationStep( mtt::TimeT currentTime,
-                                              mtt::TimeT delta)
+void VisibilityControlObject::simulationStep(mtt::Range<mtt::TimeT> time)
 {
   ParticleField* field = fieldRef().get();
   if(field == nullptr) return;

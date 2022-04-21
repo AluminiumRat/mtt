@@ -35,8 +35,7 @@ public:
 
   void emitEnergy(float energy);
 
-  virtual void simulationStep(mtt::TimeT currentTime,
-                              mtt::TimeT deltaT) override;
+  virtual void simulationStep(mtt::Range<mtt::TimeT> time) override;
 
 signals:
   void powerChanged(float newValue);

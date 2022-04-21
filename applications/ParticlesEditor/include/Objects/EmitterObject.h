@@ -340,8 +340,7 @@ public:
   void setFrictionFactorRange(const mtt::Range<float>& newValue) noexcept;
   inline void resetFrictionFactorRange() noexcept;
 
-  virtual void simulationStep(mtt::TimeT currentTime,
-                              mtt::TimeT delta);
+  virtual void simulationStep(mtt::Range<mtt::TimeT> time);
   void emitParticles(float particlesNumber) noexcept;
 
 signals:

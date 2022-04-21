@@ -224,14 +224,14 @@ void FluidObject::_rebuildBlockMatrix()
   }
 }
 
-void FluidObject::simulationStep(mtt::TimeT currentTime, mtt::TimeT delta)
+void FluidObject::simulationStep(mtt::Range<mtt::TimeT> time)
 {
   if(!_velocityMatrix.has_value()) _rebuildMatrices();
   if(!_velocityMatrix.has_value()) return;
 
   if(!_blockMatrix.has_value()) _rebuildBlockMatrix();
 
-  float dTime = mtt::toFloatTime(delta);
+  float dTime = mtt::toFloatTime(time.length());
 
   if(dTime != 0.f)
   {

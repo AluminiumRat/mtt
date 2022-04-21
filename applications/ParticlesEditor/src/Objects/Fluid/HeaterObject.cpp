@@ -47,11 +47,11 @@ void HeaterObject::emitEnergy(float energy)
   }
 }
 
-void HeaterObject::simulationStep(mtt::TimeT currentTime, mtt::TimeT deltaT)
+void HeaterObject::simulationStep(mtt::Range<mtt::TimeT> time)
 {
   if(_power <= 0.f) return;
 
-  float floatDeltaTime = mtt::toFloatTime(deltaT);
+  float floatDeltaTime = mtt::toFloatTime(time.length());
   if(floatDeltaTime <= 0.f) return;
 
   float energy = _power * floatDeltaTime;

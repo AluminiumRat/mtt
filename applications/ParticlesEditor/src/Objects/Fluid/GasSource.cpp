@@ -69,11 +69,11 @@ void GasSource::emitGas(float volume)
   }
 }
 
-void GasSource::simulationStep(mtt::TimeT currentTime, mtt::TimeT deltaT)
+void GasSource::simulationStep(mtt::Range<mtt::TimeT> time)
 {
   if(_flowRate <= 0.f) return;
 
-  float floatDeltaTime = mtt::toFloatTime(deltaT);
+  float floatDeltaTime = mtt::toFloatTime(time.length());
   if (floatDeltaTime <= 0.f) return;
 
   float volumeIncrement = _flowRate * floatDeltaTime;

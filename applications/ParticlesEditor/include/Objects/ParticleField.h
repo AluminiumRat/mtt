@@ -7,6 +7,7 @@
 
 #include <mtt/application/TimeT.h>
 #include <mtt/editorLib/Objects/MovableObject.h>
+#include <mtt/utilities/Range.h>
 
 #include <Objects/ParticleTextureDescription.h>
 #include <Objects/PEVisitorExtension.h>
@@ -113,7 +114,7 @@ public:
   void registerModificator(ModificatorObject& modificator);
   void unregisterModificator(ModificatorObject& modificator) noexcept;
 
-  void simulationStep(mtt::TimeT currentTime, mtt::TimeT delta);
+  void simulationStep(mtt::Range<mtt::TimeT> time);
 
 signals:
   void sizeChanged(const glm::vec3& newValue);
@@ -132,8 +133,7 @@ signals:
 
 private:
   void _addParticles();
-  void _applyModificators(mtt::TimeT currentTime,
-                          mtt::TimeT delta,
+  void _applyModificators(mtt::Range<mtt::TimeT> time,
                           ModificatorApplyTime applyTime);
   void _updateParticlesData(mtt::TimeT delta);
   void _deleteParticles();
