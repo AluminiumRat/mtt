@@ -42,7 +42,7 @@ NamePropertyWidget::~NamePropertyWidget() noexcept = default;
 void NamePropertyWidget::_updateObject() noexcept
 {
   if(_skipUpdate) return;
-  ScopedTrueSetter skipper(_skipUpdate);
+  ScopedSetter<bool> skipper(_skipUpdate, true);
 
   try
   {
@@ -68,7 +68,7 @@ void NamePropertyWidget::_updateObject() noexcept
 void NamePropertyWidget::_updateWidget() noexcept
 {
   if (_skipUpdate) return;
-  ScopedTrueSetter skipper(_skipUpdate);
+  ScopedSetter<bool> skipper(_skipUpdate, true);
 
   try
   {

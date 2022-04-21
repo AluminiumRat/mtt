@@ -2,33 +2,48 @@
 
 namespace mtt
 {
-  template <typename ValueType, ValueType setValue, ValueType resetValue>
+  template <typename ValueType>
   class ScopedSetter
   {
   public:
-    inline ScopedSetter(ValueType& variable) noexcept;
+    ScopedSetter(ValueType& variable, const ValueType& setValue) noexcept :
+      _variable(variable),
+      _oldValue(variable)
+    {
+      _variable = setValue;
+    }
+
     ScopedSetter(const ScopedSetter&) = delete;
     ScopedSetter& operator = (const ScopedSetter&) = delete;
-    inline ~ScopedSetter() noexcept;
+    inline ~ScopedSetter() noexcept
+    {
+      _variable = _oldValue;
+    }
 
   private:
     ValueType& _variable;
+    ValueType _oldValue;
   };
 
-  typedef ScopedSetter<bool, true, false> ScopedTrueSetter;
-  typedef ScopedSetter<bool, false, true> ScopedFalseSetter;
-
-  template <typename ValueType, ValueType setValue, ValueType resetValue>
-  inline ScopedSetter<ValueType, setValue, resetValue>::ScopedSetter(
-                                                  ValueType& variable) noexcept:
-    _variable(variable)
+  template <typename ValueType>
+  class ValueRestorer
   {
-    _variable = setValue;
-  }
+  public:
+    ValueRestorer(ValueType& variable) noexcept :
+      _variable(variable),
+      _oldValue(variable)
+    {
+    }
 
-  template <typename ValueType, ValueType setValue, ValueType resetValue>
-  inline ScopedSetter<ValueType, setValue, resetValue>::~ScopedSetter() noexcept
-  {
-    _variable = resetValue;
-  }
+    ValueRestorer(const ValueRestorer&) = delete;
+    ValueRestorer& operator = (const ValueRestorer&) = delete;
+    inline ~ValueRestorer() noexcept
+    {
+      _variable = _oldValue;
+    }
+
+  private:
+    ValueType& _variable;
+    ValueType _oldValue;
+  };
 }

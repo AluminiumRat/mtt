@@ -1,4 +1,5 @@
 #include <mtt/editorLib/Objects/ObjectLoader.h>
+#include <mtt/utilities/ScopedSetter.h>
 
 using namespace mtt;
 
@@ -26,24 +27,13 @@ void ObjectLoader::_readObjectData( Object& object,
                                     UID::ValueType mixUIDValue,
                                     const ObjectFactory& objectFactory)
 {
-  DataStream* oldStream = _stream;
-  _stream = &stream;
-
-  QDir oldFileDirectory = _fileDirectory;
-  _fileDirectory = fileDirectory;
-
-  UID::ValueType oldMixUIDValue = _mixUIDValue;
-  _mixUIDValue = mixUIDValue;
-
-  const ObjectFactory* oldFactory = _objectFactory;
-  _objectFactory = &objectFactory;
+  ScopedSetter<DataStream*> setStream(_stream, &stream);
+  ScopedSetter<QDir> setFileDir(_fileDirectory, fileDirectory);
+  ScopedSetter<UID::ValueType> setUidMixValue(_mixUIDValue, mixUIDValue);
+  ScopedSetter<const ObjectFactory*> setObjectFactory(_objectFactory,
+                                                      &objectFactory);
 
   process(object);
-
-  _stream = oldStream;
-  _fileDirectory = oldFileDirectory;
-  _mixUIDValue = oldMixUIDValue;
-  _objectFactory = oldFactory;
 }
 
 QString ObjectLoader::readFilename()

@@ -91,7 +91,7 @@ namespace mtt
   {
     if(_skipUpdate) return;
     if(_multiplier == 0.f) return;
-    ScopedTrueSetter skipper(_skipUpdate);
+    ScopedSetter<bool> skipper(_skipUpdate, true);
 
     try
     {
@@ -135,7 +135,7 @@ namespace mtt
           TimeSpinConnection<ObjectClass>::_updateFromProperty() noexcept
   {
     if (_skipUpdate) return;
-    ScopedTrueSetter skipper(_skipUpdate);
+    ScopedSetter<bool> skipper(_skipUpdate, true);
 
     try
     {

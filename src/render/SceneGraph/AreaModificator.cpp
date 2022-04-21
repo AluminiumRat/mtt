@@ -2,6 +2,7 @@
 
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
 #include <mtt/render/SceneGraph/AreaModificator.h>
+#include <mtt/utilities/ScopedSetter.h>
 
 using namespace mtt;
 
@@ -26,7 +27,7 @@ void AreaModificator::addToDrawPlan(DrawPlanBuildInfo& buildInfo)
 {
   if(_consumers.empty()) return;
 
-  DrawMatrices oldMatrices = buildInfo.drawMatrices;
+  ValueRestorer<DrawMatrices> restoreMatrices(buildInfo.drawMatrices);
 
   buildInfo.drawMatrices.localToViewMatrix =
                   buildInfo.drawMatrices.localToViewMatrix * transformMatrix();
@@ -36,8 +37,6 @@ void AreaModificator::addToDrawPlan(DrawPlanBuildInfo& buildInfo)
                                     oldNormalsMatrix * _normalTransformMatrix;
 
   buildPrepareActions(buildInfo);
-
-  buildInfo.drawMatrices = oldMatrices;
 }
 
 void AreaModificator::buildPrepareActions(DrawPlanBuildInfo& buildInfo)

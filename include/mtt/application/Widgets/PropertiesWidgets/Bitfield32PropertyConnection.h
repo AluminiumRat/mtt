@@ -81,7 +81,7 @@ namespace mtt
   inline void Bitfield32PropertyConnection<ObjectClass>::_updateProperty() noexcept
   {
     if(_skipUpdate) return;
-    ScopedTrueSetter skipper(_skipUpdate);
+    ScopedSetter<bool> skipper(_skipUpdate, true);
 
     try
     {
@@ -108,7 +108,7 @@ namespace mtt
   inline void Bitfield32PropertyConnection<ObjectClass>::_updateWidget() noexcept
   {
     if (_skipUpdate) return;
-    ScopedTrueSetter skipper(_skipUpdate);
+    ScopedSetter<bool> skipper(_skipUpdate, true);
 
     try
     {

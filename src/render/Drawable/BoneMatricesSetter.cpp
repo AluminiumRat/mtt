@@ -10,17 +10,27 @@ void BoneMatricesSetter::draw(DrawPlanBuildInfo& buildInfo,
 {
   const void* oldMatrices = buildInfo.extraData.data(
                                     DrawPlanBuildExtraData::boneMatricesIndex);
-  if(matrices.empty())
+
+  try
   {
-    buildInfo.extraData.setData(nullptr,
-                                DrawPlanBuildExtraData::boneMatricesIndex);
+    if(matrices.empty())
+    {
+      buildInfo.extraData.setData(nullptr,
+                                  DrawPlanBuildExtraData::boneMatricesIndex);
+    }
+    else
+    {
+      buildInfo.extraData.setData(&matrices,
+                                  DrawPlanBuildExtraData::boneMatricesIndex);
+    }
+    drawNext(buildInfo, next, modifiactorsLeft, drawable);
   }
-  else
+  catch (...)
   {
-    buildInfo.extraData.setData(&matrices,
+    buildInfo.extraData.setData(oldMatrices,
                                 DrawPlanBuildExtraData::boneMatricesIndex);
+    throw;
   }
-  drawNext(buildInfo, next, modifiactorsLeft, drawable);
 
   buildInfo.extraData.setData(oldMatrices,
                               DrawPlanBuildExtraData::boneMatricesIndex);

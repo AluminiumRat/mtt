@@ -80,7 +80,7 @@ namespace mtt
   inline void BoolCheckboxConnection<ObjectClass>::_updateProperty() noexcept
   {
     if(_skipUpdate) return;
-    ScopedTrueSetter skipper(_skipUpdate);
+    ScopedSetter<bool> skipper(_skipUpdate, true);
 
     try
     {
@@ -107,7 +107,7 @@ namespace mtt
   inline void BoolCheckboxConnection<ObjectClass>::_updateWidget() noexcept
   {
     if (_skipUpdate) return;
-    ScopedTrueSetter skipper(_skipUpdate);
+    ScopedSetter<bool> skipper(_skipUpdate, true);
 
     try
     {

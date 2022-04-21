@@ -15,9 +15,20 @@ void UidDrawableModificator::draw(DrawPlanBuildInfo& buildInfo,
 {
   const void* oldUID =
               buildInfo.extraData.data(DrawPlanBuildExtraData::objectUIDIndex);
-  buildInfo.extraData.setData(&_uid,
-                              DrawPlanBuildExtraData::objectUIDIndex);
-  drawNext(buildInfo, next, modifiactorsLeft, drawable);
+
+  try
+  {
+    buildInfo.extraData.setData(&_uid,
+                                DrawPlanBuildExtraData::objectUIDIndex);
+    drawNext(buildInfo, next, modifiactorsLeft, drawable);
+  }
+  catch (...)
+  {
+    buildInfo.extraData.setData(oldUID,
+                                DrawPlanBuildExtraData::objectUIDIndex);
+    throw;
+  }
+
   buildInfo.extraData.setData(oldUID,
                               DrawPlanBuildExtraData::objectUIDIndex);
 }

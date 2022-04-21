@@ -1,5 +1,6 @@
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
 #include <mtt/render/SceneGraph/DrawableNode.h>
+#include <mtt/utilities/ScopedSetter.h>
 
 using namespace mtt;
 
@@ -16,7 +17,7 @@ void DrawableNode::setTransformMatrix(const glm::mat4& newValue) noexcept
 
 void DrawableNode::addToDrawPlan(DrawPlanBuildInfo& buildInfo)
 {
-  DrawMatrices oldMatrices = buildInfo.drawMatrices;
+  ValueRestorer<DrawMatrices> restoreMatrices(buildInfo.drawMatrices);
 
   buildInfo.drawMatrices.localToViewMatrix =
                   buildInfo.drawMatrices.localToViewMatrix * transformMatrix();
@@ -26,6 +27,4 @@ void DrawableNode::addToDrawPlan(DrawPlanBuildInfo& buildInfo)
                                     oldNormalsMatrix * _normalTransformMatrix;
 
   Drawable::addToDrawPlan(buildInfo);
-
-  buildInfo.drawMatrices = oldMatrices;
 }

@@ -81,7 +81,7 @@ void ObjectsTreeView::_updateSelectionFromWidget() noexcept
   if(_itemModel == nullptr) return;
 
   if(_skipUpdate) return;
-  ScopedTrueSetter skipper(_skipUpdate);
+  ScopedSetter<bool> skipper(_skipUpdate, true);
 
   std::vector<Object*> newSelectedObjects;
   QModelIndexList selection = selectionModel()->selectedIndexes();
@@ -106,7 +106,7 @@ void ObjectsTreeView::_updateWidgetFromSelection() noexcept
   if (_itemModel == nullptr) return;
 
   if (_skipUpdate) return;
-  ScopedTrueSetter skipper(_skipUpdate);
+  ScopedSetter<bool> skipper(_skipUpdate, true);
 
   QItemSelection selection;
 

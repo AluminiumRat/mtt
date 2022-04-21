@@ -96,7 +96,7 @@ namespace mtt
           EnumComboConnection<ObjectClass, EnumType>::_updateProperty() noexcept
   {
     if(_skipUpdate) return;
-    ScopedTrueSetter skipper(_skipUpdate);
+    ScopedSetter<bool> skipper(_skipUpdate, true);
 
     try
     {
@@ -125,7 +125,7 @@ namespace mtt
             EnumComboConnection<ObjectClass, EnumType>::updateWidget() noexcept
   {
     if (_skipUpdate) return;
-    ScopedTrueSetter skipper(_skipUpdate);
+    ScopedSetter<bool> skipper(_skipUpdate, true);
 
     int valueIndex = 0;
     for (; valueIndex < _enumValues.size(); valueIndex++)

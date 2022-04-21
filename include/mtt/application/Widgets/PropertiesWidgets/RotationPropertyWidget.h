@@ -87,8 +87,8 @@ namespace mtt
   inline void RotationPropertyWidget<ObjectClass>::updateProperty() noexcept
   {
     if(_skipUpdate) return;
-    ScopedTrueSetter skipper(_skipUpdate);
-  
+    ScopedSetter<bool> skipper(_skipUpdate, true);
+
     try
     {
       glm::vec3 angles( glm::radians(xSpin().value()),
@@ -112,7 +112,7 @@ namespace mtt
   inline void RotationPropertyWidget<ObjectClass>::updateWidget() noexcept
   {
     if (_skipUpdate) return;
-    ScopedTrueSetter skipper(_skipUpdate);
+    ScopedSetter<bool> skipper(_skipUpdate, true);
 
     try
     {

@@ -64,8 +64,8 @@ void WorkCycle::removeSingleshots() noexcept
 
 void WorkCycle::step()
 {
-  ScopedTrueSetter setInProgress(_inProgress);
-  
+  ScopedSetter<bool> setInProgress(_inProgress, true);
+
   std::vector<AbstractAction*> groupTable(totalCategories, nullptr);
   std::vector<AbstractAction*> group;
   group.reserve(totalCategories);

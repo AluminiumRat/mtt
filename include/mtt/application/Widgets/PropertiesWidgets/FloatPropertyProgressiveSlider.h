@@ -146,7 +146,7 @@ namespace mtt
                                                       _updateProperty() noexcept
   {
     if(_skipUpdate) return;
-    ScopedTrueSetter skipper(_skipUpdate);
+    ScopedSetter<bool> skipper(_skipUpdate, true);
   
     try
     {
@@ -179,7 +179,7 @@ namespace mtt
                                                        _updateWidget() noexcept
   {
     if (_skipUpdate) return;
-    ScopedTrueSetter skipper(_skipUpdate);
+    ScopedSetter<bool> skipper(_skipUpdate, true);
 
     float widgetFactor = 0;
     if((_object.*_getter)() != _minValue)

@@ -3,6 +3,7 @@
 #include <mtt/render/Drawable/RotateToCameraModificator.h>
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
 #include <mtt/render/SceneGraph/CameraNode.h>
+#include <mtt/utilities/ScopedSetter.h>
 
 using namespace mtt;
 
@@ -11,7 +12,7 @@ void RotateToCameraModificator::draw( DrawPlanBuildInfo& buildInfo,
                                       size_t modifiactorsLeft,
                                       Drawable& drawable) const
 {
-  DrawMatrices oldMatrices = buildInfo.drawMatrices;
+  ValueRestorer<DrawMatrices> restoreMatrices(buildInfo.drawMatrices);
 
   float xScale = glm::length(buildInfo.drawMatrices.localToViewMatrix[0]);
   buildInfo.drawMatrices.localToViewMatrix[0] = glm::vec4(xScale, 0, 0, 0);
@@ -23,6 +24,4 @@ void RotateToCameraModificator::draw( DrawPlanBuildInfo& buildInfo,
   buildInfo.drawMatrices.localToViewMatrix[2] = glm::vec4(0, 0, zScale, 0);
 
   drawNext(buildInfo, next, modifiactorsLeft, drawable);
-
-  buildInfo.drawMatrices = oldMatrices;
 }

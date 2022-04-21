@@ -68,10 +68,11 @@ void BaseFbxImporter::processScene(FbxScene& scene)
 void BaseFbxImporter::_importNode(FbxNode& node)
 {
   FBXMaterials oldMaterials = _materials;
+
   _updateMaterials(node);
 
   pushTranslation(node);
-  
+
   FbxMesh* mesh = node.GetMesh();
   if(mesh != nullptr) _importMesh(*mesh);
 

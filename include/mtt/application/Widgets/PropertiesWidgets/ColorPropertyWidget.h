@@ -72,7 +72,7 @@ namespace mtt
     ColorWidget::onColorChanged(newValue);
   
     if(_skipUpdate) return;
-    ScopedTrueSetter skipper(_skipUpdate);
+    ScopedSetter<bool> skipper(_skipUpdate, true);
 
     try
     {
@@ -93,7 +93,7 @@ namespace mtt
   inline void ColorPropertyWidget<ObjectClass>::updateWidget() noexcept
   {
     if (_skipUpdate) return;
-    ScopedTrueSetter skipper(_skipUpdate);
+    ScopedSetter<bool> skipper(_skipUpdate, true);
     setColor((_object.*_getter)());
   }
 }

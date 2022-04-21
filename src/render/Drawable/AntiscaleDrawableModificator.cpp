@@ -1,5 +1,6 @@
 #include <mtt/render/Drawable/AntiscaleDrawableModificator.h>
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
+#include <mtt/utilities/ScopedSetter.h>
 
 using namespace mtt;
 
@@ -12,7 +13,7 @@ void AntiscaleDrawableModificator::draw(DrawPlanBuildInfo& buildInfo,
                                         size_t modifiactorsLeft,
                                         Drawable& drawable) const
 {
-  DrawMatrices oldMatrices = buildInfo.drawMatrices;
+  ValueRestorer<DrawMatrices> restoreMatrices(buildInfo.drawMatrices);
 
   glm::mat4 newLocalToViewMatrix = getCutedTransform(
                                       buildInfo.drawMatrices.localToViewMatrix);
@@ -21,8 +22,6 @@ void AntiscaleDrawableModificator::draw(DrawPlanBuildInfo& buildInfo,
                             glm::transpose(glm::inverse(newLocalToViewMatrix));
 
   drawNext(buildInfo, next, modifiactorsLeft, drawable);
-
-  buildInfo.drawMatrices = oldMatrices;
 }
 
 glm::mat4 AntiscaleDrawableModificator::getCutedTransform(

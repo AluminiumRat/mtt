@@ -95,7 +95,7 @@ namespace mtt
 
     TimeType oldTime = _time;
     _time = newValue;
-    
+
     try
     {
       if(_owner != nullptr) _owner->sortKeypoints();

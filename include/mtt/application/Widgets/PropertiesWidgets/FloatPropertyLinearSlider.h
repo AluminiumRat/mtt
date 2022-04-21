@@ -121,7 +121,7 @@ namespace mtt
   inline void FloatPropertyLinearSlider<ObjectClass>::updateProperty() noexcept
   {
     if(_skipUpdate) return;
-    ScopedTrueSetter skipper(_skipUpdate);
+    ScopedSetter<bool> skipper(_skipUpdate, true);
   
     try
     {
@@ -145,7 +145,7 @@ namespace mtt
   inline void FloatPropertyLinearSlider<ObjectClass>::updateWidget() noexcept
   {
     if (_skipUpdate) return;
-    ScopedTrueSetter skipper(_skipUpdate);
+    ScopedSetter<bool> skipper(_skipUpdate, true);
 
     float factor = ((_object.*_getter)() - _minValue) / (_maxValue - _minValue);
     int newValue = minimum() + round((maximum() - minimum()) * factor);

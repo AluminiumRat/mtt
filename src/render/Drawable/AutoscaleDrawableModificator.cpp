@@ -3,6 +3,7 @@
 #include <mtt/render/Drawable/AutoscaleDrawableModificator.h>
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
 #include <mtt/render/SceneGraph/CameraNode.h>
+#include <mtt/utilities/ScopedSetter.h>
 
 using namespace mtt;
 
@@ -22,7 +23,7 @@ void AutoscaleDrawableModificator::draw(DrawPlanBuildInfo& buildInfo,
     return;
   }
 
-  DrawMatrices oldMatrices = buildInfo.drawMatrices;
+  ValueRestorer<DrawMatrices> restoreMatrices(buildInfo.drawMatrices);
 
   glm::vec3 viewSpacePoint = buildInfo.drawMatrices.localToViewMatrix *
                                                           glm::vec4(0, 0, 0, 1);
@@ -39,8 +40,6 @@ void AutoscaleDrawableModificator::draw(DrawPlanBuildInfo& buildInfo,
   }
 
   drawNext(buildInfo, next, modifiactorsLeft, drawable);
-
-  buildInfo.drawMatrices = oldMatrices;
 }
 
 float AutoscaleDrawableModificator::scale(const glm::vec3& position,

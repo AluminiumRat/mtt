@@ -111,7 +111,7 @@ void ParticleFieldWidget::_updateTextures() noexcept
 
 void ParticleFieldWidget::_updateExtentSpin() noexcept
 {
-  mtt::ScopedTrueSetter lock(_skipUpdate);
+  mtt::ScopedSetter<bool> lock(_skipUpdate, true);
 
   int textureIndex = _ui->texturesList->currentRow();
   if (textureIndex < 0)
@@ -130,7 +130,7 @@ void ParticleFieldWidget::_updateExtentSpin() noexcept
 void ParticleFieldWidget::_setExtentValue() noexcept
 {
   if(_skipUpdate) return;
-  mtt::ScopedTrueSetter lock(_skipUpdate);
+  mtt::ScopedSetter<bool> lock(_skipUpdate, true);
 
   int textureIndex = _ui->texturesList->currentRow();
   if (textureIndex < 0) return;

@@ -68,7 +68,7 @@ ManipulatorMenu::ManipulatorMenu( QWidget& window,
 void ManipulatorMenu::_setMoveManipulator() noexcept
 {
   if (_skipUpdate) return;
-  ScopedTrueSetter lock(_skipUpdate);
+  ScopedSetter<bool> lock(_skipUpdate, true);
   _setMovingAction->setChecked(true);
   _setRotationAction->setChecked(false);
   _setScaleAction->setChecked(false);
@@ -78,7 +78,7 @@ void ManipulatorMenu::_setMoveManipulator() noexcept
 void ManipulatorMenu::_setRotationManipulator() noexcept
 {
   if (_skipUpdate) return;
-  ScopedTrueSetter lock(_skipUpdate);
+  ScopedSetter<bool> lock(_skipUpdate, true);
   _setMovingAction->setChecked(false);
   _setRotationAction->setChecked(true);
   _setScaleAction->setChecked(false);
@@ -88,7 +88,7 @@ void ManipulatorMenu::_setRotationManipulator() noexcept
 void ManipulatorMenu::_setScaleManipulator() noexcept
 {
   if (_skipUpdate) return;
-  ScopedTrueSetter lock(_skipUpdate);
+  ScopedSetter<bool> lock(_skipUpdate, true);
   _setMovingAction->setChecked(false);
   _setRotationAction->setChecked(false);
   _setScaleAction->setChecked(true);
@@ -115,7 +115,7 @@ void ManipulatorMenu::_setManipulatorType(
 void ManipulatorMenu::_updateMenuFromManipulatorType() noexcept
 {
   if (_skipUpdate) return;
-  ScopedTrueSetter lock(_skipUpdate);
+  ScopedSetter<bool> lock(_skipUpdate, true);
 
   _setMovingAction->setChecked(
                   _controller.currentManipulator() ==
@@ -131,7 +131,7 @@ void ManipulatorMenu::_updateMenuFromManipulatorType() noexcept
 void ManipulatorMenu::_setLocalOrientation() noexcept
 {
   if (_skipUpdate) return;
-  ScopedTrueSetter lock(_skipUpdate);
+  ScopedSetter<bool> lock(_skipUpdate, true);
 
   _localOrientationAction->setChecked(true);
   _globalOrientationAction->setChecked(false);
@@ -141,7 +141,7 @@ void ManipulatorMenu::_setLocalOrientation() noexcept
 void ManipulatorMenu::_setGlobalOrientation() noexcept
 {
   if (_skipUpdate) return;
-  ScopedTrueSetter lock(_skipUpdate);
+  ScopedSetter<bool> lock(_skipUpdate, true);
 
   _localOrientationAction->setChecked(false);
   _globalOrientationAction->setChecked(true);
@@ -151,7 +151,7 @@ void ManipulatorMenu::_setGlobalOrientation() noexcept
 void ManipulatorMenu::_updateMenuFromOrientation() noexcept
 {
   if (_skipUpdate) return;
-  ScopedTrueSetter lock(_skipUpdate);
+  ScopedSetter<bool> lock(_skipUpdate, true);
 
   _localOrientationAction->setChecked(
                           _controller.orientation() ==

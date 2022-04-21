@@ -20,9 +20,20 @@ void SelectionDrawableModificator::draw(DrawPlanBuildInfo& buildInfo,
 {
   const void* oldSelected = buildInfo.extraData.data(
                                     DrawPlanBuildExtraData::selectedFlagIndex);
-  buildInfo.extraData.setData(&_selected,
-                              DrawPlanBuildExtraData::selectedFlagIndex);
-  drawNext(buildInfo, next, modifiactorsLeft, drawable);
+
+  try
+  {
+    buildInfo.extraData.setData(&_selected,
+                                DrawPlanBuildExtraData::selectedFlagIndex);
+    drawNext(buildInfo, next, modifiactorsLeft, drawable);
+  }
+  catch (...)
+  {
+    buildInfo.extraData.setData(oldSelected,
+                                DrawPlanBuildExtraData::selectedFlagIndex);
+    throw;
+  }
+
   buildInfo.extraData.setData(oldSelected,
                               DrawPlanBuildExtraData::selectedFlagIndex);
 }

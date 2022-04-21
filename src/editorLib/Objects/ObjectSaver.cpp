@@ -1,6 +1,7 @@
 #include <stdexcept>
 
 #include <mtt/editorLib/Objects/ObjectSaver.h>
+#include <mtt/utilities/ScopedSetter.h>
 
 using namespace mtt;
 
@@ -30,20 +31,11 @@ void ObjectSaver::saveObjectData( const Object& object,
                                   const QDir& fileDirectory,
                                   const ObjectFactory& objectFactory)
 {
-  DataStream* oldStream = _stream;
-  _stream = &stream;
-
-  QDir oldFileDirectory = _fileDirectory;
-  _fileDirectory = fileDirectory;
-
-  const ObjectFactory* oldFactory = _objectFactory;
-  _objectFactory = &objectFactory;
-
+  ScopedSetter<DataStream*> setStream(_stream, &stream);
+  ScopedSetter<QDir> setFileDir(_fileDirectory, fileDirectory);
+  ScopedSetter<const ObjectFactory*> setObjectFactory(_objectFactory,
+                                                      &objectFactory);
   process(object);
-
-  _stream = oldStream;
-  _fileDirectory = oldFileDirectory;
-  _objectFactory = oldFactory;
 }
 
 void ObjectSaver::writeFilename(const QString& filename)

@@ -1,6 +1,7 @@
 #include <mtt/render/SceneGraph/DrawableNode.h>
 #include <mtt/render/SceneGraph/DrawVisitor.h>
 #include <mtt/render/SceneGraph/FieldArea.h>
+#include <mtt/utilities/ScopedSetter.h>
 
 using namespace mtt;
 
@@ -29,8 +30,9 @@ void DrawVisitor::visit(const FieldArea& area)
 {
   if(area.drawables().empty()) return;
 
-  const AreaModificatorSet* oldModificators = _buildInfo.areaModificators;
-  _buildInfo.areaModificators = area.modificators();
+  ScopedSetter<const AreaModificatorSet*> setAreaModificators(
+                                                    _buildInfo.areaModificators,
+                                                    area.modificators());
 
   if(area.modificators() != nullptr)
   {
@@ -47,6 +49,4 @@ void DrawVisitor::visit(const FieldArea& area)
       node->addToDrawPlan(_buildInfo);
     }
   }
-
-  _buildInfo.areaModificators = oldModificators;
 }

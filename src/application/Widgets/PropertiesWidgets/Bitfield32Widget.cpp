@@ -64,7 +64,7 @@ Bitfield32Widget::~Bitfield32Widget() noexcept = default;
 void Bitfield32Widget::_updateValue() noexcept
 {
   if (_skipUpdate) return;
-  ScopedTrueSetter skipper(_skipUpdate);
+  ScopedSetter<bool> skipper(_skipUpdate, true);
 
   uint32_t newValue = 0;
   uint32_t cursor = 1;
@@ -88,7 +88,7 @@ void Bitfield32Widget::setValue(uint32_t newValue) noexcept
 void Bitfield32Widget::_updateWidgets() noexcept
 {
   if (_skipUpdate) return;
-  ScopedTrueSetter skipper(_skipUpdate);
+  ScopedSetter<bool> skipper(_skipUpdate, true);
 
   uint32_t cursor = 1;
   for (size_t iCheckbox = 0; iCheckbox < 32; iCheckbox++)
