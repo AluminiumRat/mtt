@@ -9,6 +9,7 @@
 #include <mtt/utilities/Log.h>
 
 #include <MainWindow.h>
+#include <PlayerToolbar.h>
 
 MainWindow::MainWindow() :
   _observerFactory(_commonEditData),
@@ -27,6 +28,12 @@ MainWindow::MainWindow() :
   menuBar()->addMenu(&_environmentMenu);
   menuBar()->addMenu(&_manipulatorMenu);
   menuBar()->addMenu(&_renderMenu);
+
+  std::unique_ptr<PlayerToolbar> playerToolbar(
+                                            new PlayerToolbar(_commonEditData));
+  playerToolbar->setObjectName("PlayerToolbar");
+  playerToolbar->setMovable(false);
+  addToolBar(playerToolbar.release());
 
   connect(&_commonEditData,
           &ParticlesEditorCommonData::sceneChanged,

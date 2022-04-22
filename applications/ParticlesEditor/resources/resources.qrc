@@ -4,7 +4,9 @@
       <file>emitter.png</file>
       <file>gravity.png</file>
       <file>heater.png</file>
+      <file>play.png</file>
       <file>source.png</file>
+      <file>stop.png</file>
       <file>visibilityControl.png</file>
     </qresource>
 </RCC>

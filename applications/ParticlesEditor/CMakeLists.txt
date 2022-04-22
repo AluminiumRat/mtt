@@ -111,6 +111,7 @@ set(HEADERS
     "include/MainWindow.h"
     "include/ParticlesEditorCommonData.h"
     "include/ParticlesEditorScene.h"
+    "include/PlayerToolbar.h"
     )
 
 set(SOURCES
@@ -177,6 +178,7 @@ set(SOURCES
     "src/ParticlesEditor.cpp"
     "src/ParticlesEditorCommonData.cpp"
     "src/ParticlesEditorScene.cpp"
+    "src/PlayerToolbar.cpp"
     )
 
 set(UI_FILES
