@@ -39,7 +39,6 @@ private:
   void _loadSkeletons();
   void _loadGeometry();
   void _loadAnimations();
-  void _clearScene() noexcept;
 
 private:
   ObjectEditorScene& _scene;

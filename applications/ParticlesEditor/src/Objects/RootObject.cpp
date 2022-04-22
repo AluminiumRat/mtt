@@ -87,3 +87,27 @@ void RootObject::changeParticleField( std::unique_ptr<ParticleField> newField)
   _particleField = newFieldPtr;
   emit particleFieldChanged(*_particleField);
 }
+
+void RootObject::clear() noexcept
+{
+  try
+  {
+    while (_modificatorsGroup->childsNumber() != 0)
+    {
+      _modificatorsGroup->removeChild(_modificatorsGroup->child(0), true);
+    }
+
+    changeAnimation(
+                  std::make_unique<ParticleAnimation>(tr("Animation"), false));
+    changeParticleField(std::make_unique<ParticleField>(tr("Field"), false));
+  }
+  catch (std::exception& error)
+  {
+    mtt::Log() << error.what();
+    mtt::Abort("RootObject::clear: unable to clear scene.");
+  }
+  catch (...)
+  {
+    mtt::Abort("RootObject::clear: unable to clear scene.");
+  }
+}

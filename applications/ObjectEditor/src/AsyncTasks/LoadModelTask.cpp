@@ -119,42 +119,11 @@ void LoadModelTask::asyncPart()
   _loadAnimations();
 }
 
-void LoadModelTask::_clearScene() noexcept
-{
-  mtt::AnimationGroup& animations = _scene.dataRoot().animationGroup();
-  while (animations.childsNumber() != 0)
-  {
-    animations.removeChild( animations.child(animations.childsNumber() -1),
-                            true);
-  }
-
-  GeometryGroup& geometry = _scene.dataRoot().geometryGroup();
-  while (geometry.childsNumber() != 0)
-  {
-    geometry.removeChild( geometry.child(geometry.childsNumber() -1),
-                          true);
-  }
-
-  MaterialsGroup& materials = _scene.dataRoot().materialsGroup();
-  while (materials.childsNumber() != 0)
-  {
-    materials.removeChild(materials.child(materials.childsNumber() -1),
-                          true);
-  }
-
-  mtt::SkeletonGroup& skeletons = _scene.dataRoot().skeletonGroup();
-  while (skeletons.childsNumber() != 0)
-  {
-    skeletons.removeChild(skeletons.child(skeletons.childsNumber() -1),
-                          true);
-  }
-}
-
 void LoadModelTask::finalizePart()
 {
   _commonData.undoStack().clear();
   _commonData.setDataFilename("");
-  _clearScene();
+  _scene.dataRoot().clear();
 
   try
   {
@@ -182,7 +151,7 @@ void LoadModelTask::finalizePart()
   }
   catch (...)
   {
-    _clearScene();
+    _scene.dataRoot().clear();
     throw;
   }
 }

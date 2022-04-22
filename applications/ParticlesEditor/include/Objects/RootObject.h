@@ -40,6 +40,8 @@ public:
   /// newField must be not null
   void changeParticleField(std::unique_ptr<ParticleField> newField);
 
+  void clear() noexcept;
+
 signals:
   void animationChanged(ParticleAnimation& newAnimation);
   void particleFieldChanged(ParticleField& newField);

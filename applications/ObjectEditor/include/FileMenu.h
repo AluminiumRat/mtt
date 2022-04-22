@@ -15,6 +15,8 @@ public:
   virtual ~FileMenu() noexcept = default;
 
 private:
+  void _clearScene() noexcept;
+
   void _loadModel() noexcept;
 
   void _saveModel() noexcept;

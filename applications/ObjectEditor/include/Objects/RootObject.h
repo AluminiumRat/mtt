@@ -39,6 +39,8 @@ public:
   inline mtt::AnimationGroup& animationGroup() noexcept;
   inline const mtt::AnimationGroup& animationGroup() const noexcept;
 
+  void clear() noexcept;
+
 private:
   mtt::SkeletonGroup* _skeletonGroup;
   GeometryGroup* _geometryGroup;

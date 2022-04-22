@@ -15,6 +15,8 @@ public:
   virtual ~FileMenu() noexcept = default;
 
 private:
+  void _clearScene() noexcept;
+
   void _load() noexcept;
 
   void _saveEffect() noexcept;

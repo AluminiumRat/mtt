@@ -86,7 +86,7 @@ void LoadEffectTask::finalizePart()
 {
   _commonData.undoStack().clear();
   _commonData.setDataFilename("");
-  _clearScene();
+  _scene.dataRoot().clear();
 
   try
   {
@@ -101,16 +101,8 @@ void LoadEffectTask::finalizePart()
   }
   catch (...)
   {
-    _clearScene();
+    _scene.dataRoot().clear();
     throw;
   }
 }
 
-void LoadEffectTask::_clearScene() noexcept
-{
-  ModificatorGroup& modificators = _scene.dataRoot().modificatorsGroup();
-  while (modificators.childsNumber() != 0)
-  {
-    modificators.removeChild(modificators.child(0), true);
-  }
-}

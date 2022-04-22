@@ -13,6 +13,9 @@ FileMenu::FileMenu( QWidget& window, ParticlesEditorCommonData& commonData) :
   _window(window),
   _commonData(commonData)
 {
+  addAction(tr("&New"), this, &FileMenu::_clearScene);
+  addSeparator();
+
   QAction* openAction = addAction(tr("&Open"), this, &FileMenu::_load);
   openAction->setShortcut(Qt::CTRL + Qt::Key_O);
 
@@ -22,6 +25,19 @@ FileMenu::FileMenu( QWidget& window, ParticlesEditorCommonData& commonData) :
   saveAction->setShortcut(Qt::CTRL + Qt::Key_S);
 
   addAction(tr("Save &As ..."), this, &FileMenu::_saveEffectAs);
+}
+
+void FileMenu::_clearScene() noexcept
+{
+  if (_commonData.scene() == nullptr)
+  {
+    QMessageBox::critical(&_window, tr("Error"), tr("Scene is empty."));
+    return;
+  }
+
+  _commonData.undoStack().clear();
+  _commonData.setDataFilename("");
+  _commonData.scene()->dataRoot().clear();
 }
 
 void FileMenu::_saveEffect() noexcept

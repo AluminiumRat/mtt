@@ -35,7 +35,6 @@ protected:
 private:
   void _checkHead();
   void _loadModificators();
-  void _clearScene() noexcept;
 
 private:
   ParticlesEditorScene& _scene;
