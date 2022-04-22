@@ -5,6 +5,7 @@
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QMenuBar>
 
+#include <mtt/editorLib/MainWindow/ManipulatorToolbar.h>
 #include <mtt/editorLib/Objects/DirectLightObject.h>
 #include <mtt/utilities/Log.h>
 
@@ -34,6 +35,13 @@ MainWindow::MainWindow() :
   playerToolbar->setObjectName("PlayerToolbar");
   playerToolbar->setMovable(false);
   addToolBar(playerToolbar.release());
+
+  std::unique_ptr<mtt::ManipulatorToolbar> manipulatorToolbar(
+           new mtt::ManipulatorToolbar( *this,
+                                        _renderWidget.manipulatorController()));
+  manipulatorToolbar->setObjectName("ManipulatorToolbar");
+  manipulatorToolbar->setMovable(false);
+  addToolBar(manipulatorToolbar.release());
 
   connect(&_commonEditData,
           &ParticlesEditorCommonData::sceneChanged,

@@ -1,6 +1,9 @@
 <RCC>
     <qresource prefix="/editorLib">
-      <file>directLight.png</file>
       <file>ambientLight.png</file>
+      <file>directLight.png</file>
+      <file>movingGizmo.png</file>
+      <file>rotateGizmo.png</file>
+      <file>scaleGizmo.png</file>
     </qresource>
 </RCC>
