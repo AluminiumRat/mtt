@@ -53,6 +53,13 @@ RenderWidget::~RenderWidget() noexcept
   removeAction();
 }
 
+void RenderWidget::setPresentMode(SwapChain::PresentMode newValue) noexcept
+{
+  if (presentMode() == newValue) return;
+  _renderer->setPresentMode(newValue);
+  emit presentModeChanged(newValue);
+}
+
 void RenderWidget::removeAction() noexcept
 {
   if (_renderAction == nullptr) return;

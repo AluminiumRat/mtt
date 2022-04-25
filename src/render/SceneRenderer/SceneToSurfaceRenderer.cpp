@@ -19,10 +19,12 @@ SceneToSurfaceRenderer::SceneToSurfaceRenderer( LogicalDevice& device,
   _drawQueue(drawQueue),
   _presentationQueue(presentationQueue),
   _surface(surface),
+  _presentMode(SwapChain::FIFO_PRESENT_MODE),
   _swapChain(new SwapChain( device,
                             surface,
                             _presentationQueue,
-                            {&_drawQueue, &_presentationQueue})),
+                            {&_drawQueue, &_presentationQueue},
+                            _presentMode)),
   _targetImageFormat(_swapChain->imageFormat()),
   _frameBuilder(nullptr),
   _frameCounter(0)
@@ -52,7 +54,8 @@ void SceneToSurfaceRenderer::_rebuildSwapchain()
     _swapChain = new SwapChain( _device,
                                 _surface,
                                 _presentationQueue,
-                                { &_drawQueue, &_presentationQueue });
+                                { &_drawQueue, &_presentationQueue},
+                                _presentMode);
     _createFrames();
   }
   catch(...)
@@ -60,6 +63,14 @@ void SceneToSurfaceRenderer::_rebuildSwapchain()
     _clearSwapchain();
     throw;
   }
+}
+
+void SceneToSurfaceRenderer::setPresentMode(
+                                      SwapChain::PresentMode newValue) noexcept
+{
+  if(_presentMode == newValue) return;
+  _presentMode = newValue;
+  _clearSwapchain();
 }
 
 void SceneToSurfaceRenderer::_createFrames()

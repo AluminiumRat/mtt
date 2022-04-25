@@ -34,6 +34,9 @@ namespace mtt
 
     inline VkFormat surfaceFormat() const noexcept;
 
+    inline SwapChain::PresentMode presentMode() const noexcept;
+    void setPresentMode(SwapChain::PresentMode newValue) noexcept;
+
     inline AbstractColorFrameBuilder* frameBuilder() const noexcept;
     inline void setFrameBuilder(AbstractColorFrameBuilder* newBuilder);
 
@@ -41,6 +44,7 @@ namespace mtt
     virtual void setCamera(CameraNode* camera);
 
   signals:
+    void presentModeChanged(SwapChain::PresentMode newValue);
     void cameraChanged(CameraNode* newCamera);
     void sceneChanged(RenderScene* newScene);
 
@@ -99,6 +103,11 @@ namespace mtt
   inline VkFormat RenderWidget::surfaceFormat() const noexcept
   {
     return _renderer->targetImageFormat();
+  }
+
+  inline SwapChain::PresentMode RenderWidget::presentMode() const noexcept
+  {
+    return _renderer->presentMode();
   }
 
   inline AbstractColorFrameBuilder* RenderWidget::frameBuilder() const noexcept

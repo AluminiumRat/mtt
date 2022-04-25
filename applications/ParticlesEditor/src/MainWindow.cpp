@@ -20,7 +20,8 @@ MainWindow::MainWindow() :
   _fileMenu(*this, _commonEditData),
   _editMenu(*this, _commonEditData),
   _environmentMenu(*this, _commonEditData),
-  _manipulatorMenu(*this, _renderWidget.manipulatorController())
+  _manipulatorMenu(*this, _renderWidget.manipulatorController()),
+  _renderMenu(_renderWidget)
 {
   setWindowTitle(tr("Particles editor"));
 

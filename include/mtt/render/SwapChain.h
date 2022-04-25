@@ -23,6 +23,13 @@ namespace mtt
   class SwapChain : public Lockable
   {
   public:
+    enum PresentMode
+    {
+      FIFO_PRESENT_MODE,
+      MAILBOX_PRESENT_MODE
+    };
+
+  public:
     struct FrameAccess
     {
     public:
@@ -52,7 +59,9 @@ namespace mtt
     SwapChain(LogicalDevice& device,
               RenderSurface& surface,
               CommandQueue& presentQueue,
-              std::vector<CommandQueue const*> ownerQueues);
+              std::vector<CommandQueue const*> ownerQueues,
+              PresentMode presentMode);
+
     SwapChain(const SwapChain&) = delete;
     SwapChain& operator = (const SwapChain&) = delete;
   protected:
@@ -63,6 +72,8 @@ namespace mtt
   
     inline VkFormat imageFormat() const noexcept;
     inline const glm::uvec2& extent() const noexcept;
+
+    inline PresentMode presentMode() const noexcept;
 
     inline size_t framesCount() const noexcept;
     inline Image& frame(size_t frameIndex) noexcept;
@@ -100,6 +111,7 @@ namespace mtt
     VkSwapchainKHR _handle;
     VkFormat _imageFormat;
     glm::uvec2 _extent;
+    PresentMode _presentMode;
 
     std::vector<FrameRecord> _frames;
     std::optional<uint32_t> _lockedFrameIndex;
@@ -160,6 +172,11 @@ namespace mtt
   inline const glm::uvec2& SwapChain::extent() const noexcept
   {
     return _extent;
+  }
+
+  inline SwapChain::PresentMode SwapChain::presentMode() const noexcept
+  {
+    return _presentMode;
   }
 
   inline size_t SwapChain::framesCount() const noexcept

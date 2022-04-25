@@ -93,12 +93,14 @@ static std::vector<uint32_t> getFamilyIndices(
 SwapChain::SwapChain( LogicalDevice& device,
                       RenderSurface& surface,
                       CommandQueue& presentQueue,
-                      std::vector<CommandQueue const*> ownerQueues) :
+                      std::vector<CommandQueue const*> ownerQueues,
+                      PresentMode presentMode) :
   _device(device),
   _presentQueue(presentQueue),
   _handle(VK_NULL_HANDLE),
   _imageFormat(VK_FORMAT_UNDEFINED),
-  _extent(0, 0)
+  _extent(0, 0),
+  _presentMode(presentMode)
 {
   try
   {
@@ -121,16 +123,17 @@ void SwapChain::_createSwapchain(
   if(!_device.physicalDevice().isSurfaceSuitable(surface)) Abort("SwapChain::SwapChain: Device is not suitable with surface.");
   PhysicalDevice::SwapChainSupport swapChainSupport =
                       _device.physicalDevice().surface—ompatibility(surface);
-    
+
   VkSurfaceFormatKHR surfaceFormat =
                             chooseSwapSurfaceFormat(swapChainSupport.formats);
   _imageFormat = surfaceFormat.format;
-  VkPresentModeKHR presentMode =
+  VkPresentModeKHR presentMode = _presentMode == FIFO_PRESENT_MODE ?
+                          VK_PRESENT_MODE_FIFO_KHR :
                           chooseSwapPresentMode(swapChainSupport.presentModes);
   VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities);
   _extent = glm::ivec2(extent.width, extent.height);
   uint32_t imageCount = chooseImageCount(swapChainSupport.capabilities);
-  
+
   VkSwapchainCreateInfoKHR createInfo{};
   createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
   createInfo.surface = surface.handle();
@@ -141,7 +144,7 @@ void SwapChain::_createSwapchain(
   createInfo.imageArrayLayers = 1;
   createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |
                           VK_IMAGE_USAGE_TRANSFER_DST_BIT;
-  
+
   std::vector<uint32_t> familyIndices = getFamilyIndices(ownerQueues);
   if(familyIndices.size() <= 1)
   {

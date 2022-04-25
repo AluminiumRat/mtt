@@ -34,6 +34,9 @@ namespace mtt
 
     inline VkFormat targetImageFormat() const noexcept;
 
+    inline SwapChain::PresentMode presentMode() const noexcept;
+    void setPresentMode(SwapChain::PresentMode newValue) noexcept;
+
     inline AbstractColorFrameBuilder* frameBuilder() const noexcept;
     void setFrameBuilder(AbstractColorFrameBuilder* newBuilder);
 
@@ -48,6 +51,7 @@ namespace mtt
     CommandQueue& _drawQueue;
     CommandQueue& _presentationQueue;
     RenderSurface& _surface;
+    SwapChain::PresentMode _presentMode;
     Ref<SwapChain> _swapChain;
     VkFormat _targetImageFormat;
 
@@ -58,6 +62,12 @@ namespace mtt
     std::vector<Ref<Semaphore>> _startPresentSemaphores;
     size_t _frameCounter;
   };
+
+  inline SwapChain::PresentMode
+                            SceneToSurfaceRenderer::presentMode() const noexcept
+  {
+    return _presentMode;
+  }
 
   inline VkFormat SceneToSurfaceRenderer::targetImageFormat() const noexcept
   {
