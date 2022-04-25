@@ -1,4 +1,4 @@
-//backgroundApplicator.frag
+//backgroundApplicator.glsl
 
 #if $LUMINANCE_SAMPLER_ENABLED$
   layout( set = staticSet,

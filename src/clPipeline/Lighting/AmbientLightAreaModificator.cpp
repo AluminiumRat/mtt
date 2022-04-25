@@ -55,7 +55,7 @@ void AmbientLightAreaModificator::adjustPipeline(
     std::string indexStr = std::to_string(modificatorIndex);
 
     ShaderModule::Fragment& fragment = targetShader.newFragment();
-    fragment.loadFromFile("clPipeline/ambientLightModificator.frag");
+    fragment.loadFromFile("clPipeline/ambientLightModificator.glsl");
 
     std::string applyFunctionName("modificator");
     applyFunctionName += indexStr;
@@ -99,7 +99,7 @@ void AmbientLightAreaModificator::adjustPipeline(
     lightDataBindingName += indexStr;
     targetPipeline.addResource( lightDataBindingName,
                                 _drawDataUniform,
-                                VK_SHADER_STAGE_FRAGMENT_BIT);
+                                targetShader.type());
 
     if(_ambientMapSampler.attachedTexture(0) != nullptr)
     {
@@ -109,7 +109,7 @@ void AmbientLightAreaModificator::adjustPipeline(
       ambientMapBindingName += indexStr;
       targetPipeline.addResource( ambientMapBindingName,
                                   _ambientMapSampler,
-                                  VK_SHADER_STAGE_FRAGMENT_BIT);
+                                  targetShader.type());
     }
     else
     {
@@ -124,7 +124,7 @@ void AmbientLightAreaModificator::adjustPipeline(
       diffuseLuminanceMapBindingName += indexStr;
       targetPipeline.addResource( diffuseLuminanceMapBindingName,
                                   _diffuseLuminanceSampler,
-                                  VK_SHADER_STAGE_FRAGMENT_BIT);
+                                  targetShader.type());
     }
     else
     {

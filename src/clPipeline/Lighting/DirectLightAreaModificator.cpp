@@ -114,7 +114,7 @@ void DirectLightAreaModificator::adjustPipeline(
     std::string indexStr = std::to_string(modificatorIndex);
 
     ShaderModule::Fragment& fragment = targetShader.newFragment();
-    fragment.loadFromFile("clPipeline/directLightModificator.frag");
+    fragment.loadFromFile("clPipeline/directLightModificator.glsl");
 
     std::string applyFunctionName("modificator");
     applyFunctionName += indexStr;
@@ -142,7 +142,7 @@ void DirectLightAreaModificator::adjustPipeline(
     lightDataBindingName += indexStr;
     targetPipeline.addResource( lightDataBindingName,
                                 _lightDataUniform,
-                                VK_SHADER_STAGE_FRAGMENT_BIT);
+                                targetShader.type());
 
     if (_light.shadowMapProvider() != nullptr)
     {
@@ -154,13 +154,13 @@ void DirectLightAreaModificator::adjustPipeline(
       shadowSamplerBindingName += indexStr;
       targetPipeline.addResource( shadowSamplerBindingName,
                                   _light.getOrCreateShdowmapSampler(),
-                                  VK_SHADER_STAGE_FRAGMENT_BIT);
+                                  targetShader.type());
 
       std::string coordCorrectionBindingName("shadowCoordsCorrectionBinding");
       coordCorrectionBindingName += indexStr;
       targetPipeline.addResource(coordCorrectionBindingName,
                                   _coordsCorrectionUniform,
-                                  VK_SHADER_STAGE_FRAGMENT_BIT);
+                                  targetShader.type());
     }
     else fragment.replace("$SHADOW_MAP_ENABLED$", "0");
   }

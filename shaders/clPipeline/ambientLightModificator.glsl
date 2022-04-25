@@ -1,4 +1,4 @@
-//ambientLightModificator.frag
+//ambientLightModificator.glsl
 
 #if $DIFFUSE_LUMINANCE_MAP_ENABLED$
   layout( set = staticSet,

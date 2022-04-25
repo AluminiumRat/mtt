@@ -65,7 +65,7 @@ void FLColorTechnique::adjustPipeline(GraphicsPipeline& pipeline,
                                 new ShaderModule( ShaderModule::FRAGMENT_SHADER,
                                                   renderPass.device()));
   fragmentShader->newFragment().loadFromFile("meshLib.frag");
-  fragmentShader->newFragment().loadFromFile("clPipeline/materialLib.frag");
+  fragmentShader->newFragment().loadFromFile("clPipeline/materialLib.glsl");
   fragmentShader->newFragment().loadFromFile("clPipeline/meshFL.frag");
   fragmentShader->setDefine("MODIFICATOR_DECLARATION", "");
   fragmentShader->setDefine("APPLY_POSTEFFECT", "");

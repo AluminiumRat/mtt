@@ -5,6 +5,7 @@
 
 #include <glm/vec4.hpp>
 
+#include <mtt/clPipeline/MeshTechniques/TransparentProxyTechnique.h>
 #include <mtt/render/Drawable/Drawable.h>
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
 #include <mtt/render/Pipeline/Buffer.h>
@@ -12,6 +13,7 @@
 #include <mtt/render/Pipeline/Sampler.h>
 #include <mtt/render/Pipeline/Texture2D.h>
 #include <mtt/render/Pipeline/VolatileUniform.h>
+#include <mtt/render/SceneGraph/AreaModificator.h>
 
 namespace mtt
 {
@@ -46,27 +48,52 @@ public:
 
   void setParticleTextures(const std::vector<TextureData>& textures);
 
+  virtual void registerAreaModificators(mtt::AreaModificatorSet& set) override;
+  virtual void unregisterAreaModificators(
+                                mtt::AreaModificatorSet& set) noexcept override;
+
 protected:
   virtual void buildDrawActions(mtt::DrawPlanBuildInfo& buildInfo) override;
 
 private:
-  class DrawTechnique
+  class ProxyTechnique : public mtt::ModificatorProxyTechnique
   {
   public:
-    DrawTechnique(ParticlesDrawable& parent);
+    ProxyTechnique(ParticlesDrawable& parent);
 
-    void resetPipeline() noexcept;
-    void buildDrawActions(mtt::DrawPlanBuildInfo& buildInfo);
+    void resetPipelines() noexcept;
+
+  protected:
+    virtual std::unique_ptr<mtt::AbstractMeshTechnique>
+                        createTechnique(mtt::AreaModificatorSet& set) override;
 
   private:
-    std::string _makeTextureExtentefine() const;
+    ParticlesDrawable& _parent;
+  };
+
+  class DrawTechnique : public mtt::AbstractMeshTechnique,
+                        private mtt::AreaModificator::Consumer
+  {
+  public:
+    DrawTechnique(ParticlesDrawable& parent,
+                  mtt::AreaModificatorSet& modificatorSet);
+    virtual ~DrawTechnique() noexcept;
+
+    virtual void resetPipeline() noexcept override;
+    virtual void addToDrawPlan(mtt::DrawPlanBuildInfo& buildInfo) override;
+
+  private:
+    std::string _makeTextureExtentDefine() const;
     void _rebuildPipeline(mtt::AbstractRenderPass& renderPass);
+    void _applyAreaModifictors( mtt::ShaderModule& shader,
+                                mtt::GraphicsPipeline& pipeline);
     mtt::Ref<mtt::PlainBuffer> _makeIndices(
                                 const mtt::DrawPlanBuildInfo& buildInfo,
                                 mtt::LogicalDevice& device) const;
 
   private:
     ParticlesDrawable& _parent;
+    mtt::AreaModificatorSet& _modificatorSet;
     using MatricesUniform = mtt::VolatileUniform<mtt::DrawMatrices>;
     MatricesUniform _matricesUniform;
     std::optional<mtt::GraphicsPipeline> _pipeline;
@@ -85,5 +112,5 @@ private:
   std::vector<TextureData> _textureData;
   std::vector<glm::vec3> _positionsData;
 
-  DrawTechnique _colorTechnique;
+  ProxyTechnique _technique;
 };

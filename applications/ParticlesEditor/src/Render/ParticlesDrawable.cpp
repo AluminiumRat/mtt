@@ -1,18 +1,70 @@
 #include <limits>
 
 #include <mtt/Application/Application.h>
+#include <mtt/clPipeline/Background/BackgroundAreaModificator.h>
+#include <mtt/clPipeline/Lighting/LightAreaModificator.h>
 #include <mtt/clPipeline/constants.h>
 #include <mtt/render/DrawPlan/DrawMeshAction.h>
 #include <mtt/render/Pipeline/ShaderModule.h>
 #include <mtt/render/RenderPass/GeneralRenderPass.h>
+#include <mtt/render/SceneGraph/AreaModificatorSet.h>
 #include <mtt/utilities/Abort.h>
 
 #include <Render/DrawParticlesAction.h>
 #include <Render/ParticlesDrawable.h>
 
-ParticlesDrawable::DrawTechnique::DrawTechnique(ParticlesDrawable& parent) :
+ParticlesDrawable::ProxyTechnique::ProxyTechnique(ParticlesDrawable& parent) :
   _parent(parent)
 {
+}
+
+void ParticlesDrawable::ProxyTechnique::resetPipelines() noexcept
+{
+  for(size_t techniqueIndex = 0;
+      techniqueIndex < subtechniquesNumber();
+      techniqueIndex++)
+  {
+    DrawTechnique& technqiue = static_cast<DrawTechnique&>(
+                                                  subtechnique(techniqueIndex));
+    technqiue.resetPipeline();
+  }
+}
+
+std::unique_ptr<mtt::AbstractMeshTechnique>
+          ParticlesDrawable::ProxyTechnique::createTechnique(
+                                                  mtt::AreaModificatorSet& set)
+{
+  return std::make_unique<DrawTechnique>(_parent, set);
+}
+
+ParticlesDrawable::DrawTechnique::DrawTechnique(
+                                      ParticlesDrawable& parent,
+                                      mtt::AreaModificatorSet& modificatorSet) :
+  _parent(parent),
+  _modificatorSet(modificatorSet)
+{
+  for (mtt::AreaModificator* modificator : _modificatorSet.modificators())
+  {
+    if( modificator->type() ==
+                        mtt::clPipeline::BackgroundAreaModificator::typeIndex ||
+        modificator->type() == mtt::clPipeline::LightAreaModificator::typeIndex)
+    {
+      modificator->addConsumer(*this);
+    }
+  }
+}
+
+ParticlesDrawable::DrawTechnique::~DrawTechnique()
+{
+  for (mtt::AreaModificator* modificator : _modificatorSet.modificators())
+  {
+    if (modificator->type() ==
+                        mtt::clPipeline::BackgroundAreaModificator::typeIndex ||
+        modificator->type() == mtt::clPipeline::LightAreaModificator::typeIndex)
+    {
+      modificator->removeConsumer(*this);
+    }
+  }
 }
 
 void ParticlesDrawable::DrawTechnique::resetPipeline() noexcept
@@ -20,7 +72,41 @@ void ParticlesDrawable::DrawTechnique::resetPipeline() noexcept
   _pipeline.reset();
 }
 
-std::string ParticlesDrawable::DrawTechnique::_makeTextureExtentefine() const
+void ParticlesDrawable::DrawTechnique::_applyAreaModifictors(
+                                                mtt::ShaderModule& shader,
+                                                mtt::GraphicsPipeline& pipeline)
+{
+  shader.newFragment().loadFromFile("clPipeline/materialLib.glsl");
+
+  shader.setDefine("MODIFICATOR_DECLARATION", "");
+  shader.setDefine("APPLY_POSTEFFECT", "");
+  shader.setDefine("APPLY_AMBIENT_WEIGHT", "");
+  shader.setDefine("APPLY_LIGHT", "");
+
+  for(size_t modificatorIndex = 0;
+      modificatorIndex < _modificatorSet.modificators().size();
+      modificatorIndex++)
+  {
+    mtt::AreaModificator& modificator =
+                              *_modificatorSet.modificators()[modificatorIndex];
+    if(modificator.type() ==
+                          mtt::clPipeline::BackgroundAreaModificator::typeIndex)
+    {
+      mtt::clPipeline::BackgroundAreaModificator& backgroundModificator =
+          static_cast<mtt::clPipeline::BackgroundAreaModificator&>(modificator);
+      backgroundModificator.adjustPipeline( pipeline, shader, modificatorIndex);
+    }
+
+    if (modificator.type() == mtt::clPipeline::LightAreaModificator::typeIndex)
+    {
+      mtt::clPipeline::LightAreaModificator& lightModificator =
+              static_cast<mtt::clPipeline::LightAreaModificator&>(modificator);
+      lightModificator.adjustPipeline(pipeline, shader, modificatorIndex);
+    }
+  }
+}
+
+std::string ParticlesDrawable::DrawTechnique::_makeTextureExtentDefine() const
 {
   std::string define;
   for ( size_t textureIndex = 0;
@@ -48,6 +134,7 @@ void ParticlesDrawable::DrawTechnique::_rebuildPipeline(
                                               mtt::ShaderModule::VERTEX_SHADER,
                                               renderPass.device()));
     vertexShader->newFragment().loadFromFile("particles.vert");
+    _applyAreaModifictors(*vertexShader, *_pipeline);
     _pipeline->addShader(std::move(vertexShader));
 
     std::unique_ptr<mtt::ShaderModule> geometryShader(
@@ -102,7 +189,7 @@ void ParticlesDrawable::DrawTechnique::_rebuildPipeline(
       _pipeline->setDefine("COLOR_SAMPLER_ENABLED");
       _pipeline->setDefine( "TEXTURES_NUMBER",
                             std::to_string(_parent._sampler->arraySize()));
-      _pipeline->setDefine("EXTENT_DEFINE", _makeTextureExtentefine());
+      _pipeline->setDefine("EXTENT_DEFINE", _makeTextureExtentDefine());
     }
 
     _pipeline->setTopology(VK_PRIMITIVE_TOPOLOGY_POINT_LIST);
@@ -115,7 +202,7 @@ void ParticlesDrawable::DrawTechnique::_rebuildPipeline(
   }
 }
 
-void ParticlesDrawable::DrawTechnique::buildDrawActions(
+void ParticlesDrawable::DrawTechnique::addToDrawPlan(
                                               mtt::DrawPlanBuildInfo& buildInfo)
 {
   mtt::AbstractRenderPass* renderPass =
@@ -194,7 +281,7 @@ ParticlesDrawable::ParticlesDrawable() :
   _tileIndexBuffer( mtt::Application::instance().displayDevice(),
                     mtt::Buffer::VERTEX_BUFFER),
   _particlesNumber(0),
-  _colorTechnique(*this)
+  _technique(*this)
 {
 }
 
@@ -235,7 +322,7 @@ void ParticlesDrawable::setData(std::vector<glm::vec3> positionData,
 void ParticlesDrawable::setParticleTextures(
                                       const std::vector<TextureData>& textures)
 {
-  _colorTechnique.resetPipeline();
+  _technique.resetPipelines();
   _sampler.reset();
   _textureData.clear();
 
@@ -269,6 +356,17 @@ void ParticlesDrawable::buildDrawActions(mtt::DrawPlanBuildInfo& buildInfo)
   if(_particlesNumber == 0) return;
   if (buildInfo.frameType == mtt::clPipeline::colorFrameType)
   {
-    _colorTechnique.buildDrawActions(buildInfo);
+    _technique.addToDrawPlan(buildInfo);
   }
+}
+
+void ParticlesDrawable::registerAreaModificators(mtt::AreaModificatorSet& set)
+{
+  _technique.registerAreaModificators(set);
+}
+
+void ParticlesDrawable::unregisterAreaModificators(
+                                          mtt::AreaModificatorSet& set) noexcept
+{
+  _technique.unregisterAreaModificators(set);
 }

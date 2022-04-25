@@ -50,7 +50,7 @@ void BackgroundAreaModificator::adjustPipeline(
     std::string indexStr = std::to_string(modificatorIndex);
 
     ShaderModule::Fragment& fragment = targetShader.newFragment();
-    fragment.loadFromFile("clPipeline/backgroundModificator.frag");
+    fragment.loadFromFile("clPipeline/backgroundModificator.glsl");
 
     std::string applyFunctionName("modificator");
     applyFunctionName += indexStr;
@@ -78,7 +78,7 @@ void BackgroundAreaModificator::adjustPipeline(
     drawDataBindingName += indexStr;
     targetPipeline.addResource( drawDataBindingName,
                                 _drawDataUniform,
-                                VK_SHADER_STAGE_FRAGMENT_BIT);
+                                targetShader.type());
 
     if(_luminanceSampler.attachedTexture(0) != nullptr)
     {
@@ -88,7 +88,7 @@ void BackgroundAreaModificator::adjustPipeline(
       luminanceSamplerBindingName += indexStr;
       targetPipeline.addResource( luminanceSamplerBindingName,
                                   _luminanceSampler,
-                                  VK_SHADER_STAGE_FRAGMENT_BIT);
+                                  targetShader.type());
     }
     else
     {

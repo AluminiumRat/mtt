@@ -1,4 +1,4 @@
-//directLightModificator.frag
+//directLightModificator.glsl
 
 layout( set = volatileSet,
         binding = lightDataBinding$INDEX$) uniform LightData$INDEX$

@@ -52,10 +52,32 @@ namespace mtt
     void registerSubtechnique(AbstractMeshTechnique& technique);
     void unregisterSubtechnique(AbstractMeshTechnique& technique);
 
+    inline size_t subtechniquesNumber() const noexcept;
+    inline const AbstractMeshTechnique& subtechnique(
+                                                  size_t index) const noexcept;
+    inline AbstractMeshTechnique& subtechnique(size_t index) noexcept;
+
     virtual void setMesh(Mesh* newMesh) override;
 
   private:
     using Subtechniques = std::vector<AbstractMeshTechnique*>;
     Subtechniques _subtechniques;
   };
+
+  inline size_t CompositeMeshTechnique::subtechniquesNumber() const noexcept
+  {
+    return _subtechniques.size();
+  }
+
+  inline const AbstractMeshTechnique& CompositeMeshTechnique::subtechnique(
+                                                    size_t index) const noexcept
+  {
+    return *_subtechniques[index];
+  }
+
+  inline AbstractMeshTechnique& CompositeMeshTechnique::subtechnique(
+                                                          size_t index) noexcept
+  {
+    return *_subtechniques[index];
+  }
 }

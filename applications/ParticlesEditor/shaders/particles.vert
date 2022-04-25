@@ -19,11 +19,37 @@ layout(location = 1) out vec4 outColor;
 layout(location = 2) out flat uint outTextureIndex;
 layout(location = 3) out flat uint outTileIndex;
 
+MODIFICATOR_DECLARATION
+
+vec3 viewCoord;
+float overallAmbientWeight = 0.f;
+vec3 normal = vec3(0.f, 0.f, 1.f);
+vec3 toView = vec3(0.f, 0.f, 1.f);
+float viewDotNorm = 0.f;
+float roughness = 0.f;
+
+vec3 luminance = vec3(0.f, 0.f, 0.f);
+void applyLight(vec3 lambertLuminance, vec3 specularLuminance)
+{
+  luminance += lambertLuminance;
+}
+
 void main()
 {
   gl_Position = drawMatrices.localToViewMatrix * vec4(inPosition, 1.f);
-  outSizeRotation = inSizeRotation;
+  viewCoord = gl_Position.xyz;
+  toView = normalize(-viewCoord);
+  viewDotNorm = dot(toView, normal);
+
+  APPLY_AMBIENT_WEIGHT
+  APPLY_LIGHT
+
   outColor = inColor;
+  outColor.rgb *= luminance;
+
+  APPLY_POSTEFFECT
+
+  outSizeRotation = inSizeRotation;
   outTextureIndex = inTextureIndex;
   outTileIndex = inTileIndex;
 }

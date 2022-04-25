@@ -97,7 +97,7 @@ void AmbientLightApplicator::DrawTechnique::_adjustPipeline(
   std::unique_ptr<ShaderModule> fragmentShader(
                                 new ShaderModule( ShaderModule::FRAGMENT_SHADER,
                                                   pipeline.device()));
-  fragmentShader->newFragment().loadFromFile("clPipeline/materialLib.frag");
+  fragmentShader->newFragment().loadFromFile("clPipeline/materialLib.glsl");
   fragmentShader->newFragment().loadFromFile(
                                         "clPipeline/ambientLightDrawable.frag");
   pipeline.addShader(std::move(fragmentShader));

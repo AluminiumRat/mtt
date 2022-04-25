@@ -89,7 +89,7 @@ void DirectLightApplicator::DrawTechnique::_adjustPipeline()
   std::unique_ptr<ShaderModule> fragmentShader(
                                 new ShaderModule( ShaderModule::FRAGMENT_SHADER,
                                                   _pipeline->device()));
-  fragmentShader->newFragment().loadFromFile("clPipeline/materialLib.frag");
+  fragmentShader->newFragment().loadFromFile("clPipeline/materialLib.glsl");
   fragmentShader->newFragment().loadFromFile(
                                         "clPipeline/directLightDrawable.frag");
   _pipeline->addShader(std::move(fragmentShader));

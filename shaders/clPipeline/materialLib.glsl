@@ -1,4 +1,4 @@
-//materialLib.frag
+//materialLib.glsl
 #ifndef MATERIAL_LIB
 #define MATERIAL_LIB
 
