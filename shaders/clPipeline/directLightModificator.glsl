@@ -28,7 +28,7 @@ layout( set = volatileSet,
 #endif
 
 #if $SHADOW_MAP_ENABLED$
-  int getLayer(vec2 shadowCoords)
+  int getLayer$INDEX$(vec2 shadowCoords)
   {
     int result = 0;
     for(int layer = 1; layer < $SHADOW_CASCADE_SIZE$; layer++)
@@ -46,7 +46,7 @@ layout( set = volatileSet,
     return result;
   }
 
-  float getShadowFactor(int layer,
+  float getShadowFactor$INDEX$(int layer,
                         vec2 shadowCoords,
                         float normalizedDistanceToLight,
                         float slope)
@@ -119,7 +119,7 @@ void $APPLY_FUNCTION$()
     shadowCoords /= 2.f * lightData$INDEX$.radius;
     shadowCoords += vec2(.5f, .5f);
 
-    int layer = getLayer(shadowCoords);
+    int layer = getLayer$INDEX$(shadowCoords);
 
     float texelSize = 2 * lightData$INDEX$.radius /
                                         textureSize(shadowMap$INDEX$[layer], 0).x;
@@ -127,7 +127,8 @@ void $APPLY_FUNCTION$()
 
     float slope = texelSize / lightDotNorm / lightData$INDEX$.distance;
 
-    illuminance *= getShadowFactor( layer,
+    illuminance *= getShadowFactor$INDEX$(
+                                    layer,
                                     shadowCoords,
                                     toLightDistance / lightData$INDEX$.distance,
                                     slope);
