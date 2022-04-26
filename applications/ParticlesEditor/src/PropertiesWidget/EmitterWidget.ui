@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>293</width>
-    <height>555</height>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -464,9 +464,9 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="colorMainLayout">
+    <layout class="QHBoxLayout" name="albedoLayout">
      <item>
-      <widget class="QLabel" name="colorLabel">
+      <widget class="QLabel" name="albedoLabel">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>1</horstretch>
@@ -474,7 +474,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Color</string>
+        <string>Albedo</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -485,14 +485,14 @@
       </widget>
      </item>
      <item>
-      <widget class="QWidget" name="colorWidget" native="true">
+      <widget class="QWidget" name="albedoWidget" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>3</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <layout class="QVBoxLayout" name="colorWidgetLayout">
+       <layout class="QVBoxLayout" name="albedoWidgetLayout">
         <property name="leftMargin">
          <number>0</number>
         </property>
@@ -575,16 +575,9 @@
     </layout>
    </item>
    <item>
-    <widget class="QCheckBox" name="ignoreBrightnessCheck">
-     <property name="text">
-      <string>Ignore brightness</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="brightnessRangeLayout">
+    <layout class="QHBoxLayout" name="emissionColorMainLayout">
      <item>
-      <widget class="QLabel" name="brightnessRangeLabel">
+      <widget class="QLabel" name="emissionColorLabel">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>1</horstretch>
@@ -592,7 +585,51 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Brightness range</string>
+        <string>Emission color</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QWidget" name="emisssionColorWidget" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>3</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <layout class="QVBoxLayout" name="emissionColorLayout">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="emissionBrightnessLayout">
+     <item>
+      <widget class="QLabel" name="emissionBrightnessLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Emission brightness</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -621,17 +658,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QDoubleSpinBox" name="minBrightnessSpin">
-          <property name="maximum">
-           <double>999.000000000000000</double>
-          </property>
-          <property name="singleStep">
-           <double>0.100000000000000</double>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QDoubleSpinBox" name="maxBrightnessSpin">
+         <widget class="QDoubleSpinBox" name="emissionBrightnessSpin">
           <property name="maximum">
            <double>999.000000000000000</double>
           </property>

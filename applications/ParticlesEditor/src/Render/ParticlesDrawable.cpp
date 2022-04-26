@@ -76,8 +76,6 @@ void ParticlesDrawable::DrawTechnique::_applyAreaModifictors(
                                                 mtt::ShaderModule& shader,
                                                 mtt::GraphicsPipeline& pipeline)
 {
-  shader.newFragment().loadFromFile("clPipeline/materialLib.glsl");
-
   shader.setDefine("MODIFICATOR_DECLARATION", "");
   shader.setDefine("APPLY_POSTEFFECT", "");
   shader.setDefine("APPLY_AMBIENT_WEIGHT", "");
@@ -101,7 +99,11 @@ void ParticlesDrawable::DrawTechnique::_applyAreaModifictors(
     {
       mtt::clPipeline::LightAreaModificator& lightModificator =
               static_cast<mtt::clPipeline::LightAreaModificator&>(modificator);
-      lightModificator.adjustPipeline(pipeline, shader, modificatorIndex);
+      lightModificator.adjustPipeline(
+              pipeline,
+              shader,
+              mtt::clPipeline::LightAreaModificator::OVERALL_ILLUMINANCE_MODEL,
+              modificatorIndex);
     }
   }
 }
@@ -161,10 +163,15 @@ void ParticlesDrawable::DrawTechnique::_rebuildPipeline(
     sizeRotationAtribute.adjustDataType(mtt::VertexAttribute::FLOAT_VEC2_TYPE);
     sizeRotationAtribute.attachBuffer(&_parent._sizeRotationBuffer);
 
-    mtt::VertexAttribute& colorAtribute =
-                              _pipeline->getOrCreateAttribute("colorLocation");
-    colorAtribute.adjustDataType(mtt::VertexAttribute::FLOAT_VEC4_TYPE);
-    colorAtribute.attachBuffer(&_parent._colorBuffer);
+    mtt::VertexAttribute& albedoAtribute =
+                              _pipeline->getOrCreateAttribute("albedoLocation");
+    albedoAtribute.adjustDataType(mtt::VertexAttribute::FLOAT_VEC4_TYPE);
+    albedoAtribute.attachBuffer(&_parent._albedoBuffer);
+
+    mtt::VertexAttribute& emissionAtribute =
+                            _pipeline->getOrCreateAttribute("emissionLocation");
+    emissionAtribute.adjustDataType(mtt::VertexAttribute::FLOAT_VEC4_TYPE);
+    emissionAtribute.attachBuffer(&_parent._emissionBuffer);
 
     mtt::VertexAttribute& textureIndexAtribute =
                         _pipeline->getOrCreateAttribute("textureIndexLocation");
@@ -274,8 +281,10 @@ ParticlesDrawable::ParticlesDrawable() :
                   mtt::Buffer::VERTEX_BUFFER),
   _sizeRotationBuffer(mtt::Application::instance().displayDevice(),
                       mtt::Buffer::VERTEX_BUFFER),
-  _colorBuffer( mtt::Application::instance().displayDevice(),
+  _albedoBuffer( mtt::Application::instance().displayDevice(),
                 mtt::Buffer::VERTEX_BUFFER),
+  _emissionBuffer(mtt::Application::instance().displayDevice(),
+                  mtt::Buffer::VERTEX_BUFFER),
   _textureIndexBuffer(mtt::Application::instance().displayDevice(),
                       mtt::Buffer::VERTEX_BUFFER),
   _tileIndexBuffer( mtt::Application::instance().displayDevice(),
@@ -285,15 +294,18 @@ ParticlesDrawable::ParticlesDrawable() :
 {
 }
 
-void ParticlesDrawable::setData(std::vector<glm::vec3> positionData,
-                                std::vector<glm::vec2> sizeRotationData,
-                                std::vector<glm::vec4> colorData,
-                                std::vector<uint32_t> textureIndexData,
-                                std::vector<uint32_t> tileIndexData)
+void ParticlesDrawable::setData(const std::vector<glm::vec3>& positionData,
+                                const std::vector<glm::vec2>& sizeRotationData,
+                                const std::vector<glm::vec4>& albedoData,
+                                const std::vector<glm::vec4>& emissionData,
+                                const std::vector<uint32_t>& textureIndexData,
+                                const std::vector<uint32_t>& tileIndexData)
 {
   if( positionData.size() != sizeRotationData.size() ||
-      positionData.size() != colorData.size() ||
-      positionData.size() != textureIndexData.size()) mtt::Abort("ParticlesDrawable::setData: data vectors have different sizes");
+      positionData.size() != albedoData.size() ||
+      positionData.size() != emissionData.size() ||
+      positionData.size() != textureIndexData.size() ||
+      positionData.size() != tileIndexData.size() ) mtt::Abort("ParticlesDrawable::setData: data vectors have different sizes");
 
   _particlesNumber = 0;
 
@@ -307,8 +319,10 @@ void ParticlesDrawable::setData(std::vector<glm::vec3> positionData,
                           particlesNumber * sizeof(glm::vec3));
   _sizeRotationBuffer.setData(sizeRotationData.data(),
                               particlesNumber * sizeof(glm::vec2));
-  _colorBuffer.setData( colorData.data(),
+  _albedoBuffer.setData(albedoData.data(),
                         particlesNumber * sizeof(glm::vec4));
+  _emissionBuffer.setData(emissionData.data(),
+                          particlesNumber * sizeof(glm::vec4));
   _textureIndexBuffer.setData(textureIndexData.data(),
                               particlesNumber * sizeof(uint32_t));
   _tileIndexBuffer.setData( tileIndexData.data(),

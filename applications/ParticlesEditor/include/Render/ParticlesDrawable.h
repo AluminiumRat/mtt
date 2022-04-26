@@ -38,13 +38,15 @@ public:
   /// All data vectors must have the same size
   /// x component of sizeRotation is diameter of particle,
   /// y component of sizeRotation is rotation of particle in radians
-  /// colorData contains premultipled rgba color value with opacity
+  /// albedoData contains premultipled rgba color value with opacity
+  /// emissionData uses only rgb components
   /// If particlesNumber != 0 then all pointers must not be nullptr
-  void setData( std::vector<glm::vec3> positionData,
-                std::vector<glm::vec2> sizeRotationData,
-                std::vector<glm::vec4> colorData,
-                std::vector<uint32_t> textureIndexData,
-                std::vector<uint32_t> tileIndexData);
+  void setData( const std::vector<glm::vec3>& positionData,
+                const std::vector<glm::vec2>& sizeRotationData,
+                const std::vector<glm::vec4>& albedoData,
+                const std::vector<glm::vec4>& emissionData,
+                const std::vector<uint32_t>& textureIndexData,
+                const std::vector<uint32_t>& tileIndexData);
 
   void setParticleTextures(const std::vector<TextureData>& textures);
 
@@ -102,7 +104,8 @@ private:
 private:
   mtt::Buffer _positionBuffer;
   mtt::Buffer _sizeRotationBuffer;
-  mtt::Buffer _colorBuffer;
+  mtt::Buffer _albedoBuffer;
+  mtt::Buffer _emissionBuffer;
   mtt::Buffer _textureIndexBuffer;
   mtt::Buffer _tileIndexBuffer;
   size_t _particlesNumber;

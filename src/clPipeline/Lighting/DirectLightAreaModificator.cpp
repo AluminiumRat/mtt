@@ -107,6 +107,7 @@ void DirectLightAreaModificator::_makeShadowCommand(
 void DirectLightAreaModificator::adjustPipeline(
                                               AbstractPipeline& targetPipeline,
                                               ShaderModule& targetShader,
+                                              ApplyModel applyModel,
                                               size_t modificatorIndex)
 {
   try
@@ -163,6 +164,12 @@ void DirectLightAreaModificator::adjustPipeline(
                                   targetShader.type());
     }
     else fragment.replace("$SHADOW_MAP_ENABLED$", "0");
+
+    if (applyModel == LAMBERT_SPECULAR_LUMINANCE_MODEL)
+    {
+      fragment.replace("$LAMBERT_SPECULAR_LUMINANCE_MODEL$", "1");
+    }
+    else fragment.replace("$LAMBERT_SPECULAR_LUMINANCE_MODEL$", "0");
   }
   catch (std::exception& error)
   {

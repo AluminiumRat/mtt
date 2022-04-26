@@ -22,6 +22,7 @@ namespace mtt
 
       virtual void adjustPipeline(AbstractPipeline& targetPipeline,
                                   ShaderModule& targetShader,
+                                  ApplyModel applyModel,
                                   size_t modificatorIndex) override;
 
       inline void reset() noexcept;

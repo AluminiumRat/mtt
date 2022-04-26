@@ -27,11 +27,11 @@ EmitterObject::EmitterObject( const QString& name,
   _sizeRange(1.f, 1.f),
   _rotationRange(-glm::pi<float>(), glm::pi<float>()),
   _rotationSpeedRange(.0f, .0f),
-  _firstColor(1.f, 1.f, 1.f),
-  _secondColor(1.f, 1.f, 1.f),
+  _firstAlbedo(1.f, 1.f, 1.f),
+  _secondAlbedo(1.f, 1.f, 1.f),
   _opacityRange(1.f, 1.f),
-  _ignoreBrightness(true),
-  _brightnessRange(1.f, 1.f),
+  _emissionColor(1.f),
+  _emissionBrightness(0.f),
   _textureIndex(0),
   _tileIndex(0),
   _lifetimeRange(mtt::second, mtt::second),
@@ -136,18 +136,20 @@ void EmitterObject::setRotationSpeedRange(
   emit rotationSpeedRangeChanged(newValue);
 }
 
-void EmitterObject::setFirstColor(const glm::vec3& newValue) noexcept
+void EmitterObject::setFirstAlbedo(const glm::vec3& newValue) noexcept
 {
-  if(_firstColor == newValue) return;
-  _firstColor = newValue;
-  emit firstColorChanged(newValue);
+  glm::vec3 newColor = glm::max(newValue, glm::vec3(0.f));
+  if(_firstAlbedo == newColor) return;
+  _firstAlbedo = newColor;
+  emit firstAlbedoChanged(newColor);
 }
 
-void EmitterObject::setSecondColor(const glm::vec3& newValue) noexcept
+void EmitterObject::setSecondAlbedo(const glm::vec3& newValue) noexcept
 {
-  if(_secondColor == newValue) return;
-  _secondColor = newValue;
-  emit secondColorChanged(newValue);
+  glm::vec3 newColor = glm::max(newValue, glm::vec3(0.f));
+  if(_secondAlbedo == newColor) return;
+  _secondAlbedo = newColor;
+  emit secondAlbedoChanged(newColor);
 }
 
 void EmitterObject::setOpacityRange(const mtt::Range<float>& newValue) noexcept
@@ -158,19 +160,20 @@ void EmitterObject::setOpacityRange(const mtt::Range<float>& newValue) noexcept
   emit opacityRangeChanged(newValue);
 }
 
-void EmitterObject::setIgnoreBrightness(bool newValue) noexcept
+void EmitterObject::setEmissionColor(const glm::vec3& newValue) noexcept
 {
-  if(_ignoreBrightness == newValue) return;
-  _ignoreBrightness = newValue;
-  emit ignoreBrightnessChanged(newValue);
+  glm::vec3 newColor = glm::max(newValue, glm::vec3(0.f));
+  if(_emissionColor == newColor) return;
+  _emissionColor = newColor;
+  emit emissionColorChanged(newColor);
 }
 
-void EmitterObject::setBrightnessRange(
-                                    const mtt::Range<float>& newValue) noexcept
+void EmitterObject::setEmissionBrightness(float newValue) noexcept
 {
-  if(_brightnessRange == newValue) return;
-  _brightnessRange = newValue;
-  emit brightnessRangeChanged(newValue);
+  newValue = glm::max(newValue, 0.f);
+  if(_emissionBrightness == newValue) return;
+  _emissionBrightness = newValue;
+  emit emissionBrightnessChanged(newValue);
 }
 
 void EmitterObject::setTextureIndex(uint8_t newValue) noexcept
@@ -315,23 +318,16 @@ void EmitterObject::emitParticles(float floatParticlesNumber) noexcept
                                       _rotationSpeedRange.min(),
                                       _rotationSpeedRange.max(),
                                       _displacedDistribution(_randomEngine));
-    newParticle.color = glm::mix( _firstColor,
-                                  _secondColor,
-                                  _displacedDistribution(_randomEngine));
-    newParticle.color = glm::clamp( newParticle.color,
-                                    glm::vec3(0.f),
-                                    glm::vec3(1.f));
-    newParticle.opacity = glm::mix( _opacityRange.min(),
-                                    _opacityRange.max(),
-                                   _displacedDistribution(_randomEngine));
-    if (_ignoreBrightness) newParticle.brightness = newParticle.opacity;
-    else
-    {
-      newParticle.brightness = glm::mix(_brightnessRange.min(),
-                                        _brightnessRange.max(),
-                                        _displacedDistribution(_randomEngine));
-      newParticle.brightness = glm::max(newParticle.brightness, 0.f);
-    }
+
+    glm::vec3 albedo = glm::mix(_firstAlbedo,
+                                _secondAlbedo,
+                                _displacedDistribution(_randomEngine));
+    float opacity = glm::mix( _opacityRange.min(),
+                              _opacityRange.max(),
+                              _displacedDistribution(_randomEngine));
+    newParticle.albedo = glm::vec4(albedo, opacity);
+    newParticle.emission = glm::vec4(_emissionColor * _emissionBrightness, 0.f);
+
     newParticle.visibilityFactor = 1.f;
     newParticle.textureIndex = _textureIndex;
     newParticle.tileIndex = _tileIndex;

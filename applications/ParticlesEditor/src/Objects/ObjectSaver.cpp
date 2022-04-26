@@ -33,11 +33,11 @@ void ObjectSaver::visitConstEmitterObject(const EmitterObject& object)
   stream() << object.sizeRange();
   stream() << object.rotationRange();
   stream() << object.rotationSpeedRange();
-  stream() << object.firstColor();
-  stream() << object.secondColor();
+  stream() << object.firstAlbedo();
+  stream() << object.secondAlbedo();
   stream() << object.opacityRange();
-  stream() << object.ignoreBrightness();
-  stream() << object.brightnessRange();
+  stream() << object.emissionColor();
+  stream() << object.emissionBrightness();
   stream() << uint8_t(object.textureIndex());
   stream() << uint8_t(object.tileIndex());
   stream() << object.lifetimeRange();

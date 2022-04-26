@@ -32,11 +32,11 @@ void ObjectLoader::visitEmitterObject(EmitterObject& object)
   object.setSizeRange(stream().readRange<float>());
   object.setRotationRange(stream().readRange<float>());
   object.setRotationSpeedRange(stream().readRange<float>());
-  object.setFirstColor(stream().readVec3());
-  object.setSecondColor(stream().readVec3());
+  object.setFirstAlbedo(stream().readVec3());
+  object.setSecondAlbedo(stream().readVec3());
   object.setOpacityRange(stream().readRange<float>());
-  object.setIgnoreBrightness(stream().readBool());
-  object.setBrightnessRange(stream().readRange<float>());
+  object.setEmissionColor(stream().readVec3());
+  object.setEmissionBrightness(stream().readFloat());
   object.setTextureIndex(stream().readUint8());
   object.setTileIndex(stream().readUint8());
   object.setLifetimeRange(stream().readRange<mtt::TimeT>());

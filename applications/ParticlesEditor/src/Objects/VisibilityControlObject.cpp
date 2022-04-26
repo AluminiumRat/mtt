@@ -38,7 +38,8 @@ void VisibilityControlObject::simulationStep(mtt::TimeRange time)
       }
       else if (particleTime > endTime)
       {
-        particle.visibilityFactor = glm::smoothstep(1.f, endTime, particleTime);
+        particle.visibilityFactor =
+                              1.f - glm::smoothstep(endTime, 1.f, particleTime);
       }
       else particle.visibilityFactor = 1.f;
     };

@@ -110,8 +110,12 @@ void $APPLY_FUNCTION$()
   if(toLightDistance < 0 || toLightDistance > lightData$INDEX$.distance) return;
   if(length(localCoord.xy) > lightData$INDEX$.radius) return;
 
-  vec3 lightInverseDirection = lightData$INDEX$.lightInverseDirection;
-  float lightDotNorm = max(dot(lightInverseDirection, normal), 0.f);
+  #if $LAMBERT_SPECULAR_LUMINANCE_MODEL$
+    vec3 lightInverseDirection = lightData$INDEX$.lightInverseDirection;
+    float lightDotNorm = max(dot(lightInverseDirection, normal), 0.f);
+  #else
+    float lightDotNorm = 1.f;
+  #endif
 
   vec3 illuminance = lightData$INDEX$.illuminance;
   #if $SHADOW_MAP_ENABLED$
@@ -122,7 +126,7 @@ void $APPLY_FUNCTION$()
     int layer = getLayer$INDEX$(shadowCoords);
 
     float texelSize = 2 * lightData$INDEX$.radius /
-                                        textureSize(shadowMap$INDEX$[layer], 0).x;
+                                      textureSize(shadowMap$INDEX$[layer], 0).x;
     texelSize /= shadowCoordsCorrection$INDEX$.values[layer].x;
 
     float slope = texelSize / lightDotNorm / lightData$INDEX$.distance;
@@ -134,18 +138,22 @@ void $APPLY_FUNCTION$()
                                     slope);
   #endif
 
-  vec3 lambertLuminance = illuminance * lightDotNorm / M_PI;
+  #if $LAMBERT_SPECULAR_LUMINANCE_MODEL$
+    vec3 lambertLuminance = illuminance * lightDotNorm / M_PI;
 
-  vec3 halfDir = normalize(toView + lightInverseDirection);
-  float normDotHalf = max(dot(normal, halfDir), 0.f);
+    vec3 halfDir = normalize(toView + lightInverseDirection);
+    float normDotHalf = max(dot(normal, halfDir), 0.f);
 
-  float distributionFactor = GGXDistribution(normDotHalf, roughness);
-  float geometryFactor = neumannGeometryFactor( lightDotNorm,
-                                                normDotHalf,
-                                                viewDotNorm);
-  float specularFactor =  distributionFactor * geometryFactor /
+    float distributionFactor = GGXDistribution(normDotHalf, roughness);
+    float geometryFactor = neumannGeometryFactor( lightDotNorm,
+                                                  normDotHalf,
+                                                  viewDotNorm);
+    float specularFactor =  distributionFactor * geometryFactor /
                                                             (4.f * viewDotNorm);
-  vec3 specularLuminance = illuminance * specularFactor;
+    vec3 specularLuminance = illuminance * specularFactor;
 
-  applyLight(lambertLuminance, specularLuminance);
+    applyLight(lambertLuminance, specularLuminance);
+  #else
+    applyLight(illuminance);
+  #endif
 }

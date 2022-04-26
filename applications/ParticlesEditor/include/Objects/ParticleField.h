@@ -54,9 +54,8 @@ public:
     float size;
     float rotation;
     float rotationSpeed;
-    glm::vec3 color;
-    float brightness;
-    float opacity;
+    glm::vec4 albedo;
+    glm::vec3 emission;
     float visibilityFactor;
     uint8_t textureIndex;
     uint8_t tileIndex;

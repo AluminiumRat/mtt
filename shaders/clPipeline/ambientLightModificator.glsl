@@ -24,7 +24,7 @@ layout( binding = lightDataBinding$INDEX$,
   mat4 viewToLocal;
 } lightData$INDEX$;
 
-#if $AMBIENT_MAP_ENABLED$
+#if $AMBIENT_MAP_ENABLED$ && $LAMBERT_SPECULAR_LUMINANCE_MODEL$
   vec3 readAmbientMap$INDEX$(vec3 direction, float roughnessValue)
   {
     roughnessValue = max(roughnessValue, .001f);
@@ -73,26 +73,49 @@ void $APPLY_FUNCTION$()
     float weight = getWeight$INDEX$() / max(overallAmbientWeight, 1.f);
   #endif
 
-  vec3 lambertLuminance = lightData$INDEX$.illuminance * weight / M_PI;
-  #if $DIFFUSE_LUMINANCE_MAP_ENABLED$
-    vec3 probeDirection =
-                      normalize(mat3(lightData$INDEX$.viewToLocal) * normal);
-    probeDirection.z = -probeDirection.z;
-    vec3 diffuseLuminanceProbe =
-                        texture(diffuseLuminanceMap$INDEX$, probeDirection).rgb;
-    lambertLuminance *= diffuseLuminanceProbe;
-  #endif
+  vec3 illuminance = lightData$INDEX$.illuminance * weight;
 
-  #if $AMBIENT_MAP_ENABLED$
-    vec3 reflectionDirView = reflect(viewCoord, normal);
-    vec3 reflectionDir =
-            normalize(mat3(lightData$INDEX$.viewToLocal) * reflectionDirView);
-    reflectionDir.z = -reflectionDir.z;
-    vec3 reflectionLuminance = readAmbientMap$INDEX$(reflectionDir, roughness);
-    reflectionLuminance *= lightData$INDEX$.illuminance * weight / M_PI;
+  #if $LAMBERT_SPECULAR_LUMINANCE_MODEL$
+    vec3 lambertLuminance = illuminance / M_PI;
+    #if $DIFFUSE_LUMINANCE_MAP_ENABLED$
+      vec3 probeDirection =
+                        normalize(mat3(lightData$INDEX$.viewToLocal) * normal);
+      probeDirection.z = -probeDirection.z;
+      vec3 diffuseLuminanceProbe =
+                          texture(diffuseLuminanceMap$INDEX$, probeDirection).rgb;
+      lambertLuminance *= diffuseLuminanceProbe;
+    #endif
+
+    #if $AMBIENT_MAP_ENABLED$
+      vec3 reflectionDirView = reflect(viewCoord, normal);
+      vec3 reflectionDir =
+              normalize(mat3(lightData$INDEX$.viewToLocal) * reflectionDirView);
+      reflectionDir.z = -reflectionDir.z;
+      vec3 reflectionLuminance = readAmbientMap$INDEX$(reflectionDir, roughness);
+      reflectionLuminance *= lightData$INDEX$.illuminance * weight / M_PI;
+    #else
+      vec3 reflectionLuminance = lightData$INDEX$.illuminance * weight / M_PI;
+    #endif
+
+    applyLight(lambertLuminance, reflectionLuminance);
   #else
-    vec3 reflectionLuminance = lightData$INDEX$.illuminance * weight / M_PI;
-  #endif
+    #if $DIFFUSE_LUMINANCE_MAP_ENABLED$
+      vec3 environmentColor = vec3(0.f, 0.f, 0.f);
+      environmentColor += texture(diffuseLuminanceMap$INDEX$,
+                                  vec3(1.f, 0.f, 0.f)).rgb;
+      environmentColor += texture(diffuseLuminanceMap$INDEX$,
+                                  vec3(-1.f, 0.f, 0.f)).rgb;
+      environmentColor += texture(diffuseLuminanceMap$INDEX$,
+                                  vec3(0.f, 1.f, 0.f)).rgb;
+      environmentColor += texture(diffuseLuminanceMap$INDEX$,
+                                  vec3(0.f, -1.f, 0.f)).rgb;
+      environmentColor += texture(diffuseLuminanceMap$INDEX$,
+                                  vec3(0.f, 0.f, 1.f)).rgb;
+      environmentColor += texture(diffuseLuminanceMap$INDEX$,
+                                  vec3(0.f, 1.f, -1.f)).rgb;
+      illuminance *= environmentColor / 6.f;
+    #endif
 
-  applyLight(lambertLuminance, reflectionLuminance);
+    applyLight(illuminance);
+  #endif
 }

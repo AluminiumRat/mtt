@@ -41,9 +41,9 @@ private:
   std::optional<FloatConnection> _intensityConnection;
   std::optional<FloatConnection> _sizeConnection;
   std::optional<FloatConnection> _angleConnection;
+  std::optional<FloatConnection> _emissionBrigtnessConnecton;
 
   using BoolConnection = mtt::BoolCheckboxConnection<EmitterObject>;
-  std::optional<BoolConnection> _ignoreBrightnessConnection;
   std::optional<BoolConnection> _enabledConnection;
 
   using RangeConnection = mtt::FloatRangeSpinConnection<EmitterObject>;
@@ -52,7 +52,6 @@ private:
   std::optional<RangeConnection> _rotationConnection;
   std::optional<RangeConnection> _rotationSpeedConnection;
   std::optional<RangeConnection> _opacityConnection;
-  std::optional<RangeConnection> _brightnessConnection;
   std::optional<RangeConnection> _massConnection;
   std::optional<RangeConnection> _frictionFactorConnection;
 

@@ -89,6 +89,20 @@ EmitterWidget::EmitterWidget(EmitterObject& object, mtt::UndoStack& undoStack) :
                                     undoStack);
   _rotationSpeedConnection->setMultiplier(360.f / 2.f / glm::pi<float>());
 
+  using ColorWidget = mtt::ColorPropertyWidget<EmitterObject>;
+  _ui->albedoWidgetLayout->addWidget(
+                            new ColorWidget(object,
+                                            &EmitterObject::firstAlbedo,
+                                            &EmitterObject::setFirstAlbedo,
+                                            &EmitterObject::firstAlbedoChanged,
+                                            undoStack));
+  _ui->albedoWidgetLayout->addWidget(
+                          new ColorWidget(object,
+                                          &EmitterObject::secondAlbedo,
+                                          &EmitterObject::setSecondAlbedo,
+                                          &EmitterObject::secondAlbedoChanged,
+                                          undoStack));
+
   _opacityConnection.emplace( *_ui->minOpacitySpin,
                               *_ui->maxOpacitySpin,
                               object,
@@ -97,20 +111,19 @@ EmitterWidget::EmitterWidget(EmitterObject& object, mtt::UndoStack& undoStack) :
                               &EmitterObject::opacityRangeChanged,
                               undoStack);
 
-  _ignoreBrightnessConnection.emplace(*_ui->ignoreBrightnessCheck,
-                                      object,
-                                      &EmitterObject::ignoreBrightness,
-                                      &EmitterObject::setIgnoreBrightness,
-                                      &EmitterObject::ignoreBrightnessChanged,
-                                      undoStack);
+  _ui->emissionColorLayout->addWidget(
+                          new ColorWidget(object,
+                                          &EmitterObject::emissionColor,
+                                          &EmitterObject::setEmissionColor,
+                                          &EmitterObject::emissionColorChanged,
+                                          undoStack));
 
-  _brightnessConnection.emplace(*_ui->minBrightnessSpin,
-                                *_ui->maxBrightnessSpin,
-                                object,
-                                &EmitterObject::brightnessRange,
-                                &EmitterObject::setBrightnessRange,
-                                &EmitterObject::brightnessRangeChanged,
-                                undoStack);
+  _emissionBrigtnessConnecton.emplace(*_ui->emissionBrightnessSpin,
+                                      object,
+                                      &EmitterObject::emissionBrightness,
+                                      &EmitterObject::setEmissionBrightness,
+                                      &EmitterObject::emissionBrightnessChanged,
+                                      undoStack);
 
   _textureConnection.emplace( *_ui->textureIndexSpin,
                               object,
@@ -150,19 +163,6 @@ EmitterWidget::EmitterWidget(EmitterObject& object, mtt::UndoStack& undoStack) :
                                     &EmitterObject::frictionFactorRangeChanged,
                                     undoStack);
 
-  using ColorWidget = mtt::ColorPropertyWidget<EmitterObject>;
-  _ui->colorWidgetLayout->addWidget(
-                                new ColorWidget(object,
-                                                &EmitterObject::firstColor,
-                                                &EmitterObject::setFirstColor,
-                                                &EmitterObject::firstColorChanged,
-                                                undoStack));
-  _ui->colorWidgetLayout->addWidget(
-                              new ColorWidget(object,
-                                              &EmitterObject::secondColor,
-                                              &EmitterObject::setSecondColor,
-                                              &EmitterObject::secondColorChanged,
-                                              undoStack));
   adjustSize();
 }
 

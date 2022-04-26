@@ -2,7 +2,8 @@
 
 layout(location = positionLocation) in vec3 inPosition;
 layout(location = sizeRotationLocation) in vec2 inSizeRotation;
-layout(location = colorLocation) in vec4 inColor;
+layout(location = albedoLocation) in vec4 inAlbedo;
+layout(location = emissionLocation) in vec4 inEmission;
 layout(location = textureIndexLocation) in uint inTextureIndex;
 layout(location = tileIndexLocation) in uint inTileIndex;
 
@@ -23,29 +24,24 @@ MODIFICATOR_DECLARATION
 
 vec3 viewCoord;
 float overallAmbientWeight = 0.f;
-vec3 normal = vec3(0.f, 0.f, 1.f);
-vec3 toView = vec3(0.f, 0.f, 1.f);
-float viewDotNorm = 0.f;
-float roughness = 0.f;
 
-vec3 luminance = vec3(0.f, 0.f, 0.f);
-void applyLight(vec3 lambertLuminance, vec3 specularLuminance)
+vec3 totalIlluminance = vec3(0.f, 0.f, 0.f);
+void applyLight(vec3 illuminance)
 {
-  luminance += lambertLuminance;
+  totalIlluminance += illuminance;
 }
 
 void main()
 {
   gl_Position = drawMatrices.localToViewMatrix * vec4(inPosition, 1.f);
   viewCoord = gl_Position.xyz;
-  toView = normalize(-viewCoord);
-  viewDotNorm = dot(toView, normal);
 
   APPLY_AMBIENT_WEIGHT
   APPLY_LIGHT
 
-  outColor = inColor;
-  outColor.rgb *= luminance;
+  outColor = inAlbedo;
+  outColor.rgb *= totalIlluminance / M_PI;
+  outColor.rgb += inEmission.rgb;
 
   APPLY_POSTEFFECT
 

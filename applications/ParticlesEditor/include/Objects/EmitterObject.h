@@ -143,21 +143,21 @@ public:
               STORED true
               USER false)
 
-  Q_PROPERTY( glm::vec3 firstColor
-              READ firstColor
-              WRITE setFirstColor
-              RESET resetFirstColor
-              NOTIFY firstColorChanged
+  Q_PROPERTY( glm::vec3 firstAlbedo
+              READ firstAlbedo
+              WRITE setFirstAlbedo
+              RESET resetFirstAlbedo
+              NOTIFY firstAlbedoChanged
               DESIGNABLE true
               SCRIPTABLE true
               STORED true
               USER false)
 
-  Q_PROPERTY( glm::vec3 secondColor
-              READ secondColor
-              WRITE setSecondColor
-              RESET resetSecondColor
-              NOTIFY secondColorChanged
+  Q_PROPERTY( glm::vec3 secondAlbedo
+              READ secondAlbedo
+              WRITE setSecondAlbedo
+              RESET resetSecondAlbedo
+              NOTIFY secondAlbedoChanged
               DESIGNABLE true
               SCRIPTABLE true
               STORED true
@@ -173,21 +173,21 @@ public:
               STORED true
               USER false)
 
-  Q_PROPERTY( bool ignoreBrightness
-              READ ignoreBrightness
-              WRITE setIgnoreBrightness
-              RESET resetIgnoreBrightness
-              NOTIFY ignoreBrightnessChanged
+  Q_PROPERTY( glm::vec3 emissionColor
+              READ emissionColor
+              WRITE setEmissionColor
+              RESET resetEmissionColor
+              NOTIFY emissionColorChanged
               DESIGNABLE true
               SCRIPTABLE true
               STORED true
               USER false)
 
-  Q_PROPERTY( mtt::Range<float> brightnessRange
-              READ brightnessRange
-              WRITE setBrightnessRange
-              RESET resetBrightnessRange
-              NOTIFY brightnessRangeChanged
+  Q_PROPERTY( float emissionBrightness
+              READ emissionBrightness
+              WRITE setEmissionBrightness
+              RESET resetEmissionBrightness
+              NOTIFY emissionBrightnessChanged
               DESIGNABLE true
               SCRIPTABLE true
               STORED true
@@ -299,25 +299,25 @@ public:
   void setRotationSpeedRange(const mtt::Range<float>& newValue) noexcept;
   inline void resetRotationSpeedRange() noexcept;
 
-  inline const glm::vec3& firstColor() const noexcept;
-  void setFirstColor(const glm::vec3& newValue) noexcept;
-  inline void resetFirstColor() noexcept;
+  inline const glm::vec3& firstAlbedo() const noexcept;
+  void setFirstAlbedo(const glm::vec3& newValue) noexcept;
+  inline void resetFirstAlbedo() noexcept;
 
-  inline const glm::vec3& secondColor() const noexcept;
-  void setSecondColor(const glm::vec3& newValue) noexcept;
-  inline void resetSecondColor() noexcept;
+  inline const glm::vec3& secondAlbedo() const noexcept;
+  void setSecondAlbedo(const glm::vec3& newValue) noexcept;
+  inline void resetSecondAlbedo() noexcept;
 
   inline const mtt::Range<float>& opacityRange() const noexcept;
   void setOpacityRange(const mtt::Range<float>& newValue) noexcept;
   inline void resetOpacityRange() noexcept;
 
-  inline bool ignoreBrightness() const noexcept;
-  void setIgnoreBrightness(bool newValue) noexcept;
-  inline void resetIgnoreBrightness() noexcept;
+  inline const glm::vec3& emissionColor() const noexcept;
+  void setEmissionColor(const glm::vec3& newValue) noexcept;
+  inline void resetEmissionColor() noexcept;
 
-  inline const mtt::Range<float>& brightnessRange() const noexcept;
-  void setBrightnessRange(const mtt::Range<float>& newValue) noexcept;
-  inline void resetBrightnessRange() noexcept;
+  inline float emissionBrightness() const noexcept;
+  void setEmissionBrightness(float newValue) noexcept;
+  inline void resetEmissionBrightness() noexcept;
 
   inline uint8_t textureIndex() const noexcept;
   void setTextureIndex(uint8_t newValue) noexcept;
@@ -355,11 +355,11 @@ signals:
   void sizeRangeChanged(const mtt::Range<float>& newValue);
   void rotationRangeChanged(const mtt::Range<float>& newValue);
   void rotationSpeedRangeChanged(const mtt::Range<float>& newValue);
-  void firstColorChanged(const glm::vec3& newValue);
-  void secondColorChanged(const glm::vec3& newValue);
+  void firstAlbedoChanged(const glm::vec3& newValue);
+  void secondAlbedoChanged(const glm::vec3& newValue);
   void opacityRangeChanged(const mtt::Range<float>& newValue);
-  void ignoreBrightnessChanged(bool newValue);
-  void brightnessRangeChanged(const mtt::Range<float>& newValue);
+  void emissionColorChanged(const glm::vec3& newValue);
+  void emissionBrightnessChanged(float newValue);
   void textureIndexChanged(uint8_t newValue);
   void tileIndexChanged(uint8_t newValue);
   void lifetimeRangeChanged(const mtt::TimeRange& newValue);
@@ -391,11 +391,11 @@ private:
   mtt::Range<float> _sizeRange;
   mtt::Range<float> _rotationRange;
   mtt::Range<float> _rotationSpeedRange;
-  glm::vec3 _firstColor;
-  glm::vec3 _secondColor;
+  glm::vec3 _firstAlbedo;
+  glm::vec3 _secondAlbedo;
   mtt::Range<float> _opacityRange;
-  bool _ignoreBrightness;
-  mtt::Range<float> _brightnessRange;
+  glm::vec3 _emissionColor;
+  float _emissionBrightness;
   uint8_t _textureIndex;
   uint8_t _tileIndex;
   mtt::TimeRange _lifetimeRange;
@@ -529,24 +529,24 @@ inline void EmitterObject::resetRotationSpeedRange() noexcept
   setRotationSpeedRange(mtt::Range<float>(0.f, 0.f));
 }
 
-inline const glm::vec3& EmitterObject::firstColor() const noexcept
+inline const glm::vec3& EmitterObject::firstAlbedo() const noexcept
 {
-  return _firstColor;
+  return _firstAlbedo;
 }
 
-inline void EmitterObject::resetFirstColor() noexcept
+inline void EmitterObject::resetFirstAlbedo() noexcept
 {
-  setFirstColor(glm::vec3(1.f, 1.f, 1.f));
+  setFirstAlbedo(glm::vec3(1.f, 1.f, 1.f));
 }
 
-inline const glm::vec3& EmitterObject::secondColor() const noexcept
+inline const glm::vec3& EmitterObject::secondAlbedo() const noexcept
 {
-  return _secondColor;
+  return _secondAlbedo;
 }
 
-inline void EmitterObject::resetSecondColor() noexcept
+inline void EmitterObject::resetSecondAlbedo() noexcept
 {
-  setSecondColor(glm::vec3(1.f, 1.f, 1.f));
+  setSecondAlbedo(glm::vec3(1.f, 1.f, 1.f));
 }
 
 inline const mtt::Range<float>& EmitterObject::opacityRange() const noexcept
@@ -559,24 +559,24 @@ inline void EmitterObject::resetOpacityRange() noexcept
   setOpacityRange(mtt::Range<float>(1.f, 1.f));
 }
 
-inline bool EmitterObject::ignoreBrightness() const noexcept
+inline const glm::vec3& EmitterObject::emissionColor() const noexcept
 {
-  return _ignoreBrightness;
+  return _emissionColor;
 }
 
-inline void EmitterObject::resetIgnoreBrightness() noexcept
+inline void EmitterObject::resetEmissionColor() noexcept
 {
-  setIgnoreBrightness(true);
+  setEmissionColor(glm::vec3(1.f));
 }
 
-inline const mtt::Range<float>& EmitterObject::brightnessRange() const noexcept
+inline float EmitterObject::emissionBrightness() const noexcept
 {
-  return _brightnessRange;
+  return _emissionBrightness;
 }
 
-inline void EmitterObject::resetBrightnessRange() noexcept
+inline void EmitterObject::resetEmissionBrightness() noexcept
 {
-  setBrightnessRange(mtt::Range<float>(1.f, 1.f));
+  setEmissionBrightness(0.f);
 }
 
 inline uint8_t EmitterObject::textureIndex() const noexcept

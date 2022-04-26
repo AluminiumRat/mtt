@@ -91,9 +91,11 @@ void FLColorTechnique::adjustPipeline(GraphicsPipeline& pipeline,
     {
       LightAreaModificator& lightModificator =
                                 static_cast<LightAreaModificator&>(modificator);
-      lightModificator.adjustPipeline(pipeline,
-                                      *fragmentShader,
-                                      modificatorIndex);
+      lightModificator.adjustPipeline(
+                        pipeline,
+                        *fragmentShader,
+                        LightAreaModificator::LAMBERT_SPECULAR_LUMINANCE_MODEL,
+                        modificatorIndex);
     }
   }
 

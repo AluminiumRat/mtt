@@ -88,8 +88,11 @@ void FieldRenderObserver::_updateParticles() noexcept
   std::vector<glm::vec2> sizeRotation;
   sizeRotation.reserve(pointsNumber);
 
-  std::vector<glm::vec4> color;
-  color.reserve(pointsNumber);
+  std::vector<glm::vec4> albedo;
+  albedo.reserve(pointsNumber);
+
+  std::vector<glm::vec4> emission;
+  emission.reserve(pointsNumber);
 
   std::vector<uint32_t> textureIndices;
   textureIndices.reserve(pointsNumber);
@@ -102,16 +105,21 @@ void FieldRenderObserver::_updateParticles() noexcept
     ParticleField::ParticleData particle = _field.particlesData()[index];
     positions.push_back(particle.position);
     sizeRotation.push_back(glm::vec2(particle.size, particle.rotation));
-    color.push_back(glm::vec4(particle.color * particle.brightness *
-                                                      particle.visibilityFactor,
-                              particle.opacity * particle.visibilityFactor));
+    float opacity = particle.albedo.a;
+    glm::vec3 premultipledAlbedo = particle.albedo;
+    premultipledAlbedo *= opacity;
+    albedo.push_back(glm::vec4(premultipledAlbedo, opacity) *
+                                                    particle.visibilityFactor);
+    emission.push_back(
+                glm::vec4(particle.emission * particle.visibilityFactor, 1.f));
     textureIndices.push_back(particle.textureIndex);
     tileIndices.push_back(particle.tileIndex);
   }
 
   _particlesDrawable.setData( positions,
                               sizeRotation,
-                              color,
+                              albedo,
+                              emission,
                               textureIndices,
                               tileIndices);
 }
