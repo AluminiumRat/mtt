@@ -127,7 +127,7 @@ void main()
   if(length(localCoord.xy) > lightData.radius) discard;
 
   vec4 albedo = texelFetch(albedoMap, fragCoord, 0);
-  vec3 normal = normalize(texelFetch(normalMap, fragCoord, 0).rgb);
+  vec3 normal = normalize(texelFetch(normalMap, fragCoord, 0).xyz);
   vec3 specular = texelFetch(specularMap, fragCoord, 0).xyz;
   float roughness = max(specular.x, .001f);
   float specularStrength = specular.y;

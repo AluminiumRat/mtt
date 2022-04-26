@@ -89,7 +89,7 @@ vec3 getLuminance(vec3 albedo,
 
   vec3 halfDir = normalize(toViewDirection + lightInverseDirection);
   float normDotHalf = max(dot(normal, halfDir), 0.f);
-  float normDotView = max(dot(normal, toViewDirection), 0.f);
+  float normDotView = max(dot(normal, toViewDirection), 0.01f);
   float viewDotHalf = max(dot(toViewDirection, halfDir), 0.f);
 
   float distributionFactor = GGXDistribution(normDotHalf, roughness);
