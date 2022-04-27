@@ -29,14 +29,14 @@ void DrawParticleAction::execute(mtt::DrawContext& context)
   _pipeline.setScissor(_scissor);
   _pipeline.setViewport(_viewport);
 
-  _pipeline.scheduleBind(context.drawProducer);
-  _pipeline.indices().scheduleBindData(*_indicesBuffer, context.drawProducer);
-
   constexpr uint32_t depthSamplerIndex =
                           mtt::clPipeline::ForwardLightPass::depthSamplerIndex;
 
   _depthSamplerTexture.setImageView(
                             context.frameBuffer->samplerMap(depthSamplerIndex));
+
+  _pipeline.scheduleBind(context.drawProducer);
+  _pipeline.indices().scheduleBindData(*_indicesBuffer, context.drawProducer);
 
   vkCmdDrawIndexed( context.drawProducer.bufferHandle(),
                     _pointsNumber,

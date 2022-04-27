@@ -29,7 +29,7 @@ ForwardLightPass::ForwardLightPass( VkFormat colorBufferFormat,
   dependencies[0].srcSubpass = VK_SUBPASS_EXTERNAL;
   dependencies[0].dstSubpass = 0;
   dependencies[0].srcStageMask = VK_PIPELINE_STAGE_TRANSFER_BIT;
-  dependencies[0].srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+  dependencies[0].srcAccessMask = VK_ACCESS_MEMORY_WRITE_BIT;
   dependencies[0].dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
   dependencies[0].dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
