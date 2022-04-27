@@ -17,10 +17,12 @@ layout(location = 2) in uint inTextureIndex[];
 layout(location = 3) in uint inTileIndex[];
 
 layout(location = 0) out vec4 outColor;
+layout(location = 1) out flat float outNearDepth;
+layout(location = 2) out flat float outFarDepth;
 
 #ifdef COLOR_SAMPLER_ENABLED
-  layout(location = 1) out vec2 outTexCoords;
-  layout(location = 2) out flat uint outTextureIndex;
+  layout(location = 3) out vec2 outTexCoords;
+  layout(location = 4) out flat uint outTextureIndex;
 #endif
 
 const vec2 shifts[4] = {vec2(-.5f,  .5f),
@@ -52,6 +54,14 @@ void main()
     texCoordStart *= texCoordWidth;
   #endif
 
+  vec4 center = gl_in[0].gl_Position;
+  vec4 centerProjected = drawMatrices.projectionMatrix * center;
+  float nearDepth = centerProjected.z / centerProjected.w;
+
+  vec4 farProjected = drawMatrices.projectionMatrix *
+                                    (center + vec4(0.f, 0.f, -size / 2.f, 0.f));
+  float farDepth = farProjected.z / farProjected.w;
+
   for(int pointIndex = 3; pointIndex >= 0; pointIndex--)
   {
     vec2 shift = shifts[pointIndex];
@@ -61,6 +71,9 @@ void main()
     viewPosition.xy += rotatedShift * size;
     gl_Position = drawMatrices.projectionMatrix * viewPosition;
     outColor = inColor[0];
+
+    outNearDepth = nearDepth;
+    outFarDepth = farDepth;
 
     #ifdef COLOR_SAMPLER_ENABLED
       outTexCoords = texCoordStart + texCoords[pointIndex] * texCoordWidth;

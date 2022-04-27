@@ -13,21 +13,33 @@ ForwardLightPass::ForwardLightPass( VkFormat colorBufferFormat,
                                     VkImageLayout colorBufferLayout,
                                     VkFormat depthBufferFormat,
                                     VkImageLayout depthBufferLayout,
+                                    VkFormat depthSamplerFormat,
+                                    VkImageLayout depthSamplerLayout,
                                     LogicalDevice& device) :
   GeneralRenderPass(device),
   _colorBufferFormat(colorBufferFormat),
   _colorBufferLayout(colorBufferLayout),
   _depthBufferFormat(depthBufferFormat),
-  _depthBufferLayout(depthBufferLayout)
+  _depthBufferLayout(depthBufferLayout),
+  _depthSamplerFormat(depthSamplerFormat),
+  _depthSamplerLayout(depthSamplerLayout)
 {
-  std::vector<VkSubpassDependency> dependencies(1);
+  std::vector<VkSubpassDependency> dependencies(2);
   dependencies[0] = {};
   dependencies[0].srcSubpass = VK_SUBPASS_EXTERNAL;
   dependencies[0].dstSubpass = 0;
-  dependencies[0].srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-  dependencies[0].srcAccessMask = 0;
-  dependencies[0].dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-  dependencies[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+  dependencies[0].srcStageMask = VK_PIPELINE_STAGE_TRANSFER_BIT;
+  dependencies[0].srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+  dependencies[0].dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+  dependencies[0].dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+  dependencies[1] = {};
+  dependencies[1].srcSubpass = VK_SUBPASS_EXTERNAL;
+  dependencies[1].dstSubpass = 0;
+  dependencies[1].srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+  dependencies[1].srcAccessMask = 0;
+  dependencies[1].dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+  dependencies[1].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
   VkAttachmentDescription colorAttachment{};
   colorAttachment.format = _colorBufferFormat;
@@ -78,15 +90,19 @@ ForwardLightPass::ForwardLightPass( VkFormat colorBufferFormat,
 
   subpasses[0].stages.push_back(forwardLightStage);
 
-  setup(dependencies, attachments, 0, subpasses);
+  setup(dependencies, attachments, samplersNumber, subpasses);
 }
 
-Ref<FrameBuffer> ForwardLightPass::createFrameBuffer(ImageView& colorTarget,
-                                                        ImageView& depthMap)
+Ref<FrameBuffer> ForwardLightPass::createFrameBuffer( ImageView& colorTarget,
+                                                      ImageView& depthMap,
+                                                      ImageView& depthSampler)
 {
   std::vector<ImageView*> attachments(attachmentNumber);
   attachments[colorAttachmentIndex] = &colorTarget;
   attachments[depthAttachmentIndex] = &depthMap;
 
-  return GeneralRenderPass::createFrameBuffer(attachments, {});
+  std::vector<ImageView*> samplers(samplersNumber);
+  samplers[depthSamplerIndex] = &depthSampler;
+
+  return GeneralRenderPass::createFrameBuffer(attachments, samplers);
 }

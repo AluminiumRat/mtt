@@ -110,7 +110,9 @@ private:
   mtt::Buffer _tileIndexBuffer;
   size_t _particlesNumber;
 
-  std::optional<mtt::Sampler> _sampler;
+  std::optional<mtt::Sampler> _textureSampler;
+  mtt::Sampler _depthSampler;
+  mtt::Texture2D* _depthSamplerTexture;
 
   std::vector<TextureData> _textureData;
   std::vector<glm::vec3> _positionsData;

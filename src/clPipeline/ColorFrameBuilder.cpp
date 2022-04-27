@@ -11,7 +11,15 @@ static constexpr VkImageLayout commonDepthBufferLayout =
 static constexpr VkImageUsageFlags depthImageUsage =
                                   VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT |
                                   VK_IMAGE_USAGE_SAMPLED_BIT |
-                                  VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
+                                  VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT |
+                                  VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+
+static constexpr VkImageLayout flDepthSamplerLayout =
+                                      VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+static constexpr VkImageUsageFlags flDepthSamplerUsage =
+                                                VK_IMAGE_USAGE_SAMPLED_BIT |
+                                                VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 
 static constexpr VkImageLayout normalMapLayout =
                                       VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -61,6 +69,8 @@ public:
 
   Image* colorBuffer;
   Image* target;
+  Image* commonDepthBuffer;
+  Image* flDepthSamplerImage;
 
   ColorFrame(const glm::uvec2& extent, ColorFrameBuilder& renderer) :
     AbstractFrame(extent, renderer)
@@ -141,6 +151,8 @@ ColorFrameBuilder::ColorFrameBuilder( VkFormat colorBufferFormat,
                                           commonColorBufferLayout,
                                           depthMapFormat,
                                           commonDepthBufferLayout,
+                                          depthMapFormat,
+                                          flDepthSamplerLayout,
                                           device)),
   _selectionPass(new SelectionPass( colorBufferFormat,
                                     commonColorBufferLayout,
@@ -263,7 +275,7 @@ std::unique_ptr<AbstractFrame> ColorFrameBuilder::createFrame(Image& target)
 
   Ref<Image> depthBuffer(
                     new Image(VK_IMAGE_TYPE_2D,
-                              VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+                              commonDepthBufferLayout,
                               depthImageUsage,
                               0,
                               depthMapFormat,
@@ -285,6 +297,24 @@ std::unique_ptr<AbstractFrame> ColorFrameBuilder::createFrame(Image& target)
                                         VK_IMAGE_VIEW_TYPE_2D,
                                         colorMapping,
                                         depthSubresourceRange));
+
+  Ref<Image> flDepthSamplerImage(
+                    new Image(VK_IMAGE_TYPE_2D,
+                              flDepthSamplerLayout,
+                              flDepthSamplerUsage,
+                              0,
+                              depthMapFormat,
+                              target.extent(),
+                              VK_SAMPLE_COUNT_1_BIT,
+                              1,
+                              1,
+                              VK_IMAGE_ASPECT_DEPTH_BIT,
+                              _device));
+
+  Ref<ImageView> flDepthSamplerView(new ImageView(*flDepthSamplerImage,
+                                                  VK_IMAGE_VIEW_TYPE_2D,
+                                                  colorMapping,
+                                                  depthSubresourceRange));
 
   newFrame->geometryPassFrameBuffer =
                                   _gBufferPass->createFrameBuffer(*depthMap,
@@ -312,8 +342,9 @@ std::unique_ptr<AbstractFrame> ColorFrameBuilder::createFrame(Image& target)
                                                               *depthMap);
 
   newFrame->forwardLightPassFrameBuffer =
-                        _forwardLightPass->createFrameBuffer( *colorBufferView,
-                                                              *depthMap);
+                    _forwardLightPass->createFrameBuffer( *colorBufferView,
+                                                          *depthMap,
+                                                          *flDepthSamplerView);
 
   newFrame->selectionPassFrameBuffer =
                             _selectionPass->createFrameBuffer(*colorBufferView,
@@ -321,6 +352,8 @@ std::unique_ptr<AbstractFrame> ColorFrameBuilder::createFrame(Image& target)
 
   newFrame->target = &target;
   newFrame->colorBuffer = colorBuffer.get();
+  newFrame->commonDepthBuffer = depthBuffer.get();
+  newFrame->flDepthSamplerImage = flDepthSamplerImage.get();
 
   return newFrame;
 }
@@ -360,12 +393,6 @@ void ColorFrameBuilder::scheduleRender( AbstractFramePlan& plan,
   drawContext.frameBuffer = frame.backgroundPassFrameBuffer.get();
   _backgroundPass->scheduleRender(plan, drawContext);
 
-  drawContext.frameBuffer = frame.forwardLightPassFrameBuffer.get();
-  _forwardLightPass->scheduleRender(plan, drawContext);
-
-  drawContext.frameBuffer = frame.selectionPassFrameBuffer.get();
-  _selectionPass->scheduleRender(plan, drawContext);
-
   Image::CopyImageChunk copyInfo{};
   copyInfo.srcArrayIndex = 0;
   copyInfo.srcMipLevel = 0;
@@ -374,6 +401,19 @@ void ColorFrameBuilder::scheduleRender( AbstractFramePlan& plan,
   copyInfo.dstMipLevel = 0;
   copyInfo.dstOffset = glm::uvec3(0);
   copyInfo.extent = frame.target->extent();
+
+  frame.flDepthSamplerImage->scheduleCopy( drawProducer,
+                                          *frame.commonDepthBuffer,
+                                          VK_IMAGE_ASPECT_DEPTH_BIT,
+                                          VK_IMAGE_ASPECT_DEPTH_BIT,
+                                          {copyInfo});
+
+  drawContext.frameBuffer = frame.forwardLightPassFrameBuffer.get();
+  _forwardLightPass->scheduleRender(plan, drawContext);
+
+  drawContext.frameBuffer = frame.selectionPassFrameBuffer.get();
+  _selectionPass->scheduleRender(plan, drawContext);
+
   frame.target->scheduleCopy( drawProducer,
                               *frame.colorBuffer,
                               VK_IMAGE_ASPECT_COLOR_BIT,

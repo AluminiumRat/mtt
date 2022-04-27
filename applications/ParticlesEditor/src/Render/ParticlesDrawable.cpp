@@ -1,4 +1,5 @@
 #include <limits>
+#include <memory>
 
 #include <mtt/Application/Application.h>
 #include <mtt/clPipeline/Background/BackgroundAreaModificator.h>
@@ -188,16 +189,21 @@ void ParticlesDrawable::DrawTechnique::_rebuildPipeline(
                             VK_SHADER_STAGE_VERTEX_BIT |
                               VK_SHADER_STAGE_GEOMETRY_BIT);
 
-    if (_parent._sampler.has_value())
+    if (_parent._textureSampler.has_value())
     {
       _pipeline->addResource( "colorSamplerBinding",
-                              _parent._sampler.value(),
+                              _parent._textureSampler.value(),
                               VK_SHADER_STAGE_FRAGMENT_BIT);
       _pipeline->setDefine("COLOR_SAMPLER_ENABLED");
-      _pipeline->setDefine( "TEXTURES_NUMBER",
-                            std::to_string(_parent._sampler->arraySize()));
+      _pipeline->setDefine(
+                          "TEXTURES_NUMBER",
+                          std::to_string(_parent._textureSampler->arraySize()));
       _pipeline->setDefine("EXTENT_DEFINE", _makeTextureExtentDefine());
     }
+
+    _pipeline->addResource( "depthSamplerBinding",
+                            _parent._depthSampler,
+                            VK_SHADER_STAGE_FRAGMENT_BIT);
 
     _pipeline->setTopology(VK_PRIMITIVE_TOPOLOGY_POINT_LIST);
     _pipeline->indices().setType(VK_INDEX_TYPE_UINT16);
@@ -237,7 +243,8 @@ void ParticlesDrawable::DrawTechnique::addToDrawPlan(
                               pointsNumber,
                               *indices,
                               _matricesUniform,
-                              buildInfo.drawMatrices);
+                              buildInfo.drawMatrices,
+                              *_parent._depthSamplerTexture);
 }
 
 mtt::Ref<mtt::PlainBuffer> ParticlesDrawable::DrawTechnique::_makeIndices(
@@ -290,8 +297,16 @@ ParticlesDrawable::ParticlesDrawable() :
   _tileIndexBuffer( mtt::Application::instance().displayDevice(),
                     mtt::Buffer::VERTEX_BUFFER),
   _particlesNumber(0),
+  _depthSampler(mtt::PipelineResource::VOLATILE,
+                mtt::Application::instance().displayDevice()),
+  _depthSamplerTexture(nullptr),
   _technique(*this)
 {
+  std::shared_ptr<mtt::Texture2D> depthSamplerTexture =
+                        std::make_shared<mtt::Texture2D>(
+                                  mtt::Application::instance().displayDevice());
+  _depthSamplerTexture = depthSamplerTexture.get();
+  _depthSampler.setAttachedTexture(std::move(depthSamplerTexture));
 }
 
 void ParticlesDrawable::setData(const std::vector<glm::vec3>& positionData,
@@ -337,7 +352,7 @@ void ParticlesDrawable::setParticleTextures(
                                       const std::vector<TextureData>& textures)
 {
   _technique.resetPipelines();
-  _sampler.reset();
+  _textureSampler.reset();
   _textureData.clear();
 
   if(textures.empty()) return;
@@ -345,22 +360,22 @@ void ParticlesDrawable::setParticleTextures(
   try
   {
     _textureData = textures;
-    _sampler.emplace( _textureData.size(),
-                      mtt::PipelineResource::STATIC,
-                      mtt::Application::instance().displayDevice());
+    _textureSampler.emplace(_textureData.size(),
+                            mtt::PipelineResource::STATIC,
+                            mtt::Application::instance().displayDevice());
     for ( size_t textureIndex = 0;
           textureIndex < _textureData.size();
           textureIndex++)
     {
       if(_textureData[textureIndex].texture == nullptr) mtt::Abort("ParticlesDrawable::setParticleTextures: textures array contain nullptr");
-      _sampler->setAttachedTexture( _textureData[textureIndex].texture,
-                                    textureIndex);
+      _textureSampler->setAttachedTexture(_textureData[textureIndex].texture,
+                                          textureIndex);
     }
   }
   catch (...)
   {
     _textureData.clear();
-    _sampler.reset();
+    _textureSampler.reset();
     throw;
   }
 }
