@@ -21,7 +21,13 @@ namespace mtt
     {
     public:
       /// R component is normalized linear distance to occluder
-      static constexpr VkFormat shadowmapFormat = VK_FORMAT_R32_SFLOAT;
+      /// G component is weighted average distance to transparent objects
+      /// B component is weighted average square of distance to transparent
+      /// objects
+      /// A component is weight weight for G and B components
+      /// If A component is 0 then no transparent objects rendered to this
+      /// texel.
+      static constexpr VkFormat shadowmapFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
       static constexpr VkImageLayout shadowmapLayout =
                                       VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
     public:

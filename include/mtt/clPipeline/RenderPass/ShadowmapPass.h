@@ -20,6 +20,7 @@ namespace mtt
                     VkImageLayout shadowmapLayout,
                     VkFormat depthmapFormat,
                     VkImageLayout depthmapLayout,
+                    mtt::StageIndex stageIndex,
                     LogicalDevice& device);
       ShadowmapPass(const ShadowmapPass&) = delete;
       ShadowmapPass& operator = (const ShadowmapPass&) = delete;
@@ -32,6 +33,8 @@ namespace mtt
       inline VkFormat depthmapFormat() const noexcept;
       inline VkImageLayout depthmapLayout() const noexcept;
 
+      inline mtt::StageIndex stageIndex() const noexcept;
+
       Ref<FrameBuffer> createFrameBuffer( ImageView& shadowMapBuffer,
                                           ImageView& depthBuffer);
     private:
@@ -39,6 +42,7 @@ namespace mtt
       VkImageLayout _shadowmapLayout;
       VkFormat _depthmapFormat;
       VkImageLayout _depthmapLayout;
+      mtt::StageIndex _stageIndex;
     };
 
     inline VkFormat ShadowmapPass::shadowmapFormat() const noexcept
@@ -59,6 +63,11 @@ namespace mtt
     inline VkImageLayout ShadowmapPass::depthmapLayout() const noexcept
     {
       return _depthmapLayout;
+    }
+
+    inline mtt::StageIndex ShadowmapPass::stageIndex() const noexcept
+    {
+      return _stageIndex;
     }
   }
 }

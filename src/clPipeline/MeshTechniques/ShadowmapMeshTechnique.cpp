@@ -9,7 +9,7 @@ using namespace mtt::clPipeline;
 ShadowmapMeshTechnique::ShadowmapMeshTechnique(VkPrimitiveTopology topology) :
   BaseGeometryTechnique(SKELETON_FEATURE |
                           VIEW_COORDS_IN_FRAGMENT_SHADER_FEATURE,
-                        shadowmapStage,
+                        opaqueShadowmapStage,
                         topology,
                         NEAR_FIRST_ORDER)
 {

@@ -25,8 +25,9 @@ namespace mtt
     constexpr StageIndex forwardLightStage(6);
     constexpr StageIndex selectionStage(7);
 
-    /// Single stage for shadowmap render
-    constexpr StageIndex shadowmapStage(0);
+    /// Stages for shadowmap render
+    constexpr StageIndex opaqueShadowmapStage(0);
+    constexpr StageIndex transparentShadowmapStage(1);
 
     /// Single stage for uid render
     constexpr StageIndex uidStage = baseStages::uidStage;

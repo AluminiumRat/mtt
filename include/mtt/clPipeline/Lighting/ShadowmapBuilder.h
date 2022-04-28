@@ -34,7 +34,8 @@ namespace mtt
                                           /// duplicate frame queries
 
       private:
-        DrawBin _shadowmapBin;
+        DrawBin _opaqueShadowmapBin;
+        DrawBin _transparentShadowmapBin;
       };
 
     public:
@@ -63,7 +64,8 @@ namespace mtt
       VkFormat _shadowmapFormat;
       VkImageLayout _shadowmapLayout;
       VkImageUsageFlags _shadowmapUsage;
-      Ref<ShadowmapPass> _renderPass;
+      Ref<ShadowmapPass> _opaquePass;
+      Ref<ShadowmapPass> _transparentPass;
       LogicalDevice& _device;
     };
 

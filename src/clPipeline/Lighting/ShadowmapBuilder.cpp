@@ -10,16 +10,15 @@ static constexpr VkFormat depthBufferFormat = VK_FORMAT_D32_SFLOAT;
 static constexpr VkImageLayout depthBufferLayout =
                               VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
-class LinearDepthFrame : public OneTargetFrameBuilder::Frame
+class ShadowmapBuilderFrame : public OneTargetFrameBuilder::Frame
 {
 public:
-  Ref<FrameBuffer> mainPassFrameBuffer;
+  Ref<FrameBuffer> opaquePassFrameBuffer;
+  Ref<FrameBuffer> transparentPassFrameBuffer;
 
   Ref<Image> target;
-  Ref<ImageView> targetView;
-  Ref<ImageView> depthBufferView;
 
-  LinearDepthFrame(glm::u16vec2 extent, ShadowmapBuilder& renderer) :
+  ShadowmapBuilderFrame(glm::u16vec2 extent, ShadowmapBuilder& renderer) :
     Frame(extent, renderer)
   {
   }
@@ -38,9 +37,11 @@ public:
 ShadowmapBuilder::ShadowMapFramePlan::ShadowMapFramePlan(AbstractFrame& frame) :
   AbstractFramePlan(frame),
   viewProjectionMatrix(1),
-  _shadowmapBin(memoryPool())
+  _opaqueShadowmapBin(memoryPool()),
+  _transparentShadowmapBin(memoryPool())
 {
-  registerBin(_shadowmapBin, shadowmapStage);
+  registerBin(_opaqueShadowmapBin, opaqueShadowmapStage);
+  registerBin(_transparentShadowmapBin, transparentShadowmapStage);
 }
 
 ShadowmapBuilder::ShadowmapBuilder( VkFormat shadowmapFormat,
@@ -51,21 +52,29 @@ ShadowmapBuilder::ShadowmapBuilder( VkFormat shadowmapFormat,
   _shadowmapFormat(shadowmapFormat),
   _shadowmapLayout(shadowmapLayout),
   _shadowmapUsage(shadowmapUsage),
-  _renderPass(new ShadowmapPass(_shadowmapFormat,
+  _opaquePass(new ShadowmapPass(_shadowmapFormat,
                                 _shadowmapLayout,
                                 depthBufferFormat,
                                 depthBufferLayout,
+                                opaqueShadowmapStage,
                                 device)),
+  _transparentPass(new ShadowmapPass( _shadowmapFormat,
+                                      _shadowmapLayout,
+                                      depthBufferFormat,
+                                      depthBufferLayout,
+                                      transparentShadowmapStage,
+                                      device)),
   _device(device)
 {
-  registerStagePass(*_renderPass);
+  registerStagePass(*_opaquePass);
+  registerStagePass(*_transparentPass);
 }
 
 std::unique_ptr<ShadowmapBuilder::Frame>
                         ShadowmapBuilder::createFrame(const glm::uvec2& extent)
 {
-  std::unique_ptr<LinearDepthFrame> newFrame(
-                                          new LinearDepthFrame(extent , *this));
+  std::unique_ptr<ShadowmapBuilderFrame> newFrame(
+                                    new ShadowmapBuilderFrame(extent , *this));
 
   newFrame->target = new Image( VK_IMAGE_TYPE_2D,
                                 _shadowmapLayout,
@@ -98,7 +107,6 @@ std::unique_ptr<ShadowmapBuilder::Frame>
                                           VK_IMAGE_VIEW_TYPE_2D,
                                           colorMapping,
                                           colorSubresourceRange));
-  newFrame->targetView = std::move(targetView);
 
   Ref<Image> depthBuffer(new Image( VK_IMAGE_TYPE_2D,
                                     depthBufferLayout,
@@ -119,14 +127,19 @@ std::unique_ptr<ShadowmapBuilder::Frame>
   depthSubresourceRange.baseArrayLayer = 0;
   depthSubresourceRange.layerCount = 1;
 
-  newFrame->depthBufferView = new ImageView(*depthBuffer,
-                                            VK_IMAGE_VIEW_TYPE_2D,
-                                            colorMapping,
-                                            depthSubresourceRange);
+  Ref<ImageView>depthBufferView(new ImageView(*depthBuffer,
+                                              VK_IMAGE_VIEW_TYPE_2D,
+                                              colorMapping,
+                                              depthSubresourceRange));
 
-  newFrame->mainPassFrameBuffer = _renderPass->createFrameBuffer(
-                                                    *newFrame->targetView,
-                                                    *newFrame->depthBufferView);
+  newFrame->opaquePassFrameBuffer = _opaquePass->createFrameBuffer(
+                                                              *targetView,
+                                                              *depthBufferView);
+
+  newFrame->transparentPassFrameBuffer =
+                    _transparentPass->createFrameBuffer(*targetView,
+                                                        *depthBufferView);
+
   return newFrame;
 }
 
@@ -141,10 +154,14 @@ void ShadowmapBuilder::scheduleRender(AbstractFramePlan& plan,
                                       CommandProducer& drawProducer)
 {
   if(&plan.frameBuilder() != this) Abort("ShadowmapBuilder::scheduleRender: the frame was not created in this renderer.");
-  
+
   ShadowMapFramePlan& shadowPlan = static_cast<ShadowMapFramePlan&>(plan);
-  LinearDepthFrame& frame = static_cast<LinearDepthFrame&>(plan.frame());
-  
-  DrawContext drawContext{drawProducer, frame.mainPassFrameBuffer.get()};
-  _renderPass->scheduleRender(plan, drawContext);
+  ShadowmapBuilderFrame& frame =
+                              static_cast<ShadowmapBuilderFrame&>(plan.frame());
+
+  DrawContext drawContext{drawProducer, frame.opaquePassFrameBuffer.get()};
+  _opaquePass->scheduleRender(plan, drawContext);
+
+  drawContext.frameBuffer = frame.transparentPassFrameBuffer.get();
+  _transparentPass->scheduleRender(plan, drawContext);
 }

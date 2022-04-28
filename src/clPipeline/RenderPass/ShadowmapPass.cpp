@@ -8,12 +8,14 @@ ShadowmapPass::ShadowmapPass( VkFormat shadowmapFormat,
                               VkImageLayout shadowmapLayout,
                               VkFormat depthmapFormat,
                               VkImageLayout depthmapLayout,
+                              mtt::StageIndex stageIndex,
                               LogicalDevice& device) :
   GeneralRenderPass(device),
   _shadowmapFormat(shadowmapFormat),
   _shadowmapLayout(shadowmapLayout),
   _depthmapFormat(depthmapFormat),
-  _depthmapLayout(depthmapLayout)
+  _depthmapLayout(depthmapLayout),
+  _stageIndex(stageIndex)
 {
   std::vector<VkSubpassDependency> dependencies(1);
   dependencies[0] = {};
@@ -27,7 +29,11 @@ ShadowmapPass::ShadowmapPass( VkFormat shadowmapFormat,
   VkAttachmentDescription mapAttachment{};
   mapAttachment.format = _shadowmapFormat;
   mapAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-  mapAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+  if (stageIndex == opaqueShadowmapStage)
+  {
+    mapAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+  }
+  else mapAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
   mapAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
   mapAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
   mapAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
@@ -37,7 +43,11 @@ ShadowmapPass::ShadowmapPass( VkFormat shadowmapFormat,
   VkAttachmentDescription depthAttachment{};
   depthAttachment.format = _depthmapFormat;
   depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-  depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+  if(stageIndex == opaqueShadowmapStage)
+  {
+    depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+  }
+  else depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
   depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
   depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
   depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
@@ -68,10 +78,24 @@ ShadowmapPass::ShadowmapPass( VkFormat shadowmapFormat,
   SubpassInfo subpassInfo;
   subpassInfo.subpassIndex = 0;
   fillMultisampling(subpassInfo);
-  subpassInfo.blentAttachments.push_back(noColorBlendingState);
+  if (stageIndex == opaqueShadowmapStage)
+  {
+    VkPipelineColorBlendAttachmentState blendingState = noColorBlendingState;
+    blendingState.colorWriteMask = VK_COLOR_COMPONENT_R_BIT;
+    subpassInfo.blentAttachments.push_back(blendingState);
+  }
+  else
+  {
+    VkPipelineColorBlendAttachmentState blendingState =
+                                                  accamulateColorBlendingState;
+    blendingState.colorWriteMask = VK_COLOR_COMPONENT_G_BIT |
+                                    VK_COLOR_COMPONENT_B_BIT |
+                                    VK_COLOR_COMPONENT_A_BIT;
+    subpassInfo.blentAttachments.push_back(blendingState);
+  }
   subpasses[0].subpassInfo = subpassInfo;
 
-  subpasses[0].stages.push_back(shadowmapStage);
+  subpasses[0].stages.push_back(_stageIndex);
 
   setup(dependencies, attachments, 0, subpasses);
 }
