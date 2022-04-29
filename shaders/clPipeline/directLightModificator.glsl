@@ -46,14 +46,11 @@ layout( set = volatileSet,
     return result;
   }
 
-  float getShadowFactor$INDEX$(int layer,
-                        vec2 shadowCoords,
-                        float normalizedDistanceToLight,
-                        float slope)
+  float getOpaqueShadowFactor$INDEX$( int layer,
+                                      vec2 centerCoords,
+                                      float normalizedDistanceToLight,
+                                      float slope)
   {
-    vec4 coordsCorrection = shadowCoordsCorrection$INDEX$.values[layer];
-    vec2 centerCoords = shadowCoords * coordsCorrection.x + coordsCorrection.yz;
-
     float mapSize = textureSize(shadowMap$INDEX$[layer], 0).x;
     vec2 centerTexelCoords = mapSize * centerCoords;
     vec2 blurSize =
@@ -73,7 +70,7 @@ layout( set = volatileSet,
                               length(centerTexelCoords - finishTexel));
     float slopeCorrection = maxTexelShift * slope;
 
-    float shadowFactor = 0;
+    float opaqueFactor = 0;
 
     ivec2 iTexelCoord = iStartTexel;
     float xWeight = startWeights.x;
@@ -87,7 +84,7 @@ layout( set = volatileSet,
                                         iTexelCoord,
                                         0).x;
         float currentWeight = xWeight * yWeight;
-        shadowFactor += currentWeight *
+        opaqueFactor += currentWeight *
                               step( normalizedDistanceToLight - slopeCorrection,
                                     shadowDepth);
 
@@ -99,7 +96,49 @@ layout( set = volatileSet,
       xWeight = iTexelCoord.x == iFinishTexel.x ? finishWeights.x : 1.f;
     }
 
-    return shadowFactor / (4 * blurSize.x * blurSize.y);
+    return opaqueFactor / (4 * blurSize.x * blurSize.y);
+  }
+
+  float getTransparentShadowFactor$INDEX$(int layer,
+                                          vec2 centerCoords,
+                                          float normalizedDistanceToLight)
+  {
+    vec3 variadicValues = textureLod( shadowMap$INDEX$[layer],
+                                      centerCoords,
+                                      0).gba;
+    if(variadicValues.z == 0.f) return 1.f;
+
+    float avgDistance = variadicValues.x / variadicValues.z;
+    float avgSqDistance = variadicValues.y / variadicValues.z;
+    float variance2 = avgSqDistance - avgDistance * avgDistance;
+
+    float deviation = normalizedDistanceToLight - avgDistance;
+    float limit = 3.f * sqrt(variance2);
+    float blackout = smoothstep(-limit, limit, deviation);
+
+    blackout *= variadicValues.z;
+
+    return 1.f - blackout;
+  }
+
+  float getShadowFactor$INDEX$( int layer,
+                                vec2 shadowCoords,
+                                float normalizedDistanceToLight,
+                                float slope)
+  {
+    vec4 coordsCorrection = shadowCoordsCorrection$INDEX$.values[layer];
+    vec2 centerCoords = shadowCoords * coordsCorrection.x + coordsCorrection.yz;
+
+    float opaqueFactor = getOpaqueShadowFactor$INDEX$(layer,
+                                                      centerCoords,
+                                                      normalizedDistanceToLight,
+                                                      slope);
+
+    float transparentFactor = getTransparentShadowFactor$INDEX$(
+                                                    layer,
+                                                    centerCoords,
+                                                    normalizedDistanceToLight);
+    return min(opaqueFactor, transparentFactor);
   }
 #endif
 
