@@ -65,14 +65,15 @@ void main()
     float distance = -gl_in[0].gl_Position.z;
     distance -= nearFar.near;
     distance /= nearFar.nearFar;
+    float normalizedSize = size / nearFar.nearFar;
 
-    float nearDistance3 = distance - size / 2.f;
+    float nearDistance3 = distance - normalizedSize / 2.f;
     nearDistance3 = nearDistance3 * nearDistance3 * nearDistance3;
 
-    float farDistance3 = distance + size / 2.f;
+    float farDistance3 = distance + normalizedSize / 2.f;
     farDistance3 = farDistance3 * farDistance3 * farDistance3;
 
-    float sqDistance2 = (farDistance3 - nearDistance3) / 3.f / size;
+    float sqDistance2 = (farDistance3 - nearDistance3) / 3.f / normalizedSize;
 
     vec2 avgDistances = vec2(distance, sqDistance2);
   #endif
