@@ -56,7 +56,7 @@ ShadowmapPass::ShadowmapPass( VkFormat shadowmapFormat,
 
   std::vector<AttachmentDescription> attachments(attachmentNumber);
   attachments[shadowmapAttachmentIndex].attachmentInfo = mapAttachment;
-  attachments[shadowmapAttachmentIndex].clearValue = { 1.f, 1.f, 0.f, 0.f };
+  attachments[shadowmapAttachmentIndex].clearValue = { 1.f, 0.f, 0.f, 0.f };
   attachments[depthAttachmentIndex].attachmentInfo = depthAttachment;
   attachments[depthAttachmentIndex].clearValue.depthStencil = { 0.f, 0 };
 
@@ -86,11 +86,19 @@ ShadowmapPass::ShadowmapPass( VkFormat shadowmapFormat,
   }
   else
   {
-    VkPipelineColorBlendAttachmentState blendingState =
-                                                  accamulateColorBlendingState;
-    blendingState.colorWriteMask = VK_COLOR_COMPONENT_G_BIT |
-                                    VK_COLOR_COMPONENT_B_BIT |
-                                    VK_COLOR_COMPONENT_A_BIT;
+    VkPipelineColorBlendAttachmentState blendingState
+    {
+      VK_TRUE,                              // blendEnable
+      VK_BLEND_FACTOR_SRC_ALPHA,            // srcColorBlendFactor
+      VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,  // dstColorBlendFactor
+      VK_BLEND_OP_ADD,                      // colorBlendOp
+      VK_BLEND_FACTOR_ONE,                  // srcAlphaBlendFactor
+      VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,  // dstAlphaBlendFactor
+      VK_BLEND_OP_ADD,                      // alphaBlendOp
+      VK_COLOR_COMPONENT_G_BIT |            // colorWriteMask;
+       VK_COLOR_COMPONENT_B_BIT |
+       VK_COLOR_COMPONENT_A_BIT
+    };
     subpassInfo.blentAttachments.push_back(blendingState);
   }
   subpasses[0].subpassInfo = subpassInfo;

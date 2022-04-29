@@ -11,14 +11,29 @@ layout( set = volatileSet,
   mat4 projectionMatrix;
 } drawMatrices;
 
+#ifdef SHADOWMAP_OUTPUT
+  layout(binding = nearfarBinding, set = volatileSet) uniform NearFar
+  {
+    float near;
+    float nearFar;
+  } nearFar;
+#endif
+
 layout(location = 0) in vec2 inSizeRotation[];
 layout(location = 1) in vec4 inColor[];
 layout(location = 2) in uint inTextureIndex[];
 layout(location = 3) in uint inTileIndex[];
 
 layout(location = 0) out vec4 outColor;
-layout(location = 1) out flat float outNearDepth;
-layout(location = 2) out flat float outFarDepth;
+
+#ifdef SHADOWMAP_OUTPUT
+  layout(location = 1) out flat vec2 outAvgDistances;
+#else
+  #ifdef DEPTH_SAMPLER_ENABLED
+    layout(location = 1) out flat float outNearDepth;
+    layout(location = 2) out flat float outFarDepth;
+  #endif
+#endif
 
 #ifdef COLOR_SAMPLER_ENABLED
   layout(location = 3) out vec2 outTexCoords;
@@ -46,6 +61,32 @@ void main()
   float angleSin = sin(rotation);
   float angleCos = cos(rotation);
 
+  #ifdef SHADOWMAP_OUTPUT
+    float distance = -gl_in[0].gl_Position.z;
+    distance -= nearFar.near;
+    distance /= nearFar.nearFar;
+
+    float nearDistance3 = distance - size / 2.f;
+    nearDistance3 = nearDistance3 * nearDistance3 * nearDistance3;
+
+    float farDistance3 = distance + size / 2.f;
+    farDistance3 = farDistance3 * farDistance3 * farDistance3;
+
+    float sqDistance2 = (farDistance3 - nearDistance3) / 3.f / size;
+
+    vec2 avgDistances = vec2(distance, sqDistance2);
+  #endif
+
+  #ifdef DEPTH_SAMPLER_ENABLED
+    vec4 center = gl_in[0].gl_Position;
+    vec4 centerProjected = drawMatrices.projectionMatrix * center;
+    float nearDepth = centerProjected.z / centerProjected.w;
+
+    vec4 farProjected = drawMatrices.projectionMatrix *
+                                    (center + vec4(0.f, 0.f, -size / 2.f, 0.f));
+    float farDepth = farProjected.z / farProjected.w;
+  #endif
+
   #ifdef COLOR_SAMPLER_ENABLED
     uint textureExtent = textureExtent[inTextureIndex[0]];
     float texCoordWidth = 1.f / textureExtent;
@@ -53,14 +94,6 @@ void main()
                               inTileIndex[0] / textureExtent);
     texCoordStart *= texCoordWidth;
   #endif
-
-  vec4 center = gl_in[0].gl_Position;
-  vec4 centerProjected = drawMatrices.projectionMatrix * center;
-  float nearDepth = centerProjected.z / centerProjected.w;
-
-  vec4 farProjected = drawMatrices.projectionMatrix *
-                                    (center + vec4(0.f, 0.f, -size / 2.f, 0.f));
-  float farDepth = farProjected.z / farProjected.w;
 
   for(int pointIndex = 3; pointIndex >= 0; pointIndex--)
   {
@@ -72,8 +105,14 @@ void main()
     gl_Position = drawMatrices.projectionMatrix * viewPosition;
     outColor = inColor[0];
 
-    outNearDepth = nearDepth;
-    outFarDepth = farDepth;
+    #ifdef SHADOWMAP_OUTPUT
+      outAvgDistances = avgDistances;
+    #endif
+
+    #ifdef DEPTH_SAMPLER_ENABLED
+      outNearDepth = nearDepth;
+      outFarDepth = farDepth;
+    #endif
 
     #ifdef COLOR_SAMPLER_ENABLED
       outTexCoords = texCoordStart + texCoords[pointIndex] * texCoordWidth;

@@ -3,7 +3,6 @@
 #include <mtt/editorLib/EditorApplication.h>
 
 #include <AsyncTasks/UploadParticleTexturesTask.h>
-#include <Render/ParticlesDrawable.h>
 
 UploadParticleTexturesTask::UploadParticleTexturesTask(
                                 const ParticleTextureDescriptions& descriptions,

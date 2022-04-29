@@ -9,10 +9,11 @@
 #include <mtt/render/Pipeline/VolatileUniform.h>
 #include <mtt/render/PlainBuffer.h>
 
-class DrawParticleAction : public mtt::AbstractAction
+class ColorDrawParticlesAction : public mtt::AbstractAction
 {
 public:
-  DrawParticleAction( mtt::GraphicsPipeline& pipeline,
+  ColorDrawParticlesAction(
+                      mtt::GraphicsPipeline& pipeline,
                       VkViewport viewport,
                       VkRect2D scissor,
                       uint32_t pointsNumber,
@@ -20,9 +21,10 @@ public:
                       mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform,
                       const mtt::DrawMatrices& drawMatrices,
                       mtt::Texture2D& depthSamplerTexture);
-  DrawParticleAction(const DrawParticleAction&) = delete;
-  DrawParticleAction& operator = (const DrawParticleAction&) = delete;
-  virtual ~DrawParticleAction() noexcept = default;
+  ColorDrawParticlesAction(const ColorDrawParticlesAction&) = delete;
+  ColorDrawParticlesAction& operator = (
+                                      const ColorDrawParticlesAction&) = delete;
+  virtual ~ColorDrawParticlesAction() noexcept = default;
 
   virtual void execute(mtt::DrawContext& context) override;
 

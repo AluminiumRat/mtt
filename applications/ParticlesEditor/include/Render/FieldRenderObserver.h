@@ -5,7 +5,7 @@
 #include <mtt/render/SceneGraph/SimpleDrawableNode.h>
 #include <mtt/application/AsyncTasks/AsyncTaskQueue.h>
 
-#include <Render/ParticlesDrawable.h>
+#include <Render/Particles/ParticlesDrawable.h>
 
 class ParticleField;
 

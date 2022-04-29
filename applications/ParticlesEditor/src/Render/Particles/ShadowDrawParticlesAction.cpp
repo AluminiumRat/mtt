@@ -1,8 +1,8 @@
 #include <mtt/clPipeline/RenderPass/ForwardLightPass.h>
 
-#include <Render/DrawParticlesAction.h>
+#include <Render/Particles/ShadowDrawParticlesAction.h>
 
-DrawParticleAction::DrawParticleAction(
+ShadowDrawParticlesAction::ShadowDrawParticlesAction(
                       mtt::GraphicsPipeline& pipeline,
                       VkViewport viewport,
                       VkRect2D scissor,
@@ -10,7 +10,8 @@ DrawParticleAction::DrawParticleAction(
                       mtt::PlainBuffer& indicesBuffer,
                       mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform,
                       const mtt::DrawMatrices& drawMatrices,
-                      mtt::Texture2D& depthSamplerTexture) :
+                      NearFarUniform& nearFarUniform,
+                      NearFarInfo nearfarData) :
   _pipeline(pipeline),
   _viewport(viewport),
   _scissor(scissor),
@@ -18,22 +19,21 @@ DrawParticleAction::DrawParticleAction(
   _indicesBuffer(&indicesBuffer),
   _matricesUniform(matricesUniform),
   _drawMatrices(drawMatrices),
-  _depthSamplerTexture(depthSamplerTexture)
+  _nearFarUniform(nearFarUniform),
+  _nearfarData(nearfarData)
 {
 }
 
-void DrawParticleAction::execute(mtt::DrawContext& context)
+void ShadowDrawParticlesAction::execute(mtt::DrawContext& context)
 {
   _matricesUniform.setValuePtr(&_drawMatrices);
+  _nearFarUniform.setValuePtr(&_nearfarData);
 
   _pipeline.setScissor(_scissor);
   _pipeline.setViewport(_viewport);
 
   constexpr uint32_t depthSamplerIndex =
-                          mtt::clPipeline::ForwardLightPass::depthSamplerIndex;
-
-  _depthSamplerTexture.setImageView(
-                            context.frameBuffer->samplerMap(depthSamplerIndex));
+                        mtt::clPipeline::ForwardLightPass::depthSamplerIndex;
 
   _pipeline.scheduleBind(context.drawProducer);
   _pipeline.indices().scheduleBindData(*_indicesBuffer, context.drawProducer);

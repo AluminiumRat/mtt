@@ -9,7 +9,7 @@
 #include <mtt/render/Pipeline/Texture2D.h>
 
 #include <Objects/ParticleTextureDescription.h>
-#include <Render/ParticlesDrawable.h>
+#include <Render/Particles/ParticlesDrawable.h>
 
 class UploadParticleTexturesTask : public mtt::AbstractAsyncTask
 {
