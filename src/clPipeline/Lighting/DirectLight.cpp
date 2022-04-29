@@ -73,8 +73,8 @@ Sampler& DirectLight::getOrCreateShdowmapSampler()
                                           layerIndex);
     }
 
-    _shadowmapSampler->setMinFilter(VK_FILTER_NEAREST);
-    _shadowmapSampler->setMagFilter(VK_FILTER_NEAREST);
+    _shadowmapSampler->setMinFilter(VK_FILTER_LINEAR);
+    _shadowmapSampler->setMagFilter(VK_FILTER_LINEAR);
     _shadowmapSampler->setMipmapMode(VK_SAMPLER_MIPMAP_MODE_NEAREST);
     _shadowmapSampler->setAddressModeU(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
     _shadowmapSampler->setAddressModeV(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
