@@ -30,7 +30,9 @@ protected:
             mtt::GraphicsPipeline& pipeline,
             uint32_t pointsNumber,
             mtt::PlainBuffer& indices,
-            mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform) override;
+            mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform,
+            mtt::VolatileUniform<glm::vec2>& falloffUniform,
+            glm::vec2 falloffValue) override;
 
 private:
   NearFarUniform _nearFarUniform;

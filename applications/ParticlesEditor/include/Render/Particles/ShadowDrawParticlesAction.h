@@ -26,7 +26,9 @@ public:
                       mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform,
                       const mtt::DrawMatrices& drawMatrices,
                       NearFarUniform& nearFarUniform,
-                      NearFarInfo nearfarData);
+                      NearFarInfo nearfarData,
+                      mtt::VolatileUniform<glm::vec2>& falloffUniform,
+                      glm::vec2 falloffValue);
   ShadowDrawParticlesAction(const ShadowDrawParticlesAction&) = delete;
   ShadowDrawParticlesAction& operator = (
                                     const ShadowDrawParticlesAction&) = delete;
@@ -44,4 +46,6 @@ private:
   mtt::DrawMatrices _drawMatrices;
   NearFarUniform& _nearFarUniform;
   NearFarInfo _nearfarData;
+  mtt::VolatileUniform<glm::vec2>& _falloffUniform;
+  glm::vec2 _falloffValue;
 };

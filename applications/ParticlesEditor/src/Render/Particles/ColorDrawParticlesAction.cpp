@@ -10,6 +10,8 @@ ColorDrawParticlesAction::ColorDrawParticlesAction(
                       mtt::PlainBuffer& indicesBuffer,
                       mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform,
                       const mtt::DrawMatrices& drawMatrices,
+                      mtt::VolatileUniform<glm::vec2>& falloffUniform,
+                      glm::vec2 falloffValue,
                       mtt::Texture2D& depthSamplerTexture) :
   _pipeline(pipeline),
   _viewport(viewport),
@@ -18,6 +20,8 @@ ColorDrawParticlesAction::ColorDrawParticlesAction(
   _indicesBuffer(&indicesBuffer),
   _matricesUniform(matricesUniform),
   _drawMatrices(drawMatrices),
+  _falloffUniform(falloffUniform),
+  _falloffValue(falloffValue),
   _depthSamplerTexture(depthSamplerTexture)
 {
 }
@@ -25,6 +29,7 @@ ColorDrawParticlesAction::ColorDrawParticlesAction(
 void ColorDrawParticlesAction::execute(mtt::DrawContext& context)
 {
   _matricesUniform.setValuePtr(&_drawMatrices);
+  _falloffUniform.setValuePtr(&_falloffValue);
 
   _pipeline.setScissor(_scissor);
   _pipeline.setViewport(_viewport);

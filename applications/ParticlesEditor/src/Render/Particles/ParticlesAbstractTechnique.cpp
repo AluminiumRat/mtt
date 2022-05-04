@@ -68,10 +68,19 @@ void ParticlesAbstractTechnique::_rebuildPipeline(
     tileIndexAtribute.adjustDataType(mtt::VertexAttribute::UINT32_TYPE);
     tileIndexAtribute.attachBuffer(&_commonData.tileIndexBuffer);
 
+    mtt::VertexAttribute& falloffDistanceAtribute =
+                    _pipeline->getOrCreateAttribute("falloffDistanceLocation");
+    falloffDistanceAtribute.adjustDataType(mtt::VertexAttribute::FLOAT_TYPE);
+    falloffDistanceAtribute.attachBuffer(&_commonData.falloffDistanceBuffer);
+
     _pipeline->addResource( mtt::DrawMatrices::bindingName,
                             _matricesUniform,
                             VK_SHADER_STAGE_VERTEX_BIT |
                               VK_SHADER_STAGE_GEOMETRY_BIT);
+
+    _pipeline->addResource( "falloffBinding",
+                            _fallofUniform,
+                            VK_SHADER_STAGE_VERTEX_BIT);
 
     if (_commonData.textureSampler.has_value())
     {
@@ -111,33 +120,56 @@ void ParticlesAbstractTechnique::addToDrawPlan(
   mtt::DrawBin* renderBin = buildInfo.currentFramePlan->getBin(_stage);
   if (renderBin == nullptr) mtt::Abort("ParticlesAbstractTechnique::buildDrawActions: render bin is not supported.");
 
-  mtt::Ref<mtt::PlainBuffer> indices =
-                                  _makeIndices(buildInfo, renderPass->device());
+  IndicesData indices = _makeIndices(buildInfo, renderPass->device());
+  if(indices.pointsNumber == 0) return;
+
+  glm::vec2 falloffValue( _commonData.falloffBaseDistance,
+                          _commonData.falloffBaseDistance *
+                                            (1.f + _commonData.falloffLength));
 
   buildDrawAction(*renderBin,
                   buildInfo,
                   *_pipeline,
-                  _commonData.particlesNumber,
-                  *indices,
-                  _matricesUniform);
+                  indices.pointsNumber,
+                  *indices.buffer,
+                  _matricesUniform,
+                  _fallofUniform,
+                  falloffValue);
 }
 
-mtt::Ref<mtt::PlainBuffer> ParticlesAbstractTechnique::_makeIndices(
-                                  const mtt::DrawPlanBuildInfo& buildInfo,
-                                  mtt::LogicalDevice& device) const
+ParticlesAbstractTechnique::IndicesData
+                            ParticlesAbstractTechnique::_makeIndices(
+                                        const mtt::DrawPlanBuildInfo& buildInfo,
+                                        mtt::LogicalDevice& device) const
 {
+  float baseFallofFinish =
+            _commonData.falloffBaseDistance * (1.f + _commonData.falloffLength);
+
   std::vector<float> distances;
   distances.reserve(_commonData.positionsData.size());
-  for (const glm::vec3& position : _commonData.positionsData)
-  {
-    distances.push_back(buildInfo.distanceToPoint(position));
-  }
-
   std::vector<uint16_t> indicesData;
   indicesData.reserve(_commonData.positionsData.size());
-  for(uint16_t i = 0; i < _commonData.particlesNumber; i++)
+
+  for(uint16_t particleIndex = 0;
+      particleIndex < _commonData.particlesNumber;
+      particleIndex++)
   {
-    indicesData.push_back(i);
+    glm::vec3 particlePosition = _commonData.positionsData[particleIndex];
+    float distance = buildInfo.distanceToPoint(particlePosition);
+
+    distances.push_back(distance);
+
+    float falloffFinish =
+              _commonData.falloffDistanceData[particleIndex] * baseFallofFinish;
+    if(distance > falloffFinish) continue;
+
+    indicesData.push_back(particleIndex);
+  }
+
+  if (indicesData.size() == 0)
+  {
+    return IndicesData{ mtt::Ref<mtt::PlainBuffer>(), // buffer
+                        0 };                          // pointsNumber
   }
 
   std::sort(indicesData.begin(),
@@ -152,8 +184,11 @@ mtt::Ref<mtt::PlainBuffer> ParticlesAbstractTechnique::_makeIndices(
                                           indicesData.size() * sizeof(uint16_t),
                                           VMA_MEMORY_USAGE_CPU_TO_GPU,
                                           VK_BUFFER_USAGE_INDEX_BUFFER_BIT));
+
   indexBuffer->uploadData(indicesData.data(),
                           0,
                           indicesData.size() * sizeof(uint16_t));
-  return indexBuffer;
+
+  return IndicesData{ indexBuffer,          // buffer
+                      indicesData.size()};  // pointsNumber
 }

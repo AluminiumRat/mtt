@@ -11,7 +11,9 @@ ShadowDrawParticlesAction::ShadowDrawParticlesAction(
                       mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform,
                       const mtt::DrawMatrices& drawMatrices,
                       NearFarUniform& nearFarUniform,
-                      NearFarInfo nearfarData) :
+                      NearFarInfo nearfarData,
+                      mtt::VolatileUniform<glm::vec2>& falloffUniform,
+                      glm::vec2 falloffValue) :
   _pipeline(pipeline),
   _viewport(viewport),
   _scissor(scissor),
@@ -20,7 +22,9 @@ ShadowDrawParticlesAction::ShadowDrawParticlesAction(
   _matricesUniform(matricesUniform),
   _drawMatrices(drawMatrices),
   _nearFarUniform(nearFarUniform),
-  _nearfarData(nearfarData)
+  _nearfarData(nearfarData),
+  _falloffUniform(falloffUniform),
+  _falloffValue(falloffValue)
 {
 }
 
@@ -28,6 +32,7 @@ void ShadowDrawParticlesAction::execute(mtt::DrawContext& context)
 {
   _matricesUniform.setValuePtr(&_drawMatrices);
   _nearFarUniform.setValuePtr(&_nearfarData);
+  _falloffUniform.setValuePtr(&_falloffValue);
 
   _pipeline.setScissor(_scissor);
   _pipeline.setViewport(_viewport);

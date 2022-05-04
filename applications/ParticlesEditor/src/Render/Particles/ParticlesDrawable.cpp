@@ -18,13 +18,15 @@ void ParticlesDrawable::setData(const std::vector<glm::vec3>& positionData,
                                 const std::vector<glm::vec4>& albedoData,
                                 const std::vector<glm::vec4>& emissionData,
                                 const std::vector<uint32_t>& textureIndexData,
-                                const std::vector<uint32_t>& tileIndexData)
+                                const std::vector<uint32_t>& tileIndexData,
+                                const std::vector<float>& falloffDistanceData)
 {
   if( positionData.size() != sizeRotationData.size() ||
       positionData.size() != albedoData.size() ||
       positionData.size() != emissionData.size() ||
       positionData.size() != textureIndexData.size() ||
-      positionData.size() != tileIndexData.size() ) mtt::Abort("ParticlesDrawable::setData: data vectors have different sizes");
+      positionData.size() != tileIndexData.size() ||
+      positionData.size() != falloffDistanceData.size()) mtt::Abort("ParticlesDrawable::setData: data vectors have different sizes");
 
   _commonData.particlesNumber = 0;
 
@@ -46,8 +48,11 @@ void ParticlesDrawable::setData(const std::vector<glm::vec3>& positionData,
                                           particlesNumber * sizeof(uint32_t));
   _commonData.tileIndexBuffer.setData(tileIndexData.data(),
                                       particlesNumber * sizeof(uint32_t));
+  _commonData.falloffDistanceBuffer.setData(falloffDistanceData.data(),
+                                            particlesNumber * sizeof(float));
 
   _commonData.positionsData = positionData;
+  _commonData.falloffDistanceData = falloffDistanceData;
   _commonData.particlesNumber = particlesNumber;
 }
 
@@ -84,6 +89,16 @@ void ParticlesDrawable::setParticleTextures(
     _commonData.textureSampler.reset();
     throw;
   }
+}
+
+void ParticlesDrawable::setFalloffBaseDistance(float newValue) noexcept
+{
+  _commonData.falloffBaseDistance = std::max(newValue, 0.f);
+}
+
+void ParticlesDrawable::setFalloffLength(float newValue) noexcept
+{
+  _commonData.falloffLength = std::max(newValue, 0.f);
 }
 
 void ParticlesDrawable::buildDrawActions(mtt::DrawPlanBuildInfo& buildInfo)

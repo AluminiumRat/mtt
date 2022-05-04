@@ -37,19 +37,28 @@ protected:
                   mtt::GraphicsPipeline& pipeline,
                   uint32_t pointsNumber,
                   mtt::PlainBuffer& indices,
-                  mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform) = 0;
+                  mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform,
+                  mtt::VolatileUniform<glm::vec2>& falloffUniform,
+                  glm::vec2 falloffValue) = 0;
 
 private:
   std::string _makeTextureExtentDefine() const;
   void _rebuildPipeline(mtt::AbstractRenderPass& renderPass);
-  mtt::Ref<mtt::PlainBuffer> _makeIndices(
-                              const mtt::DrawPlanBuildInfo& buildInfo,
-                              mtt::LogicalDevice& device) const;
+
+  struct IndicesData
+  {
+    mtt::Ref<mtt::PlainBuffer> buffer;
+    size_t pointsNumber;
+  };
+
+  IndicesData _makeIndices( const mtt::DrawPlanBuildInfo& buildInfo,
+                            mtt::LogicalDevice& device) const;
 
 private:
   ParticlesDrawCommonData& _commonData;
   mtt::StageIndex _stage;
   mtt::VolatileUniform<mtt::DrawMatrices> _matricesUniform;
+  mtt::VolatileUniform<glm::vec2> _fallofUniform;
   std::optional<mtt::GraphicsPipeline> _pipeline;
 };
 

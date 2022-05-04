@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <random>
 #include <stdexcept>
 
 #include <mtt/clPipeline/MeshTechniques/InstrumentalCompositeTechnique.h>
@@ -17,6 +18,13 @@ FieldRenderObserver::FieldRenderObserver( ParticleField& object,
   Object3DRenderObserver(object, commonData),
   _field(object)
 {
+  std::default_random_engine randomEngine;
+  std::uniform_real_distribution<float> distribution(0.001f, 1.f);
+  for (float& tableRecord : _randomTable)
+  {
+    tableRecord = distribution(randomEngine);
+  }
+
   registerCulledDrawable(_hullNode);
   fullTransformJoint().addChild(_hullNode);
   _hullNode.addModificator(visibleFilter());
@@ -100,6 +108,9 @@ void FieldRenderObserver::_updateParticles() noexcept
   std::vector<uint32_t> tileIndices;
   tileIndices.reserve(pointsNumber);
 
+  std::vector<float> falloffDistances;
+  falloffDistances.reserve(pointsNumber);
+
   for (ParticleField::ParticleIndex index : _field.workIndices())
   {
     ParticleField::ParticleData particle = _field.particlesData()[index];
@@ -114,6 +125,7 @@ void FieldRenderObserver::_updateParticles() noexcept
                 glm::vec4(particle.emission * particle.visibilityFactor, 1.f));
     textureIndices.push_back(particle.textureIndex);
     tileIndices.push_back(particle.tileIndex);
+    falloffDistances.push_back(1.f / _randomTable[index % 256]);
   }
 
   _particlesDrawable.setData( positions,
@@ -121,7 +133,8 @@ void FieldRenderObserver::_updateParticles() noexcept
                               albedo,
                               emission,
                               textureIndices,
-                              tileIndices);
+                              tileIndices,
+                              falloffDistances);
 }
 
 void FieldRenderObserver::_updateTextures() noexcept
