@@ -10,7 +10,8 @@ ParticlesColorTechnique::ParticlesColorTechnique(
                                       ParticlesDrawCommonData& commonData,
                                       mtt::AreaModificatorSet& modificatorSet) :
   ParticlesAbstractTechnique( commonData,
-                              mtt::clPipeline::forwardLightStage),
+                              mtt::clPipeline::forwardLightStage,
+                              1),
   _modificatorSet(modificatorSet)
 {
   for (mtt::AreaModificator* modificator : _modificatorSet.modificators())

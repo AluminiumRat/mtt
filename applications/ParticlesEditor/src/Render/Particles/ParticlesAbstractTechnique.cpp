@@ -4,10 +4,13 @@
 
 ParticlesAbstractTechnique::ParticlesAbstractTechnique(
                                       ParticlesDrawCommonData& commonData,
-                                      mtt::StageIndex stage) :
+                                      mtt::StageIndex stage,
+                                      uint8_t thinningFactor) :
   _commonData(commonData),
-  _stage(stage)
+  _stage(stage),
+  _thinningFactor(thinningFactor)
 {
+  if(_thinningFactor == 0) _thinningFactor = 1;
 }
 
 void ParticlesAbstractTechnique::clearPipeline() noexcept
@@ -94,6 +97,10 @@ void ParticlesAbstractTechnique::_rebuildPipeline(
       _pipeline->setDefine("EXTENT_DEFINE", _makeTextureExtentDefine());
     }
 
+    _pipeline->setDefine("THINNING_FACTOR", std::to_string(_thinningFactor));
+    //float baseSizeFactor = sqrt(float(_thinningFactor));
+    //_pipeline->setDefine("BASE_SIZE_FACTOR", std::to_string(baseSizeFactor));
+
     _pipeline->setTopology(VK_PRIMITIVE_TOPOLOGY_POINT_LIST);
     _pipeline->indices().setType(VK_INDEX_TYPE_UINT16);
 
@@ -162,6 +169,9 @@ ParticlesAbstractTechnique::IndicesData
     float falloffFinish =
               _commonData.falloffDistanceData[particleIndex] * baseFallofFinish;
     if(distance > falloffFinish) continue;
+
+    uint8_t tag = _commonData.tagData[particleIndex];
+    if(tag % _thinningFactor != 0) continue;
 
     indicesData.push_back(particleIndex);
   }

@@ -19,10 +19,10 @@ FieldRenderObserver::FieldRenderObserver( ParticleField& object,
   _field(object)
 {
   std::default_random_engine randomEngine;
-  std::uniform_real_distribution<float> distribution(0.001f, 1.f);
-  for (float& tableRecord : _randomTable)
+  std::uniform_int_distribution<int> distribution(0, 255);
+  for (uint8_t& value : _randomTable)
   {
-    tableRecord = distribution(randomEngine);
+    value = uint8_t(distribution(randomEngine));
   }
 
   registerCulledDrawable(_hullNode);
@@ -108,8 +108,8 @@ void FieldRenderObserver::_updateParticles() noexcept
   std::vector<uint32_t> tileIndices;
   tileIndices.reserve(pointsNumber);
 
-  std::vector<float> falloffDistances;
-  falloffDistances.reserve(pointsNumber);
+  std::vector<uint8_t> tagValues;
+  tagValues.reserve(pointsNumber);
 
   for (ParticleField::ParticleIndex index : _field.workIndices())
   {
@@ -125,7 +125,7 @@ void FieldRenderObserver::_updateParticles() noexcept
                 glm::vec4(particle.emission * particle.visibilityFactor, 1.f));
     textureIndices.push_back(particle.textureIndex);
     tileIndices.push_back(particle.tileIndex);
-    falloffDistances.push_back(1.f / _randomTable[index % 256]);
+    tagValues.push_back(_randomTable[index % 256]);
   }
 
   _particlesDrawable.setData( positions,
@@ -134,7 +134,7 @@ void FieldRenderObserver::_updateParticles() noexcept
                               emission,
                               textureIndices,
                               tileIndices,
-                              falloffDistances);
+                              tagValues);
 }
 
 void FieldRenderObserver::_updateTextures() noexcept

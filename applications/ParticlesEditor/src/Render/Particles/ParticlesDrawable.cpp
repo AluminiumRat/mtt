@@ -1,4 +1,5 @@
 #include <limits>
+#include <random>
 
 #include <mtt/application/Application.h>
 #include <mtt/clPipeline/constants.h>
@@ -11,6 +12,12 @@ ParticlesDrawable::ParticlesDrawable() :
   _colorTechnique(_commonData),
   _shadowmapTechnique(_commonData)
 {
+  std::default_random_engine randomEngine;
+  std::uniform_real_distribution<float> distribution(0.001f, 1.f);
+  for (float& value : _randomDistancesTable)
+  {
+    value = 1.f / distribution(randomEngine);
+  }
 }
 
 void ParticlesDrawable::setData(const std::vector<glm::vec3>& positionData,
@@ -19,14 +26,14 @@ void ParticlesDrawable::setData(const std::vector<glm::vec3>& positionData,
                                 const std::vector<glm::vec4>& emissionData,
                                 const std::vector<uint32_t>& textureIndexData,
                                 const std::vector<uint32_t>& tileIndexData,
-                                const std::vector<float>& falloffDistanceData)
+                                const std::vector<uint8_t>& tagData)
 {
   if( positionData.size() != sizeRotationData.size() ||
       positionData.size() != albedoData.size() ||
       positionData.size() != emissionData.size() ||
       positionData.size() != textureIndexData.size() ||
       positionData.size() != tileIndexData.size() ||
-      positionData.size() != falloffDistanceData.size()) mtt::Abort("ParticlesDrawable::setData: data vectors have different sizes");
+      positionData.size() != tagData.size()) mtt::Abort("ParticlesDrawable::setData: data vectors have different sizes");
 
   _commonData.particlesNumber = 0;
 
@@ -35,6 +42,16 @@ void ParticlesDrawable::setData(const std::vector<glm::vec3>& positionData,
 
   particlesNumber = std::min( particlesNumber,
                               size_t(std::numeric_limits<uint16_t>::max()));
+
+  std::vector<float> falloffDistanceData;
+  falloffDistanceData.reserve(particlesNumber);
+  for ( size_t particleIndex = 0;
+        particleIndex < particlesNumber;
+        particleIndex++)
+  {
+    falloffDistanceData.push_back(
+                                _randomDistancesTable[tagData[particleIndex]]);
+  }
 
   _commonData.positionBuffer.setData( positionData.data(),
                                       particlesNumber * sizeof(glm::vec3));
@@ -52,7 +69,8 @@ void ParticlesDrawable::setData(const std::vector<glm::vec3>& positionData,
                                             particlesNumber * sizeof(float));
 
   _commonData.positionsData = positionData;
-  _commonData.falloffDistanceData = falloffDistanceData;
+  _commonData.falloffDistanceData = std::move(falloffDistanceData);
+  _commonData.tagData = tagData;
   _commonData.particlesNumber = particlesNumber;
 }
 

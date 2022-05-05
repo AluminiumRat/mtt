@@ -52,9 +52,7 @@ void main()
   outColor.rgb += inEmission.rgb;
 
   vec2 falloffDistances = falloffBase.value * inFalloffDistance;
-
   float distanceToParticle = length(viewCoord);
-
   outColor *= 1.f - smoothstep( falloffDistances.x,
                                 falloffDistances.y,
                                 distanceToParticle);

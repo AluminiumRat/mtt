@@ -33,8 +33,7 @@ public:
   /// y component of sizeRotation is rotation of particle in radians
   /// albedoData contains premultipled rgba color value with opacity
   /// emissionData uses only rgb components
-  /// falloffDistanceData contains fallof distances normalized to
-  /// baseFallofDistance
+  /// tagData is used to smooth degradation and must be random number.
   /// If particlesNumber != 0 then all pointers must not be nullptr
   void setData( const std::vector<glm::vec3>& positionData,
                 const std::vector<glm::vec2>& sizeRotationData,
@@ -42,7 +41,7 @@ public:
                 const std::vector<glm::vec4>& emissionData,
                 const std::vector<uint32_t>& textureIndexData,
                 const std::vector<uint32_t>& tileIndexData,
-                const std::vector<float>& falloffDistanceData);
+                const std::vector<uint8_t>& tagData);
 
   void setParticleTextures(const std::vector<TextureData>& textures);
 
@@ -62,6 +61,7 @@ private:
   ParticlesDrawCommonData _commonData;
   ParticlesProxyTechnique _colorTechnique;
   ParticlesShadowmapTechnique _shadowmapTechnique;
+  float _randomDistancesTable[256];
 };
 
 inline float ParticlesDrawable::falloffBaseDistance() const noexcept

@@ -39,6 +39,7 @@ public:
   std::vector<TextureData> textureData;
   std::vector<glm::vec3> positionsData;
   std::vector<float> falloffDistanceData;
+  std::vector<uint8_t> tagData;
 
   float falloffBaseDistance;
   float falloffLength;

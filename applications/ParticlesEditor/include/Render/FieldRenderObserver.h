@@ -32,7 +32,7 @@ private:
   ParticlesDrawable _particlesDrawable;
   mtt::SimpleDrawableNode _particlesNode;
 
-  float _randomTable[256];
+  uint8_t _randomTable[256];
 
   std::unique_ptr<mtt::AsyncTaskQueue::TaskStopper> _uploadTextureStopper;
 };

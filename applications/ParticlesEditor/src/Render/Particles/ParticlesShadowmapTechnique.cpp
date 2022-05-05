@@ -6,7 +6,8 @@
 ParticlesShadowmapTechnique::ParticlesShadowmapTechnique(
                                           ParticlesDrawCommonData& commonData) :
   ParticlesAbstractTechnique( commonData,
-                              mtt::clPipeline::transparentShadowmapStage)
+                              mtt::clPipeline::transparentShadowmapStage,
+                              10)
 {
 }
 

@@ -16,7 +16,8 @@ class ParticlesAbstractTechnique : public mtt::AbstractMeshTechnique
 {
 public:
   ParticlesAbstractTechnique( ParticlesDrawCommonData& commonData,
-                              mtt::StageIndex stage);
+                              mtt::StageIndex stage,
+                              uint8_t thinningFactor);
   ParticlesAbstractTechnique(const ParticlesAbstractTechnique&) = delete;
   ParticlesAbstractTechnique& operator = (
                                     const ParticlesAbstractTechnique&) = delete;
@@ -57,6 +58,7 @@ private:
 private:
   ParticlesDrawCommonData& _commonData;
   mtt::StageIndex _stage;
+  uint8_t _thinningFactor;
   mtt::VolatileUniform<mtt::DrawMatrices> _matricesUniform;
   mtt::VolatileUniform<glm::vec2> _fallofUniform;
   std::optional<mtt::GraphicsPipeline> _pipeline;
