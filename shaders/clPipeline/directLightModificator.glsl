@@ -110,7 +110,7 @@ layout( set = volatileSet,
 
     float avgDistance = variadicValues.x / variadicValues.z;
     float avgSqDistance = variadicValues.y / variadicValues.z;
-    float variance2 = avgSqDistance - avgDistance * avgDistance;
+    float variance2 = max(avgSqDistance - avgDistance * avgDistance, 0.f);
 
     float deviation = normalizedDistanceToLight - avgDistance;
     float limit = 3.f * sqrt(variance2);
