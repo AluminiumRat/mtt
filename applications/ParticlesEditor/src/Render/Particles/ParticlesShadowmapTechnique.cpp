@@ -7,7 +7,7 @@ ParticlesShadowmapTechnique::ParticlesShadowmapTechnique(
                                           ParticlesDrawCommonData& commonData) :
   ParticlesAbstractTechnique( commonData,
                               mtt::clPipeline::transparentShadowmapStage,
-                              10)
+                              3)
 {
 }
 
@@ -21,10 +21,6 @@ void ParticlesShadowmapTechnique::adjustPipeline(
                                               mtt::ShaderModule::VERTEX_SHADER,
                                               device));
   vertexShader->newFragment().loadFromFile("particles.vert");
-  vertexShader->setDefine("MODIFICATOR_DECLARATION", "");
-  vertexShader->setDefine("APPLY_POSTEFFECT", "");
-  vertexShader->setDefine("APPLY_AMBIENT_WEIGHT", "");
-  vertexShader->setDefine("APPLY_LIGHT", "");
   pipeline.addShader(std::move(vertexShader));
 
   std::unique_ptr<mtt::ShaderModule> geometryShader(
@@ -38,14 +34,14 @@ void ParticlesShadowmapTechnique::adjustPipeline(
                                     new mtt::ShaderModule(
                                             mtt::ShaderModule::FRAGMENT_SHADER,
                                             device));
-  fragmentShader->newFragment().loadFromFile("particles.frag");
+  fragmentShader->newFragment().loadFromFile("particlesShadow.frag");
   pipeline.addShader(std::move(fragmentShader));
-
-  pipeline.setDefine("SHADOWMAP_OUTPUT");
 
   pipeline.addResource( "nearfarBinding",
                         _nearFarUniform,
                         VK_SHADER_STAGE_GEOMETRY_BIT);
+
+  pipeline.setDefine("SHADOWMAP_OUTPUT");
 }
 
 void ParticlesShadowmapTechnique::buildDrawAction(

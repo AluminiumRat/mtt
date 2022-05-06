@@ -102,13 +102,14 @@ void ParticlesColorTechnique::adjustPipeline(mtt::GraphicsPipeline& pipeline)
                                     new mtt::ShaderModule(
                                             mtt::ShaderModule::FRAGMENT_SHADER,
                                             device));
-  fragmentShader->newFragment().loadFromFile("particles.frag");
+  fragmentShader->newFragment().loadFromFile("particlesColor.frag");
   pipeline.addShader(std::move(fragmentShader));
 
-  pipeline.setDefine("DEPTH_SAMPLER_ENABLED");
   pipeline.addResource( "depthSamplerBinding",
                         commonData().depthSampler,
                         VK_SHADER_STAGE_FRAGMENT_BIT);
+
+  pipeline.setDefine("COLOR_OUTPUT");
 }
 
 void ParticlesColorTechnique::buildDrawAction(

@@ -97,9 +97,10 @@ void ParticlesAbstractTechnique::_rebuildPipeline(
       _pipeline->setDefine("EXTENT_DEFINE", _makeTextureExtentDefine());
     }
 
-    _pipeline->setDefine("THINNING_FACTOR", std::to_string(_thinningFactor));
-    //float baseSizeFactor = sqrt(float(_thinningFactor));
-    //_pipeline->setDefine("BASE_SIZE_FACTOR", std::to_string(baseSizeFactor));
+    if(_thinningFactor > 1.f)
+    {
+      _pipeline->setDefine("THINNING_FACTOR", std::to_string(_thinningFactor));
+    }
 
     _pipeline->setTopology(VK_PRIMITIVE_TOPOLOGY_POINT_LIST);
     _pipeline->indices().setType(VK_INDEX_TYPE_UINT16);

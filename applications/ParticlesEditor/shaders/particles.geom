@@ -29,7 +29,7 @@ layout(location = 0) out vec4 outColor;
 #ifdef SHADOWMAP_OUTPUT
   layout(location = 1) out flat vec2 outAvgDistances;
 #else
-  #ifdef DEPTH_SAMPLER_ENABLED
+  #ifdef COLOR_OUTPUT
     layout(location = 1) out flat float outNearDepth;
     layout(location = 2) out flat float outFarDepth;
   #endif
@@ -78,7 +78,7 @@ void main()
     vec2 avgDistances = vec2(distance, sqDistance2);
   #endif
 
-  #ifdef DEPTH_SAMPLER_ENABLED
+  #ifdef COLOR_OUTPUT
     vec4 center = gl_in[0].gl_Position;
     vec4 centerProjected = drawMatrices.projectionMatrix * center;
     float nearDepth = centerProjected.z / centerProjected.w;
@@ -110,7 +110,7 @@ void main()
       outAvgDistances = avgDistances;
     #endif
 
-    #ifdef DEPTH_SAMPLER_ENABLED
+    #ifdef COLOR_OUTPUT
       outNearDepth = nearDepth;
       outFarDepth = farDepth;
     #endif

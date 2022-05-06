@@ -28,34 +28,46 @@ layout(location = 1) out vec4 outColor;
 layout(location = 2) out flat uint outTextureIndex;
 layout(location = 3) out flat uint outTileIndex;
 
-MODIFICATOR_DECLARATION
+#ifdef COLOR_OUTPUT
+  MODIFICATOR_DECLARATION
 
-vec3 viewCoord;
-float overallAmbientWeight = 0.f;
+  vec3 viewCoord;
+  float overallAmbientWeight = 0.f;
 
-vec3 totalIlluminance = vec3(0.f, 0.f, 0.f);
-void applyLight(vec3 illuminance)
-{
-  totalIlluminance += illuminance;
-}
+  vec3 totalIlluminance = vec3(0.f, 0.f, 0.f);
+  void applyLight(vec3 illuminance)
+  {
+    totalIlluminance += illuminance;
+  }
+#endif
 
 void main()
 {
   gl_Position = drawMatrices.localToViewMatrix * vec4(inPosition, 1.f);
-  viewCoord = gl_Position.xyz;
-
-  APPLY_AMBIENT_WEIGHT
-  APPLY_LIGHT
 
   outColor = inAlbedo;
-  outColor.rgb *= totalIlluminance / M_PI;
-  outColor.rgb += inEmission.rgb;
+
+  #ifdef COLOR_OUTPUT
+    viewCoord = gl_Position.xyz;
+
+    APPLY_AMBIENT_WEIGHT
+    APPLY_LIGHT
+
+    outColor.rgb *= totalIlluminance / M_PI;
+    outColor.rgb += inEmission.rgb;
+  #endif
 
   vec2 falloffDistances = falloffBase.value * inFalloffDistance;
-  float distanceToParticle = length(viewCoord);
+  float distanceToParticle = length(gl_Position.xyz);
   outColor *= 1.f - smoothstep( falloffDistances.x,
                                 falloffDistances.y,
                                 distanceToParticle);
+
+  #ifdef THINNING_FACTOR
+    float transparency = 1.f - outColor.a;
+    transparency = pow(transparency, THINNING_FACTOR);
+    outColor.a = 1.f - transparency;
+  #endif
 
   float sizeFalloffFactor = sqrt(distanceToParticle / falloffBase.value.x);
   outSizeRotation = inSizeRotation;
@@ -64,5 +76,7 @@ void main()
   outTextureIndex = inTextureIndex;
   outTileIndex = inTileIndex;
 
-  APPLY_POSTEFFECT
+  #ifdef COLOR_OUTPUT
+    APPLY_POSTEFFECT
+  #endif
 }
