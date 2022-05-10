@@ -23,6 +23,8 @@ private:
   void _updateSize() noexcept;
   void _updateParticles() noexcept;
   void _updateTextures() noexcept;
+  void _updateLodMppx() noexcept;
+  void _updateLodSmoothing() noexcept;
 
 private:
   ParticleField& _field;

@@ -49,6 +49,15 @@ namespace mtt
                                               /// clip distance.
   };
 
+  /// mppx = frondDistance * slope + intercept
+  struct MppxDistanceFunction
+  {
+    alignas(4) float intercept;
+    alignas(4) float slope;
+
+    inline float mppx(float distance) const noexcept;
+  };
+
   /// All info in current view space
   struct ViewInfo
   {
@@ -74,6 +83,8 @@ namespace mtt
 
     ///Meter per pixel ratio
     inline float mppx(const glm::vec3& point) const noexcept;
+
+    inline MppxDistanceFunction mppxFunction() const noexcept;
   };
 
   struct DrawPlanBuildInfo
@@ -141,6 +152,11 @@ namespace mtt
                                         const glm::vec3& point) const noexcept;
   };
 
+  inline float MppxDistanceFunction::mppx(float distance) const noexcept
+  {
+    return distance * slope + intercept;
+  }
+
   inline float ViewInfo::distanceToPoint(const glm::vec3& point) const noexcept
   {
     return glm::length(point - viewPosition);
@@ -189,6 +205,24 @@ namespace mtt
                                       (farCameraDistance - nearCameraDistance);
 
     return glm::mix(screenSizeInfo.nearMppx, screenSizeInfo.farMppx, rate);
+  }
+
+  inline MppxDistanceFunction ViewInfo::mppxFunction() const noexcept
+  {
+    MppxDistanceFunction result;
+    if (nearCameraDistance == farCameraDistance)
+    {
+      result.intercept = screenSizeInfo.nearMppx;
+      result.slope = 0.f;
+    }
+    else
+    {
+      result.slope = (screenSizeInfo.farMppx - screenSizeInfo.nearMppx) /
+                                      (farCameraDistance - nearCameraDistance);
+      result.intercept =
+                    screenSizeInfo.nearMppx - result.slope * nearCameraDistance;
+    }
+    return result;
   }
 
   inline glm::vec3 DrawPlanBuildInfo::viewSpacePoint(

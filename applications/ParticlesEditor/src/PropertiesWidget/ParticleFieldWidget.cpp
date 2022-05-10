@@ -87,7 +87,19 @@ ParticleFieldWidget::ParticleFieldWidget( ParticleField& object,
           &ParticleFieldWidget::_moveTextureDown,
           Qt::DirectConnection);
 
-  adjustSize();
+  _lodMppxConnection.emplace( *_ui->lodMppxSpin,
+                              object,
+                              &ParticleField::lodMppx,
+                              &ParticleField::setLodMppx,
+                              &ParticleField::lodMppxChanged,
+                              undoStack);
+
+  _lodSmoothingConnection.emplace(*_ui->lodSmoothingSpin,
+                                  object,
+                                  &ParticleField::lodSmoothing,
+                                  &ParticleField::setLodSmoothing,
+                                  &ParticleField::lodSmoothingChanged,
+                                  undoStack);
 }
 
 ParticleFieldWidget::~ParticleFieldWidget() noexcept = default;

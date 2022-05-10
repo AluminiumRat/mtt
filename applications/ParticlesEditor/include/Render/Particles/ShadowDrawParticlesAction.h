@@ -18,17 +18,19 @@ public:
 
 public:
   ShadowDrawParticlesAction(
-                      mtt::GraphicsPipeline& pipeline,
-                      VkViewport viewport,
-                      VkRect2D scissor,
-                      uint32_t pointsNumber,
-                      mtt::PlainBuffer& indicesBuffer,
-                      mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform,
-                      const mtt::DrawMatrices& drawMatrices,
-                      NearFarUniform& nearFarUniform,
-                      NearFarInfo nearfarData,
-                      mtt::VolatileUniform<glm::vec2>& falloffUniform,
-                      glm::vec2 falloffValue);
+          mtt::GraphicsPipeline& pipeline,
+          VkViewport viewport,
+          VkRect2D scissor,
+          uint32_t pointsNumber,
+          mtt::PlainBuffer& indicesBuffer,
+          mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform,
+          const mtt::DrawMatrices& drawMatrices,
+          NearFarUniform& nearFarUniform,
+          NearFarInfo nearfarData,
+          mtt::VolatileUniform<mtt::MppxDistanceFunction>& mppxFunctionUniform,
+          mtt::MppxDistanceFunction mppxFunctionValues,
+          mtt::VolatileUniform<glm::vec2>& falloffUniform,
+          glm::vec2 falloffValue);
   ShadowDrawParticlesAction(const ShadowDrawParticlesAction&) = delete;
   ShadowDrawParticlesAction& operator = (
                                     const ShadowDrawParticlesAction&) = delete;
@@ -46,6 +48,8 @@ private:
   mtt::DrawMatrices _drawMatrices;
   NearFarUniform& _nearFarUniform;
   NearFarInfo _nearfarData;
+  mtt::VolatileUniform<mtt::MppxDistanceFunction>& _mppxFunctionUniform;
+  mtt::MppxDistanceFunction _mppxFunctionValues;
   mtt::VolatileUniform<glm::vec2>& _falloffUniform;
   glm::vec2 _falloffValue;
 };

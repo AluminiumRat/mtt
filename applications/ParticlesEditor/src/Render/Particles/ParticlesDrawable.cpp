@@ -14,7 +14,7 @@ ParticlesDrawable::ParticlesDrawable() :
 {
   std::default_random_engine randomEngine;
   std::uniform_real_distribution<float> distribution(0.001f, 1.f);
-  for (float& value : _randomDistancesTable)
+  for (float& value : _randomFactorTable)
   {
     value = 1.f / distribution(randomEngine);
   }
@@ -43,14 +43,13 @@ void ParticlesDrawable::setData(const std::vector<glm::vec3>& positionData,
   particlesNumber = std::min( particlesNumber,
                               size_t(std::numeric_limits<uint16_t>::max()));
 
-  std::vector<float> falloffDistanceData;
-  falloffDistanceData.reserve(particlesNumber);
+  std::vector<float> falloffFactorData;
+  falloffFactorData.reserve(particlesNumber);
   for ( size_t particleIndex = 0;
         particleIndex < particlesNumber;
         particleIndex++)
   {
-    falloffDistanceData.push_back(
-                                _randomDistancesTable[tagData[particleIndex]]);
+    falloffFactorData.push_back(_randomFactorTable[tagData[particleIndex]]);
   }
 
   _commonData.positionBuffer.setData( positionData.data(),
@@ -65,11 +64,11 @@ void ParticlesDrawable::setData(const std::vector<glm::vec3>& positionData,
                                           particlesNumber * sizeof(uint32_t));
   _commonData.tileIndexBuffer.setData(tileIndexData.data(),
                                       particlesNumber * sizeof(uint32_t));
-  _commonData.falloffDistanceBuffer.setData(falloffDistanceData.data(),
-                                            particlesNumber * sizeof(float));
+  _commonData.falloffFactorBuffer.setData(falloffFactorData.data(),
+                                          particlesNumber * sizeof(float));
 
   _commonData.positionsData = positionData;
-  _commonData.falloffDistanceData = std::move(falloffDistanceData);
+  _commonData.falloffFactorData = std::move(falloffFactorData);
   _commonData.tagData = tagData;
   _commonData.particlesNumber = particlesNumber;
 }
@@ -109,14 +108,14 @@ void ParticlesDrawable::setParticleTextures(
   }
 }
 
-void ParticlesDrawable::setFalloffBaseDistance(float newValue) noexcept
+void ParticlesDrawable::setFalloffBaseMppx(float newValue) noexcept
 {
-  _commonData.falloffBaseDistance = std::max(newValue, 0.f);
+  _commonData.falloffBaseMppx = std::max(newValue, 0.f);
 }
 
-void ParticlesDrawable::setFalloffLength(float newValue) noexcept
+void ParticlesDrawable::setFalloffSmoothing(float newValue) noexcept
 {
-  _commonData.falloffLength = std::max(newValue, 0.f);
+  _commonData.falloffSmoothing = std::max(newValue, 0.f);
 }
 
 void ParticlesDrawable::buildDrawActions(mtt::DrawPlanBuildInfo& buildInfo)

@@ -6,7 +6,7 @@ layout(location = albedoLocation) in vec4 inAlbedo;
 layout(location = emissionLocation) in vec4 inEmission;
 layout(location = textureIndexLocation) in uint inTextureIndex;
 layout(location = tileIndexLocation) in uint inTileIndex;
-layout(location = falloffDistanceLocation) in float inFalloffDistance;
+layout(location = falloffFactorLocation) in float inFalloffFactor;
 
 layout( set = volatileSet,
         binding = drawMatricesBinding) uniform DrawMatrices
@@ -17,10 +17,17 @@ layout( set = volatileSet,
 } drawMatrices;
 
 layout( set = volatileSet,
+        binding = mppxFunctionBinding) uniform MppxFunction
+{
+  float intercept;
+  float slope;
+} mppxFunction;
+
+layout( set = volatileSet,
         binding = falloffBinding) uniform FalloffValues
 {
-  vec2 value;       // x value is base distance of falloff start
-                    // y value is base distance to falloff finish
+  vec2 value;       // x value is base mppx of falloff start
+                    // y value is base mppx to falloff finish
 } falloffBase;
 
 layout(location = 0) out vec2 outSizeRotation;
@@ -57,11 +64,13 @@ void main()
     outColor.rgb += inEmission.rgb;
   #endif
 
-  vec2 falloffDistances = falloffBase.value * inFalloffDistance;
+  vec2 falloffMppx = falloffBase.value * inFalloffFactor;
   float distanceToParticle = length(gl_Position.xyz);
-  outColor *= 1.f - smoothstep( falloffDistances.x,
-                                falloffDistances.y,
-                                distanceToParticle);
+  float particleMppx = distanceToParticle * mppxFunction.slope +
+                                                        mppxFunction.intercept;
+  outColor *= 1.f - smoothstep( falloffMppx.x,
+                                falloffMppx.y,
+                                particleMppx);
 
   #ifdef THINNING_FACTOR
     float transparency = 1.f - outColor.a;
@@ -69,7 +78,7 @@ void main()
     outColor.a = 1.f - transparency;
   #endif
 
-  float sizeFalloffFactor = sqrt(distanceToParticle / falloffBase.value.x);
+  float sizeFalloffFactor = sqrt(particleMppx / falloffBase.value.x);
   outSizeRotation = inSizeRotation;
   outSizeRotation.x *= max(sizeFalloffFactor, 1.f);
 

@@ -43,6 +43,26 @@ class ParticleField : public mtt::MovableObject
               STORED true
               USER false)
 
+  Q_PROPERTY( float lodMppx
+              READ lodMppx
+              WRITE setLodMppx
+              RESET resetLodMppx
+              NOTIFY lodMppxChanged
+              DESIGNABLE true
+              SCRIPTABLE true
+              STORED true
+              USER false)
+
+  Q_PROPERTY( float lodSmoothing
+              READ lodSmoothing
+              WRITE setLodSmoothing
+              RESET resetLodSmoothing
+              NOTIFY lodSmoothingChanged
+              DESIGNABLE true
+              SCRIPTABLE true
+              STORED true
+              USER false)
+
 public:
   using ParticleIndex = uint16_t;
 
@@ -103,6 +123,14 @@ public:
                             const ParticleTextureDescriptions& newDescriptions);
   inline void resetTextureDescriptions();
 
+  inline float lodMppx() const noexcept;
+  void setLodMppx(float newValue) noexcept;
+  inline void resetLodMppx() noexcept;
+
+  inline float lodSmoothing() const noexcept;
+  void setLodSmoothing(float newValue) noexcept;
+  inline void resetLodSmoothing() noexcept;
+
   inline FluidObject& fluid() noexcept;
   inline const FluidObject& fluid() const noexcept;
 
@@ -117,6 +145,8 @@ public:
 signals:
   void sizeChanged(const glm::vec3& newValue);
   void textureDescriptionsChanged(const ParticleTextureDescriptions& newValue);
+  void lodMppxChanged(float newValue);
+  void lodSmoothingChanged(float newValue);
   void cleared();
   void simulationStepStarted();
   /// First step of simulation
@@ -144,6 +174,9 @@ private:
   std::vector<ParticleData> _newParticles;
 
   ParticleTextureDescriptions _textureDescriptions;
+
+  float _lodMppx;
+  float _lodSmoothing;
 
   using Emitters = std::vector<EmitterObject*>;
   Emitters _emitters;
@@ -173,6 +206,26 @@ inline const ParticleTextureDescriptions&
 inline void ParticleField::resetTextureDescriptions()
 {
   setTextureDescriptions(ParticleTextureDescriptions());
+}
+
+inline float ParticleField::lodMppx() const noexcept
+{
+  return _lodMppx;
+}
+
+inline void ParticleField::resetLodMppx() noexcept
+{
+  setLodMppx(.005f);
+}
+
+inline float ParticleField::lodSmoothing() const noexcept
+{
+  return _lodSmoothing;
+}
+
+inline void ParticleField::resetLodSmoothing() noexcept
+{
+  setLodSmoothing(1.f);
 }
 
 inline FluidObject& ParticleField::fluid() noexcept

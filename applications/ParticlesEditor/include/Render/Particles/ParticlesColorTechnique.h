@@ -19,14 +19,15 @@ public:
 protected:
   virtual void adjustPipeline(mtt::GraphicsPipeline& pipeline) override;
   virtual void buildDrawAction(
-            mtt::DrawBin& renderBin,
-            mtt::DrawPlanBuildInfo& buildInfo,
-            mtt::GraphicsPipeline& pipeline,
-            uint32_t pointsNumber,
-            mtt::PlainBuffer& indices,
-            mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform,
-            mtt::VolatileUniform<glm::vec2>& falloffUniform,
-            glm::vec2 falloffValue) override;
+          mtt::DrawBin& renderBin,
+          mtt::DrawPlanBuildInfo& buildInfo,
+          mtt::GraphicsPipeline& pipeline,
+          uint32_t pointsNumber,
+          mtt::PlainBuffer& indices,
+          mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform,
+          mtt::VolatileUniform<mtt::MppxDistanceFunction>& mppxFunctionUniform,
+          mtt::VolatileUniform<glm::vec2>& falloffUniform,
+          glm::vec2 falloffValue) override;
 
 private:
   void _applyAreaModifictors( mtt::ShaderModule& shader,

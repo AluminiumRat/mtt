@@ -45,10 +45,10 @@ public:
 
   void setParticleTextures(const std::vector<TextureData>& textures);
 
-  inline float falloffBaseDistance() const noexcept;
-  void setFalloffBaseDistance(float newValue) noexcept;
-  inline float falloffLength() const noexcept;
-  void setFalloffLength(float newValue) noexcept;
+  inline float falloffBaseMppx() const noexcept;
+  void setFalloffBaseMppx(float newValue) noexcept;
+  inline float falloffSmoothing() const noexcept;
+  void setFalloffSmoothing(float newValue) noexcept;
 
   virtual void registerAreaModificators(mtt::AreaModificatorSet& set) override;
   virtual void unregisterAreaModificators(
@@ -61,15 +61,15 @@ private:
   ParticlesDrawCommonData _commonData;
   ParticlesProxyTechnique _colorTechnique;
   ParticlesShadowmapTechnique _shadowmapTechnique;
-  float _randomDistancesTable[256];
+  float _randomFactorTable[256];
 };
 
-inline float ParticlesDrawable::falloffBaseDistance() const noexcept
+inline float ParticlesDrawable::falloffBaseMppx() const noexcept
 {
-  return _commonData.falloffBaseDistance;
+  return _commonData.falloffBaseMppx;
 }
 
-inline float ParticlesDrawable::falloffLength() const noexcept
+inline float ParticlesDrawable::falloffSmoothing() const noexcept
 {
-  return _commonData.falloffLength;
+  return _commonData.falloffSmoothing;
 }

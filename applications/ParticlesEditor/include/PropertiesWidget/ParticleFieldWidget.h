@@ -4,6 +4,8 @@
 
 #include <QtWidgets/QWidget>
 
+#include <mtt/application/Widgets/PropertiesWidgets/FloatSpinConnection.h>
+
 #include <Objects/ParticleField.h>
 
 namespace mtt
@@ -40,4 +42,8 @@ private:
   ParticleField& _field;
   mtt::UndoStack& _undoStack;
   bool _skipUpdate;
+
+  using FloatConnection = mtt::FloatSpinConnection<ParticleField>;
+  std::optional<FloatConnection> _lodMppxConnection;
+  std::optional<FloatConnection> _lodSmoothingConnection;
 };

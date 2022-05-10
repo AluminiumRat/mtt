@@ -1,6 +1,7 @@
 #include <mtt/clPipeline/Background/BackgroundAreaModificator.h>
 #include <mtt/clPipeline/Lighting/LightAreaModificator.h>
 #include <mtt/clPipeline/constants.h>
+#include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
 #include <mtt/render/SceneGraph/AreaModificatorSet.h>
 
 #include <Render/Particles/ColorDrawParticlesAction.h>
@@ -113,15 +114,19 @@ void ParticlesColorTechnique::adjustPipeline(mtt::GraphicsPipeline& pipeline)
 }
 
 void ParticlesColorTechnique::buildDrawAction(
-                      mtt::DrawBin& renderBin,
-                      mtt::DrawPlanBuildInfo& buildInfo,
-                      mtt::GraphicsPipeline& pipeline,
-                      uint32_t pointsNumber,
-                      mtt::PlainBuffer& indices,
-                      mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform,
-                      mtt::VolatileUniform<glm::vec2>& falloffUniform,
-                      glm::vec2 falloffValue)
+          mtt::DrawBin& renderBin,
+          mtt::DrawPlanBuildInfo& buildInfo,
+          mtt::GraphicsPipeline& pipeline,
+          uint32_t pointsNumber,
+          mtt::PlainBuffer& indices,
+          mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform,
+          mtt::VolatileUniform<mtt::MppxDistanceFunction>& mppxFunctionUniform,
+          mtt::VolatileUniform<glm::vec2>& falloffUniform,
+          glm::vec2 falloffValue)
 {
+  mtt::MppxDistanceFunction mppxFunction =
+                                      buildInfo.currentViewInfo.mppxFunction();
+
   renderBin.createAction<ColorDrawParticlesAction>(
                               buildInfo.getPriorityFarFirstOrder(glm::vec3(0)),
                               pipeline,
@@ -131,6 +136,8 @@ void ParticlesColorTechnique::buildDrawAction(
                               indices,
                               matricesUniform,
                               buildInfo.drawMatrices,
+                              mppxFunctionUniform,
+                              mppxFunction,
                               falloffUniform,
                               falloffValue,
                               *commonData().depthSamplerTexture);

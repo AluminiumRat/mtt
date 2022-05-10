@@ -12,7 +12,9 @@ ParticleField::ParticleField( const QString& name,
                               bool canBeRenamed,
                               const mtt::UID& theId) :
   MovableObject(name, canBeRenamed, theId),
-  _size(10.f, 10.f, 10.f)
+  _size(10.f, 10.f, 10.f),
+  _lodMppx(.005f),
+  _lodSmoothing(1.f)
 {
   mtt::UID fluidId(id().mixedUID(18395279348825422041ull));
   std::unique_ptr<FluidObject> fluid( new FluidObject(tr("Fluid"),
@@ -62,6 +64,22 @@ void ParticleField::setTextureDescriptions(
   }
 
   emit textureDescriptionsChanged(_textureDescriptions);
+}
+
+void ParticleField::setLodMppx(float newValue) noexcept
+{
+  newValue = glm::max(newValue, 0.f);
+  if(_lodMppx == newValue) return;
+  _lodMppx = newValue;
+  emit lodMppxChanged(newValue);
+}
+
+void ParticleField::setLodSmoothing(float newValue) noexcept
+{
+  newValue = glm::max(newValue, 0.f);
+  if(_lodSmoothing == newValue) return;
+  _lodSmoothing = newValue;
+  emit lodSmoothingChanged(newValue);
 }
 
 void ParticleField::registerEmitter(EmitterObject& emitter)

@@ -71,15 +71,19 @@ void ParticlesAbstractTechnique::_rebuildPipeline(
     tileIndexAtribute.adjustDataType(mtt::VertexAttribute::UINT32_TYPE);
     tileIndexAtribute.attachBuffer(&_commonData.tileIndexBuffer);
 
-    mtt::VertexAttribute& falloffDistanceAtribute =
-                    _pipeline->getOrCreateAttribute("falloffDistanceLocation");
-    falloffDistanceAtribute.adjustDataType(mtt::VertexAttribute::FLOAT_TYPE);
-    falloffDistanceAtribute.attachBuffer(&_commonData.falloffDistanceBuffer);
+    mtt::VertexAttribute& falloffFactorAtribute =
+                    _pipeline->getOrCreateAttribute("falloffFactorLocation");
+    falloffFactorAtribute.adjustDataType(mtt::VertexAttribute::FLOAT_TYPE);
+    falloffFactorAtribute.attachBuffer(&_commonData.falloffFactorBuffer);
 
     _pipeline->addResource( mtt::DrawMatrices::bindingName,
                             _matricesUniform,
                             VK_SHADER_STAGE_VERTEX_BIT |
                               VK_SHADER_STAGE_GEOMETRY_BIT);
+
+    _pipeline->addResource( "mppxFunctionBinding",
+                            _mppxFunctionUniform,
+                            VK_SHADER_STAGE_VERTEX_BIT);
 
     _pipeline->addResource( "falloffBinding",
                             _fallofUniform,
@@ -131,9 +135,9 @@ void ParticlesAbstractTechnique::addToDrawPlan(
   IndicesData indices = _makeIndices(buildInfo, renderPass->device());
   if(indices.pointsNumber == 0) return;
 
-  glm::vec2 falloffValue( _commonData.falloffBaseDistance,
-                          _commonData.falloffBaseDistance *
-                                            (1.f + _commonData.falloffLength));
+  glm::vec2 falloffValue( _commonData.falloffBaseMppx,
+                          _commonData.falloffBaseMppx *
+                                          (1.f + _commonData.falloffSmoothing));
 
   buildDrawAction(*renderBin,
                   buildInfo,
@@ -141,6 +145,7 @@ void ParticlesAbstractTechnique::addToDrawPlan(
                   indices.pointsNumber,
                   *indices.buffer,
                   _matricesUniform,
+                  _mppxFunctionUniform,
                   _fallofUniform,
                   falloffValue);
 }
@@ -150,8 +155,10 @@ ParticlesAbstractTechnique::IndicesData
                                         const mtt::DrawPlanBuildInfo& buildInfo,
                                         mtt::LogicalDevice& device) const
 {
-  float baseFallofFinish =
-            _commonData.falloffBaseDistance * (1.f + _commonData.falloffLength);
+  float baseFallofFinishMppx =
+            _commonData.falloffBaseMppx * (1.f + _commonData.falloffSmoothing);
+  mtt::MppxDistanceFunction mppxFunction =
+                                      buildInfo.currentViewInfo.mppxFunction();
 
   std::vector<float> distances;
   distances.reserve(_commonData.positionsData.size());
@@ -167,9 +174,9 @@ ParticlesAbstractTechnique::IndicesData
 
     distances.push_back(distance);
 
-    float falloffFinish =
-              _commonData.falloffDistanceData[particleIndex] * baseFallofFinish;
-    if(distance > falloffFinish) continue;
+    float falloffFinishMppx =
+            _commonData.falloffFactorData[particleIndex] * baseFallofFinishMppx;
+    if(mppxFunction.mppx(distance) > falloffFinishMppx) continue;
 
     uint8_t tag = _commonData.tagData[particleIndex];
     if(tag % _thinningFactor != 0) continue;

@@ -33,14 +33,15 @@ protected:
 
   virtual void adjustPipeline(mtt::GraphicsPipeline& pipeline) = 0;
   virtual void buildDrawAction(
-                  mtt::DrawBin& renderBin,
-                  mtt::DrawPlanBuildInfo& buildInfo,
-                  mtt::GraphicsPipeline& pipeline,
-                  uint32_t pointsNumber,
-                  mtt::PlainBuffer& indices,
-                  mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform,
-                  mtt::VolatileUniform<glm::vec2>& falloffUniform,
-                  glm::vec2 falloffValue) = 0;
+          mtt::DrawBin& renderBin,
+          mtt::DrawPlanBuildInfo& buildInfo,
+          mtt::GraphicsPipeline& pipeline,
+          uint32_t pointsNumber,
+          mtt::PlainBuffer& indices,
+          mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform,
+          mtt::VolatileUniform<mtt::MppxDistanceFunction>& mppxFunctionUniform,
+          mtt::VolatileUniform<glm::vec2>& falloffUniform,
+          glm::vec2 falloffValue) = 0;
 
 private:
   std::string _makeTextureExtentDefine() const;
@@ -60,6 +61,7 @@ private:
   mtt::StageIndex _stage;
   uint8_t _thinningFactor;
   mtt::VolatileUniform<mtt::DrawMatrices> _matricesUniform;
+  mtt::VolatileUniform<mtt::MppxDistanceFunction> _mppxFunctionUniform;
   mtt::VolatileUniform<glm::vec2> _fallofUniform;
   std::optional<mtt::GraphicsPipeline> _pipeline;
 };

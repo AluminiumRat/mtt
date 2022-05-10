@@ -3,17 +3,19 @@
 #include <Render/Particles/ShadowDrawParticlesAction.h>
 
 ShadowDrawParticlesAction::ShadowDrawParticlesAction(
-                      mtt::GraphicsPipeline& pipeline,
-                      VkViewport viewport,
-                      VkRect2D scissor,
-                      uint32_t pointsNumber,
-                      mtt::PlainBuffer& indicesBuffer,
-                      mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform,
-                      const mtt::DrawMatrices& drawMatrices,
-                      NearFarUniform& nearFarUniform,
-                      NearFarInfo nearfarData,
-                      mtt::VolatileUniform<glm::vec2>& falloffUniform,
-                      glm::vec2 falloffValue) :
+          mtt::GraphicsPipeline& pipeline,
+          VkViewport viewport,
+          VkRect2D scissor,
+          uint32_t pointsNumber,
+          mtt::PlainBuffer& indicesBuffer,
+          mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform,
+          const mtt::DrawMatrices& drawMatrices,
+          NearFarUniform& nearFarUniform,
+          NearFarInfo nearfarData,
+          mtt::VolatileUniform<mtt::MppxDistanceFunction>& mppxFunctionUniform,
+          mtt::MppxDistanceFunction mppxFunctionValues,
+          mtt::VolatileUniform<glm::vec2>& falloffUniform,
+          glm::vec2 falloffValue) :
   _pipeline(pipeline),
   _viewport(viewport),
   _scissor(scissor),
@@ -23,6 +25,8 @@ ShadowDrawParticlesAction::ShadowDrawParticlesAction(
   _drawMatrices(drawMatrices),
   _nearFarUniform(nearFarUniform),
   _nearfarData(nearfarData),
+  _mppxFunctionUniform(mppxFunctionUniform),
+  _mppxFunctionValues(mppxFunctionValues),
   _falloffUniform(falloffUniform),
   _falloffValue(falloffValue)
 {
@@ -32,6 +36,7 @@ void ShadowDrawParticlesAction::execute(mtt::DrawContext& context)
 {
   _matricesUniform.setValuePtr(&_drawMatrices);
   _nearFarUniform.setValuePtr(&_nearfarData);
+  _mppxFunctionUniform.setValuePtr(&_mppxFunctionValues);
   _falloffUniform.setValuePtr(&_falloffValue);
 
   _pipeline.setScissor(_scissor);

@@ -3,16 +3,18 @@
 #include <Render/Particles/ColorDrawParticlesAction.h>
 
 ColorDrawParticlesAction::ColorDrawParticlesAction(
-                      mtt::GraphicsPipeline& pipeline,
-                      VkViewport viewport,
-                      VkRect2D scissor,
-                      uint32_t pointsNumber,
-                      mtt::PlainBuffer& indicesBuffer,
-                      mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform,
-                      const mtt::DrawMatrices& drawMatrices,
-                      mtt::VolatileUniform<glm::vec2>& falloffUniform,
-                      glm::vec2 falloffValue,
-                      mtt::Texture2D& depthSamplerTexture) :
+          mtt::GraphicsPipeline& pipeline,
+          VkViewport viewport,
+          VkRect2D scissor,
+          uint32_t pointsNumber,
+          mtt::PlainBuffer& indicesBuffer,
+          mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform,
+          const mtt::DrawMatrices& drawMatrices,
+          mtt::VolatileUniform<mtt::MppxDistanceFunction>& mppxFunctionUniform,
+          mtt::MppxDistanceFunction mppxFunctionValues,
+          mtt::VolatileUniform<glm::vec2>& falloffUniform,
+          glm::vec2 falloffValue,
+          mtt::Texture2D& depthSamplerTexture) :
   _pipeline(pipeline),
   _viewport(viewport),
   _scissor(scissor),
@@ -20,6 +22,8 @@ ColorDrawParticlesAction::ColorDrawParticlesAction(
   _indicesBuffer(&indicesBuffer),
   _matricesUniform(matricesUniform),
   _drawMatrices(drawMatrices),
+  _mppxFunctionUniform(mppxFunctionUniform),
+  _mppxFunctionValues(mppxFunctionValues),
   _falloffUniform(falloffUniform),
   _falloffValue(falloffValue),
   _depthSamplerTexture(depthSamplerTexture)
@@ -29,6 +33,7 @@ ColorDrawParticlesAction::ColorDrawParticlesAction(
 void ColorDrawParticlesAction::execute(mtt::DrawContext& context)
 {
   _matricesUniform.setValuePtr(&_drawMatrices);
+  _mppxFunctionUniform.setValuePtr(&_mppxFunctionValues);
   _falloffUniform.setValuePtr(&_falloffValue);
 
   _pipeline.setScissor(_scissor);

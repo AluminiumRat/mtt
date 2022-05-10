@@ -63,6 +63,20 @@ FieldRenderObserver::FieldRenderObserver( ParticleField& object,
           &FieldRenderObserver::_updateTextures,
           Qt::DirectConnection);
   _updateTextures();
+
+  connect(&_field,
+          &ParticleField::lodMppxChanged,
+          this,
+          &FieldRenderObserver::_updateLodMppx,
+          Qt::DirectConnection);
+  _updateLodMppx();
+
+  connect(&_field,
+          &ParticleField::lodSmoothingChanged,
+          this,
+          &FieldRenderObserver::_updateLodSmoothing,
+          Qt::DirectConnection);
+  _updateLodSmoothing();
 }
 
 void FieldRenderObserver::_updateSize() noexcept
@@ -162,4 +176,14 @@ void FieldRenderObserver::_updateTextures() noexcept
   {
     mtt::Log() << "FieldRenderObserver::_updateTextures: unknown error.";
   }
+}
+
+void FieldRenderObserver::_updateLodMppx() noexcept
+{
+  _particlesDrawable.setFalloffBaseMppx(_field.lodMppx());
+}
+
+void FieldRenderObserver::_updateLodSmoothing() noexcept
+{
+  _particlesDrawable.setFalloffSmoothing(_field.lodSmoothing());
 }

@@ -29,7 +29,7 @@ public:
   mtt::Buffer emissionBuffer;
   mtt::Buffer textureIndexBuffer;
   mtt::Buffer tileIndexBuffer;
-  mtt::Buffer falloffDistanceBuffer;
+  mtt::Buffer falloffFactorBuffer;
   size_t particlesNumber;
 
   std::optional<mtt::Sampler> textureSampler;
@@ -38,9 +38,9 @@ public:
 
   std::vector<TextureData> textureData;
   std::vector<glm::vec3> positionsData;
-  std::vector<float> falloffDistanceData;
+  std::vector<float> falloffFactorData;
   std::vector<uint8_t> tagData;
 
-  float falloffBaseDistance;
-  float falloffLength;
+  float falloffBaseMppx;
+  float falloffSmoothing;
 };

@@ -13,16 +13,18 @@ class ColorDrawParticlesAction : public mtt::AbstractAction
 {
 public:
   ColorDrawParticlesAction(
-                      mtt::GraphicsPipeline& pipeline,
-                      VkViewport viewport,
-                      VkRect2D scissor,
-                      uint32_t pointsNumber,
-                      mtt::PlainBuffer& indicesBuffer,
-                      mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform,
-                      const mtt::DrawMatrices& drawMatrices,
-                      mtt::VolatileUniform<glm::vec2>& falloffUniform,
-                      glm::vec2 falloffValue,
-                      mtt::Texture2D& depthSamplerTexture);
+          mtt::GraphicsPipeline& pipeline,
+          VkViewport viewport,
+          VkRect2D scissor,
+          uint32_t pointsNumber,
+          mtt::PlainBuffer& indicesBuffer,
+          mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform,
+          const mtt::DrawMatrices& drawMatrices,
+          mtt::VolatileUniform<mtt::MppxDistanceFunction>& mppxFunctionUniform,
+          mtt::MppxDistanceFunction mppxFunctionValues,
+          mtt::VolatileUniform<glm::vec2>& falloffUniform,
+          glm::vec2 falloffValue,
+          mtt::Texture2D& depthSamplerTexture);
   ColorDrawParticlesAction(const ColorDrawParticlesAction&) = delete;
   ColorDrawParticlesAction& operator = (
                                       const ColorDrawParticlesAction&) = delete;
@@ -38,6 +40,8 @@ private:
   mtt::Ref<mtt::PlainBuffer> _indicesBuffer;
   mtt::VolatileUniform<mtt::DrawMatrices>& _matricesUniform;
   mtt::DrawMatrices _drawMatrices;
+  mtt::VolatileUniform<mtt::MppxDistanceFunction>& _mppxFunctionUniform;
+  mtt::MppxDistanceFunction _mppxFunctionValues;
   mtt::VolatileUniform<glm::vec2>& _falloffUniform;
   glm::vec2 _falloffValue;
   mtt::Texture2D& _depthSamplerTexture;

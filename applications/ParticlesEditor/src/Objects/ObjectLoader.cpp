@@ -148,6 +148,9 @@ void ObjectLoader::visitParticleField(ParticleField& object)
   }
   object.setTextureDescriptions(descriptions);
 
+  object.setLodMppx(stream().readFloat());
+  object.setLodSmoothing(stream().readFloat());
+
   loadEmbeddedObject( object.fluid(),
                       stream(),
                       fileDirectory(),

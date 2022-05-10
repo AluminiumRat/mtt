@@ -1,4 +1,5 @@
 #include <mtt/clPipeline/constants.h>
+#include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
 
 #include <Render/Particles/ParticlesShadowmapTechnique.h>
 #include <Render/Particles/ShadowDrawParticlesAction.h>
@@ -45,19 +46,23 @@ void ParticlesShadowmapTechnique::adjustPipeline(
 }
 
 void ParticlesShadowmapTechnique::buildDrawAction(
-                      mtt::DrawBin& renderBin,
-                      mtt::DrawPlanBuildInfo& buildInfo,
-                      mtt::GraphicsPipeline& pipeline,
-                      uint32_t pointsNumber,
-                      mtt::PlainBuffer& indices,
-                      mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform,
-                      mtt::VolatileUniform<glm::vec2>& falloffUniform,
-                      glm::vec2 falloffValue)
+          mtt::DrawBin& renderBin,
+          mtt::DrawPlanBuildInfo& buildInfo,
+          mtt::GraphicsPipeline& pipeline,
+          uint32_t pointsNumber,
+          mtt::PlainBuffer& indices,
+          mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform,
+          mtt::VolatileUniform<mtt::MppxDistanceFunction>& mppxFunctionUniform,
+          mtt::VolatileUniform<glm::vec2>& falloffUniform,
+          glm::vec2 falloffValue)
 {
   NearFarInfo nearFar;
   nearFar.nearDistance = buildInfo.currentViewInfo.nearCameraDistance;
   nearFar.nearFarDistance =
             buildInfo.currentViewInfo.farCameraDistance - nearFar.nearDistance;
+
+  mtt::MppxDistanceFunction mppxFunction =
+                                      buildInfo.currentViewInfo.mppxFunction();
 
   renderBin.createAction<ShadowDrawParticlesAction>(
                               buildInfo.getPriorityFarFirstOrder(glm::vec3(0)),
@@ -70,6 +75,8 @@ void ParticlesShadowmapTechnique::buildDrawAction(
                               buildInfo.drawMatrices,
                               _nearFarUniform,
                               nearFar,
+                              mppxFunctionUniform,
+                              mppxFunction,
                               falloffUniform,
                               falloffValue);
 }

@@ -151,6 +151,9 @@ void ObjectSaver::visitConstParticleField(const ParticleField& object)
     stream() << uint8_t(description.extent);
   }
 
+  stream() << object.lodMppx();
+  stream() << object.lodSmoothing();
+
   saveObjectData(object.fluid(), stream(), fileDirectory(), objectFactory());
 }
 
