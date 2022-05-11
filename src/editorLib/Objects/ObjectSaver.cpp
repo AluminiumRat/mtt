@@ -52,6 +52,21 @@ void ObjectSaver::writeCubemapData(const mtt::CubemapObject& object)
   }
 }
 
+void ObjectSaver::writeChilds(const Object& parent)
+{
+  uint32_t objectsNumber = uint32_t(parent.subobjectNumber());
+  stream() << objectsNumber;
+  for(uint32_t objectIndex = 0;
+      objectIndex < objectsNumber;
+      objectIndex++)
+  {
+    saveObject( parent.subobject(objectIndex),
+                stream(),
+                fileDirectory(),
+                objectFactory());
+  }
+}
+
 void ObjectSaver::visitConstAmbientLightObject(
                                           const mtt::AmbientLightObject& object)
 {
@@ -112,6 +127,12 @@ void ObjectSaver::visitConstDisplayedObject(const mtt::DisplayedObject& object)
 {
   CEVisitor::visitConstDisplayedObject(object);
   *_stream << object.visible();
+}
+
+void ObjectSaver::visitConstEnvironmentGroup(const EnvironmentGroup& object)
+{
+  CEVisitor::visitConstEnvironmentGroup(object);
+  writeChilds(object);
 }
 
 void ObjectSaver::visitConstEnvironmentModel(

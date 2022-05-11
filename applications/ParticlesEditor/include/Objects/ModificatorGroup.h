@@ -14,9 +14,9 @@ class ModificatorGroup : public mtt::SpecialGroup<mtt::DisplayedObject,
                           mtt::DisplayedObject)
 
 public:
-  ModificatorGroup(const QString& name,
-                bool canBeRenamed,
-                const mtt::UID& id = mtt::UID());
+  ModificatorGroup( const QString& name,
+                    bool canBeRenamed,
+                    const mtt::UID& id = mtt::UID());
   ModificatorGroup(const ModificatorGroup&) = delete;
   ModificatorGroup& operator = (const ModificatorGroup&) = delete;
   virtual ~ModificatorGroup() noexcept = default;

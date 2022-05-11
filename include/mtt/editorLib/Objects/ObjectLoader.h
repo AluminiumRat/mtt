@@ -48,6 +48,7 @@ namespace mtt
     virtual void visitCubemapObject(CubemapObject& object) override;
     virtual void visitDirectLightObject(DirectLightObject& object) override;
     virtual void visitDisplayedObject(DisplayedObject& object) override;
+    virtual void visitEnvironmentGroup(EnvironmentGroup& object) override;
     virtual void visitEnvironmentModel(EnvironmentModel& object) override;
     virtual void visitLightObject(LightObject& object) override;
     virtual void visitMovableObject(MovableObject& object) override;
@@ -62,6 +63,8 @@ namespace mtt
     inline void readKeypoint(ValueKeypoint<ValueType, TimeT>& keypoint);
     void readCubemapData(CubemapObject& object);
     UID readUID();
+    template<typename GroupClass, typename ChildClass>
+    inline void readChilds(GroupClass& parent, bool canBeRenamed);
 
   private:
     void _readObjectData( Object& object,
@@ -140,5 +143,19 @@ namespace mtt
 
     uint8_t interpolation = _stream->readInt8();
     keypoint.setInterpolation(InterpolationType(interpolation));
+  }
+
+  template<typename GroupClass, typename ChildClass>
+  inline void ObjectLoader::readChilds(GroupClass& parent, bool canBeRenamed)
+  {
+    uint32_t objectsNumber = _stream->readUint32();
+    for (; objectsNumber != 0; objectsNumber--)
+    {
+      parent.addChild(loadObject<ChildClass>( canBeRenamed,
+                                              stream(),
+                                              fileDirectory(),
+                                              mixUIDValue(),
+                                              objectFactory()));
+    }
   }
 }

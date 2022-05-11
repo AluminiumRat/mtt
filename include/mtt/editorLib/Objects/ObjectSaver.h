@@ -42,6 +42,8 @@ namespace mtt
                                       const DirectLightObject& object) override;
     virtual void visitConstDisplayedObject(
                                         const DisplayedObject& object) override;
+    virtual void visitConstEnvironmentGroup(
+                                      const EnvironmentGroup& object) override;
     virtual void visitConstEnvironmentModel(
                                       const EnvironmentModel& object) override;
     virtual void visitConstLightObject(const LightObject& object) override;
@@ -65,6 +67,8 @@ namespace mtt
     template<typename ValueType>
     inline void writeKeypoint(ValueKeypoint<ValueType, TimeT> keypoint);
     void writeCubemapData(const CubemapObject& object);
+
+    void writeChilds(const Object& parent);
 
   private:
     DataStream* _stream;

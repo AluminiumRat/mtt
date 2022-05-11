@@ -120,6 +120,12 @@ void ObjectLoader::visitDisplayedObject(DisplayedObject& object)
   object.setVisible(_stream->readBool());
 }
 
+void ObjectLoader::visitEnvironmentGroup(EnvironmentGroup& object)
+{
+  CEVisitor::visitEnvironmentGroup(object);
+  readChilds<EnvironmentGroup, EnvironmentObject>(object, true);
+}
+
 void ObjectLoader::visitEnvironmentModel(EnvironmentModel& object)
 {
   CEVisitor::visitEnvironmentModel(object);

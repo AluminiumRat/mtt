@@ -6,10 +6,9 @@
 
 namespace mtt
 {
-  class BackgroundObject;
   class EditorScene;
   class EditorCommonData;
-  class EnvironmentGroup;
+  class EnvironmentRootObject;
 
   class SaveEnvironmentTask : public SaveToFileTask
   {
@@ -36,8 +35,7 @@ namespace mtt
     void _writeHead(QFile& file, mtt::DataStream& stream);
 
   private:
-    const EnvironmentGroup& _environment;
-    const BackgroundObject& _background;
+    const EnvironmentRootObject& _environment;
     EditorCommonData& _commonData;
   };
 }

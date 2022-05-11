@@ -36,11 +36,14 @@ namespace mtt
   private:
     void _resetViews() noexcept;
     void _setRootObjects(Object* dataRoot, Object* environmentRoot);
+    void _resetScene() noexcept;
+    void _updateViews() noexcept;
     void _setScene(EditorScene* scene) noexcept;
 
   private:
     std::unique_ptr<Ui::SceneTreeWidget> _ui;
     EditorCommonData& _commonData;
+    EditorScene* _scene;
 
     SceneTreeView* _dataTreeView;
     std::optional<EditorObjectsItemModel> _dataItemModel;

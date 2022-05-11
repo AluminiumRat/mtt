@@ -8,8 +8,7 @@
 
 #include <mtt/application/AsyncTasks/AbstractAsyncTask.h>
 #include <mtt/application/DataStream.h>
-#include <mtt/editorLib/Objects/BackgroundObject.h>
-#include <mtt/editorLib/Objects/EnvironmentObject.h>
+#include <mtt/editorLib/Objects/EnvironmentRootObject.h>
 
 class QFile;
 
@@ -34,7 +33,6 @@ namespace mtt
 
   private:
     void _checkHead();
-    void _clearScene() noexcept;
 
   private:
     QString _filename;
@@ -43,8 +41,7 @@ namespace mtt
     QDir _fileDirectory;
     UID::ValueType _mixUIDValue;
 
-    std::unique_ptr<BackgroundObject> _newBackground;
-    std::vector<std::unique_ptr<EnvironmentObject>> _newObjects;
+    std::unique_ptr<EnvironmentRootObject> _newEnvironment;
 
     EditorScene& _scene;
     EditorCommonData& _commonData;

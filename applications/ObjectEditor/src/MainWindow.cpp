@@ -71,7 +71,7 @@ MainWindow::MainWindow() :
   directLight->setRotation(glm::quat(glm::vec3(.5f, 0.f, 0.f)));
 
   std::unique_ptr<ObjectEditorScene> scene(new ObjectEditorScene);
-  scene->environmentRoot().objects().addChild(std::move(directLight));
+  scene->environmentRoot().objectsGroup().addChild(std::move(directLight));
   _commonEditData.setScene(std::move(scene));
 
   _restoreGeometry();

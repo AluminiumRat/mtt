@@ -25,18 +25,13 @@ namespace mtt
 
     inline mtt::BackgroundObject& background() noexcept;
     inline const mtt::BackgroundObject& background() const noexcept;
-    /// newBackground must not be nullptr
-    void changeBackground(std::unique_ptr<mtt::BackgroundObject> newBackground);
 
-    inline mtt::EnvironmentGroup& objects() noexcept;
-    inline const mtt::EnvironmentGroup& objects() const noexcept;
-
-  signals:
-    void backgroundChanged(mtt::BackgroundObject& newBackground);
+    inline mtt::EnvironmentGroup& objectsGroup() noexcept;
+    inline const mtt::EnvironmentGroup& objectsGroup() const noexcept;
 
   private:
     mtt::BackgroundObject* _background;
-    mtt::EnvironmentGroup* _objects;
+    mtt::EnvironmentGroup* _objectsGroup;
   };
 
   inline mtt::BackgroundObject& EnvironmentRootObject::background() noexcept
@@ -50,14 +45,14 @@ namespace mtt
     return *_background;
   }
 
-  inline mtt::EnvironmentGroup& EnvironmentRootObject::objects() noexcept
+  inline mtt::EnvironmentGroup& EnvironmentRootObject::objectsGroup() noexcept
   {
-    return *_objects;
+    return *_objectsGroup;
   }
 
   inline const mtt::EnvironmentGroup&
-                                EnvironmentRootObject::objects() const noexcept
+                            EnvironmentRootObject::objectsGroup() const noexcept
   {
-    return *_objects;
+    return *_objectsGroup;
   }
 }

@@ -53,56 +53,30 @@ void LoadEnvironmentTask::asyncPart()
 
   _checkHead();
 
+  _newEnvironment.reset(
+        new EnvironmentRootObject(QCoreApplication::tr("Environment"), false));
+
   ObjectLoader loader;
   EnvironmentObjectFactory factory;
 
-  _newBackground = loader.loadObject<BackgroundObject>( false,
-                                                        *_stream,
-                                                        _fileDirectory,
-                                                        _mixUIDValue,
-                                                        factory);
+  loader.loadEmbeddedObject(_newEnvironment->background(),
+                            *_stream,
+                            _fileDirectory,
+                            _mixUIDValue,
+                            factory);
 
-  uint32_t objectsNumber = _stream->readUint32();
-  for (; objectsNumber != 0; objectsNumber--)
-  {
-    _newObjects.push_back(loader.loadObject<EnvironmentObject>( true,
-                                                                *_stream,
-                                                                _fileDirectory,
-                                                                _mixUIDValue,
-                                                                factory));
-  }
-}
-
-void LoadEnvironmentTask::_clearScene() noexcept
-{
-  mtt::EnvironmentGroup& environment = _scene.environmentRoot().objects();
-  while (environment.childsNumber() != 0)
-  {
-    environment.removeChild(environment.child(environment.childsNumber() -1),
-                            true);
-  }
+  loader.loadEmbeddedObject(_newEnvironment->objectsGroup(),
+                            *_stream,
+                            _fileDirectory,
+                            _mixUIDValue,
+                            factory);
 }
 
 void LoadEnvironmentTask::finalizePart()
 {
   _commonData.undoStack().clear();
   _commonData.setEnvironmentFilename("");
-  _clearScene();
 
-  try
-  {
-    for (std::unique_ptr<mtt::EnvironmentObject>& object : _newObjects)
-    {
-      _scene.environmentRoot().objects().addChild(std::move(object));
-    }
-
-    _scene.environmentRoot().changeBackground(std::move(_newBackground));
-
-    _commonData.setEnvironmentFilename(_filename);
-  }
-  catch (...)
-  {
-    _clearScene();
-    throw;
-  }
+  _scene.changeEnvironmentRoot(std::move(_newEnvironment));
+  _commonData.setEnvironmentFilename(_filename);
 }

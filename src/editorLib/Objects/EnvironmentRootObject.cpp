@@ -26,32 +26,6 @@ EnvironmentRootObject::EnvironmentRootObject( const QString& name,
                           new mtt::EnvironmentGroup(tr("Objects"),
                                                     false,
                                                     objectsGroupId));
-  _objects = objectsGroup.get();
+  _objectsGroup = objectsGroup.get();
   addSubobject(std::move(objectsGroup));
-}
-
-void EnvironmentRootObject::changeBackground(
-                            std::unique_ptr<mtt::BackgroundObject> newBackground)
-{
-  if(newBackground == nullptr) mtt::Abort("RootObject::changeBackground: newBackground is nullpt.");
-
-  std::unique_ptr<mtt::Object> oldBackgraund = removeSubobject( *_background,
-                                                                false);
-  mtt::BackgroundObject* newBackgroundPtr = newBackground.get();
-  try
-  {
-    addSubobject(std::move(newBackground));
-  }
-  catch (std::exception& error)
-  {
-    mtt::Log() << error.what();
-    mtt::Abort("RootObject::changeBackground: unable to change background.");
-  }
-  catch (...)
-  {
-    mtt::Abort("RootObject::changeBackground: unable to change background.");
-  }
-
-  _background = newBackgroundPtr;
-  emit backgroundChanged(*_background);
 }

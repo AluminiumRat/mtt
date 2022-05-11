@@ -12,6 +12,7 @@ using namespace mtt;
 SceneTreeWidget::SceneTreeWidget(EditorCommonData& commonData) :
   _ui(new Ui::SceneTreeWidget),
   _commonData(commonData),
+  _scene(nullptr),
   _dataTreeView(nullptr),
   _environmentTreeView(nullptr)
 {
@@ -73,21 +74,72 @@ void SceneTreeWidget::_setRootObjects(Object* dataRoot, Object* environmentRoot)
   }
 }
 
+void SceneTreeWidget::_resetScene() noexcept
+{
+  if(_scene == nullptr) return;
+
+  disconnect( _scene,
+              &EditorScene::dataRootChanged,
+              this,
+              &SceneTreeWidget::_updateViews);
+
+  disconnect( _scene,
+              &EditorScene::environmentRootChnaged,
+              this,
+              &SceneTreeWidget::_updateViews);
+
+  _scene = nullptr;
+}
+
 void SceneTreeWidget::_setScene(EditorScene* scene) noexcept
+{
+  _resetScene();
+
+  try
+  {
+    _scene = scene;
+
+    connect(_scene,
+            &EditorScene::dataRootChanged,
+            this,
+            &SceneTreeWidget::_updateViews,
+            Qt::DirectConnection);
+
+    connect(_scene,
+            &EditorScene::environmentRootChnaged,
+            this,
+            &SceneTreeWidget::_updateViews,
+            Qt::DirectConnection);
+  }
+  catch (std::exception& error)
+  {
+    _resetScene();
+    Log() << "SceneTreeWidget::_setScene: unable to connect to scene : " << error.what();
+  }
+  catch (...)
+  {
+    _resetScene();
+    Log() << "SceneTreeWidget::_setScene: unable to connect to scene.";
+  }
+
+  _updateViews();
+}
+
+void SceneTreeWidget::_updateViews() noexcept
 {
   try
   {
-    if (scene == nullptr) _resetViews();
-    else _setRootObjects(&scene->dataRoot(), &scene->environmentRoot());
+    if(_scene == nullptr) _resetViews();
+    else _setRootObjects(&_scene->dataRoot(), &_scene->environmentRoot());
   }
   catch (std::exception& error)
   {
     _resetViews();
-    Log() << "SceneTreeWidget::_setScene: unable to update widgets : " << error.what();
+    Log() << "SceneTreeWidget::_updateViews: unable to update widgets : " << error.what();
   }
   catch (...)
   {
     _resetViews();
-    Log() << "SceneTreeWidget::_setScene: unable to update widgets.";
+    Log() << "SceneTreeWidget::_updateViews: unable to update widgets.";
   }
 }

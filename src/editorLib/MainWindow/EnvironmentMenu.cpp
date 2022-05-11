@@ -123,8 +123,8 @@ void EnvironmentMenu::_addAmbientLight() noexcept
     mtt::AmbientLightObject* lightPtr = newLight.get();
 
     std::unique_ptr<mtt::AddObjectCommand> command(
-                new mtt::AddObjectCommand(std::move(newLight),
-                                          scene->environmentRoot().objects()));
+            new mtt::AddObjectCommand(std::move(newLight),
+                                      scene->environmentRoot().objectsGroup()));
     _commonData.undoStack().addAndMake(std::move(command));
     _commonData.selectObjects({lightPtr});
   }
@@ -154,8 +154,8 @@ void EnvironmentMenu::_addDirectLight() noexcept
     mtt::DirectLightObject* lightPtr = newLight.get();
 
     std::unique_ptr<mtt::AddObjectCommand> command(
-                new mtt::AddObjectCommand(std::move(newLight),
-                                          scene->environmentRoot().objects()));
+            new mtt::AddObjectCommand(std::move(newLight),
+                                      scene->environmentRoot().objectsGroup()));
     _commonData.undoStack().addAndMake(std::move(command));
     _commonData.selectObjects({lightPtr});
   }
@@ -193,8 +193,8 @@ void EnvironmentMenu::_addEnvironmentModel() noexcept
     mtt::EnvironmentModel* modelPtr = newModel.get();
 
     std::unique_ptr<mtt::AddObjectCommand> command(
-                new mtt::AddObjectCommand(std::move(newModel),
-                                          scene->environmentRoot().objects()));
+            new mtt::AddObjectCommand(std::move(newModel),
+                                      scene->environmentRoot().objectsGroup()));
     _commonData.undoStack().addAndMake(std::move(command));
     _commonData.selectObjects({modelPtr});
   }

@@ -17,6 +17,9 @@ public:
   inline RootObject& dataRoot() noexcept;
   inline const RootObject& dataRoot() const noexcept;
 
+signals:
+  void dataRootChanged(RootObject& newDataRoot);
+
 private:
   RootObject* _dataRoot;
 };

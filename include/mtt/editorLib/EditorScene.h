@@ -13,8 +13,7 @@ namespace mtt
 
   public:
     /// dataRoot and environmentRoot must not be nullptr
-    EditorScene(std::unique_ptr<Object> dataRoot,
-                std::unique_ptr<EnvironmentRootObject> environmentRoot);
+    EditorScene(std::unique_ptr<Object> dataRoot);
     EditorScene(const EditorScene&) = delete;
     EditorScene& operator = (const EditorScene&) = delete;
     virtual ~EditorScene() noexcept;
@@ -24,6 +23,17 @@ namespace mtt
 
     inline EnvironmentRootObject& environmentRoot() noexcept;
     inline const EnvironmentRootObject& environmentRoot() const noexcept;
+    /// newRoot must not be nullptr
+    void changeEnvironmentRoot(std::unique_ptr<EnvironmentRootObject> newRoot);
+
+  signals:
+    void dataRootChanged(Object& newDataRoot);
+    void environmentRootChnaged(EnvironmentRootObject& newEnvironmentRoot);
+
+  protected:
+    /// newRoot must not be nullptr
+    /// returns old data root
+    std::unique_ptr<Object> changeDataRoot(std::unique_ptr<Object> newRoot);
 
   private:
     std::unique_ptr<Object> _dataRoot;
