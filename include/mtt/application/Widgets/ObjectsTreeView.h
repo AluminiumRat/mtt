@@ -28,6 +28,9 @@ namespace mtt
     inline QSortFilterProxyModel* sortFilterModel() const noexcept;
     void setSortFilterModel(QSortFilterProxyModel* newModel);
 
+  protected:
+    virtual void mouseReleaseEvent(QMouseEvent* event) override;
+
   private:
     void _updateSelectionFromWidget() noexcept;
     void _updateWidgetFromSelection() noexcept;

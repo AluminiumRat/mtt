@@ -23,7 +23,7 @@ ObjectsTreeView::ObjectsTreeView(CommonEditData* commonEditData) :
             Qt::DirectConnection);
  }
 }
-  
+
 void ObjectsTreeView::setItemModel(ObjectItemTreeModel* itemModel)
 {
   _itemModel = itemModel;
@@ -73,6 +73,12 @@ void ObjectsTreeView::_connectToSelectionModel()
           this,
           &ObjectsTreeView::_updateSelectionFromWidget,
           Qt::DirectConnection);
+}
+
+void ObjectsTreeView::mouseReleaseEvent(QMouseEvent* event)
+{
+  QTreeView::mouseReleaseEvent(event);
+  _updateSelectionFromWidget();
 }
 
 void ObjectsTreeView::_updateSelectionFromWidget() noexcept
