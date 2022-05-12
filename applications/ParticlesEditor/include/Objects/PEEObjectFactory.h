@@ -16,9 +16,11 @@ public:
   static constexpr TypeIndex gasSourceIndex = 9;
   static constexpr TypeIndex heaterObjectIndex = 10;
   static constexpr TypeIndex sizeControlIndex = 11;
-  static constexpr TypeIndex ParticlesEmissionActionIndex = 12;
-  static constexpr TypeIndex GasEmissionActionIndex = 13;
-  static constexpr TypeIndex HeatingActionIndex = 14;
+  static constexpr TypeIndex particlesEmissionActionIndex = 12;
+  static constexpr TypeIndex gasEmissionActionIndex = 13;
+  static constexpr TypeIndex heatingActionIndex = 14;
+  static constexpr TypeIndex rootObjectIndex = 15;
+  static constexpr TypeIndex modificatorGroupIndex = 16;
 
 public:
   PEEObjectFactory();

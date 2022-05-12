@@ -73,7 +73,7 @@ void EditMenu::_addHierarhical(std::unique_ptr<HierarhicalObject> object)
     if(!target->subobjectCanBeAddedAndRemoved(*object)) target = nullptr;
   }
   if(target == nullptr) target = &scene->dataRoot().modificatorsGroup();
-    
+
   std::unique_ptr<mtt::AddObjectCommand> command(
                         new mtt::AddObjectCommand(std::move(object), *target));
   _commonData.undoStack().addAndMake(std::move(command));

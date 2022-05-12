@@ -23,11 +23,13 @@ public:
   virtual void visitGravityModificator(GravityModificator& object) override;
   virtual void visitHeaterObject(HeaterObject& object) override;
   virtual void visitHeatingAction(HeatingAction& object) override;
+  virtual void visitModificatorGroup(ModificatorGroup& object) override;
   virtual void visitModificatorObject(ModificatorObject& object) override;
   virtual void visitParticleAnimation(ParticleAnimation& object) override;
   virtual void visitParticleField(ParticleField& object) override;
   virtual void visitParticlesEmissionAction(
                                       ParticlesEmissionAction& object) override;
+  virtual void visitRootObject(RootObject& object) override;
   virtual void visitSizeControlObject(SizeControlObject& object) override;
   virtual void visitVisibilityControlObject(
                                       VisibilityControlObject& object) override;

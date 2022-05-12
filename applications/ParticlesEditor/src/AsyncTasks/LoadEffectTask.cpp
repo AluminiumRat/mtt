@@ -40,18 +40,11 @@ void LoadEffectTask::asyncPart()
   ObjectLoader loader;
   PEEObjectFactory factory;
 
-  _field = loader.loadObject<ParticleField>(false,
+  _newData = loader.loadObject<RootObject>( false,
                                             *_stream,
                                             _fileDirectory,
                                             _mixUIDValue,
                                             factory);
-  _loadModificators();
-
-  _animation = loader.loadObject<ParticleAnimation>(false,
-                                                    *_stream,
-                                                    _fileDirectory,
-                                                    _mixUIDValue,
-                                                    factory);
 }
 
 void LoadEffectTask::_checkHead()
@@ -65,44 +58,10 @@ void LoadEffectTask::_checkHead()
   if(fileVersion > SaveEffectTask::fileVersion) throw std::runtime_error("Unsupported version of pee file");
 }
 
-void LoadEffectTask::_loadModificators()
-{
-  ObjectLoader loader;
-  PEEObjectFactory factory;
-
-  uint32_t modificatorsNumber = _stream->readUint32();
-  for (; modificatorsNumber != 0; modificatorsNumber--)
-  {
-    _modificators.push_back(
-                          loader.loadObject<HierarhicalObject>( true,
-                                                                *_stream,
-                                                                _fileDirectory,
-                                                                _mixUIDValue,
-                                                                factory));
-  }
-}
-
 void LoadEffectTask::finalizePart()
 {
   _commonData.undoStack().clear();
-  _commonData.setDataFilename("");
-  _scene.dataRoot().clear();
-
-  try
-  {
-    _scene.dataRoot().changeParticleField(std::move(_field));
-    for (std::unique_ptr<HierarhicalObject>& modificator : _modificators)
-    {
-      _scene.dataRoot().modificatorsGroup().addChild(std::move(modificator));
-    }
-    _scene.dataRoot().changeAnimation(std::move(_animation));
-
-    _commonData.setDataFilename(_filename);
-  }
-  catch (...)
-  {
-    _scene.dataRoot().clear();
-    throw;
-  }
+  _scene.changeDataRoot(std::move(_newData));
+  _commonData.setDataFilename(_filename);
 }
 

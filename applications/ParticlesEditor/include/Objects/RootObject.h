@@ -32,15 +32,9 @@ public:
 
   inline ParticleAnimation& animation() noexcept;
   inline const ParticleAnimation& animation() const noexcept;
-  /// newAnimation must be not null
-  void changeAnimation(std::unique_ptr<ParticleAnimation> newAnimation);
 
   inline ParticleField& particleField() noexcept;
   inline const ParticleField& particleField() const noexcept;
-  /// newField must be not null
-  void changeParticleField(std::unique_ptr<ParticleField> newField);
-
-  void clear() noexcept;
 
 signals:
   void animationChanged(ParticleAnimation& newAnimation);

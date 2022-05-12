@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include <vector>
 
 #include <QtCore/QDir>
 #include <QtCore/QString>
@@ -9,9 +8,7 @@
 #include <mtt/application/AsyncTasks/AbstractAsyncTask.h>
 #include <mtt/application/DataStream.h>
 
-#include <Objects/HierarhicalObject.h>
-#include <Objects/ParticleAnimation.h>
-#include <Objects/ParticleField.h>
+#include <Objects/RootObject.h>
 
 class QFile;
 
@@ -34,7 +31,6 @@ protected:
 
 private:
   void _checkHead();
-  void _loadModificators();
 
 private:
   ParticlesEditorScene& _scene;
@@ -45,7 +41,5 @@ private:
   ParticlesEditorCommonData& _commonData;
   mtt::UID::ValueType _mixUIDValue;
 
-  std::unique_ptr<ParticleField> _field;
-  std::vector<std::unique_ptr<HierarhicalObject>> _modificators;
-  std::unique_ptr<ParticleAnimation> _animation;
+  std::unique_ptr<RootObject> _newData;
 };

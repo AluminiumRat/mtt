@@ -31,5 +31,5 @@ void ParticleAnimation::update(mtt::TimeRange time)
 
   AnimationObject::update(time);
 
-  _fieldRef->simulationStep(time);
+  if(_fieldRef != nullptr) _fieldRef->simulationStep(time);
 }

@@ -27,6 +27,8 @@ public:
                                     const GravityModificator& object) override;
   virtual void visitConstHeaterObject(const HeaterObject& object) override;
   virtual void visitConstHeatingAction(const HeatingAction& object) override;
+  virtual void visitConstModificatorGroup(
+                                      const ModificatorGroup& object) override;
   virtual void visitConstModificatorObject(
                                       const ModificatorObject& object) override;
   virtual void visitConstParticleAnimation(
@@ -34,6 +36,7 @@ public:
   virtual void visitConstParticleField(const ParticleField& object) override;
   virtual void visitConstParticlesEmissionAction(
                                 const ParticlesEmissionAction& object) override;
+  virtual void visitConstRootObject(const RootObject& object) override;
   virtual void visitConstSizeControlObject(
                                       const SizeControlObject& object) override;
   virtual void visitConstVisibilityControlObject(

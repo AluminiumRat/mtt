@@ -25,7 +25,7 @@ AnimationPlayer::~AnimationPlayer() noexcept
 void AnimationPlayer::start(AnimationObject& animation) noexcept
 {
   if(_currentAnimation != nullptr) stop();
-  
+
   try
   {
     _restoreCommand = animation.makeRestoreCommand();

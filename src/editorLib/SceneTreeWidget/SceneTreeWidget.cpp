@@ -99,17 +99,20 @@ void SceneTreeWidget::_setScene(EditorScene* scene) noexcept
   {
     _scene = scene;
 
-    connect(_scene,
-            &EditorScene::dataRootChanged,
-            this,
-            &SceneTreeWidget::_updateViews,
-            Qt::DirectConnection);
+    if(_scene != nullptr)
+    {
+      connect(_scene,
+              &EditorScene::dataRootChanged,
+              this,
+              &SceneTreeWidget::_updateViews,
+              Qt::DirectConnection);
 
-    connect(_scene,
-            &EditorScene::environmentRootChnaged,
-            this,
-            &SceneTreeWidget::_updateViews,
-            Qt::DirectConnection);
+      connect(_scene,
+              &EditorScene::environmentRootChnaged,
+              this,
+              &SceneTreeWidget::_updateViews,
+              Qt::DirectConnection);
+    }
   }
   catch (std::exception& error)
   {

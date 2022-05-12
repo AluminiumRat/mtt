@@ -37,7 +37,8 @@ void FileMenu::_clearScene() noexcept
 
   _commonData.undoStack().clear();
   _commonData.setDataFilename("");
-  _commonData.scene()->dataRoot().clear();
+  _commonData.scene()->changeDataRoot(
+                            std::make_unique<RootObject>(tr("Effect"), false));
 }
 
 void FileMenu::_saveEffect() noexcept
@@ -74,7 +75,7 @@ void FileMenu::_saveToFile(const QString& file) noexcept
   try
   {
     std::unique_ptr<SaveEffectTask> task;
-    task.reset(new SaveEffectTask(*_commonData.scene(),
+    task.reset(new SaveEffectTask(_commonData.scene()->dataRoot(),
                                   file,
                                   _commonData));
     mtt::EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));

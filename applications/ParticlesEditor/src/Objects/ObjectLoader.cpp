@@ -114,6 +114,12 @@ void ObjectLoader::visitHeatingAction(HeatingAction& object)
   object.heaterRef().setReferencedId(readUID());
 }
 
+void ObjectLoader::visitModificatorGroup(ModificatorGroup& object)
+{
+  PEVisitorT::visitModificatorGroup(object);
+  readChilds<ModificatorGroup, HierarhicalObject>(object, true);
+}
+
 void ObjectLoader::visitModificatorObject(ModificatorObject& object)
 {
   PEVisitorT::visitModificatorObject(object);
@@ -164,6 +170,29 @@ void ObjectLoader::visitParticlesEmissionAction(ParticlesEmissionAction& object)
 
   object.setParticlesNumber(stream().readUint32());
   object.emitterRef().setReferencedId(readUID());
+}
+
+void ObjectLoader::visitRootObject(RootObject& object)
+{
+  PEVisitorT::visitRootObject(object);
+
+  loadEmbeddedObject( object.particleField(),
+                      stream(),
+                      fileDirectory(),
+                      mixUIDValue(),
+                      objectFactory());
+
+  loadEmbeddedObject( object.modificatorsGroup(),
+                      stream(),
+                      fileDirectory(),
+                      mixUIDValue(),
+                      objectFactory());
+
+  loadEmbeddedObject( object.animation(),
+                      stream(),
+                      fileDirectory(),
+                      mixUIDValue(),
+                      objectFactory());
 }
 
 void ObjectLoader::visitSizeControlObject(SizeControlObject& object)

@@ -8,10 +8,12 @@
 #include <Objects/GasEmissionAction.h>
 #include <Objects/GravityModificator.h>
 #include <Objects/HeatingAction.h>
+#include <Objects/ModificatorGroup.h>
 #include <Objects/ParticleAnimation.h>
 #include <Objects/ParticleField.h>
 #include <Objects/ParticlesEmissionAction.h>
 #include <Objects/PEEObjectFactory.h>
+#include <Objects/RootObject.h>
 #include <Objects/SizeControlObject.h>
 #include <Objects/VisibilityControlObject.h>
 
@@ -28,7 +30,9 @@ PEEObjectFactory::PEEObjectFactory()
   registerType<GasSource, gasSourceIndex>();
   registerType<HeaterObject, heaterObjectIndex>();
   registerType<SizeControlObject, sizeControlIndex>();
-  registerType<ParticlesEmissionAction, ParticlesEmissionActionIndex>();
-  registerType<GasEmissionAction, GasEmissionActionIndex>();
-  registerType<HeatingAction, HeatingActionIndex>();
+  registerType<ParticlesEmissionAction, particlesEmissionActionIndex>();
+  registerType<GasEmissionAction, gasEmissionActionIndex>();
+  registerType<HeatingAction, heatingActionIndex>();
+  registerType<RootObject, rootObjectIndex>();
+  registerType<ModificatorGroup, modificatorGroupIndex>();
 }

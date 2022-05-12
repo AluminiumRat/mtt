@@ -20,7 +20,7 @@ EditorScene::~EditorScene() noexcept
 }
 
 void EditorScene::changeEnvironmentRoot(
-                                std::unique_ptr<EnvironmentRootObject> newRoot)
+                        std::unique_ptr<EnvironmentRootObject> newRoot) noexcept
 {
   if(newRoot == nullptr) Abort("EditorScene::changeEnvironmentRoot: newRoot is nullpt.");
 
@@ -45,7 +45,7 @@ void EditorScene::changeEnvironmentRoot(
 }
 
 std::unique_ptr<Object> EditorScene::changeDataRoot(
-                                                std::unique_ptr<Object> newRoot)
+                                      std::unique_ptr<Object> newRoot) noexcept
 {
   if(newRoot == nullptr) Abort("EditorScene::changeDataRoot: newRoot is nullpt.");
 

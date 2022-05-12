@@ -115,6 +115,12 @@ void ObjectSaver::visitConstHeatingAction(const HeatingAction& object)
   stream() << object.heaterRef().referencedId();
 }
 
+void ObjectSaver::visitConstModificatorGroup(const ModificatorGroup& object)
+{
+  PEVisitorT::visitConstModificatorGroup(object);
+  writeChilds(object);
+}
+
 void ObjectSaver::visitConstModificatorObject(const ModificatorObject& object)
 {
   PEVisitorT::visitConstModificatorObject(object);
@@ -164,6 +170,26 @@ void ObjectSaver::visitConstParticlesEmissionAction(
 
   stream() << uint32_t(object.particlesNumber());
   stream() << object.emitterRef().referencedId();
+}
+
+void ObjectSaver::visitConstRootObject(const RootObject& object)
+{
+  PEVisitorT::visitConstRootObject(object);
+
+  saveObjectData( object.particleField(),
+                  stream(),
+                  fileDirectory(),
+                  objectFactory());
+
+  saveObjectData( object.modificatorsGroup(),
+                  stream(),
+                  fileDirectory(),
+                  objectFactory());
+
+  saveObjectData( object.animation(),
+                  stream(),
+                  fileDirectory(),
+                  objectFactory());
 }
 
 void ObjectSaver::visitConstSizeControlObject(const SizeControlObject& object)

@@ -5,7 +5,7 @@
 #include <mtt/application/AsyncTasks/SaveToFileTask.h>
 
 class ParticlesEditorCommonData;
-class ParticlesEditorScene;
+class RootObject;
 
 class SaveEffectTask : public mtt::SaveToFileTask
 {
@@ -14,7 +14,7 @@ public:
   static constexpr uint32_t fileVersion = 0;
 
 public:
-  SaveEffectTask( const ParticlesEditorScene& scene,
+  SaveEffectTask( const RootObject& data,
                   const QString& filename,
                   ParticlesEditorCommonData& commonData);
   SaveEffectTask(const SaveEffectTask&) = delete;
@@ -30,9 +30,8 @@ protected:
 
 private:
   void _writeHead(QFile& file, mtt::DataStream& stream);
-  void _writeModificators(mtt::DataStream& stream, const QDir& fileDirectory);
 
 private:
-  const ParticlesEditorScene& _scene;
+  const RootObject& _data;
   ParticlesEditorCommonData& _commonData;
 };

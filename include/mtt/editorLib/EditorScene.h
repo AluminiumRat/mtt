@@ -24,7 +24,8 @@ namespace mtt
     inline EnvironmentRootObject& environmentRoot() noexcept;
     inline const EnvironmentRootObject& environmentRoot() const noexcept;
     /// newRoot must not be nullptr
-    void changeEnvironmentRoot(std::unique_ptr<EnvironmentRootObject> newRoot);
+    void changeEnvironmentRoot(
+                      std::unique_ptr<EnvironmentRootObject> newRoot) noexcept;
 
   signals:
     void dataRootChanged(Object& newDataRoot);
@@ -33,7 +34,8 @@ namespace mtt
   protected:
     /// newRoot must not be nullptr
     /// returns old data root
-    std::unique_ptr<Object> changeDataRoot(std::unique_ptr<Object> newRoot);
+    std::unique_ptr<Object> changeDataRoot(
+                                      std::unique_ptr<Object> newRoot) noexcept;
 
   private:
     std::unique_ptr<Object> _dataRoot;

@@ -5,3 +5,12 @@ ParticlesEditorScene::ParticlesEditorScene() :
   _dataRoot(static_cast<RootObject*>(&mtt::EditorScene::dataRoot()))
 {
 }
+
+void ParticlesEditorScene::changeDataRoot(
+                                  std::unique_ptr<RootObject> newRoot) noexcept
+{
+  std::unique_ptr<mtt::Object> oldRoot =
+                          mtt::EditorScene::changeDataRoot(std::move(newRoot));
+  _dataRoot = static_cast<RootObject*>(&mtt::EditorScene::dataRoot());
+  emit dataRootChanged(*_dataRoot);
+}
