@@ -5,7 +5,7 @@
 #include <mtt/application/AsyncTasks/SaveToFileTask.h>
 
 class ObjectEditorCommonData;
-class ObjectEditorScene;
+class RootObject;
 
 class SaveModelTask : public mtt::SaveToFileTask
 {
@@ -14,7 +14,7 @@ public:
   static constexpr uint32_t fileVersion = 0;
 
 public:
-  SaveModelTask(const ObjectEditorScene& scene,
+  SaveModelTask(const RootObject& dataRoot,
                 const QString& filename,
                 ObjectEditorCommonData& commonData);
   SaveModelTask(const SaveModelTask&) = delete;
@@ -30,12 +30,8 @@ protected:
 
 private:
   void _writeHead(QFile& file, mtt::DataStream& stream);
-  void _writeMaterials(mtt::DataStream& stream, const QDir& fileDirectory);
-  void _writeSkeletons(mtt::DataStream& stream, const QDir& fileDirectory);
-  void _writeGeometry(mtt::DataStream& stream, const QDir& fileDirectory);
-  void _writeAnimations(mtt::DataStream& stream, const QDir& fileDirectory);
 
 private:
-  const ObjectEditorScene& _scene;
+  const RootObject& _dataRoot;
   ObjectEditorCommonData& _commonData;
 };

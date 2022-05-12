@@ -75,6 +75,12 @@ void ObjectSaver::visitConstAmbientLightObject(
   writeCubemapData(object.ambientMap());
 }
 
+void ObjectSaver::visitConstAnimationGroup(const AnimationGroup& object)
+{
+  CEVisitor::visitConstAnimationGroup(object);
+  writeChilds(object);
+}
+
 void ObjectSaver::visitConstAnimationObject(const mtt::AnimationObject& object)
 {
   CEVisitor::visitConstAnimationObject(object);
@@ -219,6 +225,12 @@ void ObjectSaver::visitConstScalableObject(const mtt::ScalableObject& object)
 {
   CEVisitor::visitConstScalableObject(object);
   *_stream << object.scale();
+}
+
+void ObjectSaver::visitConstSkeletonGroup(const SkeletonGroup& object)
+{
+  CEVisitor::visitConstSkeletonGroup(object);
+  writeChilds(object);
 }
 
 void ObjectSaver::visitConstSkeletonObject(const mtt::SkeletonObject& object)

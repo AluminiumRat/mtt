@@ -6,6 +6,7 @@
 #include <Objects/MaterialObject.h>
 #include <Objects/MeshObject.h>
 #include <Objects/MMDObjectFactory.h>
+#include <Objects/RootObject.h>
 
 MMDObjectFactory::MMDObjectFactory()
 {
@@ -15,4 +16,5 @@ MMDObjectFactory::MMDObjectFactory()
   registerType<MaterialObject, materialIndex>();
   registerType<MeshObject, meshIndex>();
   registerType<mtt::SkeletonObject, skeletonIndex>();
+  registerType<RootObject, rootObjectIndex>();
 }

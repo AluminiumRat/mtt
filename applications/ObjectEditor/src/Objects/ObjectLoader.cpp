@@ -1,5 +1,11 @@
 #include <Objects/ObjectLoader.h>
 
+void ObjectLoader::visitGeometryGroup(GeometryGroup& object)
+{
+  OEVisitorT::visitGeometryGroup(object);
+  readChilds<GeometryGroup, LODObject>(object, true);
+}
+
 void ObjectLoader::visitGeometryObject(GeometryObject& object)
 {
   OEVisitorT::visitGeometryObject(object);
@@ -21,6 +27,12 @@ void ObjectLoader::visitLODObject(LODObject& object)
                                             mixUIDValue(),
                                             objectFactory()));
   }
+}
+
+void ObjectLoader::visitMaterialsGroup(MaterialsGroup& object)
+{
+  OEVisitorT::visitMaterialsGroup(object);
+  readChilds<MaterialsGroup, MaterialObject>(object, true);
 }
 
 void ObjectLoader::visitMaterialObject(MaterialObject& object)
@@ -107,4 +119,33 @@ void ObjectLoader::visitMeshObject(MeshObject& object)
   object.setGeometry(std::move(geometry));
   object.setBoneRefs(readBoneRefs());
   object.materialRef().setReferencedId(readUID());
+}
+
+void ObjectLoader::visitRootObject(RootObject& object)
+{
+  OEVisitorT::visitRootObject(object);
+
+  loadEmbeddedObject( object.materialsGroup(),
+                      stream(),
+                      fileDirectory(),
+                      mixUIDValue(),
+                      objectFactory());
+
+  loadEmbeddedObject( object.skeletonGroup(),
+                      stream(),
+                      fileDirectory(),
+                      mixUIDValue(),
+                      objectFactory());
+
+  loadEmbeddedObject( object.geometryGroup(),
+                      stream(),
+                      fileDirectory(),
+                      mixUIDValue(),
+                      objectFactory());
+
+  loadEmbeddedObject( object.animationGroup(),
+                      stream(),
+                      fileDirectory(),
+                      mixUIDValue(),
+                      objectFactory());
 }

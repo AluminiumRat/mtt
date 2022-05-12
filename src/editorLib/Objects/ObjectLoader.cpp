@@ -52,6 +52,12 @@ void ObjectLoader::visitAmbientLightObject(AmbientLightObject& object)
   readCubemapData(object.ambientMap());
 }
 
+void ObjectLoader::visitAnimationGroup(AnimationGroup& object)
+{
+  CEVisitor::visitAnimationGroup(object);
+  readChilds<AnimationGroup, AnimationObject>(object, true);
+}
+
 void ObjectLoader::visitAnimationObject(AnimationObject& object)
 {
   CEVisitor::visitAnimationObject(object);
@@ -208,6 +214,12 @@ void ObjectLoader::visitScalableObject(ScalableObject& object)
 {
   CEVisitor::visitScalableObject(object);
   object.setScale(_stream->readVec3());
+}
+
+void ObjectLoader::visitSkeletonGroup(SkeletonGroup& object)
+{
+  CEVisitor::visitSkeletonGroup(object);
+  readChilds<SkeletonGroup, SkeletonObject>(object, true);
 }
 
 void ObjectLoader::visitSkeletonObject(SkeletonObject& object)

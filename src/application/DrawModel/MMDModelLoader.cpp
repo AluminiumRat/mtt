@@ -42,6 +42,10 @@ std::unique_ptr<MasterDrawModel> MMDModelLoader::load()
   _stream = &stream;
 
   _checkHead();
+
+  ObjectHeader rootHeader = _loadObjectHeader();
+  if(rootHeader.objectTypeIndex != 7) throw std::runtime_error("Wrong type index of root object");
+
   _loadMaterials();
 
   std::unique_ptr<MasterDrawModel> model(new MasterDrawModel);
@@ -104,6 +108,9 @@ MMDModelLoader::MaterialData MMDModelLoader::_loadMaterialData()
 
 void MMDModelLoader::_loadMaterials()
 {
+  QString groupName;
+  (*_stream) >> groupName;
+
   uint32_t materialsNumber = _stream->readUint32();
   for (; materialsNumber != 0; materialsNumber--)
   {
@@ -121,6 +128,11 @@ MMDModelLoader::ObjectHeader MMDModelLoader::_loadObjectHeader()
 
 void MMDModelLoader::_loadBones()
 {
+  QString groupName;
+  (*_stream) >> groupName;
+
+  bool visible = _stream->readBool();
+
   uint32_t boneNumber = _stream->readUint32();
   for (; boneNumber != 0; boneNumber--)
   {
@@ -168,6 +180,11 @@ glm::mat4 MMDModelLoader::_loadTransform()
 
 void MMDModelLoader::_loadGeometry()
 {
+  QString groupName;
+  (*_stream) >> groupName;
+
+  bool visible = _stream->readBool();
+
   uint32_t lodsNumber = _stream->readUint32();
   for (; lodsNumber != 0; lodsNumber--)
   {
@@ -343,6 +360,9 @@ std::unique_ptr<Sampler> MMDModelLoader::loadTexture(const QString& fileName)
 
 void MMDModelLoader::_loadAnimations()
 {
+  QString groupName;
+  (*_stream) >> groupName;
+
   uint32_t animationsNumber = _stream->readUint32();
   for (; animationsNumber != 0; animationsNumber--)
   {

@@ -1,18 +1,14 @@
 #pragma once
 
 #include <memory>
-#include <vector>
 
 #include <QtCore/QDir>
 #include <QtCore/QString>
 
 #include <mtt/application/AsyncTasks/AbstractAsyncTask.h>
 #include <mtt/application/DataStream.h>
-#include <mtt/editorLib/Objects/AnimationObject.h>
-#include <mtt/editorLib/Objects/SkeletonObject.h>
 
-#include <Objects/LODObject.h>
-#include <Objects/MaterialObject.h>
+#include <Objects/RootObject.h>
 
 class QFile;
 
@@ -35,10 +31,6 @@ protected:
 
 private:
   void _checkHead();
-  void _loadMaterials();
-  void _loadSkeletons();
-  void _loadGeometry();
-  void _loadAnimations();
 
 private:
   ObjectEditorScene& _scene;
@@ -49,8 +41,5 @@ private:
   ObjectEditorCommonData& _commonData;
   mtt::UID::ValueType _mixUIDValue;
 
-  std::vector<std::unique_ptr<mtt::AnimationObject>> _animations;
-  std::vector<std::unique_ptr<LODObject>> _lods;
-  std::vector<std::unique_ptr<MaterialObject>> _materials;
-  std::vector<std::unique_ptr<mtt::SkeletonObject>> _skeletons;
+  std::unique_ptr<RootObject> _newDataRoot;
 };

@@ -46,34 +46,3 @@ RootObject::RootObject( const QString& name,
   _animationGroup = animationGroup.get();
   addSubobject(std::move(animationGroup));
 }
-
-void RootObject::clear() noexcept
-{
-  while (_animationGroup->childsNumber() != 0)
-  {
-    _animationGroup->removeChild( _animationGroup->child(
-                                          _animationGroup->childsNumber() - 1),
-                                  true);
-  }
-
-  while (_geometryGroup->childsNumber() != 0)
-  {
-    _geometryGroup->removeChild(_geometryGroup->child(
-                                            _geometryGroup->childsNumber() - 1),
-                                true);
-  }
-
-  while (_materialsGroup->childsNumber() != 0)
-  {
-    _materialsGroup->removeChild( _materialsGroup->child(
-                                          _materialsGroup->childsNumber() - 1),
-                                  true);
-  }
-
-  while (_skeletonGroup->childsNumber() != 0)
-  {
-    _skeletonGroup->removeChild(_skeletonGroup->child(
-                                            _skeletonGroup->childsNumber() - 1),
-                                true);
-  }
-}

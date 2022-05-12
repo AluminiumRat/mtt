@@ -1,5 +1,11 @@
 #include <Objects/ObjectSaver.h>
 
+void ObjectSaver::visitConstGeometryGroup(const GeometryGroup& object)
+{
+  OEVisitorT::visitConstGeometryGroup(object);
+  writeChilds(object);
+}
+
 void ObjectSaver::visitConstGeometryObject(const GeometryObject& object)
 {
   OEVisitorT::visitConstGeometryObject(object);
@@ -21,6 +27,12 @@ void ObjectSaver::visitConstLODObject(const LODObject& object)
                 fileDirectory(),
                 objectFactory());
   }
+}
+
+void ObjectSaver::visitConstMaterialsGroup(const MaterialsGroup& object)
+{
+  OEVisitorT::visitConstMaterialsGroup(object);
+  writeChilds(object);
 }
 
 void ObjectSaver::visitConstMaterialObject(const MaterialObject& object)
@@ -96,4 +108,29 @@ void ObjectSaver::saveBoneRefs(const BoneRefBatch& refs)
     stream() << boneRef.boneRef().referencedId();
     stream() << boneRef.boneInverseMatrix();
   }
+}
+
+void ObjectSaver::visitConstRootObject(const RootObject& object)
+{
+  OEVisitorT::visitConstRootObject(object);
+
+  saveObjectData( object.materialsGroup(),
+                  stream(),
+                  fileDirectory(),
+                  objectFactory());
+
+  saveObjectData( object.skeletonGroup(),
+                  stream(),
+                  fileDirectory(),
+                  objectFactory());
+
+  saveObjectData( object.geometryGroup(),
+                  stream(),
+                  fileDirectory(),
+                  objectFactory());
+
+  saveObjectData( object.animationGroup(),
+                  stream(),
+                  fileDirectory(),
+                  objectFactory());
 }

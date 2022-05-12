@@ -31,6 +31,8 @@ namespace mtt
 
     virtual void visitConstAmbientLightObject(
                                     const AmbientLightObject& object) override;
+    virtual void visitConstAnimationGroup(
+                                        const AnimationGroup& object) override;
     virtual void visitConstAnimationObject(
                                         const AnimationObject& object) override;
     virtual void visitConstAnimationTrack(
@@ -57,6 +59,7 @@ namespace mtt
                                         const RotatableObject& object) override;
     virtual void visitConstScalableObject(
                                         const ScalableObject& object) override;
+    virtual void visitConstSkeletonGroup(const SkeletonGroup& object) override;
     virtual void visitConstSkeletonObject(
                                         const SkeletonObject& object) override;
 

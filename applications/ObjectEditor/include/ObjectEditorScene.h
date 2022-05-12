@@ -16,6 +16,8 @@ public:
 
   inline RootObject& dataRoot() noexcept;
   inline const RootObject& dataRoot() const noexcept;
+  /// newRoot must not be nullptr
+  void changeDataRoot(std::unique_ptr<RootObject> newRoot) noexcept;
 
 signals:
   void dataRootChanged(RootObject& newDataRoot);

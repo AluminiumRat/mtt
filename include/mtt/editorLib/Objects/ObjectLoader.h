@@ -42,6 +42,7 @@ namespace mtt
     inline const ObjectFactory& objectFactory() const noexcept;
 
     virtual void visitAmbientLightObject(AmbientLightObject& object) override;
+    virtual void visitAnimationGroup(AnimationGroup& object) override;
     virtual void visitAnimationObject(AnimationObject& object) override;
     virtual void visitAnimationTrack(AnimationTrack& object) override;
     virtual void visitBackgroundObject(BackgroundObject& object) override;
@@ -57,6 +58,7 @@ namespace mtt
     virtual void visitPositionAnimator(PositionAnimator& object) override;
     virtual void visitRotatableObject(RotatableObject& object) override;
     virtual void visitScalableObject(ScalableObject& object) override;
+    virtual void visitSkeletonGroup(SkeletonGroup& object) override;
     virtual void visitSkeletonObject(SkeletonObject& object) override;
 
   protected:

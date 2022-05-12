@@ -36,7 +36,8 @@ void FileMenu::_clearScene() noexcept
 
   _commonData.undoStack().clear();
   _commonData.setDataFilename("");
-  _commonData.scene()->dataRoot().clear();
+  _commonData.scene()->changeDataRoot(
+                              std::make_unique<RootObject>(tr("Model"), false));
 }
 
 void FileMenu::_saveModel() noexcept
@@ -73,7 +74,7 @@ void FileMenu::_saveModelToFile(const QString& file) noexcept
   try
   {
     std::unique_ptr<SaveModelTask> task;
-    task.reset(new SaveModelTask( *_commonData.scene(),
+    task.reset(new SaveModelTask( _commonData.scene()->dataRoot(),
                                   file,
                                   _commonData));
     mtt::EditorApplication::instance().asyncTaskQueue.addTask(std::move(task));
