@@ -53,23 +53,14 @@ void LoadEnvironmentTask::asyncPart()
 
   _checkHead();
 
-  _newEnvironment.reset(
-        new EnvironmentRootObject(QCoreApplication::tr("Environment"), false));
-
   ObjectLoader loader;
   EnvironmentObjectFactory factory;
 
-  loader.loadEmbeddedObject(_newEnvironment->background(),
-                            *_stream,
-                            _fileDirectory,
-                            _mixUIDValue,
-                            factory);
-
-  loader.loadEmbeddedObject(_newEnvironment->objectsGroup(),
-                            *_stream,
-                            _fileDirectory,
-                            _mixUIDValue,
-                            factory);
+  _newEnvironment = loader.loadObject<EnvironmentRootObject>( false,
+                                                              *_stream,
+                                                              _fileDirectory,
+                                                              _mixUIDValue,
+                                                              factory);
 }
 
 void LoadEnvironmentTask::finalizePart()

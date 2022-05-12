@@ -46,6 +46,8 @@ namespace mtt
                                       const EnvironmentGroup& object) override;
     virtual void visitConstEnvironmentModel(
                                       const EnvironmentModel& object) override;
+    virtual void visitConstEnvironmentRootObject(
+                                  const EnvironmentRootObject& object) override;
     virtual void visitConstLightObject(const LightObject& object) override;
     virtual void visitConstObject(const mtt::Object& object) override;
     virtual void visitConstMovableObject(const MovableObject& object) override;

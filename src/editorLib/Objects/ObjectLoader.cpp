@@ -132,6 +132,23 @@ void ObjectLoader::visitEnvironmentModel(EnvironmentModel& object)
   object.setFilename(readFilename());
 }
 
+void ObjectLoader::visitEnvironmentRootObject(EnvironmentRootObject& object)
+{
+  CEVisitor::visitEnvironmentRootObject(object);
+
+  loadEmbeddedObject( object.background(),
+                      stream(),
+                      fileDirectory(),
+                      mixUIDValue(),
+                      objectFactory());
+
+  loadEmbeddedObject( object.objectsGroup(),
+                      stream(),
+                      fileDirectory(),
+                      mixUIDValue(),
+                      objectFactory());
+}
+
 void ObjectLoader::visitLightObject(LightObject& object)
 {
   CEVisitor::visitLightObject(object);

@@ -142,6 +142,22 @@ void ObjectSaver::visitConstEnvironmentModel(
   writeFilename(object.filename());
 }
 
+void ObjectSaver::visitConstEnvironmentRootObject(
+                                            const EnvironmentRootObject& object)
+{
+  CEVisitor::visitConstEnvironmentRootObject(object);
+
+  saveObjectData( object.background(),
+                  stream(),
+                  fileDirectory(),
+                  objectFactory());
+
+  saveObjectData( object.objectsGroup(),
+                  stream(),
+                  fileDirectory(),
+                  objectFactory());
+}
+
 void ObjectSaver::visitConstLightObject(const mtt::LightObject& object)
 {
   CEVisitor::visitConstLightObject(object);

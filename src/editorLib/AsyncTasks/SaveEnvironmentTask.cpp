@@ -32,14 +32,10 @@ void SaveEnvironmentTask::saveData( QFile& file,
   ObjectSaver saver;
   EnvironmentObjectFactory factory;
 
-  saver.saveObjectData( _environment.background(),
-                        stream,
-                        targetFileInfo.dir(),
-                        factory);
-  saver.saveObjectData( _environment.objectsGroup(),
-                        stream,
-                        targetFileInfo.dir(),
-                        factory);
+  saver.saveObject( _environment,
+                    stream,
+                    targetFileInfo.dir(),
+                    factory);
 }
 
 void SaveEnvironmentTask::_writeHead(QFile& file, mtt::DataStream& stream)
