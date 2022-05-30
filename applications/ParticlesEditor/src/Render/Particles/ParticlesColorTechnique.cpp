@@ -82,6 +82,10 @@ void ParticlesColorTechnique::_applyAreaModifictors(
 
 void ParticlesColorTechnique::adjustPipeline(mtt::GraphicsPipeline& pipeline)
 {
+  pipeline.setDepthTestEnable(true);
+  pipeline.setDepthWriteEnable(false);
+  pipeline.setDepthCompareOp(VK_COMPARE_OP_GREATER_OR_EQUAL);
+
   mtt::LogicalDevice& device = pipeline.device();
 
   std::unique_ptr<mtt::ShaderModule> vertexShader(

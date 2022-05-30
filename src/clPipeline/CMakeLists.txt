@@ -62,8 +62,9 @@ set(HEADERS
     "../../include/mtt/clPipeline/RenderPass/ForwardLightPass.h"
     "../../include/mtt/clPipeline/RenderPass/GBufferPass.h"
     "../../include/mtt/clPipeline/RenderPass/LightingPass.h"
+    "../../include/mtt/clPipeline/RenderPass/OpaqueShadowmapPass.h"
     "../../include/mtt/clPipeline/RenderPass/SelectionPass.h"
-    "../../include/mtt/clPipeline/RenderPass/ShadowmapPass.h"
+    "../../include/mtt/clPipeline/RenderPass/TransparentShadowmapPass.h"
 
     "../../include/mtt/clPipeline/ColorFrameBuilder.h"
     "../../include/mtt/clPipeline/constants.h"
@@ -101,8 +102,9 @@ set(SOURCES
     "RenderPass/ForwardLightPass.cpp"
     "RenderPass/GBufferPass.cpp"
     "RenderPass/LightingPass.cpp"
+    "RenderPass/OpaqueShadowmapPass.cpp"
     "RenderPass/SelectionPass.cpp"
-    "RenderPass/ShadowmapPass.cpp"
+    "RenderPass/TransparentShadowmapPass.cpp"
 
     "ColorFrameBuilder.cpp"
     )

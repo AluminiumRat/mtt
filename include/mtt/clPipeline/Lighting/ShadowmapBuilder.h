@@ -4,7 +4,8 @@
 
 #include <glm/mat4x4.hpp>
 
-#include <mtt/clPipeline/RenderPass/ShadowmapPass.h>
+#include <mtt/clPipeline/RenderPass/OpaqueShadowmapPass.h>
+#include <mtt/clPipeline/RenderPass/TransparentShadowmapPass.h>
 #include <mtt/render/SceneRenderer/AbstractFrame.h>
 #include <mtt/render/SceneRenderer/OneTargetFrameBuilder.h>
 #include <mtt/render/Ref.h>
@@ -64,8 +65,8 @@ namespace mtt
       VkFormat _shadowmapFormat;
       VkImageLayout _shadowmapLayout;
       VkImageUsageFlags _shadowmapUsage;
-      Ref<ShadowmapPass> _opaquePass;
-      Ref<ShadowmapPass> _transparentPass;
+      Ref<OpaqueShadowmapPass> _opaquePass;
+      Ref<TransparentShadowmapPass> _transparentPass;
       LogicalDevice& _device;
     };
 

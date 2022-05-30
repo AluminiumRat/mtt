@@ -8,7 +8,7 @@ namespace mtt
 
   namespace clPipeline
   {
-    class ShadowmapPass : public GeneralRenderPass
+    class OpaqueShadowmapPass : public GeneralRenderPass
     {
     public:
       inline static const size_t attachmentNumber = 2;
@@ -16,24 +16,21 @@ namespace mtt
       inline static const uint32_t depthAttachmentIndex = 1;
 
     public:
-      ShadowmapPass(VkFormat shadowmapFormat,
-                    VkImageLayout shadowmapLayout,
-                    VkFormat depthmapFormat,
-                    VkImageLayout depthmapLayout,
-                    mtt::StageIndex stageIndex,
-                    LogicalDevice& device);
-      ShadowmapPass(const ShadowmapPass&) = delete;
-      ShadowmapPass& operator = (const ShadowmapPass&) = delete;
+      OpaqueShadowmapPass(VkFormat shadowmapFormat,
+                          VkImageLayout shadowmapLayout,
+                          VkFormat depthmapFormat,
+                          VkImageLayout depthmapLayout,
+                          LogicalDevice& device);
+      OpaqueShadowmapPass(const OpaqueShadowmapPass&) = delete;
+      OpaqueShadowmapPass& operator = (const OpaqueShadowmapPass&) = delete;
     protected:
-      virtual ~ShadowmapPass() = default;
+      virtual ~OpaqueShadowmapPass() = default;
 
     public:
       inline VkFormat shadowmapFormat() const noexcept;
       inline VkImageLayout shadowmapLayout() const noexcept;
       inline VkFormat depthmapFormat() const noexcept;
       inline VkImageLayout depthmapLayout() const noexcept;
-
-      inline mtt::StageIndex stageIndex() const noexcept;
 
       Ref<FrameBuffer> createFrameBuffer( ImageView& shadowMapBuffer,
                                           ImageView& depthBuffer);
@@ -42,32 +39,26 @@ namespace mtt
       VkImageLayout _shadowmapLayout;
       VkFormat _depthmapFormat;
       VkImageLayout _depthmapLayout;
-      mtt::StageIndex _stageIndex;
     };
 
-    inline VkFormat ShadowmapPass::shadowmapFormat() const noexcept
+    inline VkFormat OpaqueShadowmapPass::shadowmapFormat() const noexcept
     {
       return _shadowmapFormat;
     }
 
-    inline VkImageLayout ShadowmapPass::shadowmapLayout() const noexcept
+    inline VkImageLayout OpaqueShadowmapPass::shadowmapLayout() const noexcept
     {
       return _shadowmapLayout;
     }
 
-    inline VkFormat ShadowmapPass::depthmapFormat() const noexcept
+    inline VkFormat OpaqueShadowmapPass::depthmapFormat() const noexcept
     {
       return _depthmapFormat;
     }
 
-    inline VkImageLayout ShadowmapPass::depthmapLayout() const noexcept
+    inline VkImageLayout OpaqueShadowmapPass::depthmapLayout() const noexcept
     {
       return _depthmapLayout;
-    }
-
-    inline mtt::StageIndex ShadowmapPass::stageIndex() const noexcept
-    {
-      return _stageIndex;
     }
   }
 }

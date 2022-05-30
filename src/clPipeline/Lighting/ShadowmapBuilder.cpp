@@ -52,18 +52,14 @@ ShadowmapBuilder::ShadowmapBuilder( VkFormat shadowmapFormat,
   _shadowmapFormat(shadowmapFormat),
   _shadowmapLayout(shadowmapLayout),
   _shadowmapUsage(shadowmapUsage),
-  _opaquePass(new ShadowmapPass(_shadowmapFormat,
-                                _shadowmapLayout,
-                                depthBufferFormat,
-                                depthBufferLayout,
-                                opaqueShadowmapStage,
-                                device)),
-  _transparentPass(new ShadowmapPass( _shadowmapFormat,
+  _opaquePass(new OpaqueShadowmapPass(_shadowmapFormat,
                                       _shadowmapLayout,
                                       depthBufferFormat,
                                       depthBufferLayout,
-                                      transparentShadowmapStage,
                                       device)),
+  _transparentPass(new TransparentShadowmapPass(_shadowmapFormat,
+                                                _shadowmapLayout,
+                                                device)),
   _device(device)
 {
   registerStagePass(*_opaquePass);
@@ -137,8 +133,7 @@ std::unique_ptr<ShadowmapBuilder::Frame>
                                                               *depthBufferView);
 
   newFrame->transparentPassFrameBuffer =
-                    _transparentPass->createFrameBuffer(*targetView,
-                                                        *depthBufferView);
+                              _transparentPass->createFrameBuffer(*targetView);
 
   return newFrame;
 }

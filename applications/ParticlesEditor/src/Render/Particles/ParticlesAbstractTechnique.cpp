@@ -37,10 +37,6 @@ void ParticlesAbstractTechnique::_rebuildPipeline(
   _pipeline.emplace(renderPass, _stage);
   try
   {
-    _pipeline->setDepthTestEnable(true);
-    _pipeline->setDepthWriteEnable(false);
-    _pipeline->setDepthCompareOp(VK_COMPARE_OP_GREATER_OR_EQUAL);
-
     mtt::VertexAttribute& positionAtribute =
                             _pipeline->getOrCreateAttribute("positionLocation");
     positionAtribute.adjustDataType(mtt::VertexAttribute::FLOAT_VEC3_TYPE);
