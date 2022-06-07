@@ -100,6 +100,14 @@ ParticleFieldWidget::ParticleFieldWidget( ParticleField& object,
                                   &ParticleField::setLodSmoothing,
                                   &ParticleField::lodSmoothingChanged,
                                   undoStack);
+
+  _lightingConnection.emplace(*_ui->lightingTypeCombo,
+                              object,
+                              &ParticleField::lightingType,
+                              &ParticleField::setLightingType,
+                              &ParticleField::lightingTypeChanged,
+                              ParticleField::lightingTypeNames,
+                              undoStack);
 }
 
 ParticleFieldWidget::~ParticleFieldWidget() noexcept = default;

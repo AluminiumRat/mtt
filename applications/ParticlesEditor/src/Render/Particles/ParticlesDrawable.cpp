@@ -118,6 +118,16 @@ void ParticlesDrawable::setFalloffSmoothing(float newValue) noexcept
   _commonData.falloffSmoothing = std::max(newValue, 0.f);
 }
 
+void ParticlesDrawable::setLightingType(
+                              ParticlesDrawable::LightingType newValue) noexcept
+{
+  if(newValue == lightingType()) return;
+  _commonData.lightingType =
+                  static_cast<ParticlesDrawCommonData::LightingType>(newValue);
+  _colorTechnique.clearPipelines();
+  _shadowmapTechnique.clearPipeline();
+}
+
 void ParticlesDrawable::buildDrawActions(mtt::DrawPlanBuildInfo& buildInfo)
 {
   if(_commonData.particlesNumber == 0) return;

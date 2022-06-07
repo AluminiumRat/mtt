@@ -25,14 +25,14 @@ void ParticlesShadowmapTechnique::adjustPipeline(
                                       new mtt::ShaderModule(
                                               mtt::ShaderModule::VERTEX_SHADER,
                                               device));
-  vertexShader->newFragment().loadFromFile("particles.vert");
+  vertexShader->newFragment().loadFromFile("particlesShadow.vert");
   pipeline.addShader(std::move(vertexShader));
 
   std::unique_ptr<mtt::ShaderModule> geometryShader(
                                     new mtt::ShaderModule(
                                             mtt::ShaderModule::GEOMETRY_SHADER,
                                             device));
-  geometryShader->newFragment().loadFromFile("particles.geom");
+  geometryShader->newFragment().loadFromFile("particlesShadow.geom");
   pipeline.addShader(std::move(geometryShader));
 
   std::unique_ptr<mtt::ShaderModule> fragmentShader(
@@ -45,8 +45,6 @@ void ParticlesShadowmapTechnique::adjustPipeline(
   pipeline.addResource( "nearfarBinding",
                         _nearFarUniform,
                         VK_SHADER_STAGE_GEOMETRY_BIT);
-
-  pipeline.setDefine("SHADOWMAP_OUTPUT");
 }
 
 void ParticlesShadowmapTechnique::buildDrawAction(

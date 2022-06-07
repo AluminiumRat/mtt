@@ -1,4 +1,4 @@
-//particlesColor.frag
+//particlesVertexLighting.frag
 
 layout (set = volatileSet,
         binding = depthSamplerBinding) uniform sampler2D depthMap;

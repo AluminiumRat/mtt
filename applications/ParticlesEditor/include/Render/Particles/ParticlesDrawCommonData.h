@@ -10,6 +10,12 @@
 class ParticlesDrawCommonData
 {
 public:
+  enum LightingType
+  {
+    PER_PARTICLE_LIGHTING,
+    PER_PIXEL_LIGHTING
+  };
+
   struct TextureData
   {
     std::shared_ptr<mtt::Texture2D> texture;
@@ -43,4 +49,6 @@ public:
 
   float falloffBaseMppx;
   float falloffSmoothing;
+
+  LightingType lightingType;
 };

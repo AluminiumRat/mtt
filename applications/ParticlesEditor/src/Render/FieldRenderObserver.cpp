@@ -77,6 +77,13 @@ FieldRenderObserver::FieldRenderObserver( ParticleField& object,
           &FieldRenderObserver::_updateLodSmoothing,
           Qt::DirectConnection);
   _updateLodSmoothing();
+
+  connect(&_field,
+          &ParticleField::lightingTypeChanged,
+          this,
+          &FieldRenderObserver::_updateLightingType,
+          Qt::DirectConnection);
+  _updateLightingType();
 }
 
 void FieldRenderObserver::_updateSize() noexcept
@@ -186,4 +193,17 @@ void FieldRenderObserver::_updateLodMppx() noexcept
 void FieldRenderObserver::_updateLodSmoothing() noexcept
 {
   _particlesDrawable.setFalloffSmoothing(_field.lodSmoothing());
+}
+
+void FieldRenderObserver::_updateLightingType() noexcept
+{
+  if (_field.lightingType() == ParticleField::PER_PARTICLE_LIGHTING)
+  {
+    _particlesDrawable.setLightingType(
+                                      ParticlesDrawable::PER_PARTICLE_LIGHTING);
+  }
+  else
+  {
+    _particlesDrawable.setLightingType(ParticlesDrawable::PER_PIXEL_LIGHTING);
+  }
 }

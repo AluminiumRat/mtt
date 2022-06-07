@@ -92,29 +92,39 @@ void ParticlesColorTechnique::adjustPipeline(mtt::GraphicsPipeline& pipeline)
                                       new mtt::ShaderModule(
                                               mtt::ShaderModule::VERTEX_SHADER,
                                               device));
-  vertexShader->newFragment().loadFromFile("particles.vert");
-  _applyAreaModifictors(*vertexShader, pipeline);
-  pipeline.addShader(std::move(vertexShader));
-
   std::unique_ptr<mtt::ShaderModule> geometryShader(
                                     new mtt::ShaderModule(
                                             mtt::ShaderModule::GEOMETRY_SHADER,
                                             device));
-  geometryShader->newFragment().loadFromFile("particles.geom");
-  pipeline.addShader(std::move(geometryShader));
-
   std::unique_ptr<mtt::ShaderModule> fragmentShader(
                                     new mtt::ShaderModule(
                                             mtt::ShaderModule::FRAGMENT_SHADER,
                                             device));
-  fragmentShader->newFragment().loadFromFile("particlesColor.frag");
+
+  if(commonData().lightingType ==
+                                ParticlesDrawCommonData::PER_PARTICLE_LIGHTING)
+  {
+    vertexShader->newFragment().loadFromFile("particlesVertexLighting.vert");
+    _applyAreaModifictors(*vertexShader, pipeline);
+    geometryShader->newFragment().loadFromFile("particlesVertexLighting.geom");
+    fragmentShader->newFragment().loadFromFile("particlesVertexLighting.frag");
+  }
+  else
+  {
+    vertexShader->newFragment().loadFromFile("particlesFragmentLighting.vert");
+    geometryShader->newFragment().loadFromFile(
+                                              "particlesFragmentLighting.geom");
+    fragmentShader->newFragment().loadFromFile(
+                                              "particlesFragmentLighting.frag");
+    _applyAreaModifictors(*fragmentShader, pipeline);
+  }
+  pipeline.addShader(std::move(vertexShader));
+  pipeline.addShader(std::move(geometryShader));
   pipeline.addShader(std::move(fragmentShader));
 
   pipeline.addResource( "depthSamplerBinding",
                         commonData().depthSampler,
                         VK_SHADER_STAGE_FRAGMENT_BIT);
-
-  pipeline.setDefine("COLOR_OUTPUT");
 }
 
 void ParticlesColorTechnique::buildDrawAction(

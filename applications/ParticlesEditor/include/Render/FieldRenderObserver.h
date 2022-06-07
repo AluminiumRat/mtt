@@ -25,6 +25,7 @@ private:
   void _updateTextures() noexcept;
   void _updateLodMppx() noexcept;
   void _updateLodSmoothing() noexcept;
+  void _updateLightingType() noexcept;
 
 private:
   ParticleField& _field;

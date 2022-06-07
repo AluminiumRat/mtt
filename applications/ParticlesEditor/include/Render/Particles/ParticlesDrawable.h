@@ -22,6 +22,12 @@ class ParticlesDrawable : public mtt::Drawable
 public:
   using TextureData = ParticlesDrawCommonData::TextureData;
 
+  enum LightingType
+  {
+    PER_PARTICLE_LIGHTING = ParticlesDrawCommonData::PER_PARTICLE_LIGHTING,
+    PER_PIXEL_LIGHTING = ParticlesDrawCommonData::PER_PIXEL_LIGHTING
+  };
+
 public:
   ParticlesDrawable();
   ParticlesDrawable(const ParticlesDrawable&) = delete;
@@ -50,6 +56,9 @@ public:
   inline float falloffSmoothing() const noexcept;
   void setFalloffSmoothing(float newValue) noexcept;
 
+  inline LightingType lightingType() const noexcept;
+  void setLightingType(LightingType newValue) noexcept;
+
   virtual void registerAreaModificators(mtt::AreaModificatorSet& set) override;
   virtual void unregisterAreaModificators(
                                 mtt::AreaModificatorSet& set) noexcept override;
@@ -72,4 +81,10 @@ inline float ParticlesDrawable::falloffBaseMppx() const noexcept
 inline float ParticlesDrawable::falloffSmoothing() const noexcept
 {
   return _commonData.falloffSmoothing;
+}
+
+inline ParticlesDrawable::LightingType
+                                ParticlesDrawable::lightingType() const noexcept
+{
+  return static_cast<LightingType>(_commonData.lightingType);
 }

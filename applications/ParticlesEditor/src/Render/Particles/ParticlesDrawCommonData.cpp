@@ -24,7 +24,8 @@ ParticlesDrawCommonData::ParticlesDrawCommonData() :
                 mtt::Application::instance().displayDevice()),
   depthSamplerTexture(nullptr),
   falloffBaseMppx(.005f),
-  falloffSmoothing(1.f)
+  falloffSmoothing(1.f),
+  lightingType(PER_PARTICLE_LIGHTING)
 {
   std::shared_ptr<mtt::Texture2D> depthTexture =
                         std::make_shared<mtt::Texture2D>(

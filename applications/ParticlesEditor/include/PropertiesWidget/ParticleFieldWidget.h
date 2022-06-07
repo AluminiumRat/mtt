@@ -4,6 +4,7 @@
 
 #include <QtWidgets/QWidget>
 
+#include <mtt/application/Widgets/PropertiesWidgets/EnumComboConnection.h>
 #include <mtt/application/Widgets/PropertiesWidgets/FloatSpinConnection.h>
 
 #include <Objects/ParticleField.h>
@@ -46,4 +47,9 @@ private:
   using FloatConnection = mtt::FloatSpinConnection<ParticleField>;
   std::optional<FloatConnection> _lodMppxConnection;
   std::optional<FloatConnection> _lodSmoothingConnection;
+
+  using LightingConnection = mtt::EnumComboConnection<
+                                                  ParticleField,
+                                                  ParticleField::LightingType>;
+  std::optional<LightingConnection> _lightingConnection;
 };

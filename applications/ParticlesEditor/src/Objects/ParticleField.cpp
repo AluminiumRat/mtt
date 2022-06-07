@@ -8,13 +8,19 @@
 #include <Objects/ModificatorObject.h>
 #include <Objects/ParticleField.h>
 
+const std::map<ParticleField::LightingType, QString>
+    ParticleField::lightingTypeNames =
+          { {ParticleField::PER_PARTICLE_LIGHTING, QT_TR_NOOP("per particle")},
+            {ParticleField::PER_PIXEL_LIGHTING, QT_TR_NOOP("per pixel")}};
+
 ParticleField::ParticleField( const QString& name,
                               bool canBeRenamed,
                               const mtt::UID& theId) :
   MovableObject(name, canBeRenamed, theId),
   _size(10.f, 10.f, 10.f),
   _lodMppx(.005f),
-  _lodSmoothing(1.f)
+  _lodSmoothing(1.f),
+  _lightingType(PER_PIXEL_LIGHTING)
 {
   mtt::UID fluidId(id().mixedUID(18395279348825422041ull));
   std::unique_ptr<FluidObject> fluid( new FluidObject(tr("Fluid"),
@@ -80,6 +86,13 @@ void ParticleField::setLodSmoothing(float newValue) noexcept
   if(_lodSmoothing == newValue) return;
   _lodSmoothing = newValue;
   emit lodSmoothingChanged(newValue);
+}
+
+void ParticleField::setLightingType(LightingType newValue) noexcept
+{
+  if(_lightingType == newValue) return;
+  _lightingType = newValue;
+  emit lightingTypeChanged(newValue);
 }
 
 void ParticleField::registerEmitter(EmitterObject& emitter)

@@ -157,6 +157,8 @@ void ObjectLoader::visitParticleField(ParticleField& object)
   object.setLodMppx(stream().readFloat());
   object.setLodSmoothing(stream().readFloat());
 
+  object.setLightingType(ParticleField::LightingType(stream().readUint8()));
+
   loadEmbeddedObject( object.fluid(),
                       stream(),
                       fileDirectory(),

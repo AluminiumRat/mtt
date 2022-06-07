@@ -23,6 +23,42 @@ class ParticleField : public mtt::MovableObject
                           visitConstParticleField,
                           mtt::MovableObject)
 
+public:
+  using ParticleIndex = uint16_t;
+
+  struct ParticleData
+  {
+    uint32_t typeMask;
+    glm::vec3 position;
+    glm::vec3 speed;
+    float size;
+    float rotation;
+    float rotationSpeed;
+    glm::vec4 albedo;
+    glm::vec3 emission;
+    float visibilityFactor;
+    uint8_t textureIndex;
+    uint8_t tileIndex;
+    mtt::TimeT currentTime;
+    mtt::TimeT maxTime;
+    float mass;
+    float frictionFactor;
+  };
+
+  enum ModificatorApplyTime
+  {
+    PREFLUID_TIME,
+    POSTFLUID_TIME,
+    POSTUPDATE_TIME
+  };
+
+  enum LightingType
+  {
+    PER_PARTICLE_LIGHTING = 0,
+    PER_PIXEL_LIGHTING = 1
+  };
+  const static std::map<LightingType, QString> lightingTypeNames;
+
   Q_PROPERTY( glm::vec3 size
               READ size
               WRITE setSize
@@ -63,34 +99,15 @@ class ParticleField : public mtt::MovableObject
               STORED true
               USER false)
 
-public:
-  using ParticleIndex = uint16_t;
-
-  struct ParticleData
-  {
-    uint32_t typeMask;
-    glm::vec3 position;
-    glm::vec3 speed;
-    float size;
-    float rotation;
-    float rotationSpeed;
-    glm::vec4 albedo;
-    glm::vec3 emission;
-    float visibilityFactor;
-    uint8_t textureIndex;
-    uint8_t tileIndex;
-    mtt::TimeT currentTime;
-    mtt::TimeT maxTime;
-    float mass;
-    float frictionFactor;
-  };
-
-  enum ModificatorApplyTime
-  {
-    PREFLUID_TIME,
-    POSTFLUID_TIME,
-    POSTUPDATE_TIME
-  };
+  Q_PROPERTY( LightingType lightingType
+              READ lightingType
+              WRITE setLightingType
+              RESET resetLightingType
+              NOTIFY lightingTypeChanged
+              DESIGNABLE true
+              SCRIPTABLE true
+              STORED true
+              USER false)
 
 public:
   ParticleField(const QString& name,
@@ -131,6 +148,10 @@ public:
   void setLodSmoothing(float newValue) noexcept;
   inline void resetLodSmoothing() noexcept;
 
+  inline LightingType lightingType() const noexcept;
+  void setLightingType(LightingType newValue) noexcept;
+  inline void resetLightingType() noexcept;
+
   inline FluidObject& fluid() noexcept;
   inline const FluidObject& fluid() const noexcept;
 
@@ -147,6 +168,7 @@ signals:
   void textureDescriptionsChanged(const ParticleTextureDescriptions& newValue);
   void lodMppxChanged(float newValue);
   void lodSmoothingChanged(float newValue);
+  void lightingTypeChanged(LightingType newValue);
   void cleared();
   void simulationStepStarted();
   /// First step of simulation
@@ -177,6 +199,8 @@ private:
 
   float _lodMppx;
   float _lodSmoothing;
+
+  LightingType _lightingType;
 
   using Emitters = std::vector<EmitterObject*>;
   Emitters _emitters;
@@ -226,6 +250,16 @@ inline float ParticleField::lodSmoothing() const noexcept
 inline void ParticleField::resetLodSmoothing() noexcept
 {
   setLodSmoothing(1.f);
+}
+
+inline ParticleField::LightingType ParticleField::lightingType() const noexcept
+{
+  return _lightingType;
+}
+
+inline void ParticleField::resetLightingType() noexcept
+{
+  setLightingType(PER_PIXEL_LIGHTING);
 }
 
 inline FluidObject& ParticleField::fluid() noexcept
