@@ -54,7 +54,6 @@ set(HEADERS
     "../../include/mtt/editorLib/MainWindow/EditMenu.h"
     "../../include/mtt/editorLib/MainWindow/EditorMainWindow.h"
     "../../include/mtt/editorLib/MainWindow/EnvironmentMenu.h"
-    "../../include/mtt/editorLib/MainWindow/ManipulatorMenu.h"
     "../../include/mtt/editorLib/MainWindow/ManipulatorToolbar.h"
     "../../include/mtt/editorLib/MainWindow/RenderMenu.h"
 
@@ -168,7 +167,6 @@ set(SOURCES
     "MainWindow/EditMenu.cpp"
     "MainWindow/EditorMainWindow.cpp"
     "MainWindow/EnvironmentMenu.cpp"
-    "MainWindow/ManipulatorMenu.cpp"
     "MainWindow/ManipulatorToolbar.cpp"
     "MainWindow/RenderMenu.cpp"
 

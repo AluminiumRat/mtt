@@ -19,7 +19,6 @@ MainWindow::MainWindow() :
   _fileMenu(*this, _commonEditData),
   _editMenu(*this, _commonEditData),
   _environmentMenu(*this, _commonEditData),
-  _manipulatorMenu(*this, _renderWidget.manipulatorController()),
   _renderMenu(_renderWidget)
 {
   setWindowTitle(tr("Object editor"));
@@ -27,7 +26,6 @@ MainWindow::MainWindow() :
   menuBar()->addMenu(&_fileMenu);
   menuBar()->addMenu(&_editMenu);
   menuBar()->addMenu(&_environmentMenu);
-  menuBar()->addMenu(&_manipulatorMenu);
   menuBar()->addMenu(&_renderMenu);
 
   std::unique_ptr<mtt::ManipulatorToolbar> manipulatorToolbar(

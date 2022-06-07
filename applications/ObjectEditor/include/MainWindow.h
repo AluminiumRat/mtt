@@ -6,7 +6,6 @@
 
 #include <mtt/editorLib/MainWindow/EditorMainWindow.h>
 #include <mtt/editorLib/MainWindow/EnvironmentMenu.h>
-#include <mtt/editorLib/MainWindow/ManipulatorMenu.h>
 #include <mtt/editorLib/MainWindow/RenderMenu.h>
 #include <mtt/editorLib/Render/EditorRenderWidget.h>
 #include <mtt/editorLib/Render/SceneRenderObserver.h>
@@ -48,6 +47,5 @@ private:
   FileMenu _fileMenu;
   EditMenu _editMenu;
   mtt::EnvironmentMenu _environmentMenu;
-  mtt::ManipulatorMenu _manipulatorMenu;
   mtt::RenderMenu _renderMenu;
 };
