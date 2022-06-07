@@ -2,6 +2,8 @@
 
 #include <Render/Particles/ParticlesAbstractTechnique.h>
 
+#define MIN_PARTICLES 10
+
 ParticlesAbstractTechnique::ParticlesAbstractTechnique(
                                       ParticlesDrawCommonData& commonData,
                                       mtt::StageIndex stage,
@@ -175,7 +177,7 @@ ParticlesAbstractTechnique::IndicesData
     if(mppxFunction.mppx(distance) > falloffFinishMppx) continue;
 
     uint8_t tag = _commonData.tagData[particleIndex];
-    if(tag % _thinningFactor != 0) continue;
+    if(tag % _thinningFactor != 0 && particleIndex > MIN_PARTICLES) continue;
 
     indicesData.push_back(particleIndex);
   }
