@@ -127,6 +127,7 @@ set(HEADERS
     "../../include/mtt/editorLib/Render/Object3DRenderObserver.h"
     "../../include/mtt/editorLib/Render/RenderObserverFactory.h"
     "../../include/mtt/editorLib/Render/SceneRenderObserver.h"
+    "../../include/mtt/editorLib/Render/SpotLightRenderObserver.h"
 
     "../../include/mtt/editorLib/SceneTreeWidget/EditorObjectsItemModel.h"
     "../../include/mtt/editorLib/SceneTreeWidget/SceneTreeView.h"
@@ -242,6 +243,7 @@ set(SOURCES
     "Render/Object3DRenderObserver.cpp"
     "Render/RenderObserverFactory.cpp"
     "Render/SceneRenderObserver.cpp"
+    "Render/SpotLightRenderObserver.cpp"
 
     "SceneTreeWidget/EditorObjectsItemModel.cpp"
     "SceneTreeWidget/SceneTreeView.cpp"

@@ -24,6 +24,13 @@ namespace mtt
     void resetGeometry() noexcept;
 
     void setSphereGeometry(float radius, unsigned int segmentNumber);
+    /// Create cone along the Z axys with apex at the zero point.
+    /// apex shift along the z axis.
+    void setConeGeometry( float radius,
+                          float height,
+                          float apexShift,
+                          unsigned int bodySegmentNumber,
+                          unsigned int baseSegmentNumber);
     /// Create cylinder along the Z axys centered at the zero point.
     /// center shift along the z axis.
     void setCylinderGeometry( float radius,

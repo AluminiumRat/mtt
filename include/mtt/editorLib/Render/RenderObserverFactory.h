@@ -25,6 +25,7 @@ namespace mtt
     virtual void visitDirectLightObject(DirectLightObject& object) override;
     virtual void visitEnvironmentModel(EnvironmentModel& object) override;
     virtual void visitSkeletonObject(SkeletonObject& object) override;
+    virtual void visitSpotLightObject(SpotLightObject& object) override;
 
   protected:
     inline CommonEditData& commonData() const noexcept;

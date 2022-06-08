@@ -135,6 +135,87 @@ void HullDrawableNode::setSphereGeometry( float radius,
   }
 }
 
+void HullDrawableNode::setConeGeometry( float radius,
+                                        float height,
+                                        float apexShift,
+                                        unsigned int bodySegmentNumber,
+                                        unsigned int baseSegmentNumber)
+{
+  if (radius <= 0.f)
+  {
+    Log() << "HullDrawableNode::setConeGeometry: radius <= 0";
+    resetGeometry();
+    return;
+  }
+  if (height <= 0.f)
+  {
+    Log() << "HullDrawableNode::setConeGeometry: height <= 0";
+    resetGeometry();
+    return;
+  }
+  if (baseSegmentNumber < 3)
+  {
+    Log() << "HullDrawableNode::setConeGeometry: baseSegmentNumber < 3";
+    resetGeometry();
+    return;
+  }
+
+  try
+  {
+    std::vector<glm::vec3> vertices;
+    vertices.reserve(bodySegmentNumber * 2 + baseSegmentNumber * 2);
+
+    float zUp = apexShift;
+    float zDown = -height + apexShift;
+
+    if(bodySegmentNumber != 0)
+    {
+      float bodyStep = 2.f * glm::pi<float>() / bodySegmentNumber;
+      float bodyAngle = 0;
+      for(size_t bodySegment = 0;
+          bodySegment < bodySegmentNumber;
+          bodySegment++)
+      {
+        vertices.emplace_back(0.f, 0.f, zUp);
+        vertices.emplace_back(cos(bodyAngle) * radius,
+                              sin(bodyAngle) * radius,
+                              zDown);
+        bodyAngle += bodyStep;
+      }
+    }
+
+    float baseStep = 2.f * glm::pi<float>() / baseSegmentNumber;
+    float baseAngle = 0;
+    for(size_t baseSegment = 0;
+        baseSegment < baseSegmentNumber - 1;
+        baseSegment++)
+    {
+      float nextAngle = baseAngle + baseStep;
+
+      vertices.emplace_back(cos(baseAngle) * radius,
+                            sin(baseAngle) * radius,
+                            zDown);
+      vertices.emplace_back(cos(nextAngle) * radius,
+                            sin(nextAngle) * radius,
+                            zDown);
+
+      baseAngle = nextAngle;
+    }
+
+    vertices.emplace_back(cos(baseAngle) * radius,
+                          sin(baseAngle) * radius,
+                          zDown);
+    vertices.emplace_back(radius, 0.f, zDown);
+
+    setGeometry(vertices);
+  }
+  catch (...)
+  {
+    resetGeometry();
+    throw;
+  }
+}
+
 void HullDrawableNode::setCylinderGeometry( float radius,
                                             float length,
                                             float centerShift,

@@ -5,5 +5,6 @@
       <file>movingGizmo.png</file>
       <file>rotateGizmo.png</file>
       <file>scaleGizmo.png</file>
+      <file>spotLight.png</file>
     </qresource>
 </RCC>

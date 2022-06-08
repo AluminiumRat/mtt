@@ -4,6 +4,7 @@
 #include <mtt/editorLib/Render/DirectLightRenderObserver.h>
 #include <mtt/editorLib/Render/EnvironmentModelRenderObserver.h>
 #include <mtt/editorLib/Render/RenderObserverFactory.h>
+#include <mtt/editorLib/Render/SpotLightRenderObserver.h>
 
 using namespace mtt;
 
@@ -52,4 +53,12 @@ void RenderObserverFactory::visitSkeletonObject(SkeletonObject& object)
 {
   setResult(std::make_unique<CrossRenderObserver>(object,
                                                   commonData()));
+}
+
+void RenderObserverFactory::visitSpotLightObject(SpotLightObject& object)
+{
+  if(renderScene() == nullptr) return;
+  setResult(std::make_unique<SpotLightRenderObserver>(object,
+                                                      commonData(),
+                                                      *renderScene()));
 }
