@@ -40,6 +40,7 @@ namespace mtt
     virtual void visitMovableObject(MovableObject& object) override;
     virtual void visitRotatableObject(RotatableObject& object) override;
     virtual void visitScalableObject(ScalableObject& object) override;
+    virtual void visitSpotLightObject(SpotLightObject& object) override;
 
   private:
     QVBoxLayout& _widgetsLayout;

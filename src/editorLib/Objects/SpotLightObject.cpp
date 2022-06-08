@@ -44,7 +44,7 @@ void SpotLightObject::setShadowmapSize(size_t newValue) noexcept
 
 void SpotLightObject::setBlurAngle(float newValue) noexcept
 {
-  newValue = std::max(0.f, newValue);
+  newValue = glm::clamp(newValue, 0.f, glm::pi<float>() / 10.f);
   if(_blurAngle == newValue) return;
   _blurAngle = newValue;
   emit blurAngleChanged(_blurAngle);

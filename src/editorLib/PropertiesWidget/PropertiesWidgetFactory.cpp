@@ -18,6 +18,7 @@
 #include <mtt/editorLib/PropertiesWidget/RotatableObjectWidget.h>
 #include <mtt/editorLib/PropertiesWidget/ScalableObjectWidget.h>
 #include <mtt/editorLib/PropertiesWidget/CubemapWidget.h>
+#include <mtt/editorLib/PropertiesWidget/SpotLightWidget.h>
 #include <mtt/editorLib/PropertiesWidget/VisiblePropertyWidget.h>
 
 using namespace mtt;
@@ -158,4 +159,12 @@ void PropertiesWidgetFactory::visitScalableObject(ScalableObject& object)
 
   _widgetsLayout.addWidget(
               new ScalableObjectWidget(object, _commonEditData.undoStack()));
+}
+
+void PropertiesWidgetFactory::visitSpotLightObject(SpotLightObject& object)
+{
+  CEVisitor::visitSpotLightObject(object);
+
+  _widgetsLayout.addWidget(
+                      new SpotLightWidget(object, _commonEditData.undoStack()));
 }
