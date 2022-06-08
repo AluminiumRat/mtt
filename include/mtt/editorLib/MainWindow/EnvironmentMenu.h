@@ -22,7 +22,10 @@ namespace mtt
     void _saveEnvironmentAs() noexcept;
     void _saveEnvironmentToFile(const QString& file) noexcept;
     void _addAmbientLight() noexcept;
+    template<typename LightType>
+    void _addLight(const QString& name) noexcept;
     void _addDirectLight() noexcept;
+    void _addSpotLight() noexcept;
     void _addEnvironmentModel() noexcept;
 
   private:

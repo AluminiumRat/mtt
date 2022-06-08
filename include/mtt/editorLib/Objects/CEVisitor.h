@@ -22,6 +22,7 @@
 #include <mtt/editorLib/Objects/ScalableObject.h>
 #include <mtt/editorLib/Objects/SkeletonGroup.h>
 #include <mtt/editorLib/Objects/SkeletonObject.h>
+#include <mtt/editorLib/Objects/SpotLightObject.h>
 
 namespace mtt
 {
@@ -122,6 +123,10 @@ namespace mtt
     inline virtual void visitConstSkeletonObject(
                                         const SkeletonObject& object) override;
     inline virtual void visitSkeletonObject(SkeletonObject& object) override;
+
+    inline virtual void visitConstSpotLightObject(
+                                        const SpotLightObject& object) override;
+    inline virtual void visitSpotLightObject(SpotLightObject& object) override;
 
   protected:
     inline virtual void* getExtension(
@@ -414,6 +419,20 @@ namespace mtt
                                                         SkeletonObject& object)
   {
     visitScalableObject(object);
+  }
+
+  template <typename BaseVisitor>
+  inline void CEVisitorT<BaseVisitor>::visitSpotLightObject(
+                                                        SpotLightObject& object)
+  {
+    visitLightObject(object);
+  }
+
+  template <typename BaseVisitor>
+  inline void CEVisitorT<BaseVisitor>::visitConstSpotLightObject(
+                                                  const SpotLightObject& object)
+  {
+    visitConstLightObject(object);
   }
 
   template <typename BaseVisitor>

@@ -16,6 +16,7 @@ DirectLightObject::DirectLightObject( const QString& name,
 
 void DirectLightObject::setRadius(float newValue) noexcept
 {
+  newValue = glm::max(newValue, 0.f);
   if(_radius == newValue) return;
   _radius = newValue;
   emit radiusChanged(_radius);
@@ -44,6 +45,7 @@ void DirectLightObject::setCascadeSize(size_t newValue) noexcept
 
 void DirectLightObject::setBlurSize(float newValue) noexcept
 {
+  newValue = glm::max(newValue, 0.f);
   if(_blurSize == newValue) return;
   _blurSize = newValue;
   emit blurSizeChanged(_blurSize);

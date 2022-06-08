@@ -24,6 +24,7 @@ namespace mtt
   class ScalableObject;
   class SkeletonGroup;
   class SkeletonObject;
+  class SpotLightObject;
 
   class CEVisitorExtension
   {
@@ -94,5 +95,8 @@ namespace mtt
 
     virtual void visitConstSkeletonObject(const SkeletonObject& object) = 0;
     virtual void visitSkeletonObject(SkeletonObject& object) = 0;
+
+    virtual void visitConstSpotLightObject(const SpotLightObject& object) = 0;
+    virtual void visitSpotLightObject(SpotLightObject& object) = 0;
   };
 }

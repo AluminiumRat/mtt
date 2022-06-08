@@ -9,6 +9,7 @@
 #include <mtt/editorLib/Objects/AmbientLightObject.h>
 #include <mtt/editorLib/Objects/DirectLightObject.h>
 #include <mtt/editorLib/Objects/EnvironmentModel.h>
+#include <mtt/editorLib/Objects/SpotLightObject.h>
 #include <mtt/editorLib/EditorApplication.h>
 #include <mtt/editorLib/EditorCommonData.h>
 
@@ -31,6 +32,7 @@ EnvironmentMenu::EnvironmentMenu( QWidget& window,
 
   addAction(tr("Add ambient light"), this, &EnvironmentMenu::_addAmbientLight);
   addAction(tr("Add direct light"), this, &EnvironmentMenu::_addDirectLight);
+  addAction(tr("Add spot light"), this, &EnvironmentMenu::_addSpotLight);
   addAction(tr("Add model"), this, &EnvironmentMenu::_addEnvironmentModel);
 }
 
@@ -111,16 +113,16 @@ void EnvironmentMenu::_loadEnvironment() noexcept
   }
 }
 
-void EnvironmentMenu::_addAmbientLight() noexcept
+template<typename LightType>
+void EnvironmentMenu::_addLight(const QString& name) noexcept
 {
   try
   {
     EditorScene* scene = _commonData.scene();
     if(scene == nullptr) return;
 
-    std::unique_ptr<mtt::AmbientLightObject> newLight(
-                        new mtt::AmbientLightObject(tr("Ambient light"), true));
-    mtt::AmbientLightObject* lightPtr = newLight.get();
+    std::unique_ptr<LightType> newLight(new LightType(name, true));
+    LightType* lightPtr = newLight.get();
 
     std::unique_ptr<mtt::AddObjectCommand> command(
             new mtt::AddObjectCommand(std::move(newLight),
@@ -142,35 +144,19 @@ void EnvironmentMenu::_addAmbientLight() noexcept
   }
 }
 
+void EnvironmentMenu::_addAmbientLight() noexcept
+{
+  _addLight<mtt::AmbientLightObject>(tr("Ambient light"));
+}
+
 void EnvironmentMenu::_addDirectLight() noexcept
 {
-  try
-  {
-    EditorScene* scene = _commonData.scene();
-    if(scene == nullptr) return;
+  _addLight<mtt::DirectLightObject>(tr("Direct light"));
+}
 
-    std::unique_ptr<mtt::DirectLightObject> newLight(
-                          new mtt::DirectLightObject(tr("Direct light"), true));
-    mtt::DirectLightObject* lightPtr = newLight.get();
-
-    std::unique_ptr<mtt::AddObjectCommand> command(
-            new mtt::AddObjectCommand(std::move(newLight),
-                                      scene->environmentRoot().objectsGroup()));
-    _commonData.undoStack().addAndMake(std::move(command));
-    _commonData.selectObjects({lightPtr});
-  }
-  catch(std::exception& error)
-  {
-    QMessageBox::critical(&_window,
-                          tr("Unable to add a light"),
-                          error.what());
-  }
-  catch(...)
-  {
-    QMessageBox::critical(&_window,
-                          tr("Unable to add a light"),
-                          tr("Unknown error"));
-  }
+void EnvironmentMenu::_addSpotLight() noexcept
+{
+  _addLight<mtt::SpotLightObject>(tr("Spot light"));
 }
 
 void EnvironmentMenu::_addEnvironmentModel() noexcept

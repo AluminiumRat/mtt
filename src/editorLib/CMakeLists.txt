@@ -93,6 +93,7 @@ set(HEADERS
     "../../include/mtt/editorLib/Objects/ScalableObject.h"
     "../../include/mtt/editorLib/Objects/SkeletonGroup.h"
     "../../include/mtt/editorLib/Objects/SkeletonObject.h"
+    "../../include/mtt/editorLib/Objects/SpotLightObject.h"
 
     "../../include/mtt/editorLib/PropertiesWidget/AmbientLightWidget.h"
     "../../include/mtt/editorLib/PropertiesWidget/AnimationObjectWidget.h"
@@ -205,6 +206,7 @@ set(SOURCES
     "Objects/ScalableObject.cpp"
     "Objects/SkeletonGroup.cpp"
     "Objects/SkeletonObject.cpp"
+    "Objects/SpotLightObject.cpp"
 
     "PropertiesWidget/AmbientLightWidget.cpp"
     "PropertiesWidget/AnimationObjectWidget.cpp"

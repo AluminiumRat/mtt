@@ -70,7 +70,7 @@ namespace mtt
     virtual ~DirectLightObject() noexcept = default;
 
     inline float radius() const noexcept;
-    virtual void setRadius(float newValue) noexcept;
+    void setRadius(float newValue) noexcept;
     inline void resetRadius() noexcept;
 
     inline bool shadowsEnabled() const noexcept;
@@ -85,6 +85,7 @@ namespace mtt
     virtual void setCascadeSize(size_t newValue) noexcept;
     inline void resetCascadeSize() noexcept;
 
+    /// blur size in meters
     inline float blurSize() const noexcept;
     virtual void setBlurSize(float newValue) noexcept;
     inline void resetBlurSize() noexcept;
