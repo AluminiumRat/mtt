@@ -60,6 +60,7 @@ namespace mtt
     virtual void visitScalableObject(ScalableObject& object) override;
     virtual void visitSkeletonGroup(SkeletonGroup& object) override;
     virtual void visitSkeletonObject(SkeletonObject& object) override;
+    virtual void visitSpotLightObject(SpotLightObject& object) override;
 
   protected:
     QString readFilename();

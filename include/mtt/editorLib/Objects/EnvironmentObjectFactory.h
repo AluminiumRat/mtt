@@ -13,6 +13,7 @@ namespace mtt
     static constexpr TypeIndex AmbientLightIndex = 8;
     static constexpr TypeIndex DirectLightIndex = 9;
     static constexpr TypeIndex EnvironmentModelIndex = 10;
+    static constexpr TypeIndex SpotLightIndex = 11;
 
   public:
     EnvironmentObjectFactory();

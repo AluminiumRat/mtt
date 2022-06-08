@@ -235,3 +235,13 @@ void ObjectLoader::visitSkeletonObject(SkeletonObject& object)
                                                 *_objectFactory));
   }
 }
+
+void ObjectLoader::visitSpotLightObject(SpotLightObject& object)
+{
+  CEVisitor::visitSpotLightObject(object);
+  object.setAngle(_stream->readFloat());
+  object.setFilterImage(readFilename());
+  object.setShadowsEnabled(_stream->readBool());
+  object.setShadowmapSize(_stream->readUint16());
+  object.setBlurAngle(_stream->readFloat());
+}

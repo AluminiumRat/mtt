@@ -62,6 +62,8 @@ namespace mtt
     virtual void visitConstSkeletonGroup(const SkeletonGroup& object) override;
     virtual void visitConstSkeletonObject(
                                         const SkeletonObject& object) override;
+    virtual void visitConstSpotLightObject(
+                                        const SpotLightObject& object) override;
 
   protected:
     inline DataStream& stream() const noexcept;
