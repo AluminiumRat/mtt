@@ -114,12 +114,35 @@ void DirectLightAreaModificator::adjustPipeline(
   {
     std::string indexStr = std::to_string(modificatorIndex);
 
-    ShaderModule::Fragment& fragment = targetShader.newFragment();
-    fragment.loadFromFile("clPipeline/directLightModificator.glsl");
+    if (_light.shadowMapProvider() != nullptr)
+    {
+      ShaderModule::Fragment& shadowLibFragment = targetShader.newFragment();
+      shadowLibFragment.loadFromFile("clPipeline/cascadeShadowmapLib.glsl");
+
+      shadowLibFragment.replace("$INDEX$", indexStr);
+
+      shadowLibFragment.replace("$SHADOW_CASCADE_SIZE$",
+                                std::to_string(_light.cascadeSize()));
+
+      std::string shadowSamplerBindingName("shadowMapBinding");
+      shadowSamplerBindingName += indexStr;
+      targetPipeline.addResource( shadowSamplerBindingName,
+                                  _light.getOrCreateShdowmapSampler(),
+                                  targetShader.type());
+
+      std::string coordCorrectionBindingName("shadowCoordsCorrectionBinding");
+      coordCorrectionBindingName += indexStr;
+      targetPipeline.addResource(coordCorrectionBindingName,
+                                  _coordsCorrectionUniform,
+                                  targetShader.type());
+    }
+
+    ShaderModule::Fragment& mainFragment = targetShader.newFragment();
+    mainFragment.loadFromFile("clPipeline/directLightModificator.glsl");
 
     std::string applyFunctionName("modificator");
     applyFunctionName += indexStr;
-    fragment.replace("$APPLY_FUNCTION$", applyFunctionName);
+    mainFragment.replace("$APPLY_FUNCTION$", applyFunctionName);
 
     const std::string* declaration =
                             targetShader.defineValue("MODIFICATOR_DECLARATION");
@@ -137,7 +160,7 @@ void DirectLightAreaModificator::adjustPipeline(
       targetShader.setDefine("APPLY_LIGHT", newApply);
     }
 
-    fragment.replace("$INDEX$", indexStr);
+    mainFragment.replace("$INDEX$", indexStr);
 
     std::string lightDataBindingName("lightDataBinding");
     lightDataBindingName += indexStr;
@@ -147,29 +170,15 @@ void DirectLightAreaModificator::adjustPipeline(
 
     if (_light.shadowMapProvider() != nullptr)
     {
-      fragment.replace("$SHADOW_MAP_ENABLED$", "1");
-      fragment.replace( "$SHADOW_CASCADE_SIZE$",
-                        std::to_string(_light.cascadeSize()));
-
-      std::string shadowSamplerBindingName("shadowMapBinding");
-      shadowSamplerBindingName += indexStr;
-      targetPipeline.addResource( shadowSamplerBindingName,
-                                  _light.getOrCreateShdowmapSampler(),
-                                  targetShader.type());
-
-      std::string coordCorrectionBindingName("shadowCoordsCorrectionBinding");
-      coordCorrectionBindingName += indexStr;
-      targetPipeline.addResource(coordCorrectionBindingName,
-                                  _coordsCorrectionUniform,
-                                  targetShader.type());
+      mainFragment.replace("$SHADOW_MAP_ENABLED$", "1");
     }
-    else fragment.replace("$SHADOW_MAP_ENABLED$", "0");
+    else mainFragment.replace("$SHADOW_MAP_ENABLED$", "0");
 
     if (applyModel == LAMBERT_SPECULAR_LUMINANCE_MODEL)
     {
-      fragment.replace("$LAMBERT_SPECULAR_LUMINANCE_MODEL$", "1");
+      mainFragment.replace("$LAMBERT_SPECULAR_LUMINANCE_MODEL$", "1");
     }
-    else fragment.replace("$LAMBERT_SPECULAR_LUMINANCE_MODEL$", "0");
+    else mainFragment.replace("$LAMBERT_SPECULAR_LUMINANCE_MODEL$", "0");
   }
   catch (std::exception& error)
   {

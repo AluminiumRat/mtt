@@ -64,21 +64,6 @@ void DirectLightApplicator::DrawTechnique::_adjustPipeline()
                           _applicator._specularMapSampler,
                           VK_SHADER_STAGE_FRAGMENT_BIT);
 
-  if(_light.shadowMapProvider() != nullptr)
-  {
-    _pipeline->setDefine("SHADOW_MAP_ENABLED");
-    _pipeline->setDefine( "SHADOW_CASCADE_SIZE",
-                          std::to_string(_light.cascadeSize()));
-
-    _pipeline->addResource( "shadowMapBinding",
-                            _light.getOrCreateShdowmapSampler(),
-                            VK_SHADER_STAGE_FRAGMENT_BIT);
-
-    _pipeline->addResource( "shadowCoordsCorrectionBinding",
-                            _applicator._coordsCorrectionUniform,
-                            VK_SHADER_STAGE_FRAGMENT_BIT);
-  }
-
   std::unique_ptr<ShaderModule> vertexShader(
                                   new ShaderModule( ShaderModule::VERTEX_SHADER,
                                                     _pipeline->device()));
@@ -89,7 +74,27 @@ void DirectLightApplicator::DrawTechnique::_adjustPipeline()
   std::unique_ptr<ShaderModule> fragmentShader(
                                 new ShaderModule( ShaderModule::FRAGMENT_SHADER,
                                                   _pipeline->device()));
+
   fragmentShader->newFragment().loadFromFile("clPipeline/materialLib.glsl");
+  if(_light.shadowMapProvider() != nullptr)
+  {
+    _pipeline->setDefine("SHADOW_MAP_ENABLED");
+
+    ShaderModule::Fragment& shadowLibFragment = fragmentShader->newFragment();
+    shadowLibFragment.loadFromFile("clPipeline/cascadeShadowmapLib.glsl");
+
+    shadowLibFragment.replace("$INDEX$", "");
+    shadowLibFragment.replace("$SHADOW_CASCADE_SIZE$",
+                              std::to_string(_light.cascadeSize()));
+
+    _pipeline->addResource( "shadowMapBinding",
+                            _light.getOrCreateShdowmapSampler(),
+                            VK_SHADER_STAGE_FRAGMENT_BIT);
+
+    _pipeline->addResource( "shadowCoordsCorrectionBinding",
+                            _applicator._coordsCorrectionUniform,
+                            VK_SHADER_STAGE_FRAGMENT_BIT);
+  }
   fragmentShader->newFragment().loadFromFile(
                                         "clPipeline/directLightDrawable.frag");
   _pipeline->addShader(std::move(fragmentShader));
