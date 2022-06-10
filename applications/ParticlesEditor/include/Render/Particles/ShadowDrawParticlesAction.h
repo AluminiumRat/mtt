@@ -13,8 +13,7 @@
 class ShadowDrawParticlesAction : public mtt::AbstractAction
 {
 public:
-  using NearFarInfo = ParticlesShadowmapTechnique::NearFarInfo;
-  using NearFarUniform = ParticlesShadowmapTechnique::NearFarUniform;
+  using MaxDistanceUniform = ParticlesShadowmapTechnique::MaxDistanceUniform;
 
 public:
   ShadowDrawParticlesAction(
@@ -25,8 +24,8 @@ public:
           mtt::PlainBuffer& indicesBuffer,
           mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform,
           const mtt::DrawMatrices& drawMatrices,
-          NearFarUniform& nearFarUniform,
-          NearFarInfo nearfarData,
+          MaxDistanceUniform& maxDistanceUniform,
+          float maxDistance,
           mtt::VolatileUniform<mtt::MppxDistanceFunction>& mppxFunctionUniform,
           mtt::MppxDistanceFunction mppxFunctionValues,
           mtt::VolatileUniform<glm::vec2>& falloffUniform,
@@ -46,8 +45,8 @@ private:
   mtt::Ref<mtt::PlainBuffer> _indicesBuffer;
   mtt::VolatileUniform<mtt::DrawMatrices>& _matricesUniform;
   mtt::DrawMatrices _drawMatrices;
-  NearFarUniform& _nearFarUniform;
-  NearFarInfo _nearfarData;
+  MaxDistanceUniform& _maxDistanceUniform;
+  float _maxDistance;
   mtt::VolatileUniform<mtt::MppxDistanceFunction>& _mppxFunctionUniform;
   mtt::MppxDistanceFunction _mppxFunctionValues;
   mtt::VolatileUniform<glm::vec2>& _falloffUniform;

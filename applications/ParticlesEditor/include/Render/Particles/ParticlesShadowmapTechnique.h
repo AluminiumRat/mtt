@@ -7,12 +7,7 @@
 class ParticlesShadowmapTechnique : public ParticlesAbstractTechnique
 {
 public:
-  struct NearFarInfo
-  {
-    alignas(4) float nearDistance;
-    alignas(4) float nearFarDistance;
-  };
-  using NearFarUniform = mtt::VolatileUniform<NearFarInfo>;
+  using MaxDistanceUniform = mtt::VolatileUniform<float>;
 
 public:
   ParticlesShadowmapTechnique(ParticlesDrawCommonData& commonData);
@@ -36,5 +31,5 @@ protected:
           glm::vec2 falloffValue) override;
 
 private:
-  NearFarUniform _nearFarUniform;
+  MaxDistanceUniform _maxDistanceUniform;
 };

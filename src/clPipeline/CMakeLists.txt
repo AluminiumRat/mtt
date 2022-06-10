@@ -44,6 +44,10 @@ set(HEADERS
     "../../include/mtt/clPipeline/Lighting/LightAreaModificator.h"
     "../../include/mtt/clPipeline/Lighting/ShadowmapBuilder.h"
     "../../include/mtt/clPipeline/Lighting/ShadowmapProvider.h"
+    "../../include/mtt/clPipeline/Lighting/SpotLight.h"
+    "../../include/mtt/clPipeline/Lighting/SpotLightApplicator.h"
+    "../../include/mtt/clPipeline/Lighting/SpotLightAreaModificator.h"
+    "../../include/mtt/clPipeline/Lighting/SpotLightData.h"
 
     "../../include/mtt/clPipeline/MeshTechniques/EmissionTechnique.h"
     "../../include/mtt/clPipeline/MeshTechniques/FLColorTechnique.h"
@@ -84,6 +88,9 @@ set(SOURCES
     "Lighting/LightAreaModificator.cpp"
     "Lighting/ShadowmapBuilder.cpp"
     "Lighting/ShadowmapProvider.cpp"
+    "Lighting/SpotLight.cpp"
+    "Lighting/SpotLightApplicator.cpp"
+    "Lighting/SpotLightAreaModificator.cpp"
 
     "MeshTechniques/EmissionTechnique.cpp"
     "MeshTechniques/FLColorTechnique.cpp"

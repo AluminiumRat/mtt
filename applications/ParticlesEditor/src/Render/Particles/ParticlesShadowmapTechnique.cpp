@@ -42,8 +42,8 @@ void ParticlesShadowmapTechnique::adjustPipeline(
   fragmentShader->newFragment().loadFromFile("particlesShadow.frag");
   pipeline.addShader(std::move(fragmentShader));
 
-  pipeline.addResource( "nearfarBinding",
-                        _nearFarUniform,
+  pipeline.addResource( "maxDistanceBinding",
+                        _maxDistanceUniform,
                         VK_SHADER_STAGE_GEOMETRY_BIT);
 }
 
@@ -58,11 +58,6 @@ void ParticlesShadowmapTechnique::buildDrawAction(
           mtt::VolatileUniform<glm::vec2>& falloffUniform,
           glm::vec2 falloffValue)
 {
-  NearFarInfo nearFar;
-  nearFar.nearDistance = buildInfo.currentViewInfo.nearCameraDistance;
-  nearFar.nearFarDistance =
-            buildInfo.currentViewInfo.farCameraDistance - nearFar.nearDistance;
-
   mtt::MppxDistanceFunction mppxFunction =
                                       buildInfo.currentViewInfo.mppxFunction();
 
@@ -75,8 +70,8 @@ void ParticlesShadowmapTechnique::buildDrawAction(
                               indices,
                               matricesUniform,
                               buildInfo.drawMatrices,
-                              _nearFarUniform,
-                              nearFar,
+                              _maxDistanceUniform,
+                              buildInfo.currentViewInfo.farCameraDistance,
                               mppxFunctionUniform,
                               mppxFunction,
                               falloffUniform,

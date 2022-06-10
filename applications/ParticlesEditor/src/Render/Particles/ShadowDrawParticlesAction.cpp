@@ -10,8 +10,8 @@ ShadowDrawParticlesAction::ShadowDrawParticlesAction(
           mtt::PlainBuffer& indicesBuffer,
           mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform,
           const mtt::DrawMatrices& drawMatrices,
-          NearFarUniform& nearFarUniform,
-          NearFarInfo nearfarData,
+          MaxDistanceUniform& maxDistanceUniform,
+          float maxDistance,
           mtt::VolatileUniform<mtt::MppxDistanceFunction>& mppxFunctionUniform,
           mtt::MppxDistanceFunction mppxFunctionValues,
           mtt::VolatileUniform<glm::vec2>& falloffUniform,
@@ -23,8 +23,8 @@ ShadowDrawParticlesAction::ShadowDrawParticlesAction(
   _indicesBuffer(&indicesBuffer),
   _matricesUniform(matricesUniform),
   _drawMatrices(drawMatrices),
-  _nearFarUniform(nearFarUniform),
-  _nearfarData(nearfarData),
+  _maxDistanceUniform(maxDistanceUniform),
+  _maxDistance(maxDistance),
   _mppxFunctionUniform(mppxFunctionUniform),
   _mppxFunctionValues(mppxFunctionValues),
   _falloffUniform(falloffUniform),
@@ -35,7 +35,7 @@ ShadowDrawParticlesAction::ShadowDrawParticlesAction(
 void ShadowDrawParticlesAction::execute(mtt::DrawContext& context)
 {
   _matricesUniform.setValuePtr(&_drawMatrices);
-  _nearFarUniform.setValuePtr(&_nearfarData);
+  _maxDistanceUniform.setValuePtr(&_maxDistance);
   _mppxFunctionUniform.setValuePtr(&_mppxFunctionValues);
   _falloffUniform.setValuePtr(&_falloffValue);
 

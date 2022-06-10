@@ -92,6 +92,31 @@ namespace mtt
   };
 
   template <>
+  class ResourceSetter<Texture2D, ImageView&>
+  {
+  public:
+    inline ResourceSetter(Texture2D& resource,
+                          ImageView& data) :
+      _resource(resource),
+      _data(data)
+    {
+    }
+
+    ResourceSetter(const ResourceSetter&) = delete;
+    ResourceSetter& operator = (const ResourceSetter&) = delete;
+    ~ResourceSetter() noexcept = default;
+
+    inline void setup(DrawContext& drawContext)
+    {
+      _resource.setImageView(_data);
+    }
+
+  private:
+    Texture2D& _resource;
+    ImageView& _data;
+  };
+
+  template <>
   class ResourceSetter<std::vector<Texture2D*>, std::vector<ImageView*>>
   {
   public:

@@ -11,11 +11,10 @@ layout( set = volatileSet,
   mat4 projectionMatrix;
 } drawMatrices;
 
-layout(binding = nearfarBinding, set = volatileSet) uniform NearFar
+layout(binding = maxDistanceBinding, set = volatileSet) uniform MaxDistance
 {
-  float near;
-  float nearFar;
-} nearFar;
+  float value;
+} maxDistance;
 
 layout(location = 0) in vec2 inSizeRotation[];
 layout(location = 1) in vec4 inColor[];
@@ -52,10 +51,8 @@ void main()
   float angleSin = sin(rotation);
   float angleCos = cos(rotation);
 
-  float distance = -gl_in[0].gl_Position.z;
-  distance -= nearFar.near;
-  distance /= nearFar.nearFar;
-  float normalizedSize = size / nearFar.nearFar;
+  float distance = -gl_in[0].gl_Position.z / maxDistance.value;
+  float normalizedSize = size / maxDistance.value;
 
   float nearDistance3 = distance - normalizedSize / 2.f;
   nearDistance3 = nearDistance3 * nearDistance3 * nearDistance3;

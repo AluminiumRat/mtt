@@ -4,11 +4,10 @@
   You should set VIEW_COORDS_IN_FRAGMENT_SHADER_FEATURE
 #endif
 
-layout(binding = nearfarBinding, set = volatileSet) uniform NearFar
+layout(binding = maxDistanceBinding, set = volatileSet) uniform MaxDistance
 {
-  float near;
-  float nearFar;
-} nearFar;
+  float value;
+} maxDistance;
 
 layout(location = 5) in vec3 inViewCoord;
 
@@ -16,7 +15,5 @@ layout(location = 0) out float outDistance;
 
 void main()
 {
-  outDistance = -inViewCoord.z;
-  outDistance -= nearFar.near;
-  outDistance /= nearFar.nearFar;
+  outDistance = -inViewCoord.z / maxDistance.value;
 }

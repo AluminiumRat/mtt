@@ -114,8 +114,22 @@ void MaterialObserver::_updateTexture(const QString& filename,
     if(filename.isEmpty()) _extraData.removeSampler(samplerName);
     else
     {
+      std::string samplerNameStr(samplerName);
+
+      auto setTextureFunction =
+        [&, samplerNameStr](std::shared_ptr<mtt::Texture2D> texture)
+        {
+          _extraData.removeSampler(samplerNameStr);
+          if(texture == nullptr) return;
+          std::unique_ptr<mtt::Sampler> sampler(
+                                new mtt::Sampler( mtt::PipelineResource::STATIC,
+                                                  texture->device()));
+          sampler->setAttachedTexture(texture);
+          _extraData.addSampler(std::move(sampler), samplerNameStr);
+        };
+
       std::unique_ptr<mtt::UploadTextureTask> task;
-      task.reset(new mtt::UploadTextureTask(filename, _extraData, samplerName));
+      task.reset(new mtt::UploadTextureTask(filename, setTextureFunction));
       mtt::AsyncTaskQueue& queue =
                             mtt::EditorApplication::instance().asyncTaskQueue;
       stopper = queue.addTaskWithStopper(std::move(task));

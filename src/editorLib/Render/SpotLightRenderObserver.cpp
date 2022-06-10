@@ -1,4 +1,5 @@
 #include <mtt/application/CommonEditData.h>
+#include <mtt/editorLib/AsyncTasks/UploadTextureTask.h>
 #include <mtt/editorLib/Objects/SpotLightObject.h>
 #include <mtt/editorLib/Render/SpotLightRenderObserver.h>
 #include <mtt/editorLib/EditorApplication.h>
@@ -17,20 +18,82 @@ SpotLightRenderObserver::SpotLightRenderObserver( SpotLightObject& object,
                                                   RenderScene& renderScene) :
   AbstractLightRenderObserver(object, commonData, ICON_FILE, ICON_SIZE),
   _lightObject(object),
+  _light(true, true, EditorApplication::instance().displayDevice()),
   _renderScene(renderScene)
 {
+  setLightObject(_light);
+
+  connect(&_lightObject,
+          &SpotLightObject::baseIlluminanceChanged,
+          this,
+          &SpotLightRenderObserver::_updateIlluminance,
+          Qt::DirectConnection);
+  connect(&_lightObject,
+          &SpotLightObject::colorChanged,
+          this,
+          &SpotLightRenderObserver::_updateIlluminance,
+          Qt::DirectConnection);
+  _updateIlluminance();
+
   connect(&_lightObject,
           &SpotLightObject::distanceChanged,
           this,
-          &SpotLightRenderObserver::_updateConeMesh,
+          &SpotLightRenderObserver::_updateDistance,
           Qt::DirectConnection);
-  _updateConeMesh();
+  _updateDistance();
 
   connect(&_lightObject,
           &SpotLightObject::angleChanged,
           this,
-          &SpotLightRenderObserver::_updateConeMesh,
+          &SpotLightRenderObserver::_updateAngle,
           Qt::DirectConnection);
+  _updateAngle();
+
+  connect(&_lightObject,
+          &SpotLightObject::filterImageChanged,
+          this,
+          &SpotLightRenderObserver::_updateFilterImage,
+          Qt::DirectConnection);
+  _updateFilterImage();
+
+  connect(&_lightObject,
+          &SpotLightObject::shadowsEnabledChanged,
+          this,
+          &SpotLightRenderObserver::_updateShadowsEnabled,
+          Qt::DirectConnection);
+  _updateShadowsEnabled();
+
+  connect(&_lightObject,
+          &SpotLightObject::shadowmapSizeChanged,
+          this,
+          &SpotLightRenderObserver::_updateShadowMapSize,
+          Qt::DirectConnection);
+  _updateShadowMapSize();
+
+  connect(&_lightObject,
+          &SpotLightObject::blurAngleChanged,
+          this,
+          &SpotLightRenderObserver::_updateBlur,
+          Qt::DirectConnection);
+  _updateBlur();
+}
+
+void SpotLightRenderObserver::_updateIlluminance() noexcept
+{
+  _light.setIlluminance(_lightObject.baseIlluminance() * _lightObject.color());
+}
+
+void SpotLightRenderObserver::_updateDistance() noexcept
+{
+  _light.setDistance(_lightObject.distance());
+  _updateDepthCamera();
+  _updateConeMesh();
+}
+
+void SpotLightRenderObserver::_updateAngle() noexcept
+{
+  _light.setAngle(_lightObject.angle());
+  _updateDepthCamera();
   _updateConeMesh();
 }
 
@@ -44,19 +107,119 @@ void SpotLightRenderObserver::_updateConeMesh() noexcept
 
   try
   {
-    float radius = _lightObject.distance() * tan(_lightObject.angle() / 2.f);
+    float height = _lightObject.distance() * cos(_lightObject.angle() / 2.f);
+    float radius = height * tan(_lightObject.angle() / 2.f);
     hullNode().setConeGeometry( radius,
-                                _lightObject.distance(),
+                                height,
                                 0.f,
                                 BODY_SEGMENTS,
                                 CAP_SEGMENTS);
   }
   catch (std::exception& error)
   {
-    Log() << "DirectLightRenderObserver::_updateCylinderMesh: unable to update cylinder mesh: " << error.what();
+    Log() << "SpotLightRenderObserver::_updateConeMesh: unable to update mesh: " << error.what();
   }
   catch (...)
   {
-    Log() << "DirectLightRenderObserver::_updateCylinderMesh: unable to update cylinder mesh: unknown error.";
+    Log() << "SpotLightRenderObserver::_updateConeMesh: unable to update mesh: unknown error.";
   }
+}
+
+void SpotLightRenderObserver::_updateDepthCamera() noexcept
+{
+  if (_shadowMapProvider == nullptr) return;
+  _shadowMapProvider->camera().setPerspectiveProjection(
+                                                _lightObject.angle(),
+                                                1,
+                                                _lightObject.distance() / 100.f,
+                                                _lightObject.distance());
+}
+
+void SpotLightRenderObserver::_updateFilterImage() noexcept
+{
+  try
+  {
+    QString filename = _lightObject.filterImage();
+    if (filename.isEmpty())
+    {
+      _light.setFilterTexture(nullptr);
+      return;
+    }
+
+    auto setTextureFunction =
+      [&](std::shared_ptr<mtt::Texture2D> texture)
+      {
+        _light.setFilterTexture(texture);
+      };
+
+    std::unique_ptr<mtt::UploadTextureTask> task;
+    task.reset(new mtt::UploadTextureTask(filename, setTextureFunction));
+    mtt::AsyncTaskQueue& queue =
+                              mtt::EditorApplication::instance().asyncTaskQueue;
+    _filterLoadStopper = queue.addTaskWithStopper(std::move(task));
+  }
+  catch (std::exception& error)
+  {
+    mtt::Log() << "SpotLightRenderObserver::_updateFilterImage: " << error.what();
+  }
+  catch (...)
+  {
+    mtt::Log() << "SpotLightRenderObserver::_updateFilterImage: unknown error.";
+  }
+}
+
+void SpotLightRenderObserver::_updateShadowsEnabled() noexcept
+{
+  if(_lightObject.shadowsEnabled() && _shadowMapProvider == nullptr)
+  {
+    try
+    {
+      LogicalDevice& device = EditorApplication::instance().displayDevice();
+      _shadowMapProvider.reset(new clPipeline::ShadowMapProvider(
+                                                          2,
+                                                          glm::uvec2(256, 256),
+                                                          device));
+
+      _light.setShadowMapProvider(_shadowMapProvider.get());
+      positionRotateJoint().addChild(_shadowMapProvider->camera());
+      _shadowMapProvider->setTargetField(&_renderScene.culledData());
+      _updateDepthCamera();
+      _updateShadowMapSize();
+    }
+    catch (std::exception& error)
+    {
+      _removeShadowmapProvider();
+      Log() << "SpotLightRenderObserver::_updateShadowsEnabled: unable to update shadow map provider: " << error.what();
+    }
+    catch (...)
+    {
+      _removeShadowmapProvider();
+      Log() << "SpotLightRenderObserver::_updateShadowsEnabled: unable to update shadow map provider: unknown error.";
+    }
+  }
+
+  if(!_lightObject.shadowsEnabled() && _shadowMapProvider != nullptr)
+  {
+    _removeShadowmapProvider();
+  }
+}
+
+void SpotLightRenderObserver::_removeShadowmapProvider() noexcept
+{
+  _light.setShadowMapProvider(nullptr);
+  positionRotateJoint().removeChild(_shadowMapProvider->camera());
+  _shadowMapProvider.reset();
+}
+
+void SpotLightRenderObserver::_updateShadowMapSize() noexcept
+{
+  if (_shadowMapProvider == nullptr) return;
+  uint frameSize = std::max(1u, uint(_lightObject.shadowmapSize()));
+  glm::uvec2 frameExtent(frameSize, frameSize);
+  _shadowMapProvider->setFrameExtent(frameExtent);
+}
+
+void SpotLightRenderObserver::_updateBlur() noexcept
+{
+  _light.setBlurAngle(_lightObject.blurAngle());
 }

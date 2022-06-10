@@ -30,8 +30,8 @@ void ShadowmapMeshTechnique::adjustPipeline(GraphicsPipeline& pipeline,
   fragmentShader->newFragment().loadFromFile("clPipeline/meshShadowmap.frag");
   pipeline.addShader(std::move(fragmentShader));
 
-  pipeline.addResource( "nearfarBinding",
-                        _nearFarUniform,
+  pipeline.addResource( "maxDistanceBinding",
+                        _maxDistanceUniform,
                         VK_SHADER_STAGE_FRAGMENT_BIT);
 }
 
@@ -40,14 +40,10 @@ void ShadowmapMeshTechnique::createRenderAction(
                                               GraphicsPipeline& pipeline,
                                               MatricesUniform& matricesUniform)
 {
-  NearFarInfo nearFar;
-  nearFar.nearDistance = buildInfo.currentViewInfo.nearCameraDistance;
-  nearFar.nearFarDistance =
-            buildInfo.currentViewInfo.farCameraDistance - nearFar.nearDistance;
-
+  float maxDistance = buildInfo.currentViewInfo.farCameraDistance;
   createActionTemplate( buildInfo,
                         pipeline,
                         matricesUniform,
-                        _nearFarUniform,
-                        nearFar);
+                        _maxDistanceUniform,
+                        maxDistance);
 }

@@ -23,13 +23,7 @@ namespace mtt
                                     GraphicsPipeline& pipeline,
                                     MatricesUniform& matricesUniform) override;
     private:
-      struct NearFarInfo
-      {
-        alignas(4) float nearDistance;
-        alignas(4) float nearFarDistance;
-      };
-      using NearFarUniform = VolatileUniform<NearFarInfo>;
-      NearFarUniform _nearFarUniform;
+      VolatileUniform<float> _maxDistanceUniform;
     };
   }
 }
