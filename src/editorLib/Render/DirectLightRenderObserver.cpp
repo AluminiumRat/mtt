@@ -86,14 +86,12 @@ void DirectLightRenderObserver::_updateIlluminance() noexcept
 void DirectLightRenderObserver::_updateDistance() noexcept
 {
   _light.setDistance(_lightObject.distance());
-  _updateDepthCamera();
   _updateCylinderMesh();
 }
 
 void DirectLightRenderObserver::_updateRadius() noexcept
 {
   _light.setRadius(_lightObject.radius());
-  _updateDepthCamera();
   _updateCylinderMesh();
 }
 
@@ -123,18 +121,6 @@ void DirectLightRenderObserver::_updateCylinderMesh() noexcept
   }
 }
 
-void DirectLightRenderObserver::_updateDepthCamera() noexcept
-{
-  if (_shadowMapProvider == nullptr) return;
-  float radius = _lightObject.radius();
-  _shadowMapProvider->camera().setOrthoProjection(-radius,
-                                                  radius,
-                                                  -radius,
-                                                  radius,
-                                                  0,
-                                                  _lightObject.distance());
-}
-
 void DirectLightRenderObserver::_updateShadowsEnabled() noexcept
 {
   if(_lightObject.shadowsEnabled() && _shadowMapProvider == nullptr)
@@ -142,15 +128,13 @@ void DirectLightRenderObserver::_updateShadowsEnabled() noexcept
     try
     {
       LogicalDevice& device = EditorApplication::instance().displayDevice();
-      _shadowMapProvider.reset(new clPipeline::ShadowMapProvider(
+      _shadowMapProvider.reset(new clPipeline::CascadeShadowMapProvider(
                                                           2,
                                                           glm::uvec2(256, 256),
                                                           device));
 
       _light.setShadowMapProvider(_shadowMapProvider.get());
-      positionRotateJoint().addChild(_shadowMapProvider->camera());
       _shadowMapProvider->setTargetField(&_renderScene.culledData());
-      _updateDepthCamera();
       _updateShadowMapSize();
     }
     catch (std::exception& error)
@@ -174,7 +158,6 @@ void DirectLightRenderObserver::_updateShadowsEnabled() noexcept
 void DirectLightRenderObserver::_removeShadowmapProvider() noexcept
 {
   _light.setShadowMapProvider(nullptr);
-  positionRotateJoint().removeChild(_shadowMapProvider->camera());
   _shadowMapProvider.reset();
 }
 

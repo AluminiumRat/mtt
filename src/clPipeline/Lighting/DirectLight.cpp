@@ -17,6 +17,8 @@ DirectLight::DirectLight( bool forwardLightingEnabled,
   _cascadeSize(1),
   _blurSize(0.f)
 {
+  addChildProtected(_shadowmapCamera);
+
   if(forwardLightingEnabled)
   {
     _forwardLightApplicator.reset(new DirectLightAreaModificator(*this));
@@ -30,6 +32,16 @@ DirectLight::DirectLight( bool forwardLightingEnabled,
   }
 
   _updateBound();
+}
+
+void DirectLight::_updateShadowmapCamera() noexcept
+{
+  _shadowmapCamera.setOrthoProjection(-radius(),
+                                      radius(),
+                                      -radius(),
+                                      radius(),
+                                      0,
+                                      distance());
 }
 
 void DirectLight::_updateBound() noexcept

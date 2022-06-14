@@ -115,8 +115,8 @@ void SpotLightApplicator::DrawTechnique::_adjustPipeline()
 }
 
 void SpotLightApplicator::DrawTechnique::addToDrawPlan(
-                              DrawPlanBuildInfo& buildInfo,
-                              const ShadowMapProvider::CascadeInfo& cascadeInfo)
+                                                  DrawPlanBuildInfo& buildInfo,
+                                                  ImageView* shadowMapView)
 {
   AbstractRenderPass* renderPass = buildInfo.builder->stagePass(lightingStage);
   if(renderPass == nullptr) return;
@@ -130,18 +130,13 @@ void SpotLightApplicator::DrawTechnique::addToDrawPlan(
 
   SpotLightData lightData = _light.buildDrawData(buildInfo);
 
-  if(cascadeInfo.empty())
+  if(shadowMapView == nullptr)
   {
-    _makeNonshadowCommand(buildInfo,
-                          pointsNumber,
-                          lightData);
+    _makeNonshadowCommand(buildInfo, pointsNumber, lightData);
   }
   else
   {
-    _makeShadowCommand( buildInfo,
-                        pointsNumber,
-                        lightData,
-                        cascadeInfo);
+    _makeShadowCommand( buildInfo, pointsNumber, lightData, *shadowMapView);
   }
 }
 
@@ -186,15 +181,14 @@ void SpotLightApplicator::DrawTechnique::_makeNonshadowCommand(
 }
 
 void SpotLightApplicator::DrawTechnique::_makeShadowCommand(
-                            DrawPlanBuildInfo& buildInfo,
-                            uint32_t pointsNumber,
-                            const SpotLightData& lightData,
-                            const ShadowMapProvider::CascadeInfo& cascadeInfo)
+                                                DrawPlanBuildInfo& buildInfo,
+                                                uint32_t pointsNumber,
+                                                const SpotLightData& lightData,
+                                                ImageView& shadowMapView)
 {
   Sampler& shadowmapSampler = *_light.shadowmapSampler();
   Texture2D* shadowTexture =
                     static_cast<Texture2D*>(shadowmapSampler.attachedTexture(0));
-  ImageView* shadowImageView = cascadeInfo[0].map;
 
   DrawBin* renderBin = buildInfo.currentFramePlan->getBin(lightingStage);
   if(renderBin == nullptr) Abort("SpotLightApplicator::DrawTechnique::_makeShadowCommand: light render bin is not supported.");
@@ -223,7 +217,7 @@ void SpotLightApplicator::DrawTechnique::_makeShadowCommand(
                                       _applicator._matricesUniform,
                                       buildInfo.drawMatrices,
                                       *shadowTexture,
-                                      *shadowImageView,
+                                      shadowMapView,
                                       *_applicator._depthTexture,
                                       LightingPass::depthSamplerMapIndex,
                                       *_applicator._normalTexture,
@@ -297,17 +291,17 @@ void SpotLightApplicator::buildDrawActions(DrawPlanBuildInfo& buildInfo)
   if (_light.angle() <= .0f) return;
   if (_light.distance() <= 0.f) return;
 
-  ShadowMapProvider::CascadeInfo cascadeInfo;
+  ImageView* shadowmapView = nullptr;
   if(_light.shadowMapProvider() != nullptr)
   {
-    cascadeInfo = _light.shadowMapProvider()->createShadowMap(1,
-                                                              buildInfo);
-    if (cascadeInfo.size() == 0) return;
+    shadowmapView = &_light.shadowMapProvider()->getShadowMap(
+                                                      _light.shadowmapCamera(),
+                                                      buildInfo);
   }
 
   if (_fullscreen(buildInfo))
   {
-    _fullscreenTechnique.addToDrawPlan(buildInfo, cascadeInfo);
+    _fullscreenTechnique.addToDrawPlan(buildInfo, shadowmapView);
   }
-  else _shapeTechnique.addToDrawPlan(buildInfo, cascadeInfo);
+  else _shapeTechnique.addToDrawPlan(buildInfo, shadowmapView);
 }

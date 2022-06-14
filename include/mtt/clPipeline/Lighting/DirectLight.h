@@ -17,7 +17,7 @@ namespace mtt
 
   namespace clPipeline
   {
-    class ShadowMapProvider;
+    class CascadeShadowMapProvider;
 
     class DirectLight : public CompositeObjectNode
     {
@@ -38,8 +38,11 @@ namespace mtt
       inline float radius() const noexcept;
       inline void setRadius(float newValue) noexcept;
 
-      inline ShadowMapProvider* shadowMapProvider() const noexcept;
-      inline void setShadowMapProvider(ShadowMapProvider* newProvider) noexcept;
+      inline const CameraNode& shadowmapCamera() const noexcept;
+
+      inline CascadeShadowMapProvider* shadowMapProvider() const noexcept;
+      inline void setShadowMapProvider(
+                                CascadeShadowMapProvider* newProvider) noexcept;
 
       inline size_t cascadeSize() const noexcept;
       /// newValue should not be 0
@@ -67,13 +70,15 @@ namespace mtt
       Sampler& getOrCreateShdowmapSampler();
 
     private:
+      void _updateShadowmapCamera() noexcept;
       void _updateBound() noexcept;
       void _resetPipelines() noexcept;
 
     private:
       LogicalDevice& _device;
 
-      ShadowMapProvider* _shadowMapProvider;
+      CameraNode _shadowmapCamera;
+      CascadeShadowMapProvider* _shadowMapProvider;
       std::optional<Sampler> _shadowmapSampler;
 
       glm::vec3 _illuminance;
@@ -105,6 +110,7 @@ namespace mtt
     {
       if(_distance == newValue) return;
       _distance = newValue;
+      _updateShadowmapCamera();
       _updateBound();
     }
 
@@ -117,16 +123,24 @@ namespace mtt
     {
       if(_radius == newValue) return;
       _radius = newValue;
+      _updateShadowmapCamera();
       _updateBound();
     }
 
-    inline ShadowMapProvider* DirectLight::shadowMapProvider() const noexcept
+    inline const CameraNode& DirectLight::shadowmapCamera() const noexcept
+    {
+      return _shadowmapCamera;
+    }
+
+
+    inline CascadeShadowMapProvider*
+                                DirectLight::shadowMapProvider() const noexcept
     {
       return _shadowMapProvider;
     }
 
     inline void DirectLight::setShadowMapProvider(
-                                        ShadowMapProvider* newProvider) noexcept
+                                CascadeShadowMapProvider* newProvider) noexcept
     {
       if(_shadowMapProvider == newProvider) return;
       _shadowMapProvider = newProvider;

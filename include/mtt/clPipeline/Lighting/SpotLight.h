@@ -7,6 +7,7 @@
 #include <mtt/clPipeline/Lighting/SpotLightData.h>
 #include <mtt/render/Pipeline/Sampler.h>
 #include <mtt/render/Pipeline/Texture2D.h>
+#include <mtt/render/SceneGraph/CameraNode.h>
 #include <mtt/render/SceneGraph/CompositeObjectNode.h>
 #include <mtt/utilities/Sphere.h>
 
@@ -41,6 +42,8 @@ namespace mtt
       /// You can set nullptr to remove filter texture
       void setFilterTexture(std::shared_ptr<Texture2D> newTexture);
 
+      inline const CameraNode& shadowmapCamera() const noexcept;
+
       inline ShadowMapProvider* shadowMapProvider() const noexcept;
       void setShadowMapProvider(ShadowMapProvider* newProvider) noexcept;
 
@@ -64,12 +67,14 @@ namespace mtt
       inline Sampler* shadowmapSampler() noexcept;
 
     private:
+      void _updateShadowmapCamera() noexcept;
       void _updateBound() noexcept;
       void _resetPipelines() noexcept;
 
     private:
       LogicalDevice& _device;
 
+      CameraNode _shadowmapCamera;
       ShadowMapProvider* _shadowMapProvider;
       std::optional<Sampler> _shadowmapSampler;
 
@@ -105,6 +110,7 @@ namespace mtt
       newValue = glm::max(0.f, newValue);
       if (_distance == newValue) return;
       _distance = newValue;
+      _updateShadowmapCamera();
       _updateBound();
     }
 
@@ -118,6 +124,7 @@ namespace mtt
       newValue = glm::clamp(newValue, 0.f, glm::pi<float>() / 2.f);
       if (_angle == newValue) return;
       _angle = newValue;
+      _updateShadowmapCamera();
       _updateBound();
     }
 
@@ -125,6 +132,11 @@ namespace mtt
     {
       if(!_filterSampler.has_value()) return nullptr;
       return static_cast<Texture2D*>(_filterSampler->attachedTexture(0));
+    }
+
+    inline const CameraNode& SpotLight::shadowmapCamera() const noexcept
+    {
+      return _shadowmapCamera;
     }
 
     inline ShadowMapProvider* SpotLight::shadowMapProvider() const noexcept
@@ -141,6 +153,7 @@ namespace mtt
     {
       newValue = glm::clamp(newValue, 0.f, glm::pi<float>() / 10.f);
       _blurAngle = newValue;
+      _updateShadowmapCamera();
     }
 
     inline Sphere SpotLight::getBoundSphere() const noexcept

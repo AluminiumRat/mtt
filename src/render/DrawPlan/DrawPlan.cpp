@@ -14,7 +14,7 @@ void DrawPlan::addFramePlan(std::unique_ptr<AbstractFramePlan> framePlan)
   _frameTable.push_back(std::move(newRecord));
 }
 
-std::vector<AbstractFramePlan*> DrawPlan::findPlans(
+std::vector<AbstractFramePlan*> DrawPlan::findFramePlans(
                                             const AbstractFrameBuilder& builder)
 {
   std::vector<AbstractFramePlan*> plans;

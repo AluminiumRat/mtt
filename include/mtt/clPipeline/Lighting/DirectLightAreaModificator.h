@@ -2,6 +2,7 @@
 
 #include <vector>
 
+#include <mtt/clPipeline/Lighting/CascadeShadowMapProvider.h>
 #include <mtt/clPipeline/Lighting/DirectLightData.h>
 #include <mtt/clPipeline/Lighting/LightAreaModificator.h>
 #include <mtt/render/Pipeline/VolatileUniform.h>
@@ -40,9 +41,9 @@ namespace mtt
       void _makeNonshadowCommand( DrawPlanBuildInfo& buildInfo,
                                   const DirectLightDrawData& lightData);
       void _makeShadowCommand(
-                            DrawPlanBuildInfo& buildInfo,
-                            const DirectLightDrawData& lightData,
-                            const ShadowMapProvider::CascadeInfo& cascadeInfo);
+                      DrawPlanBuildInfo& buildInfo,
+                      const DirectLightDrawData& lightData,
+                      const CascadeShadowMapProvider::CascadeInfo& cascadeInfo);
 
     private:
       DirectLight& _light;

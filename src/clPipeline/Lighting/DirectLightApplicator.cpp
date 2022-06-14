@@ -114,8 +114,8 @@ void DirectLightApplicator::DrawTechnique::_adjustPipeline()
 }
 
 void DirectLightApplicator::DrawTechnique::addToDrawPlan(
-                              DrawPlanBuildInfo& buildInfo,
-                              const ShadowMapProvider::CascadeInfo& cascadeInfo)
+                      DrawPlanBuildInfo& buildInfo,
+                      const CascadeShadowMapProvider::CascadeInfo& cascadeInfo)
 {
   AbstractRenderPass* renderPass = buildInfo.builder->stagePass(lightingStage);
   if(renderPass == nullptr) return;
@@ -185,10 +185,10 @@ void DirectLightApplicator::DrawTechnique::_makeNonshadowCommand(
 }
 
 void DirectLightApplicator::DrawTechnique::_makeShadowCommand(
-                            DrawPlanBuildInfo& buildInfo,
-                            uint32_t pointsNumber,
-                            const DirectLightDrawData& lightData,
-                            const ShadowMapProvider::CascadeInfo& cascadeInfo)
+                      DrawPlanBuildInfo& buildInfo,
+                      uint32_t pointsNumber,
+                      const DirectLightDrawData& lightData,
+                      const CascadeShadowMapProvider::CascadeInfo& cascadeInfo)
 {
   std::vector<Texture2D*> shadowTextures;
   shadowTextures.reserve(cascadeInfo.size());
@@ -321,12 +321,13 @@ void DirectLightApplicator::buildDrawActions(DrawPlanBuildInfo& buildInfo)
 {
   if (buildInfo.frameType != colorFrameType) return;
 
-  ShadowMapProvider::CascadeInfo cascadeInfo;
+  CascadeShadowMapProvider::CascadeInfo cascadeInfo;
   if(_light.shadowMapProvider() != nullptr)
   {
-    cascadeInfo = _light.shadowMapProvider()->createShadowMap(
-                                                          _light.cascadeSize(),
-                                                          buildInfo);
+    cascadeInfo = _light.shadowMapProvider()->getShadowMap(
+                                                      _light.cascadeSize(),
+                                                      _light.shadowmapCamera(),
+                                                      buildInfo);
     if (cascadeInfo.size() == 0) return;
   }
 

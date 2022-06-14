@@ -42,7 +42,7 @@ ImageView& ShadowMapProvider::createShadowMap(
                                         const AbstractFramePlan& dependentFrame,
                                         ViewInfo& rootViewInfo)
 {
-  size_t frameIndex = drawPlan.findPlans(_frameBuilder).size();
+  size_t frameIndex = drawPlan.findFramePlans(_frameBuilder).size();
   FrameRecord& frameRecord = _getOrCreateFrame(frameIndex);
   OneTargetFrameBuilder::Frame& frame = *frameRecord.frame;
 

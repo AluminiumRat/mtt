@@ -25,12 +25,13 @@ void DirectLightAreaModificator::buildPrepareActions(
 
   DirectLightDrawData lightData = _light.buildDrawData(buildInfo);
 
-  ShadowMapProvider::CascadeInfo cascadeInfo;
+  CascadeShadowMapProvider::CascadeInfo cascadeInfo;
   if(_light.shadowMapProvider() != nullptr)
   {
-    cascadeInfo = _light.shadowMapProvider()->createShadowMap(
-                                                          _light.cascadeSize(),
-                                                          buildInfo);
+    cascadeInfo = _light.shadowMapProvider()->getShadowMap(
+                                                      _light.cascadeSize(),
+                                                      _light.shadowmapCamera(),
+                                                      buildInfo);
     if (cascadeInfo.size() == 0) return;
   }
 
@@ -58,9 +59,9 @@ void DirectLightAreaModificator::_makeNonshadowCommand(
 }
 
 void DirectLightAreaModificator::_makeShadowCommand(
-                              DrawPlanBuildInfo& buildInfo,
-                              const DirectLightDrawData& lightData,
-                              const ShadowMapProvider::CascadeInfo& cascadeInfo)
+                      DrawPlanBuildInfo& buildInfo,
+                      const DirectLightDrawData& lightData,
+                      const CascadeShadowMapProvider::CascadeInfo& cascadeInfo)
 {
   std::vector<Texture2D*> shadowTextures;
   shadowTextures.reserve(cascadeInfo.size());

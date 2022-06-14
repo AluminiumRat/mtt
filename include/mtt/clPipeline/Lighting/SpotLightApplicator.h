@@ -47,7 +47,7 @@ namespace mtt
 
         void invalidatePipeline() noexcept;
         void addToDrawPlan( DrawPlanBuildInfo& buildInfo,
-                            const ShadowMapProvider::CascadeInfo& cascadeInfo);
+                            ImageView* shadowMapView);
 
       private:
         void _rebuildPipeline(AbstractRenderPass& renderPass);
@@ -57,11 +57,10 @@ namespace mtt
                                     uint32_t pointsNumber,
                                     const SpotLightData& lightData);
 
-        void _makeShadowCommand(
-                            DrawPlanBuildInfo& buildInfo,
-                            uint32_t pointsNumber,
-                            const SpotLightData& lightData,
-                            const ShadowMapProvider::CascadeInfo& cascadeInfo);
+        void _makeShadowCommand(DrawPlanBuildInfo& buildInfo,
+                                uint32_t pointsNumber,
+                                const SpotLightData& lightData,
+                                ImageView& shadowMapView);
 
       private:
         bool _fullscreenRender;

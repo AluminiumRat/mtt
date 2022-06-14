@@ -86,14 +86,12 @@ void SpotLightRenderObserver::_updateIlluminance() noexcept
 void SpotLightRenderObserver::_updateDistance() noexcept
 {
   _light.setDistance(_lightObject.distance());
-  _updateDepthCamera();
   _updateConeMesh();
 }
 
 void SpotLightRenderObserver::_updateAngle() noexcept
 {
   _light.setAngle(_lightObject.angle());
-  _updateDepthCamera();
   _updateConeMesh();
 }
 
@@ -123,16 +121,6 @@ void SpotLightRenderObserver::_updateConeMesh() noexcept
   {
     Log() << "SpotLightRenderObserver::_updateConeMesh: unable to update mesh: unknown error.";
   }
-}
-
-void SpotLightRenderObserver::_updateDepthCamera() noexcept
-{
-  if (_shadowMapProvider == nullptr) return;
-  _shadowMapProvider->camera().setPerspectiveProjection(
-                                                _lightObject.angle(),
-                                                1,
-                                                _lightObject.distance() / 100.f,
-                                                _lightObject.distance());
 }
 
 void SpotLightRenderObserver::_updateFilterImage() noexcept
@@ -181,9 +169,7 @@ void SpotLightRenderObserver::_updateShadowsEnabled() noexcept
                                                           device));
 
       _light.setShadowMapProvider(_shadowMapProvider.get());
-      positionRotateJoint().addChild(_shadowMapProvider->camera());
       _shadowMapProvider->setTargetField(&_renderScene.culledData());
-      _updateDepthCamera();
       _updateShadowMapSize();
     }
     catch (std::exception& error)
@@ -207,7 +193,6 @@ void SpotLightRenderObserver::_updateShadowsEnabled() noexcept
 void SpotLightRenderObserver::_removeShadowmapProvider() noexcept
 {
   _light.setShadowMapProvider(nullptr);
-  positionRotateJoint().removeChild(_shadowMapProvider->camera());
   _shadowMapProvider.reset();
 }
 

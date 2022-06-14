@@ -4,7 +4,7 @@
 #include <optional>
 #include <vector>
 
-#include <mtt/clPipeline/Lighting/ShadowMapProvider.h>
+#include <mtt/clPipeline/Lighting/CascadeShadowMapProvider.h>
 #include <mtt/clPipeline/Lighting/DirectLightData.h>
 #include <mtt/render/Pipeline/GraphicsPipeline.h>
 #include <mtt/render/Pipeline/Sampler.h>
@@ -49,8 +49,9 @@ namespace mtt
         virtual ~DrawTechnique() = default;
 
         void invalidatePipeline() noexcept;
-        void addToDrawPlan( DrawPlanBuildInfo& buildInfo,
-                            const ShadowMapProvider::CascadeInfo& cascadeInfo);
+        void addToDrawPlan(
+                      DrawPlanBuildInfo& buildInfo,
+                      const CascadeShadowMapProvider::CascadeInfo& cascadeInfo);
 
       private:
         void _rebuildPipeline(AbstractRenderPass& renderPass);
@@ -61,10 +62,10 @@ namespace mtt
                                     const DirectLightDrawData& lightData);
 
         void _makeShadowCommand(
-                            DrawPlanBuildInfo& buildInfo,
-                            uint32_t pointsNumber,
-                            const DirectLightDrawData& lightData,
-                            const ShadowMapProvider::CascadeInfo& cascadeInfo);
+                      DrawPlanBuildInfo& buildInfo,
+                      uint32_t pointsNumber,
+                      const DirectLightDrawData& lightData,
+                      const CascadeShadowMapProvider::CascadeInfo& cascadeInfo);
 
       private:
         bool _fullscreenRender;

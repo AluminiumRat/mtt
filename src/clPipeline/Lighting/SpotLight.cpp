@@ -15,6 +15,8 @@ SpotLight::SpotLight( bool forwardLightingEnabled,
   _angle(glm::pi<float>() / 4),
   _blurAngle(0.f)
 {
+  addChildProtected(_shadowmapCamera);
+
   if(forwardLightingEnabled)
   {
     //_forwardLightApplicator.reset(new SpotLightAreaModificator(*this));
@@ -53,6 +55,14 @@ void SpotLight::setFilterTexture(std::shared_ptr<Texture2D> newTexture)
     _filterSampler.reset();
     throw;
   }
+}
+
+void SpotLight::_updateShadowmapCamera() noexcept
+{
+  _shadowmapCamera.setPerspectiveProjection(angle(),
+                                            1,
+                                            distance() / 100.f,
+                                            distance());
 }
 
 void SpotLight::_updateBound() noexcept

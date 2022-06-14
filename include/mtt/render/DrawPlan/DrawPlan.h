@@ -19,7 +19,7 @@ namespace mtt
     ~DrawPlan() = default;
 
     void addFramePlan(std::unique_ptr<AbstractFramePlan> framePlan);
-    std::vector<AbstractFramePlan*> findPlans(
+    std::vector<AbstractFramePlan*> findFramePlans(
                                           const AbstractFrameBuilder& builder);
 
     void addDependency( const AbstractFramePlan& sourceFrame,
