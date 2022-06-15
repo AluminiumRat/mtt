@@ -42,8 +42,8 @@ void main()
   float toLightDistance = length(localCoord.xyz);
   if(localCoord.z > 0.f || toLightDistance > lightData.distance) discard;
 
-  float areaSize = -localCoord.z * lightData.halfangleTan;
-  if(length(localCoord.xy) > areaSize) discard;
+  float areaRadius = -localCoord.z * lightData.halfangleTan;
+  if(length(localCoord.xy) > areaRadius) discard;
 
   vec4 albedo = texelFetch(albedoMap, fragCoord, 0);
   vec3 normal = normalize(texelFetch(normalMap, fragCoord, 0).xyz);
@@ -65,7 +65,7 @@ void main()
                                 lightData.illuminance);
 
   vec2 textureCoord = vec2(localCoord.x, -localCoord.y);
-  textureCoord /= 2.f * areaSize;
+  textureCoord /= 2.f * areaRadius;
   textureCoord += vec2(.5f, .5f);
 
   #ifdef FILTER_SAMPLER_ENABLED
@@ -73,8 +73,9 @@ void main()
   #endif
 
   #ifdef SHADOW_MAP_ENABLED
-    float lightDotNorm = max(dot(lightInverseDirection, normal), 0.f);
-    float shadowmapSlope = areaSize / lightDotNorm / lightData.distance;
+    float lightDotNorm = abs(dot(lightInverseDirection, normal));
+    float slopeFactor = min(1.f / lightDotNorm, 10.f);
+    float shadowmapSlope = 2.f * areaRadius * slopeFactor / lightData.distance;
 
     luminance *= getShadowFactor( textureCoord,
                                   -localCoord.z / lightData.distance,

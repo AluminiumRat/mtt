@@ -55,8 +55,7 @@ float getOpaqueShadowFactor$INDEX$( int layer,
   float texelSlope = shadowmapSlope /
                       shadowCoordsCorrection$INDEX$.values[layer].x /
                       mapSize;
-  float maxTexelShift = max(length(centerTexelCoords - startTexel),
-                            length(centerTexelCoords - finishTexel));
+  float maxTexelShift = length(finishTexel - startTexel) / 2.f;
   float slopeCorrection = maxTexelShift * texelSlope;
   normalizedDistanceToLight -= slopeCorrection;
 

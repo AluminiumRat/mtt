@@ -23,8 +23,7 @@ float getOpaqueShadowFactor$INDEX$( vec2 shadowCoords,
   finishTexel = floor(finishTexel) + vec2(.5f);
 
   float texelSlope = shadowmapSlope / mapSize;
-  float maxTexelShift = max(length(centerTexelCoords - startTexel),
-                            length(centerTexelCoords - finishTexel));
+  float maxTexelShift = length(finishTexel - startTexel) / 2.f;
   float slopeCorrection = maxTexelShift * texelSlope;
   normalizedDistanceToLight -= slopeCorrection;
 
