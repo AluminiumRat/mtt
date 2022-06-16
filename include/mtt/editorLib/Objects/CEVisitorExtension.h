@@ -17,6 +17,7 @@ namespace mtt
   class EnvironmentObject;
   class EnvironmentRootObject;
   class LightObject;
+  class LightWithShadowsObject;
   class MovableObject;
   class Object3D;
   class PointLightObject;
@@ -75,6 +76,11 @@ namespace mtt
 
     virtual void visitConstLightObject(const LightObject& object) = 0;
     virtual void visitLightObject(LightObject& object) = 0;
+
+    virtual void visitConstLightWithShadowsObject(
+                                      const LightWithShadowsObject& object) = 0;
+    virtual void visitLightWithShadowsObject(
+                                            LightWithShadowsObject& object) = 0;
 
     virtual void visitConstMovableObject(const MovableObject& object) = 0;
     virtual void visitMovableObject(MovableObject& object) = 0;

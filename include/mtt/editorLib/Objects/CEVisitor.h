@@ -15,6 +15,7 @@
 #include <mtt/editorLib/Objects/EnvironmentObject.h>
 #include <mtt/editorLib/Objects/EnvironmentRootObject.h>
 #include <mtt/editorLib/Objects/LightObject.h>
+#include <mtt/editorLib/Objects/LightWithShadowsObject.h>
 #include <mtt/editorLib/Objects/MovableObject.h>
 #include <mtt/editorLib/Objects/Object3D.h>
 #include <mtt/editorLib/Objects/PointLightObject.h>
@@ -96,6 +97,11 @@ namespace mtt
     inline virtual void visitConstLightObject(
                                             const LightObject& object) override;
     inline virtual void visitLightObject(LightObject& object) override;
+
+    inline virtual void visitConstLightWithShadowsObject(
+                                const LightWithShadowsObject& object) override;
+    inline virtual void visitLightWithShadowsObject(
+                                      LightWithShadowsObject& object) override;
 
     inline virtual void visitConstMovableObject(
                                           const MovableObject& object) override;
@@ -332,6 +338,20 @@ namespace mtt
   }
 
   template <typename BaseVisitor>
+  inline void CEVisitorT<BaseVisitor>::visitLightWithShadowsObject(
+                                                LightWithShadowsObject& object)
+  {
+    visitLightObject(object);
+  }
+
+  template <typename BaseVisitor>
+  inline void CEVisitorT<BaseVisitor>::visitConstLightWithShadowsObject(
+                                          const LightWithShadowsObject& object)
+  {
+    visitConstLightObject(object);
+  }
+
+  template <typename BaseVisitor>
   inline void CEVisitorT<BaseVisitor>::visitConstMovableObject(
                                                     const MovableObject& object)
   {
@@ -362,14 +382,14 @@ namespace mtt
   inline void CEVisitorT<BaseVisitor>::visitPointLightObject(
                                                       PointLightObject& object)
   {
-    visitLightObject(object);
+    visitLightWithShadowsObject(object);
   }
 
   template <typename BaseVisitor>
   inline void CEVisitorT<BaseVisitor>::visitConstPointLightObject(
                                                 const PointLightObject& object)
   {
-    visitConstLightObject(object);
+    visitConstLightWithShadowsObject(object);
   }
 
   template <typename BaseVisitor>

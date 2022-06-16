@@ -11,7 +11,6 @@ SpotLightObject::SpotLightObject( const QString& name,
   _shadowmapSize(256),
   _blurAngle(0.f)
 {
-  setDistance(10);
 }
 
 void SpotLightObject::setAngle(float newValue) noexcept
