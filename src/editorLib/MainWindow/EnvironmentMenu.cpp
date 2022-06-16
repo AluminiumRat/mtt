@@ -10,6 +10,7 @@
 #include <mtt/editorLib/Objects/DirectLightObject.h>
 #include <mtt/editorLib/Objects/EnvironmentModel.h>
 #include <mtt/editorLib/Objects/SpotLightObject.h>
+#include <mtt/editorLib/Objects/PointLightObject.h>
 #include <mtt/editorLib/EditorApplication.h>
 #include <mtt/editorLib/EditorCommonData.h>
 
@@ -33,6 +34,7 @@ EnvironmentMenu::EnvironmentMenu( QWidget& window,
   addAction(tr("Add ambient light"), this, &EnvironmentMenu::_addAmbientLight);
   addAction(tr("Add direct light"), this, &EnvironmentMenu::_addDirectLight);
   addAction(tr("Add spot light"), this, &EnvironmentMenu::_addSpotLight);
+  addAction(tr("Add point light"), this, &EnvironmentMenu::_addPointLight);
   addAction(tr("Add model"), this, &EnvironmentMenu::_addEnvironmentModel);
 }
 
@@ -157,6 +159,11 @@ void EnvironmentMenu::_addDirectLight() noexcept
 void EnvironmentMenu::_addSpotLight() noexcept
 {
   _addLight<mtt::SpotLightObject>(tr("Spot light"));
+}
+
+void EnvironmentMenu::_addPointLight() noexcept
+{
+  _addLight<mtt::PointLightObject>(tr("Point light"));
 }
 
 void EnvironmentMenu::_addEnvironmentModel() noexcept

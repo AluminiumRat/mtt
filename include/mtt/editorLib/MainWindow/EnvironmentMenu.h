@@ -26,6 +26,7 @@ namespace mtt
     void _addLight(const QString& name) noexcept;
     void _addDirectLight() noexcept;
     void _addSpotLight() noexcept;
+    void _addPointLight() noexcept;
     void _addEnvironmentModel() noexcept;
 
   private:

@@ -19,6 +19,7 @@ namespace mtt
   class LightObject;
   class MovableObject;
   class Object3D;
+  class PointLightObject;
   class PositionAnimator;
   class RotatableObject;
   class ScalableObject;
@@ -80,6 +81,9 @@ namespace mtt
 
     virtual void visitConstObject3D(const Object3D& object) = 0;
     virtual void visitObject3D(Object3D& object) = 0;
+
+    virtual void visitConstPointLightObject(const PointLightObject& object) = 0;
+    virtual void visitPointLightObject(PointLightObject& object) = 0;
 
     virtual void visitConstPositionAnimator(const PositionAnimator& object) = 0;
     virtual void visitPositionAnimator(PositionAnimator& object) = 0;
