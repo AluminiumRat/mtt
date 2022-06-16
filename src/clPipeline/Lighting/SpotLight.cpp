@@ -19,8 +19,8 @@ SpotLight::SpotLight( bool forwardLightingEnabled,
 
   if(forwardLightingEnabled)
   {
-    //_forwardLightApplicator.reset(new SpotLightAreaModificator(*this));
-    //addChildProtected(*_forwardLightApplicator);
+    _forwardLightApplicator.reset(new SpotLightAreaModificator(*this));
+    addChildProtected(*_forwardLightApplicator);
   }
 
   if(defferedLightingEnabled)
@@ -71,10 +71,10 @@ void SpotLight::_updateBound() noexcept
   {
     _defferedLightApplicator->updateBound();
   }
-  /*if (_forwardLightApplicator != nullptr)
+  if (_forwardLightApplicator != nullptr)
   {
     _forwardLightApplicator->updateBound();
-  }*/
+  }
 }
 
 void SpotLight::_resetPipelines() noexcept
@@ -83,7 +83,7 @@ void SpotLight::_resetPipelines() noexcept
   {
     _defferedLightApplicator->resetPipelines();
   }
-  /*if (_forwardLightApplicator != nullptr) _forwardLightApplicator->reset(); */
+  if (_forwardLightApplicator != nullptr) _forwardLightApplicator->reset();
 }
 
 void SpotLight::setShadowMapProvider(ShadowMapProvider* newProvider) noexcept
@@ -144,12 +144,11 @@ DrawableNode& SpotLight::culledDrawable(size_t index) noexcept
 
 size_t SpotLight::areaModificatorsNumber() const noexcept
 {
-  return 0;//_forwardLightApplicator == nullptr ? 0 : 1;
+  return _forwardLightApplicator == nullptr ? 0 : 1;
 }
 
 AreaModificator& SpotLight::areaModificator(size_t index) noexcept
 {
-  Abort("SpotLight::areaModificator: no area modificators available.");
-  //if (_forwardLightApplicator == nullptr) Abort("SpotLight::areaModificator: no area modificators available.");
-  //else return *_forwardLightApplicator;
+  if (_forwardLightApplicator == nullptr) Abort("SpotLight::areaModificator: no area modificators available.");
+  else return *_forwardLightApplicator;
 }

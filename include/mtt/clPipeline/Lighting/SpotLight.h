@@ -4,6 +4,7 @@
 #include <memory>
 
 #include <mtt/clPipeline/Lighting/SpotLightApplicator.h>
+#include <mtt/clPipeline/Lighting/SpotLightAreaModificator.h>
 #include <mtt/clPipeline/Lighting/SpotLightData.h>
 #include <mtt/render/Pipeline/Sampler.h>
 #include <mtt/render/Pipeline/Texture2D.h>
@@ -86,7 +87,7 @@ namespace mtt
       std::optional<Sampler> _filterSampler;
 
       std::unique_ptr<SpotLightApplicator> _defferedLightApplicator;
-      //std::unique_ptr<SpotLightAreaModificator> _forwardLightApplicator;
+      std::unique_ptr<SpotLightAreaModificator> _forwardLightApplicator;
     };
 
     inline const glm::vec3& SpotLight::illuminance() const noexcept
