@@ -173,10 +173,25 @@ void ObjectSaver::visitConstLightObject(const mtt::LightObject& object)
   *_stream << object.baseIlluminance();
 }
 
+void ObjectSaver::visitConstLightWithShadowsObject(
+                                          const LightWithShadowsObject& object)
+{
+  CEVisitor::visitConstLightWithShadowsObject(object);
+  *_stream << object.shadowsEnabled();
+  *_stream << (uint16_t)object.shadowmapSize();
+  *_stream << object.shadowBlur();
+}
+
 void ObjectSaver::visitConstMovableObject(const mtt::MovableObject& object)
 {
   CEVisitor::visitConstMovableObject(object);
   *_stream << object.position();
+}
+
+void ObjectSaver::visitConstPointLightObject(const PointLightObject& object)
+{
+  CEVisitor::visitConstPointLightObject(object);
+  writeCubemapData(object.filterCubemap());
 }
 
 void ObjectSaver::visitConstPositionAnimator(const PositionAnimator& object)

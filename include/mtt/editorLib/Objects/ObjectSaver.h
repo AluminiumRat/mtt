@@ -51,8 +51,12 @@ namespace mtt
     virtual void visitConstEnvironmentRootObject(
                                   const EnvironmentRootObject& object) override;
     virtual void visitConstLightObject(const LightObject& object) override;
+    virtual void visitConstLightWithShadowsObject(
+                                const LightWithShadowsObject& object) override;
     virtual void visitConstObject(const mtt::Object& object) override;
     virtual void visitConstMovableObject(const MovableObject& object) override;
+    virtual void visitConstPointLightObject(
+                                      const PointLightObject& object) override;
     virtual void visitConstPositionAnimator(
                                       const PositionAnimator& object) override;
     virtual void visitConstRotatableObject(

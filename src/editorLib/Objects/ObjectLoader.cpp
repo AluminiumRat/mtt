@@ -164,10 +164,24 @@ void ObjectLoader::visitLightObject(LightObject& object)
   object.setBaseIlluminance(_stream->readFloat());
 }
 
+void ObjectLoader::visitLightWithShadowsObject(LightWithShadowsObject& object)
+{
+  CEVisitor::visitLightWithShadowsObject(object);
+  object.setShadowsEnabled(_stream->readBool());
+  object.setShadowmapSize(_stream->readUint16());
+  object.setShadowBlur(_stream->readFloat());
+}
+
 void ObjectLoader::visitMovableObject(MovableObject& object)
 {
   CEVisitor::visitMovableObject(object);
   object.setPosition(_stream->readVec3());
+}
+
+void ObjectLoader::visitPointLightObject(PointLightObject& object)
+{
+  CEVisitor::visitPointLightObject(object);
+  readCubemapData(object.filterCubemap());
 }
 
 void ObjectLoader::visitPositionAnimator(PositionAnimator& object)
