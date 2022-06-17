@@ -38,6 +38,7 @@ namespace mtt
     virtual void visitPositionAnimator(PositionAnimator& object) override;
     virtual void visitLightObject(LightObject& object) override;
     virtual void visitMovableObject(MovableObject& object) override;
+    virtual void visitPointLightObject(PointLightObject& object) override;
     virtual void visitRotatableObject(RotatableObject& object) override;
     virtual void visitScalableObject(ScalableObject& object) override;
     virtual void visitSpotLightObject(SpotLightObject& object) override;

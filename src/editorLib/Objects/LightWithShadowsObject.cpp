@@ -8,7 +8,7 @@ LightWithShadowsObject::LightWithShadowsObject( const QString& name,
   LightObject(name, canBeRenamed, theId),
   _shadowsEnabled(false),
   _shadowmapSize(256),
-  _blur(0.f)
+  _shadowBlur(0.f)
 {
 }
 
@@ -26,10 +26,10 @@ void LightWithShadowsObject::setShadowmapSize(size_t newValue) noexcept
   emit shadowmapSizeChanged(_shadowmapSize);
 }
 
-void LightWithShadowsObject::setBlur(float newValue) noexcept
+void LightWithShadowsObject::setShadowBlur(float newValue) noexcept
 {
-  newValue = glm::clamp(newValue, 0.f, glm::pi<float>() / 10.f);
-  if(_blur == newValue) return;
-  _blur = newValue;
-  emit blurChanged(_blur);
+  newValue = glm::max(newValue, 0.f);
+  if(_shadowBlur == newValue) return;
+  _shadowBlur = newValue;
+  emit shadowBlurChanged(_shadowBlur);
 }

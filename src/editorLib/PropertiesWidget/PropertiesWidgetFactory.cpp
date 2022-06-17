@@ -1,5 +1,6 @@
 #include <memory>
 
+#include <QtWidgets/QLabel>
 #include <QtWidgets/QVBoxLayout>
 
 #include <mtt/application/Widgets/PropertiesWidgets/NamePropertyWidget.h>
@@ -9,6 +10,7 @@
 #include <mtt/editorLib/PropertiesWidget/AnimationObjectWidget.h>
 #include <mtt/editorLib/PropertiesWidget/AnimationTrackWidget.h>
 #include <mtt/editorLib/PropertiesWidget/BackgroundWidget.h>
+#include <mtt/editorLib/PropertiesWidget/CubemapWidget.h>
 #include <mtt/editorLib/PropertiesWidget/DirectLightWidget.h>
 #include <mtt/editorLib/PropertiesWidget/EnvironmentModelWidget.h>
 #include <mtt/editorLib/PropertiesWidget/LightWidget.h>
@@ -17,7 +19,7 @@
 #include <mtt/editorLib/PropertiesWidget/PropertiesWidgetFactory.h>
 #include <mtt/editorLib/PropertiesWidget/RotatableObjectWidget.h>
 #include <mtt/editorLib/PropertiesWidget/ScalableObjectWidget.h>
-#include <mtt/editorLib/PropertiesWidget/CubemapWidget.h>
+#include <mtt/editorLib/PropertiesWidget/ShadowsWidget.h>
 #include <mtt/editorLib/PropertiesWidget/SpotLightWidget.h>
 #include <mtt/editorLib/PropertiesWidget/VisiblePropertyWidget.h>
 
@@ -143,6 +145,22 @@ void PropertiesWidgetFactory::visitMovableObject(MovableObject& object)
 
   _widgetsLayout.addWidget(
                 new MovableObjectWidget(object, _commonEditData.undoStack()));
+}
+
+void PropertiesWidgetFactory::visitPointLightObject(PointLightObject& object)
+{
+  CEVisitor::visitPointLightObject(object);
+
+  _widgetsLayout.addWidget( new ShadowsWidget(object,
+                                              180.f / glm::pi<float>(),
+                                              20.f,
+                                              _commonEditData.undoStack()));
+
+  std::unique_ptr<QLabel> filterLabel(new QLabel);
+  filterLabel->setText(QObject::tr("Filter:"));
+  _widgetsLayout.addWidget(filterLabel.release());
+  _widgetsLayout.addWidget(new CubemapWidget( object.filterCubemap(),
+                                              _commonEditData.undoStack()));
 }
 
 void PropertiesWidgetFactory::visitRotatableObject(RotatableObject& object)

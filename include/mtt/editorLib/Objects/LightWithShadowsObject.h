@@ -32,11 +32,11 @@ namespace mtt
                 STORED true
                 USER false)
 
-    Q_PROPERTY( float blur
-                READ blur
-                WRITE setBlur
-                RESET resetBlur
-                NOTIFY blurChanged
+    Q_PROPERTY( float shadowBlur
+                READ shadowBlur
+                WRITE setShadowBlur
+                RESET resetShadowBlur
+                NOTIFY shadowBlurChanged
                 DESIGNABLE true
                 SCRIPTABLE true
                 STORED true
@@ -59,19 +59,19 @@ namespace mtt
     inline void resetShadowmapSize() noexcept;
 
     /// blur size in radians or meters
-    inline float blur() const noexcept;
-    virtual void setBlur(float newValue) noexcept;
-    inline void resetBlur() noexcept;
+    inline float shadowBlur() const noexcept;
+    virtual void setShadowBlur(float newValue) noexcept;
+    inline void resetShadowBlur() noexcept;
 
   signals:
     void shadowsEnabledChanged(bool newValue);
     void shadowmapSizeChanged(size_t newValue);
-    void blurChanged(size_t newValue);
+    void shadowBlurChanged(size_t newValue);
 
   private:
     bool _shadowsEnabled;
     size_t _shadowmapSize;
-    float _blur;
+    float _shadowBlur;
   };
 
   inline bool LightWithShadowsObject::shadowsEnabled() const noexcept
@@ -94,13 +94,13 @@ namespace mtt
     setShadowmapSize(256);
   }
 
-  inline float LightWithShadowsObject::blur() const noexcept
+  inline float LightWithShadowsObject::shadowBlur() const noexcept
   {
-    return _blur;
+    return _shadowBlur;
   }
 
-  inline void LightWithShadowsObject::resetBlur() noexcept
+  inline void LightWithShadowsObject::resetShadowBlur() noexcept
   {
-    setBlur(0.f);
+    setShadowBlur(0.f);
   }
 }

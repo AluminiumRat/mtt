@@ -111,6 +111,7 @@ set(HEADERS
     "../../include/mtt/editorLib/PropertiesWidget/PropertiesWidget.h"
     "../../include/mtt/editorLib/PropertiesWidget/RotatableObjectWidget.h"
     "../../include/mtt/editorLib/PropertiesWidget/ScalableObjectWidget.h"
+    "../../include/mtt/editorLib/PropertiesWidget/ShadowsWidget.h"
     "../../include/mtt/editorLib/PropertiesWidget/SpotLightWidget.h"
     "../../include/mtt/editorLib/PropertiesWidget/VisiblePropertyWidget.h"
 
@@ -156,8 +157,9 @@ set(UI_FILES
     "PropertiesWidget/PositionAnimatorWidget.ui"
     "PropertiesWidget/RotatableObjectWidget.ui"
     "PropertiesWidget/ScalableObjectWidget.ui"
-    "PropertiesWidget/VisiblePropertyWidget.ui"
+    "PropertiesWidget/ShadowsWidget.ui"
     "PropertiesWidget/SpotLightWidget.ui"
+    "PropertiesWidget/VisiblePropertyWidget.ui"
 
     "SceneTreeWidget/SceneTreeWidget.ui"
     )
@@ -229,6 +231,7 @@ set(SOURCES
     "PropertiesWidget/PropertiesWidget.cpp"
     "PropertiesWidget/RotatableObjectWidget.cpp"
     "PropertiesWidget/ScalableObjectWidget.cpp"
+    "PropertiesWidget/ShadowsWidget.cpp"
     "PropertiesWidget/SpotLightWidget.cpp"
     "PropertiesWidget/VisiblePropertyWidget.cpp"
 
