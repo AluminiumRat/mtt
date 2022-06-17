@@ -1,4 +1,5 @@
 #include <mtt/application/Widgets/PropertiesWidgets/FilenamePropertyWidget.h>
+#include <mtt/editorLib/PropertiesWidget/ShadowsWidget.h>
 #include <mtt/editorLib/PropertiesWidget/SpotLightWidget.h>
 
 #include <GeneratedFiles/ui_SpotLightWidget.h>
@@ -6,7 +7,7 @@
 using namespace mtt;
 
 SpotLightWidget::SpotLightWidget( SpotLightObject& object,
-                                      UndoStack& undoStack) :
+                                  UndoStack& undoStack) :
   _ui(new Ui::SpotLightWidget)
 {
   _ui->setupUi(this);
@@ -29,27 +30,10 @@ SpotLightWidget::SpotLightWidget( SpotLightObject& object,
                               undoStack);
   _ui->filterLayout->addWidget(filterWidget, 3);
 
-  _shadowsConnection.emplace( *_ui->shadowsCheckbox,
-                              object,
-                              &SpotLightObject::shadowsEnabled,
-                              &SpotLightObject::setShadowsEnabled,
-                              &SpotLightObject::shadowsEnabledChanged,
-                              undoStack);
-
-  _blurConnection.emplace(*_ui->blurSpin,
-                          object,
-                          &SpotLightObject::blurAngle,
-                          &SpotLightObject::setBlurAngle,
-                          &SpotLightObject::blurAngleChanged,
-                          undoStack);
-  _blurConnection->setMultiplier(180.f / glm::pi<float>());
-
-  _mapSizeConnection.emplace( *_ui->mapSizeSpin,
-                              object,
-                              &SpotLightObject::shadowmapSize,
-                              &SpotLightObject::setShadowmapSize,
-                              &SpotLightObject::shadowmapSizeChanged,
-                              undoStack);
+  _ui->shadowsLayout->addWidget(new ShadowsWidget(object,
+                                                  180.f / glm::pi<float>(),
+                                                  20.f,
+                                                  undoStack));
 }
 
 SpotLightWidget::~SpotLightWidget() noexcept = default;

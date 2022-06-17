@@ -267,7 +267,4 @@ void ObjectSaver::visitConstSpotLightObject(const SpotLightObject& object)
   CEVisitor::visitConstSpotLightObject(object);
   *_stream << object.angle();
   writeFilename(object.filterImage());
-  *_stream << object.shadowsEnabled();
-  *_stream << (uint16_t)object.shadowmapSize();
-  *_stream << object.blurAngle();
 }

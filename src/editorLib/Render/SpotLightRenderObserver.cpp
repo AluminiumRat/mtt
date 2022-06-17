@@ -71,7 +71,7 @@ SpotLightRenderObserver::SpotLightRenderObserver( SpotLightObject& object,
   _updateShadowMapSize();
 
   connect(&_lightObject,
-          &SpotLightObject::blurAngleChanged,
+          &SpotLightObject::shadowBlurChanged,
           this,
           &SpotLightRenderObserver::_updateBlur,
           Qt::DirectConnection);
@@ -206,5 +206,5 @@ void SpotLightRenderObserver::_updateShadowMapSize() noexcept
 
 void SpotLightRenderObserver::_updateBlur() noexcept
 {
-  _light.setBlurAngle(_lightObject.blurAngle());
+  _light.setBlurAngle(_lightObject.shadowBlur());
 }

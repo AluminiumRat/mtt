@@ -465,14 +465,14 @@ namespace mtt
   inline void CEVisitorT<BaseVisitor>::visitSpotLightObject(
                                                         SpotLightObject& object)
   {
-    visitLightObject(object);
+    visitLightWithShadowsObject(object);
   }
 
   template <typename BaseVisitor>
   inline void CEVisitorT<BaseVisitor>::visitConstSpotLightObject(
                                                   const SpotLightObject& object)
   {
-    visitConstLightObject(object);
+    visitConstLightWithShadowsObject(object);
   }
 
   template <typename BaseVisitor>

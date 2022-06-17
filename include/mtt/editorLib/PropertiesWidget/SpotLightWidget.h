@@ -32,13 +32,5 @@ namespace mtt
 
     using FloatConnection = FloatSpinConnection<SpotLightObject>;
     std::optional<FloatConnection> _angleConnection;
-
-    using BoolConnection = BoolCheckboxConnection<SpotLightObject>;
-    std::optional<BoolConnection> _shadowsConnection;
-
-    std::optional<FloatConnection> _blurConnection;
-
-    using IntConnection = IntSpinConnection<SpotLightObject, size_t>;
-    std::optional<IntConnection> _mapSizeConnection;
   };
 }
