@@ -3,6 +3,7 @@
 #include <mtt/editorLib/Render/CrossRenderObserver.h>
 #include <mtt/editorLib/Render/DirectLightRenderObserver.h>
 #include <mtt/editorLib/Render/EnvironmentModelRenderObserver.h>
+#include <mtt/editorLib/Render/PointLightRenderObserver.h>
 #include <mtt/editorLib/Render/RenderObserverFactory.h>
 #include <mtt/editorLib/Render/SpotLightRenderObserver.h>
 
@@ -47,6 +48,14 @@ void RenderObserverFactory::visitEnvironmentModel(EnvironmentModel& object)
 {
   setResult(std::make_unique<EnvironmentModelRenderObserver>( object,
                                                               commonData()));
+}
+
+void RenderObserverFactory::visitPointLightObject(PointLightObject& object)
+{
+  if(renderScene() == nullptr) return;
+  setResult(std::make_unique<PointLightRenderObserver>( object,
+                                                        commonData(),
+                                                        *renderScene()));
 }
 
 void RenderObserverFactory::visitSkeletonObject(SkeletonObject& object)

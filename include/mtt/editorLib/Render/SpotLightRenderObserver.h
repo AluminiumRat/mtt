@@ -20,7 +20,7 @@ namespace mtt
                             RenderScene& renderScene);
     SpotLightRenderObserver(const SpotLightRenderObserver&) = delete;
     SpotLightRenderObserver& operator = (
-                                    const SpotLightRenderObserver&) = delete;
+                                      const SpotLightRenderObserver&) = delete;
     virtual ~SpotLightRenderObserver() noexcept = default;
 
   private:

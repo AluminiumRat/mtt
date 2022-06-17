@@ -3,6 +3,7 @@
       <file>ambientLight.png</file>
       <file>directLight.png</file>
       <file>movingGizmo.png</file>
+      <file>pointLight.png</file>
       <file>rotateGizmo.png</file>
       <file>scaleGizmo.png</file>
       <file>spotLight.png</file>
