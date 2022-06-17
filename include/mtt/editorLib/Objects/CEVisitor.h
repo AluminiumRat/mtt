@@ -244,14 +244,14 @@ namespace mtt
   inline void CEVisitorT<BaseVisitor>::visitDirectLightObject(
                                                       DirectLightObject& object)
   {
-    visitLightObject(object);
+    visitLightWithShadowsObject(object);
   }
 
   template <typename BaseVisitor>
   inline void CEVisitorT<BaseVisitor>::visitConstDirectLightObject(
                                                 const DirectLightObject& object)
   {
-    visitConstLightObject(object);
+    visitConstLightWithShadowsObject(object);
   }
 
   template <typename BaseVisitor>

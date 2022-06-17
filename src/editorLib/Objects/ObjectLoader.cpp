@@ -113,11 +113,8 @@ void ObjectLoader::visitCubemapObject(CubemapObject& object)
 void ObjectLoader::visitDirectLightObject(DirectLightObject& object)
 {
   CEVisitor::visitDirectLightObject(object);
-  object.setRadius(_stream->readFloat());
-  object.setShadowsEnabled(_stream->readBool());
-  object.setShadowmapSize(_stream->readUint16());
   object.setCascadeSize(_stream->readUint8());
-  object.setBlurSize(_stream->readFloat());
+  object.setRadius(_stream->readFloat());
 }
 
 void ObjectLoader::visitDisplayedObject(DisplayedObject& object)

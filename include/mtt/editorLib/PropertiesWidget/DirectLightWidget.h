@@ -31,15 +31,10 @@ namespace mtt
   private:
     std::unique_ptr<Ui::DirectLightWidget> _ui;
 
-    using BoolConnection = BoolCheckboxConnection<DirectLightObject>;
-    std::optional<BoolConnection> _shadowsConnection;
-
     using FloatConnection = FloatSpinConnection<DirectLightObject>;
     std::optional<FloatConnection> _radiusConnection;
-    std::optional<FloatConnection> _blurConnection;
 
     using IntConnection = IntSpinConnection<DirectLightObject, size_t>;
-    std::optional<IntConnection> _mapSizeConnection;
     std::optional<IntConnection> _cascadeSizeConnection;
   };
 }

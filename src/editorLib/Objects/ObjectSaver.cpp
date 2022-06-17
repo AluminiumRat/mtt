@@ -122,11 +122,8 @@ void ObjectSaver::visitConstDirectLightObject(
                                           const mtt::DirectLightObject& object)
 {
   CEVisitor::visitConstDirectLightObject(object);
-  *_stream << object.radius();
-  *_stream << object.shadowsEnabled();
-  *_stream << (uint16_t)object.shadowmapSize();
   *_stream << (uint8_t)object.cascadeSize();
-  *_stream << object.blurSize();
+  *_stream << object.radius();
 }
 
 void ObjectSaver::visitConstDisplayedObject(const mtt::DisplayedObject& object)
