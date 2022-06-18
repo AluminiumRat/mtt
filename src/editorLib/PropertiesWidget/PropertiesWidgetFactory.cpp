@@ -151,15 +151,15 @@ void PropertiesWidgetFactory::visitPointLightObject(PointLightObject& object)
 {
   CEVisitor::visitPointLightObject(object);
 
-  _widgetsLayout.addWidget( new ShadowsWidget(object,
-                                              180.f / glm::pi<float>(),
-                                              20.f,
-                                              _commonEditData.undoStack()));
-
   std::unique_ptr<QLabel> filterLabel(new QLabel);
   filterLabel->setText(QObject::tr("Filter:"));
   _widgetsLayout.addWidget(filterLabel.release());
   _widgetsLayout.addWidget(new CubemapWidget( object.filterCubemap(),
+                                              _commonEditData.undoStack()));
+
+  _widgetsLayout.addWidget( new ShadowsWidget(object,
+                                              180.f / glm::pi<float>(),
+                                              20.f,
                                               _commonEditData.undoStack()));
 }
 
