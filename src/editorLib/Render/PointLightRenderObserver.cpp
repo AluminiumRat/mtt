@@ -17,11 +17,11 @@ PointLightRenderObserver::PointLightRenderObserver( PointLightObject& object,
                                                   RenderScene& renderScene) :
   AbstractLightRenderObserver(object, commonData, ICON_FILE, ICON_SIZE),
   _lightObject(object),
-  //_light(true, true, EditorApplication::instance().displayDevice()),
+  _light(true, true, EditorApplication::instance().displayDevice()),
   _cubemapObserver(object.filterCubemap()),
   _renderScene(renderScene)
 {
-  //setLightObject(_light);
+  setLightObject(_light);
 
   connect(&_lightObject,
           &PointLightObject::baseIlluminanceChanged,
@@ -66,19 +66,18 @@ PointLightRenderObserver::PointLightRenderObserver( PointLightObject& object,
   _cubemapObserver.setCallback(
     [&](std::shared_ptr<CubeTexture> texture)
     {
-      //_luminanceTexture = texture;
-      //_updateLuminanceTexture();
+      _light.setFilterTexture(texture);
     });
 }
 
 void PointLightRenderObserver::_updateIlluminance() noexcept
 {
-  //_light.setIlluminance(_lightObject.baseIlluminance() * _lightObject.color());
+  _light.setIlluminance(_lightObject.baseIlluminance() * _lightObject.color());
 }
 
 void PointLightRenderObserver::_updateDistance() noexcept
 {
-  //_light.setDistance(_lightObject.distance());
+  _light.setDistance(_lightObject.distance());
   _updateSphereMesh();
 }
 
@@ -116,7 +115,7 @@ void PointLightRenderObserver::_updateShadowsEnabled() noexcept
                                                           glm::uvec2(256, 256),
                                                           device));
 
-      //_light.setShadowMapProvider(_shadowMapProvider.get());
+      _light.setShadowMapProvider(_shadowMapProvider.get());
       _shadowMapProvider->setTargetField(&_renderScene.culledData());
       _updateShadowMapSize();
     }
@@ -140,7 +139,7 @@ void PointLightRenderObserver::_updateShadowsEnabled() noexcept
 
 void PointLightRenderObserver::_removeShadowmapProvider() noexcept
 {
-  //_light.setShadowMapProvider(nullptr);
+  _light.setShadowMapProvider(nullptr);
   _shadowMapProvider.reset();
 }
 
@@ -154,5 +153,5 @@ void PointLightRenderObserver::_updateShadowMapSize() noexcept
 
 void PointLightRenderObserver::_updateBlur() noexcept
 {
-  //_light.setBlurAngle(_lightObject.shadowBlur());
+  _light.setBlurAngle(_lightObject.shadowBlur());
 }

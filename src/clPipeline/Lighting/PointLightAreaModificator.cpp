@@ -1,0 +1,1 @@
+#include <mtt/clPipeline/Lighting/PointLightAreaModificator.h>
