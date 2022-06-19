@@ -9,13 +9,15 @@
 using namespace mtt;
 using namespace mtt::clPipeline;
 
-static constexpr VkImageUsageFlags shadowmapUsage = VK_IMAGE_USAGE_SAMPLED_BIT;
+static constexpr VkImageUsageFlags shadowmapUsage =
+                                            VK_IMAGE_USAGE_SAMPLED_BIT |
+                                            VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
 ShadowMapProvider::ShadowMapProvider( size_t framePoolsNumber,
                                       glm::uvec2 frameExtent,
                                       LogicalDevice& device) :
   _frameExtent(frameExtent),
-  _frameBuilder(shadowmapFormat, shadowmapLayout, shadowmapUsage, device),
+  _frameBuilder(shadowmapFormat, shadowmapLayout, device),
   _framePools(framePoolsNumber),
   _currentPoolIndex(0),
   _targetField(nullptr)
@@ -52,7 +54,7 @@ ImageView& ShadowMapProvider::getShadowMap( const CameraNode& camera,
 
   size_t frameIndex = existingPlans.size();
   FrameRecord& frameRecord = _getOrCreateFrame(frameIndex);
-  OneTargetFrameBuilder::Frame& frame = *frameRecord.frame;
+  AbstractFrame& frame = *frameRecord.frame;
 
   _buildNewMap( camera,
                 frame,
@@ -102,10 +104,18 @@ ShadowMapProvider::FrameRecord&
   FramePool& pool = _framePools[_currentPoolIndex];
   while(pool.size() < index + 1)
   {
-    FrameRecord newRecord;
-    newRecord.frame = _frameBuilder.createFrame(_frameExtent);
+    mtt::Ref<Image> targetImage(new Image(VK_IMAGE_TYPE_2D,
+                                          shadowmapLayout,
+                                          shadowmapUsage,
+                                          0,
+                                          shadowmapFormat,
+                                          glm::uvec3(_frameExtent, 1),
+                                          VK_SAMPLE_COUNT_1_BIT,
+                                          1,
+                                          1,
+                                          VK_IMAGE_ASPECT_COLOR_BIT,
+                                          _frameBuilder.device()));
 
-    Image& image = newRecord.frame->targetImage();
     VkComponentMapping colorMapping;
     colorMapping.r = VK_COMPONENT_SWIZZLE_IDENTITY;
     colorMapping.g = VK_COMPONENT_SWIZZLE_IDENTITY;
@@ -115,16 +125,18 @@ ShadowMapProvider::FrameRecord&
     VkImageSubresourceRange subresourceRange;
     subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
     subresourceRange.baseMipLevel = 0;
-    subresourceRange.levelCount = image.mipmapCount();
+    subresourceRange.levelCount = 1;
     subresourceRange.baseArrayLayer = 0;
-    subresourceRange.layerCount = image.arraySize();
+    subresourceRange.layerCount = 1;
 
-    Ref<ImageView> imageView( new ImageView(image,
+    Ref<ImageView> targetView(new ImageView(*targetImage,
                                             VK_IMAGE_VIEW_TYPE_2D,
                                             colorMapping,
                                             subresourceRange));
-    newRecord.samplerImageView = std::move(imageView);
 
+    FrameRecord newRecord;
+    newRecord.frame = _frameBuilder.createFrame(*targetView);
+    newRecord.samplerImageView = targetView;
     pool.push_back(std::move(newRecord));
   }
 
@@ -132,7 +144,7 @@ ShadowMapProvider::FrameRecord&
 }
 
 void ShadowMapProvider::_buildNewMap( const CameraNode& renderCamera,
-                                      OneTargetFrameBuilder::Frame& frame,
+                                      AbstractFrame& frame,
                                       DrawPlan& drawPlan,
                                       const AbstractFramePlan& dependentFrame,
                                       ViewInfo& rootViewInfo)

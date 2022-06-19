@@ -7,7 +7,7 @@
 #include <mtt/clPipeline/RenderPass/OpaqueShadowmapPass.h>
 #include <mtt/clPipeline/RenderPass/TransparentShadowmapPass.h>
 #include <mtt/render/SceneRenderer/AbstractFrame.h>
-#include <mtt/render/SceneRenderer/OneTargetFrameBuilder.h>
+#include <mtt/render/SceneRenderer/AbstractFrameBuilder.h>
 #include <mtt/render/Ref.h>
 
 namespace mtt
@@ -16,7 +16,7 @@ namespace mtt
 
   namespace clPipeline
   {
-    class ShadowmapBuilder : public OneTargetFrameBuilder
+    class ShadowmapBuilder : public AbstractFrameBuilder
     {
     public:
       class ShadowMapFramePlan : public AbstractFramePlan
@@ -42,7 +42,6 @@ namespace mtt
     public:
       ShadowmapBuilder( VkFormat shadowmapFormat,
                         VkImageLayout shadowmapLayout,
-                        VkImageUsageFlags shadowmapUsage,
                         LogicalDevice& device);
       ShadowmapBuilder(const ShadowmapBuilder&) = delete;
       ShadowmapBuilder& operator = (const ShadowmapBuilder&) = delete;
@@ -50,10 +49,13 @@ namespace mtt
 
       inline VkFormat shadowmapFormat() const noexcept;
       inline VkImageLayout shadowmapLayout() const noexcept;
-      inline VkImageUsageFlags shadowmapUsage() const noexcept;
 
-      virtual std::unique_ptr<Frame> createFrame(
-                                            const glm::uvec2& extent) override;
+      inline LogicalDevice& device() const noexcept;
+
+      /// Target should be VK_IMAGE_VIEW_TYPE_2D with shadowmapFormat and
+      /// shadowmapLayout from ShadowmapBuilder's constructor and
+      /// VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT usage flag
+      std::unique_ptr<AbstractFrame> createFrame(ImageView& target);
 
       /// ShadowMapFramePlan will be created
       virtual std::unique_ptr<AbstractFramePlan> createFramePlan(
@@ -64,7 +66,6 @@ namespace mtt
     private:
       VkFormat _shadowmapFormat;
       VkImageLayout _shadowmapLayout;
-      VkImageUsageFlags _shadowmapUsage;
       Ref<OpaqueShadowmapPass> _opaquePass;
       Ref<TransparentShadowmapPass> _transparentPass;
       LogicalDevice& _device;
@@ -80,9 +81,9 @@ namespace mtt
       return _shadowmapLayout;
     }
 
-    inline VkImageUsageFlags ShadowmapBuilder::shadowmapUsage() const noexcept
+    inline LogicalDevice& ShadowmapBuilder::device() const noexcept
     {
-      return _shadowmapUsage;
+      return _device;
     }
   }
 }

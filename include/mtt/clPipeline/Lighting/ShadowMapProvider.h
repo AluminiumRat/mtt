@@ -51,7 +51,7 @@ namespace mtt
     private:
       struct FrameRecord
       {
-        std::unique_ptr<OneTargetFrameBuilder::Frame> frame;
+        std::unique_ptr<AbstractFrame> frame;
         Ref<ImageView> samplerImageView;
 
         FrameRecord() noexcept = default;
@@ -69,7 +69,7 @@ namespace mtt
                                   DrawPlan& drawPlan,
                                   const AbstractFramePlan& dependentFrame);
       void _buildNewMap(const CameraNode& renderCamera,
-                        OneTargetFrameBuilder::Frame& frame,
+                        AbstractFrame& frame,
                         DrawPlan& drawPlan,
                         const AbstractFramePlan& dependentFrame,
                         ViewInfo& rootViewInfo);
