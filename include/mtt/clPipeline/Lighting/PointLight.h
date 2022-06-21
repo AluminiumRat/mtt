@@ -6,8 +6,9 @@
 #include <mtt/clPipeline/Lighting/PointLightApplicator.h>
 #include <mtt/clPipeline/Lighting/PointLightAreaModificator.h>
 #include <mtt/clPipeline/Lighting/PointLightData.h>
-#include <mtt/render/Pipeline/Sampler.h>
+#include <mtt/render/Pipeline/Buffer.h>
 #include <mtt/render/Pipeline/CubeTexture.h>
+#include <mtt/render/Pipeline/Sampler.h>
 #include <mtt/render/SceneGraph/CameraNode.h>
 #include <mtt/render/SceneGraph/CompositeObjectNode.h>
 #include <mtt/utilities/Sphere.h>
@@ -18,7 +19,7 @@ namespace mtt
 
   namespace clPipeline
   {
-    class ShadowMapProvider;
+    class CubeShadowmapProvider;
 
     class PointLight : public CompositeObjectNode
     {
@@ -40,10 +41,10 @@ namespace mtt
       /// You can set nullptr to remove filter texture
       void setFilterTexture(std::shared_ptr<CubeTexture> newTexture);
 
-      inline const CameraNode& shadowmapCamera() const noexcept;
+      inline const CameraNode& shadowmapFrontCamera() const noexcept;
 
-      inline ShadowMapProvider* shadowMapProvider() const noexcept;
-      void setShadowMapProvider(ShadowMapProvider* newProvider) noexcept;
+      inline CubeShadowmapProvider* shadowmapProvider() const noexcept;
+      void setShadowmapProvider(CubeShadowmapProvider* newProvider) noexcept;
 
       inline float blurAngle() const noexcept;
       inline void setBlurAngle(float newValue) noexcept;
@@ -63,18 +64,20 @@ namespace mtt
                             const DrawPlanBuildInfo& buildInfo) const noexcept;
       inline Sampler* filterSampler() noexcept;
       inline Sampler* shadowmapSampler() noexcept;
+      inline Buffer* blurShiftsBuffer() noexcept;
 
     private:
       void _updateBound() noexcept;
-      void _updateShadowmapCameras() noexcept;
+      void _updateShadowmapCamera() noexcept;
       void _resetPipelines() noexcept;
 
     private:
       LogicalDevice& _device;
 
-      CameraNode _shadowmapCamera;
-      ShadowMapProvider* _shadowMapProvider;
+      CameraNode _shadowmapFrontCamera;
+      CubeShadowmapProvider* _shadowmapProvider;
       std::optional<Sampler> _shadowmapSampler;
+      std::optional<Buffer> _blurShiftsBuffer;
 
       glm::vec3 _illuminance;
       float _distance;
@@ -107,7 +110,7 @@ namespace mtt
       newValue = glm::max(0.f, newValue);
       if (_distance == newValue) return;
       _distance = newValue;
-      _updateShadowmapCameras();
+      _updateShadowmapCamera();
       _updateBound();
     }
 
@@ -117,14 +120,14 @@ namespace mtt
       return static_cast<CubeTexture*>(_filterSampler->attachedTexture(0));
     }
 
-    inline const CameraNode& PointLight::shadowmapCamera() const noexcept
+    inline const CameraNode& PointLight::shadowmapFrontCamera() const noexcept
     {
-      return _shadowmapCamera;
+      return _shadowmapFrontCamera;
     }
 
-    inline ShadowMapProvider* PointLight::shadowMapProvider() const noexcept
+    inline CubeShadowmapProvider* PointLight::shadowmapProvider() const noexcept
     {
-      return _shadowMapProvider;
+      return _shadowmapProvider;
     }
 
     inline float PointLight::blurAngle() const noexcept
@@ -153,6 +156,12 @@ namespace mtt
     {
       if(_shadowmapSampler.has_value()) return &_shadowmapSampler.value();
       return nullptr;
+    }
+
+    inline Buffer* PointLight::blurShiftsBuffer() noexcept
+    {
+      if(_blurShiftsBuffer.has_value())  return &_blurShiftsBuffer.value();
+      else return nullptr;
     }
   }
 }

@@ -142,6 +142,26 @@ void CubeTexture::_setSideData( Image& image,
   device().runTransferCommand(transferCommand);
 }
 
+void CubeTexture::setImageView(ImageView& newImageView)
+{
+  if(newImageView.viewType() != VK_IMAGE_VIEW_TYPE_CUBE)
+  {
+    Abort("CubeTexture::setImageView: wrong imageview type.");
+  }
+  if (newImageView.extent().z != 1 ||
+      newImageView.extent().x != newImageView.extent().y)
+  {
+    Abort("CubeTexture::setImageView: wrong imageview extent.");
+  }
+
+  setView(&newImageView);
+
+  _sideExtent = newImageView.extent().x;
+  _dataFormat = newImageView.image().format();
+  _samples = newImageView.image().samples();
+  _lodCount = newImageView.subresourceRange().levelCount;
+}
+
 void CubeTexture::buildDiffuseLuminanceMap(
                                 std::shared_ptr<CubeTexture> environmentTexture,
                                 uint32_t extent)

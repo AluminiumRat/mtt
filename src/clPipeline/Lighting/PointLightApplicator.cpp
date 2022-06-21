@@ -1,3 +1,4 @@
+#include <mtt/clPipeline/Lighting/CubeShadowmapProvider.h>
 #include <mtt/clPipeline/Lighting/PointLight.h>
 #include <mtt/clPipeline/Lighting/PointLightApplicator.h>
 #include <mtt/clPipeline/RenderPass/LightingPass.h>
@@ -75,7 +76,7 @@ void PointLightApplicator::DrawTechnique::_adjustPipeline()
                                                   _pipeline->device()));
 
   fragmentShader->newFragment().loadFromFile("clPipeline/materialLib.glsl");
-  if(_light.shadowMapProvider() != nullptr)
+  if(_light.shadowmapProvider() != nullptr)
   {
     _pipeline->setDefine("SHADOW_MAP_ENABLED");
 
@@ -86,6 +87,10 @@ void PointLightApplicator::DrawTechnique::_adjustPipeline()
 
     _pipeline->addResource( "shadowMapBinding",
                             *_light.shadowmapSampler(),
+                            VK_SHADER_STAGE_FRAGMENT_BIT);
+
+    _pipeline->addResource( "blurShiftsBinding",
+                            *_light.blurShiftsBuffer(),
                             VK_SHADER_STAGE_FRAGMENT_BIT);
   }
   fragmentShader->newFragment().loadFromFile(
@@ -187,8 +192,8 @@ void PointLightApplicator::DrawTechnique::_makeShadowCommand(
                                                 ImageView& shadowMapView)
 {
   Sampler& shadowmapSampler = *_light.shadowmapSampler();
-  Texture2D* shadowTexture =
-                    static_cast<Texture2D*>(shadowmapSampler.attachedTexture(0));
+  CubeTexture* shadowTexture =
+                static_cast<CubeTexture*>(shadowmapSampler.attachedTexture(0));
 
   DrawBin* renderBin = buildInfo.currentFramePlan->getBin(lightingStage);
   if(renderBin == nullptr) Abort("PointLightApplicator::DrawTechnique::_makeShadowCommand: light render bin is not supported.");
@@ -197,7 +202,7 @@ void PointLightApplicator::DrawTechnique::_makeShadowCommand(
                                     PointLightData,
                                     VolatileUniform<DrawMatrices>,
                                     DrawMatrices,
-                                    Texture2D,
+                                    CubeTexture,
                                     ImageView&,
                                     Texture2D,
                                     size_t,
@@ -291,11 +296,11 @@ void PointLightApplicator::buildDrawActions(DrawPlanBuildInfo& buildInfo)
   if (_light.distance() <= 0.f) return;
 
   ImageView* shadowmapView = nullptr;
-  if(_light.shadowMapProvider() != nullptr)
+  if(_light.shadowmapProvider() != nullptr)
   {
-    shadowmapView = &_light.shadowMapProvider()->getShadowMap(
-                                                      _light.shadowmapCamera(),
-                                                      buildInfo);
+    shadowmapView = &_light.shadowmapProvider()->getShadowMap(
+                                                  _light.shadowmapFrontCamera(),
+                                                  buildInfo);
   }
 
   if (_fullscreen(buildInfo))

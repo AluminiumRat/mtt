@@ -24,6 +24,7 @@ layout(set = volatileSet, binding = lightDataBinding) uniform LightData
   mat4 clipToView;
   mat4 viewToLocal;
   float blurRadius;
+  int sampleNumber;
 } lightData;
 
 layout(location = 0) out vec4 outColor;
@@ -68,16 +69,25 @@ void main()
   #endif
 
   #ifdef SHADOW_MAP_ENABLED
-    //float areaRadius = -localCoord.z * lightData.halfangleTan;
+    vec3 tangent = normalize(cross(cubeCoord, cubeCoord.zxy));
+    vec3 cotangent = normalize(cross(cubeCoord, tangent));
 
+    vec3 orthoDistances = abs(localCoord.xyz);
+    float maxDistance = max( orthoDistances.x,
+                            max(orthoDistances.y, orthoDistances.z));
+
+    float shadowmapSize = 2.f * maxDistance;
     float lightDotNorm = abs(dot(lightInverseDirection, normal));
     float slopeFactor = min(1.f / lightDotNorm, 10.f);
-    float shadowmapSlope = 2.f * areaRadius * slopeFactor / lightData.distance;
+    float shadowmapSlope = shadowmapSize * slopeFactor / lightData.distance;
 
-    luminance *= getShadowFactor( textureCoord,
-                                  -localCoord.z / lightData.distance,
+    luminance *= getShadowFactor( cubeCoord,
+                                  maxDistance / lightData.distance,
                                   shadowmapSlope,
-                                  lightData.blurRadius);
+                                  lightData.blurRadius,
+                                  lightData.sampleNumber,
+                                  tangent,
+                                  cotangent);
   #endif
 
   outColor = vec4(luminance, 0.f);

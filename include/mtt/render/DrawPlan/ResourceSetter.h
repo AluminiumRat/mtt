@@ -3,6 +3,7 @@
 #include <vector>
 
 #include <mtt/render/DrawPlan/DrawContext.h>
+#include <mtt/render/Pipeline/CubeTexture.h>
 #include <mtt/render/Pipeline/InputAttachment.h>
 #include <mtt/render/Pipeline/Texture2D.h>
 #include <mtt/render/Pipeline/VolatileUniform.h>
@@ -113,6 +114,31 @@ namespace mtt
 
   private:
     Texture2D& _resource;
+    ImageView& _data;
+  };
+
+  template <>
+  class ResourceSetter<CubeTexture, ImageView&>
+  {
+  public:
+    inline ResourceSetter(CubeTexture& resource,
+                          ImageView& data) :
+      _resource(resource),
+      _data(data)
+    {
+    }
+
+    ResourceSetter(const ResourceSetter&) = delete;
+    ResourceSetter& operator = (const ResourceSetter&) = delete;
+    ~ResourceSetter() noexcept = default;
+
+    inline void setup(DrawContext& drawContext)
+    {
+      _resource.setImageView(_data);
+    }
+
+  private:
+    CubeTexture& _resource;
     ImageView& _data;
   };
 

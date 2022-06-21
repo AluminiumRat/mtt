@@ -110,12 +110,12 @@ void PointLightRenderObserver::_updateShadowsEnabled() noexcept
     try
     {
       LogicalDevice& device = EditorApplication::instance().displayDevice();
-      _shadowMapProvider.reset(new clPipeline::ShadowMapProvider(
+      _shadowMapProvider.reset(new clPipeline::CubeShadowmapProvider(
                                                           2,
                                                           glm::uvec2(256, 256),
                                                           device));
 
-      _light.setShadowMapProvider(_shadowMapProvider.get());
+      _light.setShadowmapProvider(_shadowMapProvider.get());
       _shadowMapProvider->setTargetField(&_renderScene.culledData());
       _updateShadowMapSize();
     }
@@ -139,7 +139,7 @@ void PointLightRenderObserver::_updateShadowsEnabled() noexcept
 
 void PointLightRenderObserver::_removeShadowmapProvider() noexcept
 {
-  _light.setShadowMapProvider(nullptr);
+  _light.setShadowmapProvider(nullptr);
   _shadowMapProvider.reset();
 }
 

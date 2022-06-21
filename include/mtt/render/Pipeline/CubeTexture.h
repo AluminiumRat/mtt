@@ -30,6 +30,12 @@ namespace mtt
                   const SideDataInfo dataInfo[6],
                   bool generateLods);
 
+    /// Setup external image view.
+    /// newImageView should have VK_IMAGE_VIEW_TYPE_CUBE type and
+    /// Image must be in VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL during
+    /// pipeline binding
+    void setImageView(ImageView& newImageView);
+
     inline VkFormat dataFormat() const noexcept;
     inline uint32_t sideExtent() const noexcept;
     inline VkSampleCountFlagBits samples() const noexcept;

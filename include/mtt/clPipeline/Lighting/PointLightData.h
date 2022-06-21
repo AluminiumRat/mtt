@@ -15,6 +15,7 @@ namespace mtt
       alignas(16) glm::mat4 clipToView;
       alignas(16) glm::mat4 viewToLocal;
       alignas(4) float blurRadius;
+      alignas(4) uint32_t sampleNumber;
     };
   }
 }

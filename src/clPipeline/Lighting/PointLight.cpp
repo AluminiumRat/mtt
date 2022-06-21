@@ -1,3 +1,5 @@
+#include <random>
+
 #include <mtt/clPipeline/Lighting/PointLight.h>
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
 #include <mtt/utilities/Abort.h>
@@ -9,12 +11,12 @@ PointLight::PointLight( bool forwardLightingEnabled,
                         bool defferedLightingEnabled,
                         LogicalDevice& device) :
   _device(device),
-  _shadowMapProvider(nullptr),
+  _shadowmapProvider(nullptr),
   _illuminance(1.f),
   _distance(50.f),
   _blurAngle(0.f)
 {
-  addChildProtected(_shadowmapCamera);
+  addChildProtected(_shadowmapFrontCamera);
 
   if(forwardLightingEnabled)
   {
@@ -56,12 +58,12 @@ void PointLight::setFilterTexture(std::shared_ptr<CubeTexture> newTexture)
   }
 }
 
-void PointLight::_updateShadowmapCameras() noexcept
+void PointLight::_updateShadowmapCamera() noexcept
 {
-  _shadowmapCamera.setPerspectiveProjection(glm::pi<float>() / 2.f,
-                                            1,
-                                            distance() / 100.f,
-                                            distance());
+  _shadowmapFrontCamera.setPerspectiveProjection( glm::pi<float>() / 2.f,
+                                                  1,
+                                                  distance() / 100.f,
+                                                  distance());
 }
 
 void PointLight::_updateBound() noexcept
@@ -85,15 +87,17 @@ void PointLight::_resetPipelines() noexcept
   //if (_forwardLightApplicator != nullptr) _forwardLightApplicator->reset();
 }
 
-void PointLight::setShadowMapProvider(ShadowMapProvider* newProvider) noexcept
+void PointLight::setShadowmapProvider(
+                                    CubeShadowmapProvider* newProvider) noexcept
 {
-  if (_shadowMapProvider == newProvider) return;
+  if (_shadowmapProvider == newProvider) return;
 
   _resetPipelines();
   _shadowmapSampler.reset();
+  _blurShiftsBuffer.reset();
 
-/*  _shadowMapProvider = newProvider;
-  if(_shadowMapProvider == nullptr) return;
+  _shadowmapProvider = newProvider;
+  if(_shadowmapProvider == nullptr) return;
 
   try
   {
@@ -105,12 +109,28 @@ void PointLight::setShadowMapProvider(ShadowMapProvider* newProvider) noexcept
     _shadowmapSampler->setMipmapMode(VK_SAMPLER_MIPMAP_MODE_NEAREST);
     _shadowmapSampler->setAddressModeU(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
     _shadowmapSampler->setAddressModeV(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
+
+    std::default_random_engine generator;
+    std::uniform_real_distribution<float> distribution(0.f, 1.f);
+    std::vector<glm::vec2> shiftsData;
+    shiftsData.reserve(1024);
+    for (int i = 0; i < 1024; i++)
+    {
+      float radius = sqrt(distribution(generator));
+      float angle = 2.f * glm::pi<float>() * distribution(generator);
+      shiftsData.push_back(glm::vec2( radius * cos(angle),
+                                      radius * sin(angle)));
+    }
+    _blurShiftsBuffer.emplace(_device, Buffer::UNIFORM_BUFFER);
+    _blurShiftsBuffer->setData( shiftsData.data(),
+                                shiftsData.size() * sizeof(glm::vec2));
   }
   catch (...)
   {
     _shadowmapSampler.reset();
-    _shadowMapProvider = nullptr;
-  }*/
+    _blurShiftsBuffer.reset();
+    _shadowmapProvider = nullptr;
+  }
 }
 
 PointLightData PointLight::buildDrawData(
@@ -123,7 +143,19 @@ PointLightData PointLight::buildDrawData(
   drawData.distance = distance();
   drawData.clipToView = buildInfo.drawMatrices.clipToViewMatrix;
   drawData.viewToLocal = glm::inverse(buildInfo.drawMatrices.localToViewMatrix);
-  drawData.blurRadius = blurAngle() / glm::pi<float>() / 2.f / 2.f;
+  drawData.blurRadius = 0.f;
+  drawData.sampleNumber = 1;
+  if (_shadowmapSampler.has_value())
+  {
+    uint32_t extent = static_cast<CubeTexture*>(
+                          _shadowmapSampler->attachedTexture(0))->sideExtent();
+    float mapBlurRadius = blurAngle() / glm::pi<float>();
+    float radiusInTexel = mapBlurRadius * extent;
+    float texelsNumber = glm::pi<float>() * radiusInTexel * radiusInTexel;
+    float samplesNumber = texelsNumber / 4.f;
+    drawData.sampleNumber = glm::clamp(int(samplesNumber), 1, 1024);
+    drawData.blurRadius = mapBlurRadius * 2.f;
+  }
 
   return drawData;
 }
