@@ -6,14 +6,15 @@ layout( set = volatileSet,
 layout( set = staticSet,
         binding = blurShiftsBinding$INDEX$) uniform BlurShift$INDEX$
 {
-  vec2 values[1024];
+  vec2 values[285];
 } blurShift$INDEX$;
 
 float getOpaqueShadowFactor$INDEX$( vec3 cubeCoord,
                                     float normalizedDistanceToLight,
                                     float shadowmapSlope,
                                     float blurRadius,
-                                    int sampleNumber,
+                                    int startSample,
+                                    int endSample,
                                     vec3 tangent,
                                     vec3 cotangent)
 {
@@ -23,7 +24,7 @@ float getOpaqueShadowFactor$INDEX$( vec3 cubeCoord,
 
   vec4 shadows = vec4(0);
 
-  for(int i = 0; i < sampleNumber; i++)
+  for(int i = startSample; i < endSample; i++)
   {
     vec2 planeShift = blurShift$INDEX$.values[i];
     vec3 shift = planeShift.x * tangent + planeShift.y * cotangent;
@@ -33,7 +34,8 @@ float getOpaqueShadowFactor$INDEX$( vec3 cubeCoord,
     shadows += step(normalizedDistanceToLight - slope, shadowDepth);
   }
 
-  return (shadows.x + shadows.y + shadows.z + shadows.w) / 4.f / sampleNumber;
+  return (shadows.x + shadows.y + shadows.z + shadows.w) / 4.f /
+                                                      (endSample - startSample);
 }
 
 float getTransparentShadowFactor$INDEX$(vec3 cubeCoord,
@@ -59,7 +61,8 @@ float getShadowFactor$INDEX$( vec3 cubeCoord,
                               float normalizedDistanceToLight,
                               float shadowmapSlope,
                               float blurRadius,
-                              int sampleNumber,
+                              int startSample,
+                              int endSample,
                               vec3 tangent,
                               vec3 cotangent)
 {
@@ -67,7 +70,8 @@ float getShadowFactor$INDEX$( vec3 cubeCoord,
                                                     normalizedDistanceToLight,
                                                     shadowmapSlope,
                                                     blurRadius,
-                                                    sampleNumber,
+                                                    startSample,
+                                                    endSample,
                                                     tangent,
                                                     cotangent);
 

@@ -1,11 +1,14 @@
 #include <random>
 
+#include <mtt/clPipeline/Lighting/CubeShadowmapProvider.h>
 #include <mtt/clPipeline/Lighting/PointLight.h>
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
 #include <mtt/utilities/Abort.h>
 
 using namespace mtt;
 using namespace clPipeline;
+
+#define SAMPLE_CHUNKS_NUMBER 9
 
 PointLight::PointLight( bool forwardLightingEnabled,
                         bool defferedLightingEnabled,
@@ -110,20 +113,7 @@ void PointLight::setShadowmapProvider(
     _shadowmapSampler->setAddressModeU(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
     _shadowmapSampler->setAddressModeV(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
 
-    std::default_random_engine generator;
-    std::uniform_real_distribution<float> distribution(0.f, 1.f);
-    std::vector<glm::vec2> shiftsData;
-    shiftsData.reserve(1024);
-    for (int i = 0; i < 1024; i++)
-    {
-      float radius = sqrt(distribution(generator));
-      float angle = 2.f * glm::pi<float>() * distribution(generator);
-      shiftsData.push_back(glm::vec2( radius * cos(angle),
-                                      radius * sin(angle)));
-    }
-    _blurShiftsBuffer.emplace(_device, Buffer::UNIFORM_BUFFER);
-    _blurShiftsBuffer->setData( shiftsData.data(),
-                                shiftsData.size() * sizeof(glm::vec2));
+    _buildBlurShifts();
   }
   catch (...)
   {
@@ -131,6 +121,50 @@ void PointLight::setShadowmapProvider(
     _blurShiftsBuffer.reset();
     _shadowmapProvider = nullptr;
   }
+}
+
+void PointLight::_buildBlurShifts()
+{
+  std::default_random_engine gen;
+  std::uniform_real_distribution<float> rnd(0.f, 1.f);
+
+  _startShifts.resize(SAMPLE_CHUNKS_NUMBER);
+
+  std::vector<glm::vec4> shiftsData;
+  shiftsData.reserve(285);
+
+  uint32_t valueIndex = 0;
+  for (int chunk = 1; chunk <= SAMPLE_CHUNKS_NUMBER; chunk++)
+  {
+    _startShifts[chunk - 1] = valueIndex;
+
+    float radiusRange = 1.f / chunk;
+    float angleRange = 2.f * glm::pi<float>() / chunk;
+
+    for (int layer = 0; layer < chunk; layer++)
+    {
+      for (int angleIndex = 0; angleIndex < chunk; angleIndex++)
+      {
+        if(chunk == 1) shiftsData.push_back(glm::vec4(0.f));
+        else
+        {
+          float radius = radiusRange * (layer + rnd(gen));
+          radius = sqrt(radius);
+          float angle = angleRange * (angleIndex + rnd(gen));
+
+          shiftsData.push_back(glm::vec4( radius * cos(angle),
+                                          radius * sin(angle),
+                                          0.f,
+                                          0.f));
+        }
+        valueIndex++;
+      }
+    }
+  }
+
+  _blurShiftsBuffer.emplace(_device, Buffer::UNIFORM_BUFFER);
+  _blurShiftsBuffer->setData( shiftsData.data(),
+                              shiftsData.size() * sizeof(glm::vec4));
 }
 
 PointLightData PointLight::buildDrawData(
@@ -144,16 +178,25 @@ PointLightData PointLight::buildDrawData(
   drawData.clipToView = buildInfo.drawMatrices.clipToViewMatrix;
   drawData.viewToLocal = glm::inverse(buildInfo.drawMatrices.localToViewMatrix);
   drawData.blurRadius = 0.f;
-  drawData.sampleNumber = 1;
-  if (_shadowmapSampler.has_value())
+  drawData.startSample = 0;
+  drawData.endSample = 0;
+  if (_shadowmapProvider != nullptr)
   {
-    uint32_t extent = static_cast<CubeTexture*>(
-                          _shadowmapSampler->attachedTexture(0))->sideExtent();
+    uint32_t extent = _shadowmapProvider->frameExtent().x;
     float mapBlurRadius = blurAngle() / glm::pi<float>();
     float radiusInTexel = mapBlurRadius * extent;
     float texelsNumber = glm::pi<float>() * radiusInTexel * radiusInTexel;
-    float samplesNumber = texelsNumber / 4.f;
-    drawData.sampleNumber = glm::clamp(int(samplesNumber), 1, 1024);
+
+    uint32_t samplerChunkIndex = uint32_t(sqrt(texelsNumber / 2.f));
+    //This is magic adjusting number                          ^^^
+
+    samplerChunkIndex = std::min( samplerChunkIndex,
+                                  uint32_t(SAMPLE_CHUNKS_NUMBER - 1));
+    drawData.startSample = _startShifts[samplerChunkIndex];
+
+    uint32_t samplesNumber = (samplerChunkIndex + 1) * (samplerChunkIndex + 1);
+    drawData.endSample = drawData.startSample + samplesNumber;
+
     drawData.blurRadius = mapBlurRadius * 2.f;
   }
 

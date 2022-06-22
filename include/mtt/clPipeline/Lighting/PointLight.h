@@ -70,6 +70,7 @@ namespace mtt
       void _updateBound() noexcept;
       void _updateShadowmapCamera() noexcept;
       void _resetPipelines() noexcept;
+      void _buildBlurShifts();
 
     private:
       LogicalDevice& _device;
@@ -78,6 +79,7 @@ namespace mtt
       CubeShadowmapProvider* _shadowmapProvider;
       std::optional<Sampler> _shadowmapSampler;
       std::optional<Buffer> _blurShiftsBuffer;
+      std::vector<uint32_t> _startShifts;
 
       glm::vec3 _illuminance;
       float _distance;

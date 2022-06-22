@@ -106,7 +106,7 @@ CubeShadowmapProvider::ShadowmapRecord&
     mtt::Ref<Image> targetImage(new Image(VK_IMAGE_TYPE_2D,
                                           shadowmapLayout,
                                           shadowmapUsage,
-                                          0,
+                                          VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT,
                                           shadowmapFormat,
                                           glm::uvec3(_frameExtent, 1),
                                           VK_SAMPLE_COUNT_1_BIT,

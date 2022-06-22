@@ -24,7 +24,8 @@ layout(set = volatileSet, binding = lightDataBinding) uniform LightData
   mat4 clipToView;
   mat4 viewToLocal;
   float blurRadius;
-  int sampleNumber;
+  int startSample;
+  int endSample;
 } lightData;
 
 layout(location = 0) out vec4 outColor;
@@ -85,7 +86,8 @@ void main()
                                   maxDistance / lightData.distance,
                                   shadowmapSlope,
                                   lightData.blurRadius,
-                                  lightData.sampleNumber,
+                                  lightData.startSample,
+                                  lightData.endSample,
                                   tangent,
                                   cotangent);
   #endif
