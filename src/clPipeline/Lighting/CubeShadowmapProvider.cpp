@@ -14,7 +14,7 @@ static constexpr VkImageUsageFlags shadowmapUsage =
                                             VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
 CubeShadowmapProvider::CubeShadowmapProvider( size_t framePoolsNumber,
-                                              glm::uvec2 frameExtent,
+                                              uint32_t frameExtent,
                                               LogicalDevice& device) :
   _frameExtent(frameExtent),
   _frameBuilder(shadowmapFormat, shadowmapLayout, device),
@@ -23,12 +23,12 @@ CubeShadowmapProvider::CubeShadowmapProvider( size_t framePoolsNumber,
   _targetField(nullptr)
 {
   if(framePoolsNumber == 0) Abort("CubeShadowmapProvider::CubeShadowmapProvider: framePoolsNumber = 0");
-  if(frameExtent.x == 0 || frameExtent.y == 0) Abort("CubeShadowmapProvider::CubeShadowmapProvider: wrong frame extent.");
+  if(_frameExtent == 0) Abort("CubeShadowmapProvider::CubeShadowmapProvider: wrong frame extent.");
 }
 
-void CubeShadowmapProvider::setFrameExtent(glm::uvec2 frameExtent)
+void CubeShadowmapProvider::setFrameExtent(uint32_t frameExtent)
 {
-  if (frameExtent.x == 0 || frameExtent.y == 0) Abort("CubeShadowmapProvider::setFrameExtent: wrong frame extent.");
+  if (frameExtent == 0) Abort("CubeShadowmapProvider::setFrameExtent: wrong frame extent.");
 
   for(FramePool& pool : _framePools) pool.clear();
   _frameExtent = frameExtent;
@@ -108,7 +108,9 @@ CubeShadowmapProvider::ShadowmapRecord&
                                           shadowmapUsage,
                                           VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT,
                                           shadowmapFormat,
-                                          glm::uvec3(_frameExtent, 1),
+                                          glm::uvec3( _frameExtent,
+                                                      _frameExtent,
+                                                      1),
                                           VK_SAMPLE_COUNT_1_BIT,
                                           6,
                                           1,
@@ -243,11 +245,11 @@ void CubeShadowmapProvider::_buildFramePlan(
 {
   VkViewport viewport { 0.f,
                         0.f,
-                        float(_frameExtent.x),
-                        float(_frameExtent.y),
+                        float(_frameExtent),
+                        float(_frameExtent),
                         0.f,
                         1.f};
-  VkRect2D scissor {0, 0, uint32_t(_frameExtent.x), uint32_t(_frameExtent.y)};
+  VkRect2D scissor {0, 0, _frameExtent, _frameExtent};
 
   std::unique_ptr<AbstractFramePlan> framePlanPtr =
                                           _frameBuilder.createFramePlan(frame);

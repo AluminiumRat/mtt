@@ -110,10 +110,9 @@ void PointLightRenderObserver::_updateShadowsEnabled() noexcept
     try
     {
       LogicalDevice& device = EditorApplication::instance().displayDevice();
-      _shadowMapProvider.reset(new clPipeline::CubeShadowmapProvider(
-                                                          2,
-                                                          glm::uvec2(256, 256),
-                                                          device));
+      _shadowMapProvider.reset(new clPipeline::CubeShadowmapProvider( 2,
+                                                                      256,
+                                                                      device));
 
       _light.setShadowmapProvider(_shadowMapProvider.get());
       _shadowMapProvider->setTargetField(&_renderScene.culledData());
@@ -146,9 +145,8 @@ void PointLightRenderObserver::_removeShadowmapProvider() noexcept
 void PointLightRenderObserver::_updateShadowMapSize() noexcept
 {
   if (_shadowMapProvider == nullptr) return;
-  uint frameSize = std::max(1u, uint(_lightObject.shadowmapSize()));
-  glm::uvec2 frameExtent(frameSize, frameSize);
-  _shadowMapProvider->setFrameExtent(frameExtent);
+  uint32_t frameSize = std::max(1u, uint32_t(_lightObject.shadowmapSize()));
+  _shadowMapProvider->setFrameExtent(frameSize);
 }
 
 void PointLightRenderObserver::_updateBlur() noexcept

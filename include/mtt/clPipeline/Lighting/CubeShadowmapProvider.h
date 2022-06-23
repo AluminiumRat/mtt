@@ -33,14 +33,14 @@ namespace mtt
 
     public:
       CubeShadowmapProvider(size_t framePoolsNumber,
-                            glm::uvec2 frameExtent,
+                            uint32_t frameExtent,
                             LogicalDevice& device);
       CubeShadowmapProvider(const CubeShadowmapProvider&) = delete;
       CubeShadowmapProvider& operator = (const CubeShadowmapProvider&) = delete;
       virtual ~CubeShadowmapProvider() noexcept = default;
 
-      inline glm::uvec2 frameExtent() const noexcept;
-      void setFrameExtent(glm::uvec2 frameExtent);
+      inline uint32_t frameExtent() const noexcept;
+      void setFrameExtent(uint32_t frameExtent);
 
       inline AbstractField* targetField() const noexcept;
       void setTargetField(AbstractField* newField) noexcept;
@@ -87,7 +87,7 @@ namespace mtt
                             ViewInfo& rootViewInfo);
 
     private:
-      glm::ivec2 _frameExtent;
+      uint32_t _frameExtent;
       ShadowmapBuilder _frameBuilder;
 
       using FramePool = std::vector<ShadowmapRecord>;
@@ -98,7 +98,7 @@ namespace mtt
       AbstractField* _targetField;
     };
 
-    inline glm::uvec2 CubeShadowmapProvider::frameExtent() const noexcept
+    inline uint32_t CubeShadowmapProvider::frameExtent() const noexcept
     {
       return _frameExtent;
     }

@@ -182,7 +182,7 @@ PointLightData PointLight::buildDrawData(
   drawData.endSample = 0;
   if (_shadowmapProvider != nullptr)
   {
-    uint32_t extent = _shadowmapProvider->frameExtent().x;
+    uint32_t extent = _shadowmapProvider->frameExtent();
     float mapBlurRadius = blurAngle() / glm::pi<float>();
     float radiusInTexel = mapBlurRadius * extent;
     float texelsNumber = glm::pi<float>() * radiusInTexel * radiusInTexel;
