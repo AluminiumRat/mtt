@@ -23,8 +23,8 @@ PointLight::PointLight( bool forwardLightingEnabled,
 
   if(forwardLightingEnabled)
   {
-    //_forwardLightApplicator.reset(new PointLightAreaModificator(*this));
-    //addChildProtected(*_forwardLightApplicator);
+    _forwardLightApplicator.reset(new PointLightAreaModificator(*this));
+    addChildProtected(*_forwardLightApplicator);
   }
 
   if(defferedLightingEnabled)
@@ -75,10 +75,10 @@ void PointLight::_updateBound() noexcept
   {
     _defferedLightApplicator->updateBound();
   }
-  //if (_forwardLightApplicator != nullptr)
-  //{
-  //  _forwardLightApplicator->updateBound();
-  //}
+  if (_forwardLightApplicator != nullptr)
+  {
+    _forwardLightApplicator->updateBound();
+  }
 }
 
 void PointLight::_resetPipelines() noexcept
@@ -87,7 +87,7 @@ void PointLight::_resetPipelines() noexcept
   {
     _defferedLightApplicator->resetPipelines();
   }
-  //if (_forwardLightApplicator != nullptr) _forwardLightApplicator->reset();
+  if (_forwardLightApplicator != nullptr) _forwardLightApplicator->reset();
 }
 
 void PointLight::setShadowmapProvider(
@@ -189,7 +189,6 @@ PointLightData PointLight::buildDrawData(
 
     uint32_t samplerChunkIndex = uint32_t(sqrt(texelsNumber / 2.f));
     //This is magic adjusting number                          ^^^
-
     samplerChunkIndex = std::min( samplerChunkIndex,
                                   uint32_t(SAMPLE_CHUNKS_NUMBER - 1));
     drawData.startSample = _startShifts[samplerChunkIndex];
@@ -216,12 +215,11 @@ DrawableNode& PointLight::culledDrawable(size_t index) noexcept
 
 size_t PointLight::areaModificatorsNumber() const noexcept
 {
-  return 0;//_forwardLightApplicator == nullptr ? 0 : 1;
+  return _forwardLightApplicator == nullptr ? 0 : 1;
 }
 
 AreaModificator& PointLight::areaModificator(size_t index) noexcept
 {
-  Abort("PointLight::areaModificator: no area modificators available.");
-  //if (_forwardLightApplicator == nullptr) Abort("PointLight::areaModificator: no area modificators available.");
-  //else return *_forwardLightApplicator;
+  if (_forwardLightApplicator == nullptr) Abort("PointLight::areaModificator: no area modificators available.");
+  else return *_forwardLightApplicator;
 }

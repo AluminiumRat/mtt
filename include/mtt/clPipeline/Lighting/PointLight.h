@@ -24,9 +24,9 @@ namespace mtt
     class PointLight : public CompositeObjectNode
     {
     public:
-      PointLight(bool forwardLightingEnabled,
-                bool defferedLightingEnabled,
-                LogicalDevice& device);
+      PointLight( bool forwardLightingEnabled,
+                  bool defferedLightingEnabled,
+                  LogicalDevice& device);
       PointLight(const PointLight&) = delete;
       PointLight& operator = (const PointLight&) = delete;
       virtual ~PointLight() = default;
@@ -88,7 +88,7 @@ namespace mtt
       std::optional<Sampler> _filterSampler;
 
       std::unique_ptr<PointLightApplicator> _defferedLightApplicator;
-      //std::unique_ptr<PointLightAreaModificator> _forwardLightApplicator;
+      std::unique_ptr<PointLightAreaModificator> _forwardLightApplicator;
     };
 
     inline const glm::vec3& PointLight::illuminance() const noexcept

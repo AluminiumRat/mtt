@@ -21,6 +21,7 @@ float getOpaqueShadowFactor$INDEX$( vec3 cubeCoord,
   float mapSize = textureSize(shadowMap$INDEX$, 0).x;
   float texelSlope = shadowmapSlope / mapSize;
   float slope = blurRadius * shadowmapSlope + texelSlope;
+  normalizedDistanceToLight -= slope;
 
   vec4 shadows = vec4(0);
 
@@ -31,7 +32,7 @@ float getOpaqueShadowFactor$INDEX$( vec3 cubeCoord,
     shift *= blurRadius;
 
     vec4 shadowDepth = textureGather(shadowMap$INDEX$, cubeCoord + shift, 0);
-    shadows += step(normalizedDistanceToLight - slope, shadowDepth);
+    shadows += step(normalizedDistanceToLight, shadowDepth);
   }
 
   return (shadows.x + shadows.y + shadows.z + shadows.w) / 4.f /

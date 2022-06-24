@@ -74,7 +74,7 @@ void main()
     vec3 cotangent = normalize(cross(cubeCoord, tangent));
 
     vec3 orthoDistances = abs(localCoord.xyz);
-    float maxDistance = max( orthoDistances.x,
+    float maxDistance = max(orthoDistances.x,
                             max(orthoDistances.y, orthoDistances.z));
 
     float shadowmapSize = 2.f * maxDistance;
