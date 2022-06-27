@@ -76,7 +76,7 @@ namespace mtt
       FrameRecord& _getOrCreateFrame(size_t index);
 
     private:
-      glm::ivec2 _frameExtent;
+      glm::uvec2 _frameExtent;
       ShadowmapBuilder _frameBuilder;
 
       using FramePool = std::vector<FrameRecord>;

@@ -2,7 +2,6 @@
 
 #include <mtt/application/AsyncTasks/AsyncTaskQueue.h>
 #include <mtt/clPipeline/Lighting/SpotLight.h>
-#include <mtt/clPipeline/Lighting/ShadowMapProvider.h>
 #include <mtt/editorLib/Render/AbstractLightRenderObserver.h>
 
 namespace mtt
@@ -30,13 +29,11 @@ namespace mtt
     void _updateConeMesh() noexcept;
     void _updateFilterImage() noexcept;
     void _updateShadowsEnabled() noexcept;
-    void _removeShadowmapProvider() noexcept;
     void _updateShadowMapSize() noexcept;
     void _updateBlur() noexcept;
 
   private:
     SpotLightObject& _lightObject;
-    std::unique_ptr<clPipeline::ShadowMapProvider> _shadowMapProvider;
     clPipeline::SpotLight _light;
     RenderScene& _renderScene;
 

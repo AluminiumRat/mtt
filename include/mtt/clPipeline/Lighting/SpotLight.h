@@ -1,11 +1,14 @@
 #pragma once
 
-#include <optional>
 #include <memory>
+#include <optional>
+
+#include <glm/vec2.hpp>
 
 #include <mtt/clPipeline/Lighting/SpotLightApplicator.h>
 #include <mtt/clPipeline/Lighting/SpotLightAreaModificator.h>
 #include <mtt/clPipeline/Lighting/SpotLightData.h>
+#include <mtt/clPipeline/Lighting/ShadowMapProvider.h>
 #include <mtt/render/Pipeline/Sampler.h>
 #include <mtt/render/Pipeline/Texture2D.h>
 #include <mtt/render/SceneGraph/CameraNode.h>
@@ -18,7 +21,7 @@ namespace mtt
 
   namespace clPipeline
   {
-    class ShadowMapProvider;
+    class AbstarctField;
 
     class SpotLight : public CompositeObjectNode
     {
@@ -37,7 +40,7 @@ namespace mtt
       inline void setDistance(float newValue) noexcept;
 
       inline float angle() const noexcept;
-      inline void setAngle(float newValue) noexcept;
+      inline void setAngle(float newValue);
 
       inline Texture2D* filterTexture() const noexcept;
       /// You can set nullptr to remove filter texture
@@ -45,11 +48,14 @@ namespace mtt
 
       inline const CameraNode& shadowmapCamera() const noexcept;
 
-      inline ShadowMapProvider* shadowMapProvider() const noexcept;
-      void setShadowMapProvider(ShadowMapProvider* newProvider) noexcept;
+      inline glm::uvec2 shadowmapExtent() const noexcept;
+      inline void setShadowmapExtent(glm::uvec2 newValue);
+
+      inline AbstractField* shadowmapField() const noexcept;
+      inline void setShadowmapField(AbstractField* newField);
 
       inline float blurAngle() const noexcept;
-      inline void setBlurAngle(float newValue) noexcept;
+      inline void setBlurAngle(float newValue);
 
       inline Sphere getBoundSphere() const noexcept;
 
@@ -66,8 +72,11 @@ namespace mtt
                             const DrawPlanBuildInfo& buildInfo) const noexcept;
       inline Sampler* filterSampler() noexcept;
       inline Sampler* shadowmapSampler() noexcept;
+      inline ShadowMapProvider* shadowMapProvider() const noexcept;
 
     private:
+      void _resetShadowmapProvider() noexcept;
+      void _updateShadowmapProvider();
       void _updateShadowmapCamera() noexcept;
       void _updateBound() noexcept;
       void _resetPipelines() noexcept;
@@ -76,8 +85,10 @@ namespace mtt
       LogicalDevice& _device;
 
       CameraNode _shadowmapCamera;
-      ShadowMapProvider* _shadowMapProvider;
-      std::optional<Sampler> _shadowmapSampler;
+      std::unique_ptr<ShadowMapProvider> _shadowMapProvider;
+      glm::uvec2 _shadowmapExtent;
+      AbstractField* _shadowmapField;
+      std::unique_ptr<Sampler> _shadowmapSampler;
 
       glm::vec3 _illuminance;
       float _distance;
@@ -120,13 +131,23 @@ namespace mtt
       return _angle;
     }
 
-    inline void SpotLight::setAngle(float newValue) noexcept
+    inline void SpotLight::setAngle(float newValue)
     {
       newValue = glm::clamp(newValue, 0.f, glm::pi<float>() / 2.f);
       if (_angle == newValue) return;
       _angle = newValue;
-      _updateShadowmapCamera();
       _updateBound();
+      _updateShadowmapCamera();
+
+      try
+      {
+        _updateShadowmapProvider();
+      }
+      catch (...)
+      {
+        _resetShadowmapProvider();
+        throw;
+      }
     }
 
     inline Texture2D* SpotLight::filterTexture() const noexcept
@@ -142,7 +163,54 @@ namespace mtt
 
     inline ShadowMapProvider* SpotLight::shadowMapProvider() const noexcept
     {
-      return _shadowMapProvider;
+      return _shadowMapProvider.get();
+    }
+    inline glm::uvec2 SpotLight::shadowmapExtent() const noexcept
+    {
+      return _shadowmapExtent;
+    }
+
+    inline void SpotLight::setShadowmapExtent(glm::uvec2 newValue)
+    {
+      if(_shadowmapExtent == newValue) return;
+      _shadowmapExtent = newValue;
+      _resetPipelines();
+      _updateShadowmapProvider();
+      if (_shadowMapProvider != nullptr)
+      {
+        try
+        {
+          _shadowMapProvider->setFrameExtent(_shadowmapExtent);
+        }
+        catch (...)
+        {
+          _resetShadowmapProvider();
+          throw;
+        }
+      }
+    }
+    inline AbstractField* SpotLight::shadowmapField() const noexcept
+    {
+      return _shadowmapField;
+    }
+
+    inline void SpotLight::setShadowmapField(AbstractField* newField)
+    {
+      if(_shadowmapField == newField) return;
+      _shadowmapField = newField;
+      _updateShadowmapProvider();
+      if (_shadowMapProvider != nullptr)
+      {
+        try
+        {
+          _shadowMapProvider->setTargetField(_shadowmapField);
+        }
+        catch (...)
+        {
+          _resetShadowmapProvider();
+          throw;
+        }
+      }
     }
 
     inline float SpotLight::blurAngle() const noexcept
@@ -150,11 +218,10 @@ namespace mtt
       return _blurAngle;
     }
 
-    inline void SpotLight::setBlurAngle(float newValue) noexcept
+    inline void SpotLight::setBlurAngle(float newValue)
     {
       newValue = glm::clamp(newValue, 0.f, glm::pi<float>() / 10.f);
       _blurAngle = newValue;
-      _updateShadowmapCamera();
     }
 
     inline Sphere SpotLight::getBoundSphere() const noexcept
@@ -174,8 +241,7 @@ namespace mtt
 
     inline Sampler* SpotLight::shadowmapSampler() noexcept
     {
-      if(_shadowmapSampler.has_value()) return &_shadowmapSampler.value();
-      return nullptr;
+      return _shadowmapSampler.get();
     }
 
   }

@@ -1,9 +1,12 @@
+#include <stdexcept>
+
 #include <mtt/application/CommonEditData.h>
 #include <mtt/editorLib/AsyncTasks/UploadTextureTask.h>
 #include <mtt/editorLib/Objects/SpotLightObject.h>
 #include <mtt/editorLib/Render/SpotLightRenderObserver.h>
 #include <mtt/editorLib/EditorApplication.h>
 #include <mtt/render/RenderScene.h>
+#include <mtt/utilities/Log.h>
 
 #define ICON_FILE ":/editorLib/spotLight.png"
 #define ICON_SIZE 32
@@ -91,7 +94,18 @@ void SpotLightRenderObserver::_updateDistance() noexcept
 
 void SpotLightRenderObserver::_updateAngle() noexcept
 {
-  _light.setAngle(_lightObject.angle());
+  try
+  {
+    _light.setAngle(_lightObject.angle());
+  }
+  catch (std::exception& error)
+  {
+    Log() << "SpotLightRenderObserver::_updateAngle: " << error.what();
+  }
+  catch (...)
+  {
+    Log() << "SpotLightRenderObserver::_updateAngle: unknown error";
+  }
   _updateConeMesh();
 }
 
@@ -158,53 +172,54 @@ void SpotLightRenderObserver::_updateFilterImage() noexcept
 
 void SpotLightRenderObserver::_updateShadowsEnabled() noexcept
 {
-  if(_lightObject.shadowsEnabled() && _shadowMapProvider == nullptr)
+  try
   {
-    try
+    if (_lightObject.shadowsEnabled())
     {
-      LogicalDevice& device = EditorApplication::instance().displayDevice();
-      _shadowMapProvider.reset(new clPipeline::ShadowMapProvider(
-                                                          2,
-                                                          glm::uvec2(256, 256),
-                                                          device));
-
-      _light.setShadowMapProvider(_shadowMapProvider.get());
-      _shadowMapProvider->setTargetField(&_renderScene.culledData());
-      _updateShadowMapSize();
+      _light.setShadowmapField(&_renderScene.culledData());
     }
-    catch (std::exception& error)
-    {
-      _removeShadowmapProvider();
-      Log() << "SpotLightRenderObserver::_updateShadowsEnabled: unable to update shadow map provider: " << error.what();
-    }
-    catch (...)
-    {
-      _removeShadowmapProvider();
-      Log() << "SpotLightRenderObserver::_updateShadowsEnabled: unable to update shadow map provider: unknown error.";
-    }
+    else _light.setShadowmapField(nullptr);
   }
-
-  if(!_lightObject.shadowsEnabled() && _shadowMapProvider != nullptr)
+  catch (std::exception& error)
   {
-    _removeShadowmapProvider();
+    Log() << "SpotLightRenderObserver::_updateShadowsEnabled: " << error.what();
   }
-}
-
-void SpotLightRenderObserver::_removeShadowmapProvider() noexcept
-{
-  _light.setShadowMapProvider(nullptr);
-  _shadowMapProvider.reset();
+  catch (...)
+  {
+    Log() << "SpotLightRenderObserver::_updateShadowsEnabled: unknown error";
+  }
 }
 
 void SpotLightRenderObserver::_updateShadowMapSize() noexcept
 {
-  if (_shadowMapProvider == nullptr) return;
-  uint frameSize = std::max(1u, uint(_lightObject.shadowmapSize()));
-  glm::uvec2 frameExtent(frameSize, frameSize);
-  _shadowMapProvider->setFrameExtent(frameExtent);
+  try
+  {
+    uint frameSize = std::max(1u, uint(_lightObject.shadowmapSize()));
+    glm::uvec2 frameExtent(frameSize, frameSize);
+    _light.setShadowmapExtent(frameExtent);
+  }
+  catch (std::exception& error)
+  {
+    Log() << "SpotLightRenderObserver::_updateShadowMapSize: " << error.what();
+  }
+  catch (...)
+  {
+    Log() << "SpotLightRenderObserver::_updateShadowMapSize: unknown error";
+  }
 }
 
 void SpotLightRenderObserver::_updateBlur() noexcept
 {
-  _light.setBlurAngle(_lightObject.shadowBlur());
+  try
+  {
+    _light.setBlurAngle(_lightObject.shadowBlur());
+  }
+  catch (std::exception& error)
+  {
+    Log() << "SpotLightRenderObserver::_updateBlur: " << error.what();
+  }
+  catch (...)
+  {
+    Log() << "SpotLightRenderObserver::_updateBlur: unknown error";
+  }
 }

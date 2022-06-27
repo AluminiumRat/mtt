@@ -10,6 +10,8 @@ SpotLight::SpotLight( bool forwardLightingEnabled,
                           LogicalDevice& device) :
   _device(device),
   _shadowMapProvider(nullptr),
+  _shadowmapExtent(256, 256),
+  _shadowmapField(nullptr),
   _illuminance(1.f),
   _distance(50.f),
   _angle(glm::pi<float>() / 4),
@@ -86,31 +88,52 @@ void SpotLight::_resetPipelines() noexcept
   if (_forwardLightApplicator != nullptr) _forwardLightApplicator->reset();
 }
 
-void SpotLight::setShadowMapProvider(ShadowMapProvider* newProvider) noexcept
+void SpotLight::_resetShadowmapProvider() noexcept
 {
-  if (_shadowMapProvider == newProvider) return;
-
   _resetPipelines();
+  _shadowMapProvider.reset();
   _shadowmapSampler.reset();
+}
 
-  _shadowMapProvider = newProvider;
-  if(_shadowMapProvider == nullptr) return;
-
-  try
+void SpotLight::_updateShadowmapProvider()
+{
+  bool shadowsEnabled = _angle != 0 &&
+                        _shadowmapExtent.x != 0 &&
+                        _shadowmapExtent.y != 0 &&
+                        _shadowmapField != nullptr;
+  if(!shadowsEnabled)
   {
-    _shadowmapSampler.emplace(1, PipelineResource::VOLATILE, _device);
-    _shadowmapSampler->setAttachedTexture(std::make_shared<Texture2D>(_device),
-                                          0);
-    _shadowmapSampler->setMinFilter(VK_FILTER_LINEAR);
-    _shadowmapSampler->setMagFilter(VK_FILTER_LINEAR);
-    _shadowmapSampler->setMipmapMode(VK_SAMPLER_MIPMAP_MODE_NEAREST);
-    _shadowmapSampler->setAddressModeU(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
-    _shadowmapSampler->setAddressModeV(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
+    if(_shadowMapProvider == nullptr) return;
+    _resetShadowmapProvider();
   }
-  catch (...)
+  else
   {
-    _shadowmapSampler.reset();
-    _shadowMapProvider = nullptr;
+    if (_shadowMapProvider != nullptr) return;
+    _resetPipelines();
+    try
+    {
+      _shadowMapProvider.reset(new ShadowMapProvider( 2,
+                                                      _shadowmapExtent,
+                                                      _device));
+      _shadowMapProvider->setTargetField(_shadowmapField);
+
+      _shadowmapSampler.reset(new Sampler(1,
+                                          PipelineResource::VOLATILE,
+                                          _device));
+      _shadowmapSampler->setAttachedTexture(
+                                          std::make_shared<Texture2D>(_device),
+                                          0);
+      _shadowmapSampler->setMinFilter(VK_FILTER_LINEAR);
+      _shadowmapSampler->setMagFilter(VK_FILTER_LINEAR);
+      _shadowmapSampler->setMipmapMode(VK_SAMPLER_MIPMAP_MODE_NEAREST);
+      _shadowmapSampler->setAddressModeU(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
+      _shadowmapSampler->setAddressModeV(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
+    }
+    catch (...)
+    {
+      _resetShadowmapProvider();
+      throw;
+    }
   }
 }
 
