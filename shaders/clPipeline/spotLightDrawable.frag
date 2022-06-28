@@ -74,7 +74,7 @@ void main()
 
   #ifdef SHADOW_MAP_ENABLED
     float lightDotNorm = abs(dot(lightInverseDirection, normal));
-    float slopeFactor = min(1.f / lightDotNorm, 10.f);
+    float slopeFactor = min(1.f / lightDotNorm, 20.f);
     float shadowmapSlope = 2.f * areaRadius * slopeFactor / lightData.distance;
 
     luminance *= getShadowFactor( textureCoord,

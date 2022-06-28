@@ -148,7 +148,11 @@ SpotLightData SpotLight::buildDrawData(
   drawData.halfangleTan = tan(angle() / 2.f);
   drawData.clipToView = buildInfo.drawMatrices.clipToViewMatrix;
   drawData.viewToLocal = glm::inverse(buildInfo.drawMatrices.localToViewMatrix);
-  if(angle() >= 0.f) drawData.blurRadius = blurAngle() / angle() / 2.f;
+  if(angle() >= 0.f)
+  {
+    drawData.blurRadius = blurAngle() / angle() / 2.f;
+    drawData.blurRadius += .5f / shadowmapExtent().x;
+  }
   else drawData.blurRadius = 0.f;
 
   return drawData;

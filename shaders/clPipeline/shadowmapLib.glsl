@@ -8,24 +8,18 @@ float getOpaqueShadowFactor$INDEX$( vec2 shadowCoords,
                                     float shadowmapSlope,
                                     float blurRadius)
 {
-  float mapSize = textureSize(shadowMap$INDEX$, 0).x;
-  vec2 centerTexelCoords = mapSize * shadowCoords;
-  vec2 blurSize = vec2(blurRadius * mapSize + .5f);
+  float slopeCorrection = 2.f * blurRadius * shadowmapSlope;
+  normalizedDistanceToLight -= slopeCorrection;
 
-  vec2 startTexel = centerTexelCoords - blurSize;
+  float mapSize = textureSize(shadowMap$INDEX$, 0).x;
+
+  vec2 startTexel = mapSize * (shadowCoords - vec2(blurRadius));
   ivec2 iStartTexel = ivec2(startTexel);
   vec2 startWeights = vec2(1.f) - fract(startTexel);
-  startTexel = floor(startTexel) + vec2(.5f);
 
-  vec2 finishTexel = centerTexelCoords + blurSize;
+  vec2 finishTexel = mapSize * (shadowCoords + vec2(blurRadius));
   ivec2 iFinishTexel = ivec2(finishTexel);
   vec2 finishWeights = fract(finishTexel);
-  finishTexel = floor(finishTexel) + vec2(.5f);
-
-  float texelSlope = shadowmapSlope / mapSize;
-  float maxTexelShift = length(finishTexel - startTexel) / 2.f;
-  float slopeCorrection = maxTexelShift * texelSlope;
-  normalizedDistanceToLight -= slopeCorrection;
 
   float opaqueFactor = 0;
 
@@ -52,7 +46,8 @@ float getOpaqueShadowFactor$INDEX$( vec2 shadowCoords,
     xWeight = iTexelCoord.x == iFinishTexel.x ? finishWeights.x : 1.f;
   }
 
-  return opaqueFactor / (4 * blurSize.x * blurSize.y);
+  float blurSize = blurRadius * mapSize;
+  return opaqueFactor / (4 * blurSize * blurSize);
 }
 
 float getTransparentShadowFactor$INDEX$(vec2 shadowCoords,
