@@ -10,7 +10,7 @@ SpotLight::SpotLight( bool forwardLightingEnabled,
                           LogicalDevice& device) :
   _device(device),
   _shadowMapProvider(nullptr),
-  _shadowmapExtent(256, 256),
+  _shadowmapExtent(256),
   _shadowmapField(nullptr),
   _illuminance(1.f),
   _distance(50.f),
@@ -98,8 +98,7 @@ void SpotLight::_resetShadowmapProvider() noexcept
 void SpotLight::_updateShadowmapProvider()
 {
   bool shadowsEnabled = _angle != 0 &&
-                        _shadowmapExtent.x != 0 &&
-                        _shadowmapExtent.y != 0 &&
+                        _shadowmapExtent != 0 &&
                         _shadowmapField != nullptr;
   if(!shadowsEnabled)
   {
@@ -112,9 +111,10 @@ void SpotLight::_updateShadowmapProvider()
     _resetPipelines();
     try
     {
-      _shadowMapProvider.reset(new ShadowMapProvider( 2,
-                                                      _shadowmapExtent,
-                                                      _device));
+      _shadowMapProvider.reset(
+                            new ShadowMapProvider(2,
+                                                  glm::uvec2(_shadowmapExtent),
+                                                  _device));
       _shadowMapProvider->setTargetField(_shadowmapField);
 
       _shadowmapSampler.reset(new Sampler(1,
@@ -151,7 +151,7 @@ SpotLightData SpotLight::buildDrawData(
   if(angle() >= 0.f)
   {
     drawData.blurRadius = blurAngle() / angle() / 2.f;
-    drawData.blurRadius += .5f / shadowmapExtent().x;
+    drawData.blurRadius += .5f / shadowmapExtent();
   }
   else drawData.blurRadius = 0.f;
 

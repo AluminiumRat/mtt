@@ -48,8 +48,8 @@ namespace mtt
 
       inline const CameraNode& shadowmapCamera() const noexcept;
 
-      inline glm::uvec2 shadowmapExtent() const noexcept;
-      inline void setShadowmapExtent(glm::uvec2 newValue);
+      inline unsigned int shadowmapExtent() const noexcept;
+      inline void setShadowmapExtent(unsigned int newValue);
 
       inline AbstractField* shadowmapField() const noexcept;
       inline void setShadowmapField(AbstractField* newField);
@@ -86,7 +86,7 @@ namespace mtt
 
       CameraNode _shadowmapCamera;
       std::unique_ptr<ShadowMapProvider> _shadowMapProvider;
-      glm::uvec2 _shadowmapExtent;
+      unsigned int _shadowmapExtent;
       AbstractField* _shadowmapField;
       std::unique_ptr<Sampler> _shadowmapSampler;
 
@@ -165,12 +165,13 @@ namespace mtt
     {
       return _shadowMapProvider.get();
     }
-    inline glm::uvec2 SpotLight::shadowmapExtent() const noexcept
+
+    inline unsigned int SpotLight::shadowmapExtent() const noexcept
     {
       return _shadowmapExtent;
     }
 
-    inline void SpotLight::setShadowmapExtent(glm::uvec2 newValue)
+    inline void SpotLight::setShadowmapExtent(unsigned int newValue)
     {
       if(_shadowmapExtent == newValue) return;
       _shadowmapExtent = newValue;
@@ -180,7 +181,7 @@ namespace mtt
       {
         try
         {
-          _shadowMapProvider->setFrameExtent(_shadowmapExtent);
+          _shadowMapProvider->setFrameExtent(glm::uvec2(_shadowmapExtent));
         }
         catch (...)
         {

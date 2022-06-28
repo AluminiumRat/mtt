@@ -194,9 +194,10 @@ void SpotLightRenderObserver::_updateShadowMapSize() noexcept
 {
   try
   {
-    uint frameSize = std::max(1u, uint(_lightObject.shadowmapSize()));
-    glm::uvec2 frameExtent(frameSize, frameSize);
-    _light.setShadowmapExtent(frameExtent);
+    unsigned int frameSize = std::max(
+                                    1u,
+                                    unsigned int(_lightObject.shadowmapSize()));
+    _light.setShadowmapExtent(frameSize);
   }
   catch (std::exception& error)
   {
