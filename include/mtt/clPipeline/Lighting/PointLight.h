@@ -1,8 +1,9 @@
 #pragma once
 
-#include <optional>
 #include <memory>
+#include <optional>
 
+#include <mtt/clPipeline/Lighting/CubeShadowmapProvider.h>
 #include <mtt/clPipeline/Lighting/PointLightApplicator.h>
 #include <mtt/clPipeline/Lighting/PointLightAreaModificator.h>
 #include <mtt/clPipeline/Lighting/PointLightData.h>
@@ -15,12 +16,11 @@
 
 namespace mtt
 {
+  class AbstractField;
   struct DrawPlanBuildInfo;
 
   namespace clPipeline
   {
-    class CubeShadowmapProvider;
-
     class PointLight : public CompositeObjectNode
     {
     public:
@@ -43,8 +43,11 @@ namespace mtt
 
       inline const CameraNode& shadowmapFrontCamera() const noexcept;
 
-      inline CubeShadowmapProvider* shadowmapProvider() const noexcept;
-      void setShadowmapProvider(CubeShadowmapProvider* newProvider) noexcept;
+      inline unsigned int shadowmapExtent() const noexcept;
+      inline void setShadowmapExtent(unsigned int newValue);
+
+      inline AbstractField* shadowmapField() const noexcept;
+      inline void setShadowmapField(AbstractField* newField);
 
       inline float blurAngle() const noexcept;
       inline void setBlurAngle(float newValue) noexcept;
@@ -63,10 +66,13 @@ namespace mtt
       PointLightData buildDrawData(
                             const DrawPlanBuildInfo& buildInfo) const noexcept;
       inline Sampler* filterSampler() noexcept;
+      inline CubeShadowmapProvider* shadowmapProvider() const noexcept;
       inline Sampler* shadowmapSampler() noexcept;
       inline Buffer* blurShiftsBuffer() noexcept;
 
     private:
+      void _resetShadowmapProvider() noexcept;
+      void _updateShadowmapProvider();
       void _updateBound() noexcept;
       void _updateShadowmapCamera() noexcept;
       void _resetPipelines() noexcept;
@@ -76,8 +82,11 @@ namespace mtt
       LogicalDevice& _device;
 
       CameraNode _shadowmapFrontCamera;
-      CubeShadowmapProvider* _shadowmapProvider;
-      std::optional<Sampler> _shadowmapSampler;
+      std::unique_ptr<CubeShadowmapProvider> _shadowmapProvider;
+      unsigned int _shadowmapExtent;
+      AbstractField* _shadowmapField;
+      std::unique_ptr<Sampler> _shadowmapSampler;
+
       std::optional<Buffer> _blurShiftsBuffer;
       std::vector<uint32_t> _startShifts;
 
@@ -129,7 +138,47 @@ namespace mtt
 
     inline CubeShadowmapProvider* PointLight::shadowmapProvider() const noexcept
     {
-      return _shadowmapProvider;
+      return _shadowmapProvider.get();
+    }
+
+    inline unsigned int PointLight::shadowmapExtent() const noexcept
+    {
+      return _shadowmapExtent;
+    }
+
+    inline void PointLight::setShadowmapExtent(unsigned int newValue)
+    {
+      if(_shadowmapExtent == newValue) return;
+      _shadowmapExtent = newValue;
+      _updateShadowmapProvider();
+      if (_shadowmapProvider != nullptr)
+      {
+        try
+        {
+          _shadowmapProvider->setFrameExtent(_shadowmapExtent);
+        }
+        catch (...)
+        {
+          _resetShadowmapProvider();
+          throw;
+        }
+      }
+    }
+
+    inline AbstractField* PointLight::shadowmapField() const noexcept
+    {
+      return _shadowmapField;
+    }
+
+    inline void PointLight::setShadowmapField(AbstractField* newField)
+    {
+      if(_shadowmapField == newField) return;
+      _shadowmapField = newField;
+      _updateShadowmapProvider();
+      if (_shadowmapProvider != nullptr)
+      {
+        _shadowmapProvider->setTargetField(_shadowmapField);
+      }
     }
 
     inline float PointLight::blurAngle() const noexcept
@@ -156,8 +205,7 @@ namespace mtt
 
     inline Sampler* PointLight::shadowmapSampler() noexcept
     {
-      if(_shadowmapSampler.has_value()) return &_shadowmapSampler.value();
-      return nullptr;
+      return _shadowmapSampler.get();
     }
 
     inline Buffer* PointLight::blurShiftsBuffer() noexcept

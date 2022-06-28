@@ -17,12 +17,11 @@
 
 namespace mtt
 {
+  class AbstractField;
   struct DrawPlanBuildInfo;
 
   namespace clPipeline
   {
-    class AbstarctField;
-
     class SpotLight : public CompositeObjectNode
     {
     public:
@@ -202,15 +201,7 @@ namespace mtt
       _updateShadowmapProvider();
       if (_shadowMapProvider != nullptr)
       {
-        try
-        {
-          _shadowMapProvider->setTargetField(_shadowmapField);
-        }
-        catch (...)
-        {
-          _resetShadowmapProvider();
-          throw;
-        }
+        _shadowMapProvider->setTargetField(_shadowmapField);
       }
     }
 

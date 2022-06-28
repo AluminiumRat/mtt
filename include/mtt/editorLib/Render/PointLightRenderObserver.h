@@ -1,7 +1,6 @@
 #pragma once
 
 #include <mtt/application/AsyncTasks/AsyncTaskQueue.h>
-#include <mtt/clPipeline/Lighting/CubeShadowmapProvider.h>
 #include <mtt/clPipeline/Lighting/PointLight.h>
 #include <mtt/editorLib/Render/AbstractLightRenderObserver.h>
 #include <mtt/editorLib/Render/CubemapObserver.h>
@@ -29,13 +28,11 @@ namespace mtt
     void _updateDistance() noexcept;
     void _updateSphereMesh() noexcept;
     void _updateShadowsEnabled() noexcept;
-    void _removeShadowmapProvider() noexcept;
     void _updateShadowMapSize() noexcept;
     void _updateBlur() noexcept;
 
   private:
     PointLightObject& _lightObject;
-    std::unique_ptr<clPipeline::CubeShadowmapProvider> _shadowMapProvider;
     clPipeline::PointLight _light;
     CubemapObserver _cubemapObserver;
     RenderScene& _renderScene;

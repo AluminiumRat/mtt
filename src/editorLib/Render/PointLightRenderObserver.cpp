@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include <mtt/application/CommonEditData.h>
 #include <mtt/editorLib/AsyncTasks/UploadTextureTask.h>
 #include <mtt/editorLib/Objects/PointLightObject.h>
@@ -105,48 +107,41 @@ void PointLightRenderObserver::_updateSphereMesh() noexcept
 
 void PointLightRenderObserver::_updateShadowsEnabled() noexcept
 {
-  if(_lightObject.shadowsEnabled() && _shadowMapProvider == nullptr)
+  try
   {
-    try
+    if (_lightObject.shadowsEnabled())
     {
-      LogicalDevice& device = EditorApplication::instance().displayDevice();
-      _shadowMapProvider.reset(new clPipeline::CubeShadowmapProvider( 2,
-                                                                      256,
-                                                                      device));
-
-      _light.setShadowmapProvider(_shadowMapProvider.get());
-      _shadowMapProvider->setTargetField(&_renderScene.culledData());
-      _updateShadowMapSize();
+      _light.setShadowmapField(&_renderScene.culledData());
     }
-    catch (std::exception& error)
-    {
-      _removeShadowmapProvider();
-      Log() << "PointLightRenderObserver::_updateShadowsEnabled: unable to update shadow map provider: " << error.what();
-    }
-    catch (...)
-    {
-      _removeShadowmapProvider();
-      Log() << "PointLightRenderObserver::_updateShadowsEnabled: unable to update shadow map provider: unknown error.";
-    }
+    else _light.setShadowmapField(nullptr);
   }
-
-  if(!_lightObject.shadowsEnabled() && _shadowMapProvider != nullptr)
+  catch (std::exception& error)
   {
-    _removeShadowmapProvider();
+    Log() << "PointLightRenderObserver::_updateShadowsEnabled: " << error.what();
   }
-}
-
-void PointLightRenderObserver::_removeShadowmapProvider() noexcept
-{
-  _light.setShadowmapProvider(nullptr);
-  _shadowMapProvider.reset();
+  catch (...)
+  {
+    Log() << "PointLightRenderObserver::_updateShadowsEnabled: unknown error.";
+  }
 }
 
 void PointLightRenderObserver::_updateShadowMapSize() noexcept
 {
-  if (_shadowMapProvider == nullptr) return;
-  uint32_t frameSize = std::max(1u, uint32_t(_lightObject.shadowmapSize()));
-  _shadowMapProvider->setFrameExtent(frameSize);
+  try
+  {
+    unsigned int frameSize = std::max(
+                                    1u,
+                                    unsigned int(_lightObject.shadowmapSize()));
+    _light.setShadowmapExtent(frameSize);
+  }
+  catch (std::exception& error)
+  {
+    Log() << "PointLightRenderObserver::_updateShadowMapSize: " << error.what();
+  }
+  catch (...)
+  {
+    Log() << "PointLightRenderObserver::_updateShadowMapSize: unknown error.";
+  }
 }
 
 void PointLightRenderObserver::_updateBlur() noexcept
