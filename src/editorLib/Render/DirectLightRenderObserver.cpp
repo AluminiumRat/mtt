@@ -1,8 +1,11 @@
+#include <stdexcept>
+
 #include <mtt/application/CommonEditData.h>
 #include <mtt/editorLib/Objects/DirectLightObject.h>
 #include <mtt/editorLib/Render/DirectLightRenderObserver.h>
 #include <mtt/editorLib/EditorApplication.h>
 #include <mtt/render/RenderScene.h>
+#include <mtt/utilities/Log.h>
 
 #define ICON_FILE ":/editorLib/directLight.png"
 #define ICON_SIZE 32
@@ -91,8 +94,20 @@ void DirectLightRenderObserver::_updateDistance() noexcept
 
 void DirectLightRenderObserver::_updateRadius() noexcept
 {
-  _light.setRadius(_lightObject.radius());
   _updateCylinderMesh();
+
+  try
+  {
+    _light.setRadius(_lightObject.radius());
+  }
+  catch (std::exception& error)
+  {
+    Log() << "DirectLightRenderObserver::_updateRadius: " << error.what();
+  }
+  catch (...)
+  {
+    Log() << "DirectLightRenderObserver::_updateRadius: unknown error.";
+  }
 }
 
 void DirectLightRenderObserver::_updateCylinderMesh() noexcept
@@ -123,55 +138,56 @@ void DirectLightRenderObserver::_updateCylinderMesh() noexcept
 
 void DirectLightRenderObserver::_updateShadowsEnabled() noexcept
 {
-  if(_lightObject.shadowsEnabled() && _shadowMapProvider == nullptr)
+  try
   {
-    try
+    if (_lightObject.shadowsEnabled())
     {
-      LogicalDevice& device = EditorApplication::instance().displayDevice();
-      _shadowMapProvider.reset(new clPipeline::CascadeShadowMapProvider(
-                                                          2,
-                                                          glm::uvec2(256, 256),
-                                                          device));
-
-      _light.setShadowMapProvider(_shadowMapProvider.get());
-      _shadowMapProvider->setTargetField(&_renderScene.culledData());
-      _updateShadowMapSize();
+      _light.setShadowmapField(&_renderScene.culledData());
     }
-    catch (std::exception& error)
-    {
-      _removeShadowmapProvider();
-      Log() << "DirectLightRenderObserver::_updateShadowsEnabled: unable to update shadow map provider: " << error.what();
-    }
-    catch (...)
-    {
-      _removeShadowmapProvider();
-      Log() << "DirectLightRenderObserver::_updateShadowsEnabled: unable to update shadow map provider: unknown error.";
-    }
+    else _light.setShadowmapField(nullptr);
   }
-
-  if(!_lightObject.shadowsEnabled() && _shadowMapProvider != nullptr)
+  catch (std::exception& error)
   {
-    _removeShadowmapProvider();
+    Log() << "DirectLightRenderObserver::_updateShadowsEnabled: " << error.what();
   }
-}
-
-void DirectLightRenderObserver::_removeShadowmapProvider() noexcept
-{
-  _light.setShadowMapProvider(nullptr);
-  _shadowMapProvider.reset();
+  catch (...)
+  {
+    Log() << "DirectLightRenderObserver::_updateShadowsEnabled: unknown error.";
+  }
 }
 
 void DirectLightRenderObserver::_updateShadowMapSize() noexcept
 {
-  if(_shadowMapProvider == nullptr) return;
-  uint frameSize = std::max(1u, uint(_lightObject.shadowmapSize()));
-  glm::uvec2 frameExtent(frameSize, frameSize);
-  _shadowMapProvider->setFrameExtent(frameExtent);
+  unsigned int frameSize = std::max(1u,
+                                    unsigned int(_lightObject.shadowmapSize()));
+  try
+  {
+    _light.setShadowmapExtent(frameSize);
+  }
+  catch (std::exception& error)
+  {
+    Log() << "DirectLightRenderObserver::_updateShadowMapSize: " << error.what();
+  }
+  catch (...)
+  {
+    Log() << "DirectLightRenderObserver::_updateShadowMapSize: unknown error.";
+  }
 }
 
 void DirectLightRenderObserver::_updateCascadeSize() noexcept
 {
-  _light.setCascadeSize(_lightObject.cascadeSize());
+  try
+  {
+    _light.setCascadeSize(_lightObject.cascadeSize());
+  }
+  catch (std::exception& error)
+  {
+    Log() << "DirectLightRenderObserver::_updateCascadeSize: " << error.what();
+  }
+  catch (...)
+  {
+    Log() << "DirectLightRenderObserver::_updateCascadeSize: unknown error.";
+  }
 }
 
 void DirectLightRenderObserver::_updateBlur() noexcept

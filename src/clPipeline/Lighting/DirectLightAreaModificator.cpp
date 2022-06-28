@@ -26,9 +26,9 @@ void DirectLightAreaModificator::buildPrepareActions(
   DirectLightDrawData lightData = _light.buildDrawData(buildInfo);
 
   CascadeShadowMapProvider::CascadeInfo cascadeInfo;
-  if(_light.shadowMapProvider() != nullptr)
+  if(_light.shadowmapProvider() != nullptr)
   {
-    cascadeInfo = _light.shadowMapProvider()->getShadowMap(
+    cascadeInfo = _light.shadowmapProvider()->getShadowMap(
                                                       _light.cascadeSize(),
                                                       _light.shadowmapCamera(),
                                                       buildInfo);
@@ -70,7 +70,7 @@ void DirectLightAreaModificator::_makeShadowCommand(
   CoordsCorrectionData correctionData;
   correctionData.reserve(cascadeInfo.size());
 
-  Sampler& shadowmapSampler = _light.getOrCreateShdowmapSampler();
+  Sampler& shadowmapSampler = *_light.shadowmapSampler();
   for(size_t layerIndex = 0; layerIndex < cascadeInfo.size(); layerIndex++)
   {
     float blurRadius = _light.blurRelativeRadius();
@@ -115,7 +115,7 @@ void DirectLightAreaModificator::adjustPipeline(
   {
     std::string indexStr = std::to_string(modificatorIndex);
 
-    if (_light.shadowMapProvider() != nullptr)
+    if (_light.shadowmapProvider() != nullptr)
     {
       ShaderModule::Fragment& shadowLibFragment = targetShader.newFragment();
       shadowLibFragment.loadFromFile("clPipeline/cascadeShadowmapLib.glsl");
@@ -128,7 +128,7 @@ void DirectLightAreaModificator::adjustPipeline(
       std::string shadowSamplerBindingName("shadowMapBinding");
       shadowSamplerBindingName += indexStr;
       targetPipeline.addResource( shadowSamplerBindingName,
-                                  _light.getOrCreateShdowmapSampler(),
+                                  *_light.shadowmapSampler(),
                                   targetShader.type());
 
       std::string coordCorrectionBindingName("shadowCoordsCorrectionBinding");
@@ -169,7 +169,7 @@ void DirectLightAreaModificator::adjustPipeline(
                                 _lightDataUniform,
                                 targetShader.type());
 
-    if (_light.shadowMapProvider() != nullptr)
+    if (_light.shadowmapProvider() != nullptr)
     {
       mainFragment.replace("$SHADOW_MAP_ENABLED$", "1");
     }

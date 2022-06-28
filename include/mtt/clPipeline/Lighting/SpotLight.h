@@ -71,7 +71,7 @@ namespace mtt
                             const DrawPlanBuildInfo& buildInfo) const noexcept;
       inline Sampler* filterSampler() noexcept;
       inline Sampler* shadowmapSampler() noexcept;
-      inline ShadowMapProvider* shadowMapProvider() const noexcept;
+      inline ShadowMapProvider* shadowMapProvider() noexcept;
 
     private:
       void _resetShadowmapProvider() noexcept;
@@ -137,16 +137,7 @@ namespace mtt
       _angle = newValue;
       _updateBound();
       _updateShadowmapCamera();
-
-      try
-      {
-        _updateShadowmapProvider();
-      }
-      catch (...)
-      {
-        _resetShadowmapProvider();
-        throw;
-      }
+      _updateShadowmapProvider();
     }
 
     inline Texture2D* SpotLight::filterTexture() const noexcept
@@ -160,7 +151,7 @@ namespace mtt
       return _shadowmapCamera;
     }
 
-    inline ShadowMapProvider* SpotLight::shadowMapProvider() const noexcept
+    inline ShadowMapProvider* SpotLight::shadowMapProvider() noexcept
     {
       return _shadowMapProvider.get();
     }
@@ -174,7 +165,6 @@ namespace mtt
     {
       if(_shadowmapExtent == newValue) return;
       _shadowmapExtent = newValue;
-      _resetPipelines();
       _updateShadowmapProvider();
       if (_shadowMapProvider != nullptr)
       {

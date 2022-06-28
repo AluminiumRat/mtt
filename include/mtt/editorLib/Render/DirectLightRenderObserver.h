@@ -3,7 +3,6 @@
 #include <memory>
 
 #include <mtt/clPipeline/Lighting/DirectLight.h>
-#include <mtt/clPipeline/Lighting/CascadeShadowMapProvider.h>
 #include <mtt/editorLib/Render/AbstractLightRenderObserver.h>
 
 namespace mtt
@@ -30,14 +29,12 @@ namespace mtt
     void _updateRadius() noexcept;
     void _updateCylinderMesh() noexcept;
     void _updateShadowsEnabled() noexcept;
-    void _removeShadowmapProvider() noexcept;
     void _updateShadowMapSize() noexcept;
     void _updateCascadeSize() noexcept;
     void _updateBlur() noexcept;
 
   private:
     DirectLightObject& _lightObject;
-    std::unique_ptr<clPipeline::CascadeShadowMapProvider> _shadowMapProvider;
     clPipeline::DirectLight _light;
     RenderScene& _renderScene;
   };

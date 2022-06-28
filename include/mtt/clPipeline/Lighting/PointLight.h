@@ -66,7 +66,7 @@ namespace mtt
       PointLightData buildDrawData(
                             const DrawPlanBuildInfo& buildInfo) const noexcept;
       inline Sampler* filterSampler() noexcept;
-      inline CubeShadowmapProvider* shadowmapProvider() const noexcept;
+      inline CubeShadowmapProvider* shadowmapProvider() noexcept;
       inline Sampler* shadowmapSampler() noexcept;
       inline Buffer* blurShiftsBuffer() noexcept;
 
@@ -136,7 +136,7 @@ namespace mtt
       return _shadowmapFrontCamera;
     }
 
-    inline CubeShadowmapProvider* PointLight::shadowmapProvider() const noexcept
+    inline CubeShadowmapProvider* PointLight::shadowmapProvider() noexcept
     {
       return _shadowmapProvider.get();
     }

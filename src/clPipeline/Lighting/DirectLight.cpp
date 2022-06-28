@@ -10,7 +10,8 @@ DirectLight::DirectLight( bool forwardLightingEnabled,
                           bool defferedLightingEnabled,
                           LogicalDevice& device) :
   _device(device),
-  _shadowMapProvider(nullptr),
+  _shadowmapExtent(256),
+  _shadowmapField(nullptr),
   _illuminance(1.f),
   _distance(50.f),
   _radius(10.f),
@@ -63,40 +64,62 @@ void DirectLight::_resetPipelines() noexcept
     _defferedLightApplicator->resetPipelines();
   }
   if (_forwardLightApplicator != nullptr) _forwardLightApplicator->reset();
+}
+
+void DirectLight::_resetShadowmapProvider() noexcept
+{
+  _resetPipelines();
+  _shadowmapProvider.reset();
   _shadowmapSampler.reset();
 }
 
-Sampler& DirectLight::getOrCreateShdowmapSampler()
+void DirectLight::_updateShadowmapProvider()
 {
-  if(_shadowmapSampler.has_value()) return *_shadowmapSampler;
+  bool shadowsEnabled = _shadowmapExtent != 0 &&
+                        _radius != 0 &&
+                        _cascadeSize != 0 &&
+                        _shadowmapField != nullptr;
 
-  try
+  if (!shadowsEnabled)
   {
-    _shadowmapSampler.emplace(cascadeSize(),
-                              PipelineResource::VOLATILE,
-                              _device);
-
-    for(size_t layerIndex = 0;
-        layerIndex < cascadeSize();
-        layerIndex++)
+    if (_shadowmapProvider == nullptr) return;
+    _resetShadowmapProvider();
+  }
+  else
+  {
+    if(_shadowmapProvider != nullptr) return;
+    _resetPipelines();
+    try
     {
-      _shadowmapSampler->setAttachedTexture(
+      _shadowmapProvider.reset(new CascadeShadowMapProvider(
+                                                  2,
+                                                  glm::uvec2(_shadowmapExtent),
+                                                  _device));
+      _shadowmapProvider->setTargetField(_shadowmapField);
+
+      _shadowmapSampler.reset(new Sampler(cascadeSize(),
+                                          PipelineResource::VOLATILE,
+                                          _device));
+
+      for(size_t layerIndex = 0; layerIndex < cascadeSize(); layerIndex++)
+      {
+        _shadowmapSampler->setAttachedTexture(
                                           std::make_shared<Texture2D>(_device),
                                           layerIndex);
-    }
+      }
 
-    _shadowmapSampler->setMinFilter(VK_FILTER_LINEAR);
-    _shadowmapSampler->setMagFilter(VK_FILTER_LINEAR);
-    _shadowmapSampler->setMipmapMode(VK_SAMPLER_MIPMAP_MODE_NEAREST);
-    _shadowmapSampler->setAddressModeU(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
-    _shadowmapSampler->setAddressModeV(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
+      _shadowmapSampler->setMinFilter(VK_FILTER_LINEAR);
+      _shadowmapSampler->setMagFilter(VK_FILTER_LINEAR);
+      _shadowmapSampler->setMipmapMode(VK_SAMPLER_MIPMAP_MODE_NEAREST);
+      _shadowmapSampler->setAddressModeU(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
+      _shadowmapSampler->setAddressModeV(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
+    }
+    catch (...)
+    {
+      _resetShadowmapProvider();
+      throw;
+    }
   }
-  catch(...)
-  {
-    _shadowmapSampler.reset();
-    throw;
-  }
-  return *_shadowmapSampler;
 }
 
 DirectLightDrawData DirectLight::buildDrawData(

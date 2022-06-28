@@ -76,7 +76,7 @@ void DirectLightApplicator::DrawTechnique::_adjustPipeline()
                                                   _pipeline->device()));
 
   fragmentShader->newFragment().loadFromFile("clPipeline/materialLib.glsl");
-  if(_light.shadowMapProvider() != nullptr)
+  if(_light.shadowmapProvider() != nullptr)
   {
     _pipeline->setDefine("SHADOW_MAP_ENABLED");
 
@@ -88,7 +88,7 @@ void DirectLightApplicator::DrawTechnique::_adjustPipeline()
                               std::to_string(_light.cascadeSize()));
 
     _pipeline->addResource( "shadowMapBinding",
-                            _light.getOrCreateShdowmapSampler(),
+                            *_light.shadowmapSampler(),
                             VK_SHADER_STAGE_FRAGMENT_BIT);
 
     _pipeline->addResource( "shadowCoordsCorrectionBinding",
@@ -197,7 +197,7 @@ void DirectLightApplicator::DrawTechnique::_makeShadowCommand(
   CoordsCorrectionData correctionData;
   correctionData.reserve(cascadeInfo.size());
 
-  Sampler& shadowmapSampler = _light.getOrCreateShdowmapSampler();
+  Sampler& shadowmapSampler = *_light.shadowmapSampler();
   for(size_t layerIndex = 0; layerIndex < cascadeInfo.size(); layerIndex++)
   {
     float blurRadius = _light.blurRelativeRadius();
@@ -322,9 +322,9 @@ void DirectLightApplicator::buildDrawActions(DrawPlanBuildInfo& buildInfo)
   if (buildInfo.frameType != colorFrameType) return;
 
   CascadeShadowMapProvider::CascadeInfo cascadeInfo;
-  if(_light.shadowMapProvider() != nullptr)
+  if(_light.shadowmapProvider() != nullptr)
   {
-    cascadeInfo = _light.shadowMapProvider()->getShadowMap(
+    cascadeInfo = _light.shadowmapProvider()->getShadowMap(
                                                       _light.cascadeSize(),
                                                       _light.shadowmapCamera(),
                                                       buildInfo);
