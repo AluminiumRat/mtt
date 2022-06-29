@@ -46,11 +46,11 @@ DirectLightRenderObserver::DirectLightRenderObserver(
   _updateDistance();
 
   connect(&_lightObject,
-          &DirectLightObject::radiusChanged,
+          &DirectLightObject::shadowDistanceChanged,
           this,
-          &DirectLightRenderObserver::_updateRadius,
+          &DirectLightRenderObserver::_updateShadowDistance,
           Qt::DirectConnection);
-  _updateRadius();
+  _updateShadowDistance();
 
   connect(&_lightObject,
           &DirectLightObject::shadowsEnabledChanged,
@@ -89,16 +89,13 @@ void DirectLightRenderObserver::_updateIlluminance() noexcept
 void DirectLightRenderObserver::_updateDistance() noexcept
 {
   _light.setDistance(_lightObject.distance());
-  _updateCylinderMesh();
 }
 
-void DirectLightRenderObserver::_updateRadius() noexcept
+void DirectLightRenderObserver::_updateShadowDistance() noexcept
 {
-  _updateCylinderMesh();
-
   try
   {
-    _light.setRadius(_lightObject.radius());
+    _light.setRadius(_lightObject.shadowDistance());
   }
   catch (std::exception& error)
   {
@@ -107,32 +104,6 @@ void DirectLightRenderObserver::_updateRadius() noexcept
   catch (...)
   {
     Log() << "DirectLightRenderObserver::_updateRadius: unknown error.";
-  }
-}
-
-void DirectLightRenderObserver::_updateCylinderMesh() noexcept
-{
-  if (_lightObject.radius() <= 0.f || _lightObject.distance() <= 0.f)
-  {
-    hullNode().resetGeometry();
-    return;
-  }
-
-  try
-  {
-    hullNode().setCylinderGeometry( _lightObject.radius(),
-                                    _lightObject.distance(),
-                                    -_lightObject.distance() / 2.f,
-                                    BODY_SEGMENTS,
-                                    CAP_SEGMENTS);
-  }
-  catch (std::exception& error)
-  {
-    Log() << "DirectLightRenderObserver::_updateCylinderMesh: unable to update cylinder mesh: " << error.what();
-  }
-  catch (...)
-  {
-    Log() << "DirectLightRenderObserver::_updateCylinderMesh: unable to update cylinder mesh: unknown error.";
   }
 }
 

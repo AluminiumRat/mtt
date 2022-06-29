@@ -11,12 +11,12 @@ DirectLightWidget::DirectLightWidget( DirectLightObject& object,
 {
   _ui->setupUi(this);
 
-  _radiusConnection.emplace(*_ui->radiusSpin,
-                            object,
-                            &DirectLightObject::radius,
-                            &DirectLightObject::setRadius,
-                            &DirectLightObject::radiusChanged,
-                            undoStack);
+  _shadowDistanceConnection.emplace(*_ui->shadowDistanceSpin,
+                                    object,
+                                    &DirectLightObject::shadowDistance,
+                                    &DirectLightObject::setShadowDistance,
+                                    &DirectLightObject::shadowDistanceChanged,
+                                    undoStack);
 
   _cascadeSizeConnection.emplace( *_ui->cascadeSizeSpin,
                                   object,

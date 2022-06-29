@@ -30,9 +30,9 @@
     <number>0</number>
    </property>
    <item>
-    <layout class="QHBoxLayout" name="radiusLayout">
+    <layout class="QHBoxLayout" name="shadowDistanceLayout">
      <item>
-      <widget class="QLabel" name="radiusLabel">
+      <widget class="QLabel" name="shadowDistanceLabel">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>1</horstretch>
@@ -40,17 +40,23 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Radius</string>
+        <string>Shadow distance</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="radiusSpin">
+      <widget class="QDoubleSpinBox" name="shadowDistanceSpin">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>3</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="maximum">
+        <double>9999.989999999999782</double>
        </property>
       </widget>
      </item>

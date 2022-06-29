@@ -12,11 +12,11 @@ namespace mtt
                             visitConstDirectLightObject,
                             LightObject)
 
-    Q_PROPERTY( float radius
-                READ radius
-                WRITE setRadius
-                RESET resetRadius
-                NOTIFY radiusChanged
+    Q_PROPERTY( float shadowDistance
+                READ shadowDistance
+                WRITE setShadowDistance
+                RESET resetShadowDistance
+                NOTIFY shadowDistanceChanged
                 DESIGNABLE true
                 SCRIPTABLE true
                 STORED true
@@ -39,31 +39,31 @@ namespace mtt
     DirectLightObject& operator = (const DirectLightObject&) = delete;
     virtual ~DirectLightObject() noexcept = default;
 
-    inline float radius() const noexcept;
-    void setRadius(float newValue) noexcept;
-    inline void resetRadius() noexcept;
+    inline float shadowDistance() const noexcept;
+    void setShadowDistance(float newValue) noexcept;
+    inline void resetShadowDistance() noexcept;
 
     inline size_t cascadeSize() const noexcept;
     virtual void setCascadeSize(size_t newValue) noexcept;
     inline void resetCascadeSize() noexcept;
 
   signals:
-    void radiusChanged(float newValue);
+    void shadowDistanceChanged(float newValue);
     void cascadeSizeChanged(size_t newValue);
 
   private:
-    float _radius;
+    float _shadowDistance;
     size_t _cascadeSize;
   };
 
-  inline float DirectLightObject::radius() const noexcept
+  inline float DirectLightObject::shadowDistance() const noexcept
   {
-    return _radius;
+    return _shadowDistance;
   }
 
-  inline void DirectLightObject::resetRadius() noexcept
+  inline void DirectLightObject::resetShadowDistance() noexcept
   {
-    setRadius(10);
+    setShadowDistance(50.f);
   }
 
   inline size_t DirectLightObject::cascadeSize() const noexcept

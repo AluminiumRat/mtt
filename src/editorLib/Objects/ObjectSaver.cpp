@@ -123,7 +123,7 @@ void ObjectSaver::visitConstDirectLightObject(
 {
   CEVisitor::visitConstDirectLightObject(object);
   *_stream << (uint8_t)object.cascadeSize();
-  *_stream << object.radius();
+  *_stream << object.shadowDistance();
 }
 
 void ObjectSaver::visitConstDisplayedObject(const mtt::DisplayedObject& object)

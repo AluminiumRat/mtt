@@ -6,17 +6,17 @@ DirectLightObject::DirectLightObject( const QString& name,
                                       bool canBeRenamed,
                                       const UID theId) :
   LightWithShadowsObject(name, canBeRenamed, theId),
-  _radius(10),
+  _shadowDistance(50),
   _cascadeSize(1)
 {
 }
 
-void DirectLightObject::setRadius(float newValue) noexcept
+void DirectLightObject::setShadowDistance(float newValue) noexcept
 {
   newValue = glm::max(newValue, 0.f);
-  if(_radius == newValue) return;
-  _radius = newValue;
-  emit radiusChanged(_radius);
+  if(_shadowDistance == newValue) return;
+  _shadowDistance = newValue;
+  emit shadowDistanceChanged(_shadowDistance);
 }
 
 void DirectLightObject::setCascadeSize(size_t newValue) noexcept

@@ -32,7 +32,7 @@ namespace mtt
     std::unique_ptr<Ui::DirectLightWidget> _ui;
 
     using FloatConnection = FloatSpinConnection<DirectLightObject>;
-    std::optional<FloatConnection> _radiusConnection;
+    std::optional<FloatConnection> _shadowDistanceConnection;
 
     using IntConnection = IntSpinConnection<DirectLightObject, size_t>;
     std::optional<IntConnection> _cascadeSizeConnection;

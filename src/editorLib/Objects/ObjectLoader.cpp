@@ -114,7 +114,7 @@ void ObjectLoader::visitDirectLightObject(DirectLightObject& object)
 {
   CEVisitor::visitDirectLightObject(object);
   object.setCascadeSize(_stream->readUint8());
-  object.setRadius(_stream->readFloat());
+  object.setShadowDistance(_stream->readFloat());
 }
 
 void ObjectLoader::visitDisplayedObject(DisplayedObject& object)
