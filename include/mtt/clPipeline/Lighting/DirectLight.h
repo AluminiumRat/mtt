@@ -213,7 +213,7 @@ namespace mtt
 
     inline float DirectLight::blurRelativeRadius() const noexcept
     {
-      return (blurSize() / 2.f) / (2.f * radius());
+      return (blurSize() / 2.f) / (2.f * radius()) + .5f / _shadowmapExtent;
     }
 
     inline Sampler* DirectLight::shadowmapSampler() noexcept

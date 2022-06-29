@@ -31,14 +31,11 @@ void $APPLY_FUNCTION$()
     shadowCoords /= 2.f * lightData$INDEX$.radius;
     shadowCoords += vec2(.5f, .5f);
 
-    int layer = getLayer$INDEX$(shadowCoords);
-
     float shadowmapSize = 2 * lightData$INDEX$.radius;
     float shadowmapSlope =
                       shadowmapSize / lightDotNorm / lightData$INDEX$.distance;
 
     illuminance *= getShadowFactor$INDEX$(
-                                    layer,
                                     shadowCoords,
                                     toLightDistance / lightData$INDEX$.distance,
                                     shadowmapSlope);

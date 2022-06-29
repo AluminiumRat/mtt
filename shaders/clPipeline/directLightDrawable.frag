@@ -58,15 +58,12 @@ void main()
     shadowCoords /= 2.f * lightData.radius;
     shadowCoords += vec2(.5f, .5f);
 
-    int layer = getLayer(shadowCoords);
-
     float lightDotNorm = max(dot(lightData.lightInverseDirection, normal), 0.f);
 
     float shadowmapSize = 2 * lightData.radius;
     float shadowmapSlope = shadowmapSize / lightDotNorm / lightData.distance;
 
-    luminance *= getShadowFactor( layer,
-                                  shadowCoords,
+    luminance *= getShadowFactor( shadowCoords,
                                   toLightDistance / lightData.distance,
                                   shadowmapSlope);
   #endif

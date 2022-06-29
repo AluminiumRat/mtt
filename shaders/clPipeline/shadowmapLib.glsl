@@ -47,7 +47,7 @@ float getOpaqueShadowFactor$INDEX$( vec2 shadowCoords,
   }
 
   float blurSize = blurRadius * mapSize;
-  return opaqueFactor / (4 * blurSize * blurSize);
+  return opaqueFactor / (4.f * blurSize * blurSize);
 }
 
 float getTransparentShadowFactor$INDEX$(vec2 shadowCoords,
