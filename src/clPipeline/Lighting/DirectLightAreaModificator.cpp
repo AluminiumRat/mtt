@@ -1,9 +1,12 @@
+#include <limits>
+
 #include <mtt/clPipeline/Lighting/DirectLight.h>
 #include <mtt/clPipeline/Lighting/DirectLightAreaModificator.h>
 #include <mtt/clPipeline/constants.h>
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
 #include <mtt/render/DrawPlan/UpdateResourcesAction.h>
 #include <mtt/render/Pipeline/AbstractPipeline.h>
+#include <mtt/render/SceneGraph/CameraNode.h>
 
 using namespace mtt;
 using namespace mtt::clPipeline;
@@ -11,11 +14,8 @@ using namespace mtt::clPipeline;
 DirectLightAreaModificator::DirectLightAreaModificator( DirectLight& light) :
   _light(light)
 {
-}
-
-void DirectLightAreaModificator::updateBound() noexcept
-{
-  setLocalBoundSphere(_light.getBoundSphere());
+  setLocalBoundSphere(Sphere( glm::vec3(0.f),
+                              std::numeric_limits<float>::infinity()));
 }
 
 void DirectLightAreaModificator::buildPrepareActions(
@@ -23,15 +23,18 @@ void DirectLightAreaModificator::buildPrepareActions(
 {
   if (buildInfo.frameType != colorFrameType) return;
 
-  DirectLightDrawData lightData = _light.buildDrawData(buildInfo);
+  DirectLightData lightData = _light.buildDrawData(buildInfo);
 
   CascadeShadowMapProvider::CascadeInfo cascadeInfo;
   if(_light.shadowmapProvider() != nullptr)
   {
+    CameraNode shadowmapCamera;
+    _light.updateShadowmapCamera(shadowmapCamera, buildInfo);
+
     cascadeInfo = _light.shadowmapProvider()->getShadowMap(
-                                                      _light.cascadeSize(),
-                                                      _light.shadowmapCamera(),
-                                                      buildInfo);
+                                                          _light.cascadeSize(),
+                                                          shadowmapCamera,
+                                                          buildInfo);
     if (cascadeInfo.size() == 0) return;
   }
 
@@ -46,21 +49,21 @@ void DirectLightAreaModificator::buildPrepareActions(
 }
 
 void DirectLightAreaModificator::_makeNonshadowCommand(
-                                          DrawPlanBuildInfo& buildInfo,
-                                          const DirectLightDrawData& lightData)
+                                              DrawPlanBuildInfo& buildInfo,
+                                              const DirectLightData& lightData)
 {
   DrawBin* renderBin =
                   buildInfo.currentFramePlan->getBin(modificatorsPrepareStage);
   if (renderBin == nullptr) Abort("DirectLightAreaModificator::_makeNonshadowCommand: prepare bin is not supported.");
 
-  using Action = UpdateResourcesAction< VolatileUniform<DirectLightDrawData>,
-                                        DirectLightDrawData>;
+  using Action = UpdateResourcesAction< VolatileUniform<DirectLightData>,
+                                        DirectLightData>;
   renderBin->createAction<Action>(0, _lightDataUniform, lightData);
 }
 
 void DirectLightAreaModificator::_makeShadowCommand(
                       DrawPlanBuildInfo& buildInfo,
-                      const DirectLightDrawData& lightData,
+                      const DirectLightData& lightData,
                       const CascadeShadowMapProvider::CascadeInfo& cascadeInfo)
 {
   std::vector<Texture2D*> shadowTextures;
@@ -73,8 +76,8 @@ void DirectLightAreaModificator::_makeShadowCommand(
   Sampler& shadowmapSampler = *_light.shadowmapSampler();
   for(size_t layerIndex = 0; layerIndex < cascadeInfo.size(); layerIndex++)
   {
-    float blurRadius = _light.blurRelativeRadius();
-    blurRadius *= cascadeInfo[layerIndex].coordCorrection.multiplicator;
+    float multiplicator = cascadeInfo[layerIndex].coordCorrection.multiplicator;
+    float blurRadius = _light.blurRelativeRadius(multiplicator);
 
     correctionData.push_back(glm::vec4(
                           cascadeInfo[layerIndex].coordCorrection.multiplicator,
@@ -90,8 +93,8 @@ void DirectLightAreaModificator::_makeShadowCommand(
                   buildInfo.currentFramePlan->getBin(modificatorsPrepareStage);
   if (renderBin == nullptr) Abort("DirectLightAreaModificator::_makeShadowCommand: prepare bin is not supported.");
 
-  using Action = UpdateResourcesAction< VolatileUniform<DirectLightDrawData>,
-                                        DirectLightDrawData,
+  using Action = UpdateResourcesAction< VolatileUniform<DirectLightData>,
+                                        DirectLightData,
                                         VolatileUniform<CoordsCorrectionData>,
                                         CoordsCorrectionData,
                                         std::vector<Texture2D*>,

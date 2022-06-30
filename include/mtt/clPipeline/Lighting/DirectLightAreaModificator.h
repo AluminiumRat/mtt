@@ -32,23 +32,21 @@ namespace mtt
 
       inline void reset() noexcept;
 
-      void updateBound() noexcept;
-
     protected:
       virtual void buildPrepareActions(DrawPlanBuildInfo& buildInfo) override;
 
     private:
       void _makeNonshadowCommand( DrawPlanBuildInfo& buildInfo,
-                                  const DirectLightDrawData& lightData);
+                                  const DirectLightData& lightData);
       void _makeShadowCommand(
                       DrawPlanBuildInfo& buildInfo,
-                      const DirectLightDrawData& lightData,
+                      const DirectLightData& lightData,
                       const CascadeShadowMapProvider::CascadeInfo& cascadeInfo);
 
     private:
       DirectLight& _light;
 
-      VolatileUniform<DirectLightDrawData> _lightDataUniform;
+      VolatileUniform<DirectLightData> _lightDataUniform;
 
       using CoordsCorrectionData = std::vector<glm::vec4>;
       VolatileUniform<CoordsCorrectionData> _coordsCorrectionUniform;

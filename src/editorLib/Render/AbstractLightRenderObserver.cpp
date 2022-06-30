@@ -53,7 +53,6 @@ void AbstractLightRenderObserver::setLightObject(CompositeObjectNode& light)
   try
   {
     _lightRenderer = &light;
-    positionRotateJoint().addChild(*_lightRenderer);
     if(_object.enabled()) registerCompositeObject(*_lightRenderer);
   }
   catch (...)

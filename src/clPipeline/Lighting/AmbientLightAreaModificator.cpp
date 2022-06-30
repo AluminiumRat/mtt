@@ -1,3 +1,4 @@
+#include <limits>
 #include <stdexcept>
 
 #include <mtt/clPipeline/Lighting/AmbientLightAreaModificator.h>
@@ -22,7 +23,15 @@ AmbientLightAreaModificator::AmbientLightAreaModificator(
 
 void AmbientLightAreaModificator::updateBound() noexcept
 {
-  setLocalBoundSphere(Sphere(glm::vec3(0.f), _lightData.distance));
+  if (_lightData.infinityAreaMode)
+  {
+    setLocalBoundSphere(Sphere( glm::vec3(0.f),
+                                std::numeric_limits<float>::infinity()));
+  }
+  else
+  {
+    setLocalBoundSphere(Sphere(glm::vec3(0.f), _lightData.distance));
+  }
 }
 
 void AmbientLightAreaModificator::buildPrepareActions(

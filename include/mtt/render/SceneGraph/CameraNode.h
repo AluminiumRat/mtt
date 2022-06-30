@@ -11,6 +11,16 @@ namespace mtt
   class CameraNode : public AbstractNode
   {
   public:
+    // Correction of projection matrix was getted from
+    // https://matthewwellings.com/blog/the-new-vulkan-coordinate-system/
+    // Component [2][2] was changed to implement reversed-Z technique
+    static constexpr glm::mat4 projectionCorrect = glm::mat4(
+                                              glm::vec4(1.f,  0.f,  0.f, 0.f),
+                                              glm::vec4(0.f, -1.f,  0.f, 0.f),
+                                              glm::vec4(0.f,  0.f, -.5f, 0.f),
+                                              glm::vec4(0.f,  0.f,  .5f, 1.f));
+
+  public:
     CameraNode() noexcept;
     CameraNode(const CameraNode&) = delete;
     CameraNode& operator = (const CameraNode&) = delete;

@@ -15,10 +15,11 @@ layout(set = volatileSet, binding = lightDataBinding) uniform LightData
 {
   vec3 illuminance;
   vec3 lightInverseDirection;
-  float distance;
-  float radius;
+  float height;
+  float shadowDistance;
   mat4 clipToView;
   mat4 viewToLocal;
+  mat4 localToShadowCoords;
 } lightData;
 
 layout(location = 0) out vec4 outColor;
@@ -34,8 +35,7 @@ void main()
 
   vec4 localCoord = lightData.viewToLocal * viewCoord;
   float toLightDistance = -localCoord.z;
-  if(toLightDistance < 0 || toLightDistance > lightData.distance) discard;
-  if(length(localCoord.xy) > lightData.radius) discard;
+  if(toLightDistance < 0 || toLightDistance > lightData.height) discard;
 
   vec4 albedo = texelFetch(albedoMap, fragCoord, 0);
   vec3 normal = normalize(texelFetch(normalMap, fragCoord, 0).xyz);
@@ -54,17 +54,15 @@ void main()
                                 lightData.illuminance);
 
   #ifdef SHADOW_MAP_ENABLED
-    vec2 shadowCoords = vec2(localCoord.x, -localCoord.y);
-    shadowCoords /= 2.f * lightData.radius;
-    shadowCoords += vec2(.5f, .5f);
+    vec2 shadowCoords = (lightData.localToShadowCoords * localCoord).xy;
 
     float lightDotNorm = max(dot(lightData.lightInverseDirection, normal), 0.f);
 
-    float shadowmapSize = 2 * lightData.radius;
-    float shadowmapSlope = shadowmapSize / lightDotNorm / lightData.distance;
+    float shadowmapSize = 2 * lightData.shadowDistance;
+    float shadowmapSlope = shadowmapSize / lightDotNorm / lightData.height;
 
     luminance *= getShadowFactor( shadowCoords,
-                                  toLightDistance / lightData.distance,
+                                  toLightDistance / lightData.height,
                                   shadowmapSlope);
   #endif
 

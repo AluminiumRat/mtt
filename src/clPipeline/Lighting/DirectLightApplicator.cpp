@@ -1,3 +1,5 @@
+#include <limits>
+
 #include <mtt/clPipeline/Lighting/DirectLight.h>
 #include <mtt/clPipeline/Lighting/DirectLightApplicator.h>
 #include <mtt/clPipeline/RenderPass/LightingPass.h>
@@ -11,10 +13,8 @@ using namespace mtt;
 using namespace mtt::clPipeline;
 
 DirectLightApplicator::DrawTechnique::DrawTechnique(
-                                            bool fullscreenRender,
                                             DirectLight& light,
                                             DirectLightApplicator& applicator) :
-  _fullscreenRender(fullscreenRender),
   _light(light),
   _applicator(applicator)
 {
@@ -99,18 +99,7 @@ void DirectLightApplicator::DrawTechnique::_adjustPipeline()
                                         "clPipeline/directLightDrawable.frag");
   _pipeline->addShader(std::move(fragmentShader));
 
-  if(_fullscreenRender)
-  {
-    _pipeline->setTopology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP);
-    _pipeline->setDefine("FULLSCREEN_ENABLED");
-  }
-  else
-  {
-    _pipeline->addResource( DrawMatrices::bindingName,
-                            _applicator._matricesUniform,
-                            VK_SHADER_STAGE_VERTEX_BIT);
-    _pipeline->setTopology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
-  }
+  _pipeline->setTopology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP);
 }
 
 void DirectLightApplicator::DrawTechnique::addToDrawPlan(
@@ -125,37 +114,23 @@ void DirectLightApplicator::DrawTechnique::addToDrawPlan(
     _rebuildPipeline(*renderPass);
   }
 
-  uint32_t pointsNumber = _fullscreenRender ? 4 : 36;
+  DirectLightData lightData = _light.buildDrawData(buildInfo);
 
-  DirectLightDrawData lightData = _light.buildDrawData(buildInfo);
-
-  if(cascadeInfo.empty())
-  {
-    _makeNonshadowCommand(buildInfo,
-                          pointsNumber,
-                          lightData);
-  }
-  else
-  {
-    _makeShadowCommand( buildInfo,
-                        pointsNumber,
-                        lightData,
-                        cascadeInfo);
-  }
+  if(cascadeInfo.empty()) _makeNonshadowCommand(buildInfo, lightData);
+  else _makeShadowCommand( buildInfo, lightData, cascadeInfo);
 }
 
 void DirectLightApplicator::DrawTechnique::_makeNonshadowCommand(
-                                          DrawPlanBuildInfo& buildInfo,
-                                          uint32_t pointsNumber,
-                                          const DirectLightDrawData& lightData)
+                                              DrawPlanBuildInfo& buildInfo,
+                                              const DirectLightData& lightData)
 {
   DrawBin* renderBin = buildInfo.currentFramePlan->getBin(lightingStage);
   if(renderBin == nullptr) Abort("DirectLightApplicator::DrawTechnique::_makeNonshadowCommand: light render bin is not supported.");
 
-  using DrawAction = DrawMeshAction<VolatileUniform<DirectLightDrawData>,
-                                    DirectLightDrawData,
-                                    VolatileUniform<DrawMatrices>,
-                                    DrawMatrices,
+  uint32_t pointsNumber = 4;
+
+  using DrawAction = DrawMeshAction<VolatileUniform<DirectLightData>,
+                                    DirectLightData,
                                     Texture2D,
                                     size_t,
                                     Texture2D,
@@ -164,7 +139,6 @@ void DirectLightApplicator::DrawTechnique::_makeNonshadowCommand(
                                     size_t,
                                     Texture2D,
                                     size_t>;
-
   renderBin->createAction<DrawAction>(0,
                                       *_pipeline,
                                       buildInfo.viewport,
@@ -172,8 +146,6 @@ void DirectLightApplicator::DrawTechnique::_makeNonshadowCommand(
                                       pointsNumber,
                                       _applicator._lightDataUniform,
                                       lightData,
-                                      _applicator._matricesUniform,
-                                      buildInfo.drawMatrices,
                                       *_applicator._depthTexture,
                                       LightingPass::depthSamplerMapIndex,
                                       *_applicator._normalTexture,
@@ -186,8 +158,7 @@ void DirectLightApplicator::DrawTechnique::_makeNonshadowCommand(
 
 void DirectLightApplicator::DrawTechnique::_makeShadowCommand(
                       DrawPlanBuildInfo& buildInfo,
-                      uint32_t pointsNumber,
-                      const DirectLightDrawData& lightData,
+                      const DirectLightData& lightData,
                       const CascadeShadowMapProvider::CascadeInfo& cascadeInfo)
 {
   std::vector<Texture2D*> shadowTextures;
@@ -200,8 +171,8 @@ void DirectLightApplicator::DrawTechnique::_makeShadowCommand(
   Sampler& shadowmapSampler = *_light.shadowmapSampler();
   for(size_t layerIndex = 0; layerIndex < cascadeInfo.size(); layerIndex++)
   {
-    float blurRadius = _light.blurRelativeRadius();
-    blurRadius *= cascadeInfo[layerIndex].coordCorrection.multiplicator;
+    float multiplicator = cascadeInfo[layerIndex].coordCorrection.multiplicator;
+    float blurRadius = _light.blurRelativeRadius(multiplicator);
 
     correctionData.push_back(glm::vec4(
                           cascadeInfo[layerIndex].coordCorrection.multiplicator,
@@ -216,12 +187,12 @@ void DirectLightApplicator::DrawTechnique::_makeShadowCommand(
   DrawBin* renderBin = buildInfo.currentFramePlan->getBin(lightingStage);
   if(renderBin == nullptr) Abort("DirectLightApplicator::DrawTechnique::_makeShadowCommand: light render bin is not supported.");
 
-  using DrawAction = DrawMeshAction<VolatileUniform<DirectLightDrawData>,
-                                    DirectLightDrawData,
+  uint32_t pointsNumber = 4;
+
+  using DrawAction = DrawMeshAction<VolatileUniform<DirectLightData>,
+                                    DirectLightData,
                                     VolatileUniform<CoordsCorrectionData>,
                                     CoordsCorrectionData,
-                                    VolatileUniform<DrawMatrices>,
-                                    DrawMatrices,
                                     std::vector<Texture2D*>,
                                     std::vector<ImageView*>,
                                     Texture2D,
@@ -241,8 +212,6 @@ void DirectLightApplicator::DrawTechnique::_makeShadowCommand(
                                       lightData,
                                       _applicator._coordsCorrectionUniform,
                                       correctionData,
-                                      _applicator._matricesUniform,
-                                      buildInfo.drawMatrices,
                                       shadowTextures,
                                       shadowImageViews,
                                       *_applicator._depthTexture,
@@ -266,8 +235,12 @@ DirectLightApplicator::DirectLightApplicator( DirectLight& light,
   _albedoMapSampler(PipelineResource::VOLATILE, device),
   _albedoTexture(nullptr),
   _specularMapSampler(PipelineResource::VOLATILE, device),
-  _specularTexture(nullptr)
+  _specularTexture(nullptr),
+  _technique(_light, *this)
 {
+  setLocalBoundSphere(Sphere( glm::vec3(0.f),
+                              std::numeric_limits<float>::infinity()));
+
   std::shared_ptr<Texture2D> depthTexture = std::make_shared<Texture2D>(device);
   _depthTexture = depthTexture.get();
   _depthMapSampler.setAttachedTexture(std::move(depthTexture));
@@ -286,35 +259,11 @@ DirectLightApplicator::DirectLightApplicator( DirectLight& light,
                                             std::make_shared<Texture2D>(device);
   _specularTexture = specularTexture.get();
   _specularMapSampler.setAttachedTexture(std::move(specularTexture));
-
-  _techniques.shapeTechnique = std::make_unique<DrawTechnique>( false,
-                                                                _light,
-                                                                *this);
-  _techniques.fullscreenTechnique = std::make_unique<DrawTechnique>(true,
-                                                                    _light,
-                                                                    *this);
 }
 
 void DirectLightApplicator::resetPipelines() noexcept
 {
-  _techniques.shapeTechnique->invalidatePipeline();
-  _techniques.fullscreenTechnique->invalidatePipeline();
-}
-
-void DirectLightApplicator::updateBound() noexcept
-{
-  setLocalBoundSphere(_light.getBoundSphere());
-}
-
-bool DirectLightApplicator::_fullscreen(
-                              const DrawPlanBuildInfo& buildInfo) const noexcept
-{
-  Sphere boundSphere = _light.getBoundSphere();
-  boundSphere.translate(buildInfo.drawMatrices.localToViewMatrix);
-
-  const Plane& nearPlane = buildInfo.viewFrustum.face(ViewFrustum::FACE_NEAR);
-
-  return abs(nearPlane.signedDistance(boundSphere.center)) < boundSphere.radius;
+  _technique.invalidatePipeline();
 }
 
 void DirectLightApplicator::buildDrawActions(DrawPlanBuildInfo& buildInfo)
@@ -324,17 +273,15 @@ void DirectLightApplicator::buildDrawActions(DrawPlanBuildInfo& buildInfo)
   CascadeShadowMapProvider::CascadeInfo cascadeInfo;
   if(_light.shadowmapProvider() != nullptr)
   {
+    CameraNode shadowmapCamera;
+    _light.updateShadowmapCamera(shadowmapCamera, buildInfo);
+
     cascadeInfo = _light.shadowmapProvider()->getShadowMap(
-                                                      _light.cascadeSize(),
-                                                      _light.shadowmapCamera(),
-                                                      buildInfo);
+                                                          _light.cascadeSize(),
+                                                          shadowmapCamera,
+                                                          buildInfo);
     if (cascadeInfo.size() == 0) return;
   }
 
-  bool fullscreen = _fullscreen(buildInfo);
-  if (fullscreen)
-  {
-    _techniques.fullscreenTechnique->addToDrawPlan(buildInfo, cascadeInfo);
-  }
-  else _techniques.shapeTechnique->addToDrawPlan(buildInfo, cascadeInfo);
+  _technique.addToDrawPlan(buildInfo, cascadeInfo);
 }

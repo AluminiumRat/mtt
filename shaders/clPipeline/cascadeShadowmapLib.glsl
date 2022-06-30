@@ -16,8 +16,8 @@ layout( set = volatileSet,
 
 int getLayer$INDEX$(vec2 shadowCoords)
 {
-  int result = 0;
-  for(int layer = 1; layer < $SHADOW_CASCADE_SIZE$; layer++)
+  int bestLayer = -1;
+  for(int layer = 0; layer < $SHADOW_CASCADE_SIZE$; layer++)
   {
     vec4 coordsCorrection = shadowCoordsCorrection$INDEX$.values[layer];
     vec2 correctedCoords = shadowCoords * coordsCorrection.x +
@@ -26,9 +26,9 @@ int getLayer$INDEX$(vec2 shadowCoords)
     vec2 sign = step(vec2(deadZone),correctedCoords);
     sign *= step(correctedCoords, vec2(1.f - deadZone));
 
-    if(sign.x * sign.y != 0) result = layer;
+    if(sign.x * sign.y != 0) bestLayer = layer;
   }
-  return result;
+  return bestLayer;
 }
 
 float getOpaqueShadowFactor$INDEX$( int layer,
@@ -106,8 +106,11 @@ float getShadowFactor$INDEX$( vec2 shadowCoords,
                               float shadowmapSlope)
 {
   int layer = getLayer$INDEX$(shadowCoords);
+  if(layer == -1) return 1.f;
+
   vec4 coordsCorrection = shadowCoordsCorrection$INDEX$.values[layer];
   vec2 centerCoords = shadowCoords * coordsCorrection.x + coordsCorrection.yz;
+  shadowmapSlope /= coordsCorrection.x;
 
   float opaqueFactor = getOpaqueShadowFactor$INDEX$(layer,
                                                     centerCoords,

@@ -18,6 +18,7 @@ AmbientLightRenderObserver::AmbientLightRenderObserver(
   _cubemapObserver(_lightObject.ambientMap())
 {
   setLightObject(_light);
+  positionRotateJoint().addChild(_light);
 
   _cubemapObserver.setCallback(
     [&](std::shared_ptr<CubeTexture> environmentMap)

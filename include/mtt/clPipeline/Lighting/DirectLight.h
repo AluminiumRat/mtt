@@ -15,6 +15,7 @@
 namespace mtt
 {
   class AbstractField;
+  class CameraNode;
   struct DrawPlanBuildInfo;
 
   namespace clPipeline
@@ -32,13 +33,14 @@ namespace mtt
       inline const glm::vec3& illuminance() const noexcept;
       inline void setIlluminance(const glm::vec3& newValue) noexcept;
 
-      inline float distance() const noexcept;
-      inline void setDistance(float newValue) noexcept;
+      inline float height() const noexcept;
+      inline void setHeight(float newValue) noexcept;
 
-      inline float radius() const noexcept;
-      inline void setRadius(float newValue);
+      inline const glm::vec3& direction() const noexcept;
+      inline void setDirection(const glm::vec3& newValue) noexcept;
 
-      inline const CameraNode& shadowmapCamera() const noexcept;
+      inline float shadowDistance() const noexcept;
+      inline void setShadowDistance(float newValue);
 
       inline AbstractField* shadowmapField() const noexcept;
       inline void setShadowmapField(AbstractField* newField);
@@ -52,10 +54,8 @@ namespace mtt
       inline float blurSize() const noexcept;
       inline void setBlurSize(float newValue) noexcept;
 
-      inline Sphere getBoundSphere() const noexcept;
-
-      virtual size_t culledDrawablesNumber() const noexcept override;
-      virtual DrawableNode& culledDrawable(size_t index) noexcept override;
+      virtual size_t unculledDrawablesNumber() const noexcept override;
+      virtual Drawable& unculledDrawable(size_t index) noexcept override;
 
       virtual size_t areaModificatorsNumber() const noexcept override;
       virtual AreaModificator& areaModificator(size_t index) noexcept override;
@@ -63,34 +63,39 @@ namespace mtt
     private:
       friend class DirectLightApplicator;
       friend class DirectLightAreaModificator;
-      DirectLightDrawData buildDrawData(
+      DirectLightData buildDrawData(
                             const DrawPlanBuildInfo& buildInfo) const noexcept;
       inline CascadeShadowMapProvider* shadowmapProvider() noexcept;
+      void updateShadowmapCamera(
+                            CameraNode& camera,
+                            const DrawPlanBuildInfo& buildInfo) const noexcept;
       inline Sampler* shadowmapSampler() noexcept;
 
       /// Blur radius in UV coordinates, i.e. blur radius relative to light
       /// diameter
-      inline float blurRelativeRadius() const noexcept;
+      inline float blurRelativeRadius(float coordMultiplicator) const noexcept;
 
     private:
       void _resetShadowmapProvider() noexcept;
       void _updateShadowmapProvider();
-      void _updateShadowmapCamera() noexcept;
-      void _updateBound() noexcept;
+      void _updateShadowmapProjection() noexcept;
       void _resetPipelines() noexcept;
+      glm::mat4 _getShiftMatrix(
+                            const DrawPlanBuildInfo& buildInfo) const noexcept;
 
     private:
       LogicalDevice& _device;
 
-      CameraNode _shadowmapCamera;
+      glm::mat4 _shadowmapProjectionMatrix;
       std::unique_ptr<CascadeShadowMapProvider> _shadowmapProvider;
       unsigned int _shadowmapExtent;
       AbstractField* _shadowmapField;
       std::unique_ptr<Sampler> _shadowmapSampler;
 
       glm::vec3 _illuminance;
-      float _distance;
-      float _radius;
+      float _height;
+      glm::vec3 _direction;
+      float _shadowDistance;
       size_t _cascadeSize;
       float _blurSize;
 
@@ -108,38 +113,52 @@ namespace mtt
       _illuminance = newValue;
     }
 
-    inline float DirectLight::distance() const noexcept
+    inline float DirectLight::height() const noexcept
     {
-      return _distance;
+      return _height;
     }
 
-    inline void DirectLight::setDistance(float newValue) noexcept
+    inline void DirectLight::setHeight(float newValue) noexcept
     {
-      if(_distance == newValue) return;
-      _distance = newValue;
-      _updateShadowmapCamera();
-      _updateBound();
+      if(_height == newValue) return;
+      _height = newValue;
+      _updateShadowmapProjection();
     }
 
-    inline float DirectLight::radius() const noexcept
+    inline const glm::vec3& DirectLight::direction() const noexcept
     {
-      return _radius;
+      return _direction;
     }
 
-    inline void DirectLight::setRadius(float newValue)
+    inline void DirectLight::setDirection(const glm::vec3& newValue) noexcept
+    {
+      glm::vec3 newDirection = newValue;
+      if (newDirection.x == 0.f &&
+          newDirection.y == 0.f &&
+          newDirection.z == 0.f)
+      {
+        newDirection = glm::vec3(0.f, 0.f, -1.f);
+      }
+      else newDirection = glm::normalize(newDirection);
+
+      if (_direction == newDirection) return;
+      _direction = newDirection;
+      _updateShadowmapProjection();
+    }
+
+    inline float DirectLight::shadowDistance() const noexcept
+    {
+      return _shadowDistance;
+    }
+
+    inline void DirectLight::setShadowDistance(float newValue)
     {
       newValue = glm::max(0.f, newValue);
-      if(_radius == newValue) return;
-      
-      _radius = newValue;
-      _updateBound();
-      _updateShadowmapCamera();
-      _updateShadowmapProvider();
-    }
+      if(_shadowDistance == newValue) return;
 
-    inline const CameraNode& DirectLight::shadowmapCamera() const noexcept
-    {
-      return _shadowmapCamera;
+      _shadowDistance = newValue;
+      _updateShadowmapProjection();
+      _updateShadowmapProvider();
     }
 
     inline CascadeShadowMapProvider* DirectLight::shadowmapProvider() noexcept
@@ -211,22 +230,16 @@ namespace mtt
       _blurSize = newValue;
     }
 
-    inline float DirectLight::blurRelativeRadius() const noexcept
+    inline float DirectLight::blurRelativeRadius(
+                                        float coordMultiplicator) const noexcept
     {
-      return (blurSize() / 2.f) / (2.f * radius()) + .5f / _shadowmapExtent;
+      return blurSize() / shadowDistance() / 4.f * coordMultiplicator +
+                                                        .5f / _shadowmapExtent;
     }
 
     inline Sampler* DirectLight::shadowmapSampler() noexcept
     {
       return _shadowmapSampler.get();
-    }
-
-    inline Sphere DirectLight::getBoundSphere() const noexcept
-    {
-      float halfdistance = distance() / 2;
-      float boundRadius = sqrt(halfdistance * halfdistance +
-                                                          radius() * radius());
-      return Sphere(glm::vec3(0.f, 0.f, -halfdistance), boundRadius);
     }
   }
 }

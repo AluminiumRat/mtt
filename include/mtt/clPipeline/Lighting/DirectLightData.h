@@ -7,14 +7,15 @@ namespace mtt
 {
   namespace clPipeline
   {
-    struct DirectLightDrawData
+    struct DirectLightData
     {
       alignas(16) glm::vec3 illuminance;
       alignas(16) glm::vec3 lightInverseDirection;
-      alignas(4) float distance;
-      alignas(4) float radius;
+      alignas(4) float height;
+      alignas(4) float shadowDistance;
       alignas(16) glm::mat4 clipToView;
       alignas(16) glm::mat4 viewToLocal;
+      alignas(16) glm::mat4 localToShadowCoords;
     };
   }
 }

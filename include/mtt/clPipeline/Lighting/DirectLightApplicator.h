@@ -32,7 +32,6 @@ namespace mtt
       virtual ~DirectLightApplicator() = default;
 
       void resetPipelines() noexcept;
-      void updateBound() noexcept;
 
     protected:
       virtual void buildDrawActions(DrawPlanBuildInfo& buildInfo) override;
@@ -41,8 +40,7 @@ namespace mtt
       class DrawTechnique
       {
       public:
-        DrawTechnique(bool fullscreenRender,
-                      DirectLight& light,
+        DrawTechnique(DirectLight& light,
                       DirectLightApplicator& applicator);
         DrawTechnique(const DrawTechnique&) = delete;
         DrawTechnique& operator = (const DrawTechnique&) = delete;
@@ -58,24 +56,18 @@ namespace mtt
         void _adjustPipeline();
 
         void _makeNonshadowCommand( DrawPlanBuildInfo& buildInfo,
-                                    uint32_t pointsNumber,
-                                    const DirectLightDrawData& lightData);
+                                    const DirectLightData& lightData);
 
         void _makeShadowCommand(
                       DrawPlanBuildInfo& buildInfo,
-                      uint32_t pointsNumber,
-                      const DirectLightDrawData& lightData,
+                      const DirectLightData& lightData,
                       const CascadeShadowMapProvider::CascadeInfo& cascadeInfo);
 
       private:
-        bool _fullscreenRender;
         std::optional<GraphicsPipeline> _pipeline;
         DirectLight& _light;
         DirectLightApplicator& _applicator;
       };
-
-    private:
-      bool _fullscreen(const DrawPlanBuildInfo& buildInfo) const noexcept;
 
     private:
       LogicalDevice& _device;
@@ -93,18 +85,12 @@ namespace mtt
       Sampler _specularMapSampler;
       Texture2D* _specularTexture;
 
-      VolatileUniform<DirectLightDrawData> _lightDataUniform;
+      VolatileUniform<DirectLightData> _lightDataUniform;
 
       using CoordsCorrectionData = std::vector<glm::vec4>;
       VolatileUniform<CoordsCorrectionData> _coordsCorrectionUniform;
-      VolatileUniform<DrawMatrices> _matricesUniform;
 
-      struct Techniques
-      {
-        std::unique_ptr<DrawTechnique> shapeTechnique;
-        std::unique_ptr<DrawTechnique> fullscreenTechnique;
-      };
-      Techniques _techniques;
+      DrawTechnique _technique;
     };
   }
 }

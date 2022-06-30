@@ -1,6 +1,10 @@
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
+
 #include <mtt/clPipeline/Lighting/DirectLight.h>
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
 #include <mtt/render/Pipeline/Texture2D.h>
+#include <mtt/render/SceneGraph/CameraNode.h>
 #include <mtt/utilities/Abort.h>
 
 using namespace mtt;
@@ -10,16 +14,16 @@ DirectLight::DirectLight( bool forwardLightingEnabled,
                           bool defferedLightingEnabled,
                           LogicalDevice& device) :
   _device(device),
+  _shadowmapProjectionMatrix(1.f),
   _shadowmapExtent(256),
   _shadowmapField(nullptr),
   _illuminance(1.f),
-  _distance(50.f),
-  _radius(10.f),
+  _shadowDistance(50.f),
+  _height(50.f),
+  _direction(0.f, 0.f, -1.f),
   _cascadeSize(1),
   _blurSize(0.f)
 {
-  addChildProtected(_shadowmapCamera);
-
   if(forwardLightingEnabled)
   {
     _forwardLightApplicator.reset(new DirectLightAreaModificator(*this));
@@ -31,30 +35,27 @@ DirectLight::DirectLight( bool forwardLightingEnabled,
     _defferedLightApplicator.reset(new DirectLightApplicator(*this, device));
     addChildProtected(*_defferedLightApplicator);
   }
-
-  _updateBound();
 }
 
-void DirectLight::_updateShadowmapCamera() noexcept
+void DirectLight::_updateShadowmapProjection() noexcept
 {
-  _shadowmapCamera.setOrthoProjection(-radius(),
-                                      radius(),
-                                      -radius(),
-                                      radius(),
-                                      0,
-                                      distance());
-}
+  _shadowmapProjectionMatrix = CameraNode::projectionCorrect *
+                                                  glm::ortho( -_shadowDistance,
+                                                              _shadowDistance,
+                                                              -_shadowDistance,
+                                                              _shadowDistance,
+                                                              0.f,
+                                                              _height);
 
-void DirectLight::_updateBound() noexcept
-{
-  if (_defferedLightApplicator != nullptr)
-  {
-    _defferedLightApplicator->updateBound();
-  }
-  if(_forwardLightApplicator != nullptr)
-  {
-    _forwardLightApplicator->updateBound();
-  }
+  if(_direction.z == 0.f) return;
+
+  glm::vec3 slope = _direction / abs(_direction.z);
+  glm::mat4 slopeMatrix = glm::mat4(glm::vec4(     1.f,      0.f, 0.f, 0.f),
+                                    glm::vec4(     0.f,      1.f, 0.f, 0.f),
+                                    glm::vec4( slope.x,  slope.y, 1.f, 0.f),
+                                    glm::vec4(     0.f,      0.f, 0.f, 1.f));
+
+  _shadowmapProjectionMatrix = _shadowmapProjectionMatrix * slopeMatrix;
 }
 
 void DirectLight::_resetPipelines() noexcept
@@ -76,7 +77,7 @@ void DirectLight::_resetShadowmapProvider() noexcept
 void DirectLight::_updateShadowmapProvider()
 {
   bool shadowsEnabled = _shadowmapExtent != 0 &&
-                        _radius != 0 &&
+                        _shadowDistance != 0 &&
                         _cascadeSize != 0 &&
                         _shadowmapField != nullptr;
 
@@ -122,29 +123,63 @@ void DirectLight::_updateShadowmapProvider()
   }
 }
 
-DirectLightDrawData DirectLight::buildDrawData(
+DirectLightData DirectLight::buildDrawData(
                               const DrawPlanBuildInfo& buildInfo) const noexcept
 {
-  DirectLightDrawData drawData;
+  glm::mat4 shiftedLocalToView =
+        buildInfo.drawMatrices.localToViewMatrix * _getShiftMatrix(buildInfo);
+
+  DirectLightData drawData;
   drawData.illuminance = illuminance();
   drawData.lightInverseDirection =
-              buildInfo.drawMatrices.localToViewMatrix * glm::vec4(0, 0, 1, 0);
+                                shiftedLocalToView * glm::vec4(-_direction, 0);
   drawData.lightInverseDirection =
                                 glm::normalize(drawData.lightInverseDirection);
-  drawData.distance = distance();
-  drawData.radius = radius();
+  drawData.height = height();
+  drawData.shadowDistance = shadowDistance();
   drawData.clipToView = buildInfo.drawMatrices.clipToViewMatrix;
-  drawData.viewToLocal = glm::inverse(buildInfo.drawMatrices.localToViewMatrix);
-
+  drawData.viewToLocal = glm::inverse(shiftedLocalToView);
+  drawData.localToShadowCoords =  glm::translate(glm::vec3(.5f, .5f, 0.f)) *
+                                    glm::scale(glm::vec3(.5f, .5f, 1.f)) *
+                                    _shadowmapProjectionMatrix;
   return drawData;
 }
 
-size_t DirectLight::culledDrawablesNumber() const noexcept
+void DirectLight::updateShadowmapCamera(
+                              CameraNode& camera,
+                              const DrawPlanBuildInfo& buildInfo) const noexcept
+{
+  camera.setTransformMatrix(transformMatrix() * _getShiftMatrix(buildInfo));
+  camera.setProjectionMatrix(_shadowmapProjectionMatrix);
+}
+
+glm::mat4 DirectLight::_getShiftMatrix(
+                              const DrawPlanBuildInfo& buildInfo) const noexcept
+{
+  if(_shadowmapExtent == 0) return glm::mat4(1.f);
+
+  glm::mat4 viewToLocalMatrix =
+                        glm::inverse(buildInfo.drawMatrices.localToViewMatrix);
+  glm::vec3 viewCenter = viewToLocalMatrix *
+                        glm::vec4(buildInfo.currentViewInfo.viewPosition, 1.f);
+
+  glm::vec3 slope = _direction / abs(_direction.z);
+  glm::vec3 cameraPosition( viewCenter.x + slope.x * viewCenter.z,
+                            viewCenter.y + slope.y * viewCenter.z,
+                            0.f);
+
+  float texelSize = 2.f * _shadowDistance / _shadowmapExtent;
+  cameraPosition = glm::round(cameraPosition / texelSize) * texelSize;
+
+  return glm::translate(cameraPosition);
+}
+
+size_t DirectLight::unculledDrawablesNumber() const noexcept
 {
   return _defferedLightApplicator == nullptr ? 0 : 1;
 }
 
-DrawableNode& DirectLight::culledDrawable(size_t index) noexcept
+Drawable& DirectLight::unculledDrawable(size_t index) noexcept
 {
   if (_defferedLightApplicator == nullptr) Abort("DirectLight::culledDrawable: no culled drawables available.");
   else return *_defferedLightApplicator;

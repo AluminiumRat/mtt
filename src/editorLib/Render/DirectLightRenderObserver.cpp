@@ -25,6 +25,7 @@ DirectLightRenderObserver::DirectLightRenderObserver(
   _renderScene(renderScene)
 {
   setLightObject(_light);
+  positionJoint().addChild(_light);
 
   connect(&_lightObject,
           &DirectLightObject::baseIlluminanceChanged,
@@ -44,6 +45,13 @@ DirectLightRenderObserver::DirectLightRenderObserver(
           &DirectLightRenderObserver::_updateDistance,
           Qt::DirectConnection);
   _updateDistance();
+
+  connect(&_lightObject,
+          &DirectLightObject::rotationChanged,
+          this,
+          &DirectLightRenderObserver::_updateDirection,
+          Qt::DirectConnection);
+  _updateDirection();
 
   connect(&_lightObject,
           &DirectLightObject::shadowDistanceChanged,
@@ -88,14 +96,21 @@ void DirectLightRenderObserver::_updateIlluminance() noexcept
 
 void DirectLightRenderObserver::_updateDistance() noexcept
 {
-  _light.setDistance(_lightObject.distance());
+  _light.setHeight(_lightObject.distance());
+}
+
+void DirectLightRenderObserver::_updateDirection() noexcept
+{
+  glm::mat4 transform = _lightObject.localToWorldTransform();
+  glm::vec3 newDirection = transform * glm::vec4(0.f, 0.f, -1.f, 0.f);
+  _light.setDirection(newDirection);
 }
 
 void DirectLightRenderObserver::_updateShadowDistance() noexcept
 {
   try
   {
-    _light.setRadius(_lightObject.shadowDistance());
+    _light.setShadowDistance(_lightObject.shadowDistance());
   }
   catch (std::exception& error)
   {

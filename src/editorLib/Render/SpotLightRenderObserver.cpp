@@ -25,6 +25,7 @@ SpotLightRenderObserver::SpotLightRenderObserver( SpotLightObject& object,
   _renderScene(renderScene)
 {
   setLightObject(_light);
+  positionRotateJoint().addChild(_light);
 
   connect(&_lightObject,
           &SpotLightObject::baseIlluminanceChanged,
