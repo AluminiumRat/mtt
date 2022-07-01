@@ -145,12 +145,21 @@ DirectLightData DirectLight::buildDrawData(
   return drawData;
 }
 
-void DirectLight::updateShadowmapCamera(
-                              CameraNode& camera,
+void DirectLight::updateCameras(
+                              CameraNode& shadowmapCamera,
+                              CameraNode& viewCamera,
                               const DrawPlanBuildInfo& buildInfo) const noexcept
 {
-  camera.setTransformMatrix(transformMatrix() * _getShiftMatrix(buildInfo));
-  camera.setProjectionMatrix(_shadowmapProjectionMatrix);
+  glm::mat4 shiftMatrix = _getShiftMatrix(buildInfo);
+
+  shadowmapCamera.setTransformMatrix(transformMatrix() * shiftMatrix);
+  shadowmapCamera.setProjectionMatrix(_shadowmapProjectionMatrix);
+
+  glm::mat4 lightToView = buildInfo.drawMatrices.localToViewMatrix;
+  glm::mat4 viewToLight = glm::inverse(lightToView);
+  glm::mat4 viewToField = transformMatrix() * viewToLight;
+  viewCamera.setTransformMatrix(viewToField);
+  viewCamera.setProjectionMatrix(buildInfo.drawMatrices.projectionMatrix);
 }
 
 glm::mat4 DirectLight::_getShiftMatrix(

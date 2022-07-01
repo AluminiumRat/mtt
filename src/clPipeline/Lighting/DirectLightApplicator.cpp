@@ -274,11 +274,13 @@ void DirectLightApplicator::buildDrawActions(DrawPlanBuildInfo& buildInfo)
   if(_light.shadowmapProvider() != nullptr)
   {
     CameraNode shadowmapCamera;
-    _light.updateShadowmapCamera(shadowmapCamera, buildInfo);
+    CameraNode viewCamera;
+    _light.updateCameras(shadowmapCamera, viewCamera, buildInfo);
 
     cascadeInfo = _light.shadowmapProvider()->getShadowMap(
-                                                          _light.cascadeSize(),
                                                           shadowmapCamera,
+                                                          viewCamera,
+                                                          _light.cascadeSize(),
                                                           buildInfo);
     if (cascadeInfo.size() == 0) return;
   }

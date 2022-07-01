@@ -17,13 +17,13 @@ CascadeShadowMapProvider::CascadeShadowMapProvider( size_t framePoolsNumber,
 }
 
 CascadeShadowMapProvider::Area CascadeShadowMapProvider::_getTopArea(
-                                    const CameraNode& topViewCamera,
-                                    DrawPlanBuildInfo& buildInfo) const noexcept
+                                    const CameraNode& shadowmapCamera,
+                                    const CameraNode& viewCamera) const noexcept
 {
-  glm::mat4& clipToView = buildInfo.drawMatrices.clipToViewMatrix;
-  glm::mat4 toLightView =
-                        glm::inverse(buildInfo.drawMatrices.localToViewMatrix);
-  glm::mat4 toLightClip = topViewCamera.projectionMatrix();
+  glm::mat4 clipToView = viewCamera.inverseProjectionMatrix();
+  glm::mat4 toLightView = shadowmapCamera.viewMatrix() *
+                                                  viewCamera.transformMatrix();
+  glm::mat4 toLightClip = shadowmapCamera.projectionMatrix();
   glm::mat4 pointsTransform = toLightClip * toLightView * clipToView;
 
   glm::vec4 frustumPoints[] = { pointsTransform * glm::vec4(-1, -1, 1, 1),
@@ -59,17 +59,16 @@ CascadeShadowMapProvider::Area CascadeShadowMapProvider::_getTopArea(
 }
 
 glm::vec2 CascadeShadowMapProvider::_getCascadeDirectionPoint(
-                                          const CameraNode& topViewCamera,
-                                          DrawPlanBuildInfo& buildInfo,
+                                          const CameraNode& shadowmapCamera,
+                                          const CameraNode& viewCamera,
                                           glm::vec2 startPoint) const noexcept
 {
-  glm::mat4 toLightView =
-                        glm::inverse(buildInfo.drawMatrices.localToViewMatrix);
-  glm::mat4 toLightClip = topViewCamera.projectionMatrix();
+  glm::mat4 toLightView = shadowmapCamera.viewMatrix() *
+                                                  viewCamera.transformMatrix();
+  glm::mat4 toLightClip = shadowmapCamera.projectionMatrix();
   glm::mat4 endPointTransform = toLightClip * toLightView;
-  glm::vec4 endPoint = endPointTransform *
-                        glm::vec4(buildInfo.currentViewInfo.viewPosition, 1.f);
-  glm::vec4 startPoint4d(startPoint, .5f, 1);
+  glm::vec4 endPoint = endPointTransform * glm::vec4(0.f, 0.f, 0.f, 1.f);
+  glm::vec4 startPoint4d(startPoint, .5f, 1.f);
   clipSegment(startPoint4d, endPoint);
   glm::vec2 directionPoint = endPoint / endPoint.w;
 
@@ -99,18 +98,21 @@ CascadeShadowMapProvider::Area CascadeShadowMapProvider::_alignArea(
 }
 
 CascadeShadowMapProvider::CascadeInfo
-        CascadeShadowMapProvider::getShadowMap( size_t cascadeSize,
-                                                const CameraNode& topViewCamera,
-                                                DrawPlanBuildInfo& buildInfo)
+                    CascadeShadowMapProvider::getShadowMap(
+                                              const CameraNode& shadowmapCamera,
+                                              const CameraNode& viewCamera,
+                                              size_t cascadeSize,
+                                              DrawPlanBuildInfo& buildInfo)
 {
   if(cascadeSize == 0) return CascadeInfo{};
 
-  CascadeShadowMapProvider::Area area = _getTopArea(topViewCamera, buildInfo);
+  CascadeShadowMapProvider::Area area =
+                                      _getTopArea(shadowmapCamera, viewCamera);
   if(area.size.x <= 0 || area.size.y <= 0) return CascadeInfo();
 
   glm::vec2 centralPoint = area.topleftCorner + area.size / 2.f;
-  glm::vec2 directionPoint = _getCascadeDirectionPoint( topViewCamera,
-                                                        buildInfo,
+  glm::vec2 directionPoint = _getCascadeDirectionPoint( shadowmapCamera,
+                                                        viewCamera,
                                                         centralPoint);
   glm::vec2 shift = directionPoint - centralPoint;
 
@@ -122,7 +124,7 @@ CascadeShadowMapProvider::CascadeInfo
     Area alignedArea = _alignArea(area);
 
     CameraNode renderCamera;
-    _setupRenderCamera(topViewCamera, renderCamera, alignedArea);
+    _setupRenderCamera(shadowmapCamera, renderCamera, alignedArea);
 
     ShadowMapInfo info{};
     info.map = &ShadowMapProvider::getShadowMap(renderCamera, buildInfo);

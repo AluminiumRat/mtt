@@ -108,6 +108,8 @@ float getShadowFactor$INDEX$( vec2 shadowCoords,
   int layer = getLayer$INDEX$(shadowCoords);
   if(layer == -1) return 1.f;
 
+  //return float(layer) / ($SHADOW_CASCADE_SIZE$ - 1);
+
   vec4 coordsCorrection = shadowCoordsCorrection$INDEX$.values[layer];
   vec2 centerCoords = shadowCoords * coordsCorrection.x + coordsCorrection.yz;
   shadowmapSlope /= coordsCorrection.x;

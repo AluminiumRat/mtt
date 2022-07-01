@@ -40,8 +40,9 @@ namespace mtt
                                       const CascadeShadowMapProvider&) = delete;
       virtual ~CascadeShadowMapProvider() noexcept = default;
 
-      CascadeInfo getShadowMap( size_t cascadeSize,
-                                const CameraNode& topViewCamera,
+      CascadeInfo getShadowMap( const CameraNode& shadowmapCamera,
+                                const CameraNode& viewCamera,
+                                size_t cascadeSize,
                                 DrawPlanBuildInfo& buildInfo);
 
     private:
@@ -53,15 +54,17 @@ namespace mtt
       };
 
     private:
-      void _setupRenderCamera(const CameraNode& topViewCamera,
+      void _setupRenderCamera(const CameraNode& shadowmapCamera,
                               CameraNode& renderCamera,
                               const Area& mapPart) const noexcept;
 
-      Area _getTopArea( const CameraNode& topViewCamera,
-                        DrawPlanBuildInfo& buildInfo) const noexcept;
-      glm::vec2 _getCascadeDirectionPoint(const CameraNode& topViewCamera,
-                                          DrawPlanBuildInfo& buildInfo,
+      Area _getTopArea( const CameraNode& shadowmapCamera,
+                        const CameraNode& viewCamera) const noexcept;
+
+      glm::vec2 _getCascadeDirectionPoint(const CameraNode& shadowmapCamera,
+                                          const CameraNode& viewCamera,
                                           glm::vec2 startPoint) const noexcept;
+
       Area _alignArea(const Area& source) const noexcept;
     };
   }

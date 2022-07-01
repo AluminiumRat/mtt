@@ -66,9 +66,9 @@ namespace mtt
       DirectLightData buildDrawData(
                             const DrawPlanBuildInfo& buildInfo) const noexcept;
       inline CascadeShadowMapProvider* shadowmapProvider() noexcept;
-      void updateShadowmapCamera(
-                            CameraNode& camera,
-                            const DrawPlanBuildInfo& buildInfo) const noexcept;
+      void updateCameras( CameraNode& shadowmapCamera,
+                          CameraNode& viewCamera,
+                          const DrawPlanBuildInfo& buildInfo) const noexcept;
       inline Sampler* shadowmapSampler() noexcept;
 
       /// Blur radius in UV coordinates, i.e. blur radius relative to light
