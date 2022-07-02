@@ -6,7 +6,7 @@ using namespace mtt;
 PointLightObject::PointLightObject( const QString& name,
                                     bool canBeRenamed,
                                     const UID theId) :
-  LightWithShadowsObject(name, canBeRenamed, theId)
+  FadingLightObject(name, canBeRenamed, theId)
 {
   UID cubemapId(id().mixedUID(15285932983551776433ull));
   std::unique_ptr<CubemapObject> filterCubemap(new CubemapObject( tr("Filter"),

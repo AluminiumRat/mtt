@@ -5,7 +5,7 @@ using namespace mtt;
 SpotLightObject::SpotLightObject( const QString& name,
                                   bool canBeRenamed,
                                   const UID theId) :
-  LightWithShadowsObject(name, canBeRenamed, theId),
+  FadingLightObject(name, canBeRenamed, theId),
   _angle(glm::pi<float>() / 4.f)
 {
 }

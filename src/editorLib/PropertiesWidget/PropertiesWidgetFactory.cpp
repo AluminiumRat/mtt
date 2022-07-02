@@ -13,6 +13,7 @@
 #include <mtt/editorLib/PropertiesWidget/CubemapWidget.h>
 #include <mtt/editorLib/PropertiesWidget/DirectLightWidget.h>
 #include <mtt/editorLib/PropertiesWidget/EnvironmentModelWidget.h>
+#include <mtt/editorLib/PropertiesWidget/FadingLightWidget.h>
 #include <mtt/editorLib/PropertiesWidget/LightWidget.h>
 #include <mtt/editorLib/PropertiesWidget/MovableObjectWidget.h>
 #include <mtt/editorLib/PropertiesWidget/PositionAnimatorWidget.h>
@@ -129,6 +130,13 @@ void PropertiesWidgetFactory::visitPositionAnimator(PositionAnimator& object)
                                                   *skeletonSelectArea(),
                                                   _commonEditData.undoStack()));
   }
+}
+
+void PropertiesWidgetFactory::visitFadingLightObject(FadingLightObject& object)
+{
+  CEVisitor::visitFadingLightObject(object);
+  _widgetsLayout.addWidget(
+                    new FadingLightWidget(object, _commonEditData.undoStack()));
 }
 
 void PropertiesWidgetFactory::visitLightObject(LightObject& object)

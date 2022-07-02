@@ -14,6 +14,7 @@
 #include <mtt/editorLib/Objects/EnvironmentModel.h>
 #include <mtt/editorLib/Objects/EnvironmentObject.h>
 #include <mtt/editorLib/Objects/EnvironmentRootObject.h>
+#include <mtt/editorLib/Objects/FadingLightObject.h>
 #include <mtt/editorLib/Objects/LightObject.h>
 #include <mtt/editorLib/Objects/LightWithShadowsObject.h>
 #include <mtt/editorLib/Objects/MovableObject.h>
@@ -93,6 +94,11 @@ namespace mtt
                                   const EnvironmentRootObject& object) override;
     inline virtual void visitEnvironmentRootObject(
                                         EnvironmentRootObject& object) override;
+
+    inline virtual void visitConstFadingLightObject(
+                                      const FadingLightObject& object) override;
+    inline virtual void visitFadingLightObject(
+                                            FadingLightObject& object) override;
 
     inline virtual void visitConstLightObject(
                                             const LightObject& object) override;
@@ -325,6 +331,20 @@ namespace mtt
   }
 
   template <typename BaseVisitor>
+  inline void CEVisitorT<BaseVisitor>::visitFadingLightObject(
+                                                      FadingLightObject& object)
+  {
+    visitLightWithShadowsObject(object);
+  }
+
+  template <typename BaseVisitor>
+  inline void CEVisitorT<BaseVisitor>::visitConstFadingLightObject(
+                                                const FadingLightObject& object)
+  {
+    visitConstLightWithShadowsObject(object);
+  }
+
+  template <typename BaseVisitor>
   inline void CEVisitorT<BaseVisitor>::visitLightObject(LightObject& object)
   {
     visitEnvironmentObject(object);
@@ -382,14 +402,14 @@ namespace mtt
   inline void CEVisitorT<BaseVisitor>::visitPointLightObject(
                                                       PointLightObject& object)
   {
-    visitLightWithShadowsObject(object);
+    visitFadingLightObject(object);
   }
 
   template <typename BaseVisitor>
   inline void CEVisitorT<BaseVisitor>::visitConstPointLightObject(
                                                 const PointLightObject& object)
   {
-    visitConstLightWithShadowsObject(object);
+    visitConstFadingLightObject(object);
   }
 
   template <typename BaseVisitor>
@@ -465,14 +485,14 @@ namespace mtt
   inline void CEVisitorT<BaseVisitor>::visitSpotLightObject(
                                                         SpotLightObject& object)
   {
-    visitLightWithShadowsObject(object);
+    visitFadingLightObject(object);
   }
 
   template <typename BaseVisitor>
   inline void CEVisitorT<BaseVisitor>::visitConstSpotLightObject(
                                                   const SpotLightObject& object)
   {
-    visitConstLightWithShadowsObject(object);
+    visitConstFadingLightObject(object);
   }
 
   template <typename BaseVisitor>

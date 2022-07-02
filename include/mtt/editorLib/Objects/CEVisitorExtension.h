@@ -16,6 +16,7 @@ namespace mtt
   class EnvironmentModel;
   class EnvironmentObject;
   class EnvironmentRootObject;
+  class FadingLightObject;
   class LightObject;
   class LightWithShadowsObject;
   class MovableObject;
@@ -73,6 +74,10 @@ namespace mtt
     virtual void visitConstEnvironmentRootObject(
                                       const EnvironmentRootObject& object) = 0;
     virtual void visitEnvironmentRootObject(EnvironmentRootObject& object) = 0;
+
+    virtual void visitConstFadingLightObject(
+                                          const FadingLightObject& object) = 0;
+    virtual void visitFadingLightObject(FadingLightObject& object) = 0;
 
     virtual void visitConstLightObject(const LightObject& object) = 0;
     virtual void visitLightObject(LightObject& object) = 0;

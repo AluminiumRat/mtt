@@ -1,18 +1,18 @@
 #pragma once
 
-#include <mtt/editorLib/Objects/LightWithShadowsObject.h>
+#include <mtt/editorLib/Objects/FadingLightObject.h>
 
 namespace mtt
 {
   class CubemapObject;
 
-  class PointLightObject : public LightWithShadowsObject
+  class PointLightObject : public FadingLightObject
   {
     Q_OBJECT
     DEFINE_EXTENSION_ACCEPT(CEVisitorExtension,
                             visitPointLightObject,
                             visitConstPointLightObject,
-                            LightWithShadowsObject)
+                            FadingLightObject)
   public:
     PointLightObject(const QString& name,
                     bool canBeRenamed,

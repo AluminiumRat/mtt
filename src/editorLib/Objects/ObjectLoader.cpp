@@ -152,6 +152,12 @@ void ObjectLoader::visitEnvironmentRootObject(EnvironmentRootObject& object)
                       objectFactory());
 }
 
+void ObjectLoader::visitFadingLightObject(FadingLightObject& object)
+{
+  CEVisitor::visitFadingLightObject(object);
+  object.setFadeType(FadingLightObject::FadeType(_stream->readUint8()));
+}
+
 void ObjectLoader::visitLightObject(LightObject& object)
 {
   CEVisitor::visitLightObject(object);

@@ -161,6 +161,12 @@ void ObjectSaver::visitConstEnvironmentRootObject(
                   objectFactory());
 }
 
+void ObjectSaver::visitConstFadingLightObject(const FadingLightObject& object)
+{
+  CEVisitor::visitConstFadingLightObject(object);
+  *_stream << (uint8_t)object.fadeType();
+}
+
 void ObjectSaver::visitConstLightObject(const mtt::LightObject& object)
 {
   CEVisitor::visitConstLightObject(object);

@@ -1,16 +1,16 @@
 #pragma once
 
-#include <mtt/editorLib/Objects/LightWithShadowsObject.h>
+#include <mtt/editorLib/Objects/FadingLightObject.h>
 
 namespace mtt
 {
-  class SpotLightObject : public LightWithShadowsObject
+  class SpotLightObject : public FadingLightObject
   {
     Q_OBJECT
     DEFINE_EXTENSION_ACCEPT(CEVisitorExtension,
                             visitSpotLightObject,
                             visitConstSpotLightObject,
-                            LightWithShadowsObject)
+                            FadingLightObject)
 
     Q_PROPERTY( float angle
                 READ angle

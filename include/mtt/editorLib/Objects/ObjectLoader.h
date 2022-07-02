@@ -53,6 +53,7 @@ namespace mtt
     virtual void visitEnvironmentModel(EnvironmentModel& object) override;
     virtual void visitEnvironmentRootObject(
                                         EnvironmentRootObject& object) override;
+    virtual void visitFadingLightObject(FadingLightObject& object) override;
     virtual void visitLightObject(LightObject& object) override;
     virtual void visitLightWithShadowsObject(
                                       LightWithShadowsObject& object) override;

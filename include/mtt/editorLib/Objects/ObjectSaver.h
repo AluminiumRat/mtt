@@ -50,6 +50,8 @@ namespace mtt
                                       const EnvironmentModel& object) override;
     virtual void visitConstEnvironmentRootObject(
                                   const EnvironmentRootObject& object) override;
+    virtual void visitConstFadingLightObject(
+                                      const FadingLightObject& object) override;
     virtual void visitConstLightObject(const LightObject& object) override;
     virtual void visitConstLightWithShadowsObject(
                                 const LightWithShadowsObject& object) override;
