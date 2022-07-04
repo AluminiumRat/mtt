@@ -20,6 +20,7 @@ AmbientLightObject::AmbientLightObject( const QString& name,
 
 void AmbientLightObject::setSaturationDistance(float newValue) noexcept
 {
+  newValue = glm::max(0.f, newValue);
   if(_saturationDistance == newValue) return;
   _saturationDistance = newValue;
   emit saturationDistanceChanged(_saturationDistance);

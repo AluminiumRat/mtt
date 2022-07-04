@@ -22,6 +22,7 @@ void LightObject::setEnabled(bool newValue) noexcept
 
 void LightObject::setDistance(float newValue) noexcept
 {
+  newValue = glm::max(0.f, newValue);
   if(_distance == newValue) return;
   _distance = newValue;
   emit distanceChanged(_distance);
@@ -36,6 +37,7 @@ void LightObject::setColor(const glm::vec3& newValue) noexcept
 
 void LightObject::setBaseIlluminance(float newValue) noexcept
 {
+  newValue = glm::max(0.f, newValue);
   if(_baseIlluminance == newValue) return;
   _baseIlluminance = newValue;
   emit baseIlluminanceChanged(_baseIlluminance);
