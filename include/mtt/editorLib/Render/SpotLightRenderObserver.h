@@ -25,6 +25,7 @@ namespace mtt
   private:
     void _updateIlluminance() noexcept;
     void _updateDistance() noexcept;
+    void _updateFade() noexcept;
     void _updateAngle() noexcept;
     void _updateConeMesh() noexcept;
     void _updateFilterImage() noexcept;

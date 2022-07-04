@@ -44,6 +44,7 @@ set(HEADERS
     "../../include/mtt/clPipeline/Lighting/DirectLightData.h"
     "../../include/mtt/clPipeline/Lighting/DirectLightAreaModificator.h"
     "../../include/mtt/clPipeline/Lighting/LightAreaModificator.h"
+    "../../include/mtt/clPipeline/Lighting/LightingFade.h"
     "../../include/mtt/clPipeline/Lighting/PointLight.h"
     "../../include/mtt/clPipeline/Lighting/PointLightApplicator.h"
     "../../include/mtt/clPipeline/Lighting/PointLightAreaModificator.h"

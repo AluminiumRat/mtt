@@ -47,6 +47,13 @@ SpotLightRenderObserver::SpotLightRenderObserver( SpotLightObject& object,
   _updateDistance();
 
   connect(&_lightObject,
+          &SpotLightObject::fadeTypeChanged,
+          this,
+          &SpotLightRenderObserver::_updateFade,
+          Qt::DirectConnection);
+  _updateFade();
+
+  connect(&_lightObject,
           &SpotLightObject::angleChanged,
           this,
           &SpotLightRenderObserver::_updateAngle,
@@ -91,6 +98,11 @@ void SpotLightRenderObserver::_updateDistance() noexcept
 {
   _light.setDistance(_lightObject.distance());
   _updateConeMesh();
+}
+
+void SpotLightRenderObserver::_updateFade() noexcept
+{
+  _light.setFadeType(_lightObject.fadeType());
 }
 
 void SpotLightRenderObserver::_updateAngle() noexcept

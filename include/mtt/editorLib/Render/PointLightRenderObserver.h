@@ -26,6 +26,7 @@ namespace mtt
   private:
     void _updateIlluminance() noexcept;
     void _updateDistance() noexcept;
+    void _updateFade() noexcept;
     void _updateSphereMesh() noexcept;
     void _updateShadowsEnabled() noexcept;
     void _updateShadowMapSize() noexcept;

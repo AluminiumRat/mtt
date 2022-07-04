@@ -76,6 +76,12 @@ void PointLightApplicator::DrawTechnique::_adjustPipeline()
                                                   _pipeline->device()));
 
   fragmentShader->newFragment().loadFromFile("clPipeline/materialLib.glsl");
+
+  ShaderModule::Fragment& fadeLibFragment = fragmentShader->newFragment();
+  fadeLibFragment.loadFromFile("clPipeline/lightingFadeLib.glsl");
+  fadeLibFragment.replace("$INDEX$", "");
+  fadeLibFragment.replace("$FADE_TYPE$", std::to_string(_light.fadeType()));
+
   if(_light.shadowmapProvider() != nullptr)
   {
     _pipeline->setDefine("SHADOW_MAP_ENABLED");

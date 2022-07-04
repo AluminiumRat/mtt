@@ -1,5 +1,6 @@
 #pragma once
 
+#include <mtt/clPipeline/Lighting/LightingFade.h>
 #include <mtt/editorLib/Objects/LightWithShadowsObject.h>
 
 namespace mtt
@@ -12,16 +13,9 @@ namespace mtt
                             visitConstFadingLightObject,
                             LightWithShadowsObject)
   public:
-    enum FadeType
-    {
-      NO_FADE = 0,
-      LINEAR_FADE = 1,
-      INVERSE_LINEAR_FADE = 2,
-      IVERSE_SQUARE_FADE = 3
-    };
-    const static std::map<FadeType, QString> fadeTypeNames;
+    const static std::map<clPipeline::LightingFade, QString> fadeTypeNames;
 
-    Q_PROPERTY(FadeType fadeType
+    Q_PROPERTY( clPipeline::LightingFade fadeType
                 READ fadeType
                 WRITE setFadeType
                 RESET resetFadeType
@@ -39,18 +33,18 @@ namespace mtt
     FadingLightObject& operator = (const FadingLightObject&) = delete;
     virtual ~FadingLightObject() noexcept = default;
 
-    inline FadeType fadeType() const noexcept;
-    void setFadeType(FadeType newValue) noexcept;
+    inline clPipeline::LightingFade fadeType() const noexcept;
+    void setFadeType(clPipeline::LightingFade newValue) noexcept;
     inline void resetFadeType() noexcept;
 
   signals:
-    void fadeTypeChanged(FadeType newValue);
+    void fadeTypeChanged(clPipeline::LightingFade newValue);
 
   private:
-    FadeType _fadeType;
+    clPipeline::LightingFade _fadeType;
   };
 
-  inline FadingLightObject::FadeType
+  inline clPipeline::LightingFade
                                     FadingLightObject::fadeType() const noexcept
   {
     return _fadeType;
@@ -58,6 +52,6 @@ namespace mtt
 
   inline void FadingLightObject::resetFadeType() noexcept
   {
-    setFadeType(NO_FADE);
+    setFadeType(clPipeline::NO_FADE);
   }
 }

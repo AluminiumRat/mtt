@@ -69,6 +69,8 @@ void main()
     luminance *= texture(filterSampler, cubeCoord).rgb;
   #endif
 
+  luminance *= fade(toLightDistance, lightData.distance);
+
   #ifdef SHADOW_MAP_ENABLED
     vec3 tangent = normalize(cross(cubeCoord, cubeCoord.zxy));
     vec3 cotangent = normalize(cross(cubeCoord, tangent));

@@ -5,6 +5,7 @@
 
 #include <glm/vec2.hpp>
 
+#include <mtt/clPipeline/Lighting/LightingFade.h>
 #include <mtt/clPipeline/Lighting/SpotLightApplicator.h>
 #include <mtt/clPipeline/Lighting/SpotLightAreaModificator.h>
 #include <mtt/clPipeline/Lighting/SpotLightData.h>
@@ -37,6 +38,9 @@ namespace mtt
 
       inline float distance() const noexcept;
       inline void setDistance(float newValue) noexcept;
+
+      inline LightingFade fadeType() const noexcept;
+      inline void setFadeType(LightingFade newValue) noexcept;
 
       inline float angle() const noexcept;
       inline void setAngle(float newValue);
@@ -91,6 +95,7 @@ namespace mtt
 
       glm::vec3 _illuminance;
       float _distance;
+      LightingFade _fadeType;
       float _angle;
       float _blurAngle;
 
@@ -123,6 +128,18 @@ namespace mtt
       _distance = newValue;
       _updateShadowmapCamera();
       _updateBound();
+    }
+
+    inline LightingFade SpotLight::fadeType() const noexcept
+    {
+      return _fadeType;
+    }
+
+    inline void SpotLight::setFadeType(LightingFade newValue) noexcept
+    {
+      if(_fadeType == newValue) return;
+      _fadeType = newValue;
+      _resetPipelines();
     }
 
     inline float SpotLight::angle() const noexcept

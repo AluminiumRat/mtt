@@ -46,6 +46,13 @@ PointLightRenderObserver::PointLightRenderObserver( PointLightObject& object,
   _updateDistance();
 
   connect(&_lightObject,
+          &PointLightObject::fadeTypeChanged,
+          this,
+          &PointLightRenderObserver::_updateFade,
+          Qt::DirectConnection);
+  _updateFade();
+
+  connect(&_lightObject,
           &PointLightObject::shadowsEnabledChanged,
           this,
           &PointLightRenderObserver::_updateShadowsEnabled,
@@ -82,6 +89,11 @@ void PointLightRenderObserver::_updateDistance() noexcept
 {
   _light.setDistance(_lightObject.distance());
   _updateSphereMesh();
+}
+
+void PointLightRenderObserver::_updateFade() noexcept
+{
+  _light.setFadeType(_lightObject.fadeType());
 }
 
 void PointLightRenderObserver::_updateSphereMesh() noexcept

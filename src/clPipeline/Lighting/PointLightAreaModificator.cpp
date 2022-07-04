@@ -87,6 +87,11 @@ void PointLightAreaModificator::adjustPipeline(
   {
     std::string indexStr = std::to_string(modificatorIndex);
 
+    ShaderModule::Fragment& fadeLibFragment = targetShader.newFragment();
+    fadeLibFragment.loadFromFile("clPipeline/lightingFadeLib.glsl");
+    fadeLibFragment.replace("$INDEX$", indexStr);
+    fadeLibFragment.replace("$FADE_TYPE$", std::to_string(_light.fadeType()));
+
     if (_light.shadowmapProvider() != nullptr)
     {
       ShaderModule::Fragment& shadowLibFragment = targetShader.newFragment();

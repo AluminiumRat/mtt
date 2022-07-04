@@ -29,8 +29,8 @@ namespace mtt
     std::unique_ptr<Ui::FadingLightWidget> _ui;
 
     using FadeTypeConnection = mtt::EnumComboConnection<
-                                                  FadingLightObject,
-                                                  FadingLightObject::FadeType>;
+                                                      FadingLightObject,
+                                                      clPipeline::LightingFade>;
     std::optional<FadeTypeConnection> _fadeTypeConnection;
   };
 }

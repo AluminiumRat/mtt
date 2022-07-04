@@ -14,6 +14,7 @@ SpotLight::SpotLight( bool forwardLightingEnabled,
   _shadowmapField(nullptr),
   _illuminance(1.f),
   _distance(50.f),
+  _fadeType(INVERSE_LINEAR_FADE),
   _angle(glm::pi<float>() / 4),
   _blurAngle(0.f)
 {

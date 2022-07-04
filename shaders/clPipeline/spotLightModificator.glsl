@@ -45,6 +45,8 @@ void $APPLY_FUNCTION$()
     illuminance *= texture(filterSampler$INDEX$, textureCoord).rgb;
   #endif
 
+  illuminance *= fade$INDEX$(toLightDistance, lightData$INDEX$.distance);
+
   #if $SHADOW_MAP_ENABLED$
     float slopeFactor = min(1.f / lightDotNorm, 10.f);
     float shadowmapSlope =

@@ -72,6 +72,8 @@ void main()
     luminance *= texture(filterSampler, textureCoord).rgb;
   #endif
 
+  luminance *= fade(toLightDistance, lightData.distance);
+
   #ifdef SHADOW_MAP_ENABLED
     float lightDotNorm = abs(dot(lightInverseDirection, normal));
     float slopeFactor = min(1.f / lightDotNorm, 20.f);

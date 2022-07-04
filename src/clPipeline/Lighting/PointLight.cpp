@@ -19,6 +19,7 @@ PointLight::PointLight( bool forwardLightingEnabled,
   _shadowmapField(nullptr),
   _illuminance(1.f),
   _distance(50.f),
+  _fadeType(INVERSE_LINEAR_FADE),
   _blurAngle(0.f)
 {
   addChildProtected(_shadowmapFrontCamera);

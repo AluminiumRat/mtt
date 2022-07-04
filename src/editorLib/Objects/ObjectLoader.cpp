@@ -155,7 +155,7 @@ void ObjectLoader::visitEnvironmentRootObject(EnvironmentRootObject& object)
 void ObjectLoader::visitFadingLightObject(FadingLightObject& object)
 {
   CEVisitor::visitFadingLightObject(object);
-  object.setFadeType(FadingLightObject::FadeType(_stream->readUint8()));
+  object.setFadeType(clPipeline::LightingFade(_stream->readUint8()));
 }
 
 void ObjectLoader::visitLightObject(LightObject& object)

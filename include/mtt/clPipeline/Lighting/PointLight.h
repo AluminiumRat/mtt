@@ -4,6 +4,7 @@
 #include <optional>
 
 #include <mtt/clPipeline/Lighting/CubeShadowmapProvider.h>
+#include <mtt/clPipeline/Lighting/LightingFade.h>
 #include <mtt/clPipeline/Lighting/PointLightApplicator.h>
 #include <mtt/clPipeline/Lighting/PointLightAreaModificator.h>
 #include <mtt/clPipeline/Lighting/PointLightData.h>
@@ -36,6 +37,9 @@ namespace mtt
 
       inline float distance() const noexcept;
       inline void setDistance(float newValue) noexcept;
+
+      inline LightingFade fadeType() const noexcept;
+      inline void setFadeType(LightingFade newValue) noexcept;
 
       inline CubeTexture* filterTexture() const noexcept;
       /// You can set nullptr to remove filter texture
@@ -92,6 +96,7 @@ namespace mtt
 
       glm::vec3 _illuminance;
       float _distance;
+      LightingFade _fadeType;
       float _blurAngle;
 
       std::optional<Sampler> _filterSampler;
@@ -123,6 +128,18 @@ namespace mtt
       _distance = newValue;
       _updateShadowmapCamera();
       _updateBound();
+    }
+
+    inline LightingFade PointLight::fadeType() const noexcept
+    {
+      return _fadeType;
+    }
+
+    inline void PointLight::setFadeType(LightingFade newValue) noexcept
+    {
+      if(_fadeType == newValue) return;
+      _fadeType = newValue;
+      _resetPipelines();
     }
 
     inline CubeTexture* PointLight::filterTexture() const noexcept
