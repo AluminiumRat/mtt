@@ -123,5 +123,5 @@ float getShadowFactor$INDEX$( vec2 shadowCoords,
                                                   layer,
                                                   centerCoords,
                                                   normalizedDistanceToLight);
-  return min(opaqueFactor, transparentFactor);
+  return opaqueFactor * transparentFactor;
 }

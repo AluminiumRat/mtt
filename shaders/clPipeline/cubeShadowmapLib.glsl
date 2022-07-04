@@ -79,5 +79,5 @@ float getShadowFactor$INDEX$( vec3 cubeCoord,
   float transparentFactor = getTransparentShadowFactor$INDEX$(
                                                     cubeCoord,
                                                     normalizedDistanceToLight);
-  return min(opaqueFactor, transparentFactor);
+  return opaqueFactor * transparentFactor;
 }
