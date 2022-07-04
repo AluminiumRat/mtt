@@ -182,6 +182,7 @@ namespace mtt
     {
       if(_shadowmapExtent == newValue) return;
       _shadowmapExtent = newValue;
+      _updateShadowmapCamera();
       _updateShadowmapProvider();
       if (_shadowMapProvider != nullptr)
       {
@@ -221,6 +222,7 @@ namespace mtt
     {
       newValue = glm::clamp(newValue, 0.f, glm::pi<float>() / 10.f);
       _blurAngle = newValue;
+      _updateShadowmapCamera();
     }
 
     inline Sphere SpotLight::getBoundSphere() const noexcept

@@ -16,6 +16,7 @@ layout( set = volatileSet,
   mat4 clipToView;
   mat4 viewToLocal;
   float blurRadius;
+  mat4 localToShadowCoords;
 } lightData$INDEX$;
 
 void $APPLY_FUNCTION$()
@@ -40,23 +41,25 @@ void $APPLY_FUNCTION$()
   #endif
 
   vec3 illuminance = lightData$INDEX$.illuminance;
-  vec2 textureCoord = vec2(localCoord.x, -localCoord.y);
-  textureCoord /= 2.f * areaHalfsize;
-  textureCoord += vec2(.5f, .5f);
 
   #if $FILTER_SAMPLER_ENABLED$
+    vec2 textureCoord = vec2(localCoord.x, -localCoord.y);
+    textureCoord /= 2.f * areaHalfsize;
+    textureCoord += vec2(.5f, .5f);
     illuminance *= texture(filterSampler$INDEX$, textureCoord).rgb;
   #endif
 
   illuminance *= fade$INDEX$(toLightDistance, lightData$INDEX$.distance);
 
   #if $SHADOW_MAP_ENABLED$
+    vec4 shadowCoords = lightData$INDEX$.localToShadowCoords * localCoord;
+
     float slopeFactor = min(1.f / lightDotNorm, 10.f);
     float shadowmapSlope =
                   2.f * areaHalfsize * slopeFactor / lightData$INDEX$.distance;
 
     illuminance *= getShadowFactor$INDEX$(
-                                      textureCoord,
+                                      shadowCoords.xy / shadowCoords.w,
                                       -localCoord.z / lightData$INDEX$.distance,
                                       shadowmapSlope,
                                       lightData$INDEX$.blurRadius);

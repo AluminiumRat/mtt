@@ -1,3 +1,5 @@
+#include <glm/gtx/transform.hpp>
+
 #include <mtt/clPipeline/Lighting/SpotLight.h>
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
 #include <mtt/utilities/Abort.h>
@@ -62,7 +64,12 @@ void SpotLight::setFilterTexture(std::shared_ptr<Texture2D> newTexture)
 
 void SpotLight::_updateShadowmapCamera() noexcept
 {
-  _shadowmapCamera.setPerspectiveProjection(angle(),
+  float shadowmapAngle = _angle + _blurAngle / 2.f;
+  if (_shadowmapExtent != 0)
+  {
+    shadowmapAngle += _angle / _shadowmapExtent;
+  }
+  _shadowmapCamera.setPerspectiveProjection(shadowmapAngle,
                                             1,
                                             distance() / 100.f,
                                             distance());
@@ -155,6 +162,10 @@ SpotLightData SpotLight::buildDrawData(
     drawData.blurRadius += .5f / shadowmapExtent();
   }
   else drawData.blurRadius = 0.f;
+
+  drawData.localToShadowCoords = glm::translate(glm::vec3(.5f, .5f, 0.f)) *
+                                          glm::scale(glm::vec3(.5f, .5f, 1.f)) *
+                                          _shadowmapCamera.projectionMatrix();
 
   return drawData;
 }

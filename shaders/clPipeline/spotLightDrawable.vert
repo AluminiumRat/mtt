@@ -48,6 +48,7 @@ layout(location = 0) out noperspective vec2 outClipCoord;
     mat4 clipToView;
     mat4 viewToLocal;
     float blurRadius;
+    mat4 localToShadowCoords;
   } lightData;
 
   layout(binding = drawMatricesBinding, set = volatileSet) uniform DrawMatrices

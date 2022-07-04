@@ -25,6 +25,7 @@ layout(set = volatileSet, binding = lightDataBinding) uniform LightData
   mat4 clipToView;
   mat4 viewToLocal;
   float blurRadius;
+  mat4 localToShadowCoords;
 } lightData;
 
 layout(location = 0) out vec4 outColor;
@@ -67,23 +68,25 @@ void main()
                                 lightInverseDirection,
                                 lightData.illuminance);
 
-  vec2 textureCoord = vec2(localCoord.x, -localCoord.y);
-  textureCoord /= 2.f * areaHalfsize;
-  textureCoord += vec2(.5f, .5f);
-
   #ifdef FILTER_SAMPLER_ENABLED
+    vec2 textureCoord = vec2(localCoord.x, -localCoord.y);
+    textureCoord /= 2.f * areaHalfsize;
+    textureCoord += vec2(.5f, .5f);
+
     luminance *= texture(filterSampler, textureCoord).rgb;
   #endif
 
   luminance *= fade(toLightDistance, lightData.distance);
 
   #ifdef SHADOW_MAP_ENABLED
+    vec4 shadowCoords = lightData.localToShadowCoords * localCoord;
+
     float lightDotNorm = abs(dot(lightInverseDirection, normal));
     float slopeFactor = min(1.f / lightDotNorm, 20.f);
     float shadowmapSlope =
                           2.f * areaHalfsize * slopeFactor / lightData.distance;
 
-    luminance *= getShadowFactor( textureCoord,
+    luminance *= getShadowFactor( shadowCoords.xy / shadowCoords.w,
                                   -localCoord.z / lightData.distance,
                                   shadowmapSlope,
                                   lightData.blurRadius);
