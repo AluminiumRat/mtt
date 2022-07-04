@@ -17,7 +17,6 @@ class MaterialObject : public mtt::Object
   Q_PROPERTY( glm::vec3 albedo
               READ albedo
               WRITE setAlbedo
-              RESET resetAlbedo
               NOTIFY albedoChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -27,7 +26,6 @@ class MaterialObject : public mtt::Object
   Q_PROPERTY( float roughness
               READ roughness
               WRITE setRoughness
-              RESET resetRoughness
               NOTIFY roughnessChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -37,7 +35,6 @@ class MaterialObject : public mtt::Object
   Q_PROPERTY( float specularStrength
               READ specularStrength
               WRITE setSpecularStrength
-              RESET resetSpecularStrength
               NOTIFY specularStrengthChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -47,7 +44,6 @@ class MaterialObject : public mtt::Object
   Q_PROPERTY( float metallic
               READ metallic
               WRITE setMetallic
-              RESET resetMetallic
               NOTIFY metallicChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -57,7 +53,6 @@ class MaterialObject : public mtt::Object
   Q_PROPERTY( float opaqueFactor
               READ opaqueFactor
               WRITE setOpaqueFactor
-              RESET resetOpaqueFactor
               NOTIFY opaqueFactorChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -67,7 +62,6 @@ class MaterialObject : public mtt::Object
   Q_PROPERTY( float reflectionFactor
               READ reflectionFactor
               WRITE setReflectionFactor
-              RESET resetReflectionFactor
               NOTIFY reflectionFactorChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -77,7 +71,6 @@ class MaterialObject : public mtt::Object
   Q_PROPERTY( glm::vec3 emissionColor
               READ emissionColor
               WRITE setEmissionColor
-              RESET resetEmissionColor
               NOTIFY emissionColorChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -87,7 +80,6 @@ class MaterialObject : public mtt::Object
   Q_PROPERTY( float emissionFactor
               READ emissionFactor
               WRITE setEmissionFactor
-              RESET resetEmissionFactor
               NOTIFY emissionFactorChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -97,7 +89,6 @@ class MaterialObject : public mtt::Object
   Q_PROPERTY( QString albedoTexture
               READ albedoTexture
               WRITE setAlbedoTexture
-              RESET resetAlbedoTexture
               NOTIFY albedoTextureChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -107,7 +98,6 @@ class MaterialObject : public mtt::Object
   Q_PROPERTY( bool useAlphaFromAlbedoTexture
               READ useAlphaFromAlbedoTexture
               WRITE setUseAlphaFromAlbedoTexture
-              RESET resetUseAlphaFromAlbedoTexture
               NOTIFY useAlphaFromAlbedoTextureChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -117,7 +107,6 @@ class MaterialObject : public mtt::Object
   Q_PROPERTY( QString opaqueTexture
               READ opaqueTexture
               WRITE setOpaqueTexture
-              RESET resetOpaqueTexture
               NOTIFY opaqueTextureChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -127,7 +116,6 @@ class MaterialObject : public mtt::Object
   Q_PROPERTY( QString specularTexture
               READ specularTexture
               WRITE setSpecularTexture
-              RESET resetSpecularTexture
               NOTIFY specularTextureChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -137,7 +125,6 @@ class MaterialObject : public mtt::Object
   Q_PROPERTY( QString normalTexture
               READ normalTexture
               WRITE setNormalTexture
-              RESET resetNormalTexture
               NOTIFY normalTextureChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -147,7 +134,6 @@ class MaterialObject : public mtt::Object
   Q_PROPERTY( QString emissionTexture
               READ emissionTexture
               WRITE setEmissionTexture
-              RESET resetEmissionTexture
               NOTIFY emissionTextureChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -157,7 +143,6 @@ class MaterialObject : public mtt::Object
   Q_PROPERTY( QString reflectionTexture
               READ reflectionTexture
               WRITE setReflectionTexture
-              RESET resetReflectionTexture
               NOTIFY reflectionTextureChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -176,63 +161,48 @@ public:
 
   inline const glm::vec3& albedo() const noexcept;
   void setAlbedo(const glm::vec3& newValue) noexcept;
-  inline void resetAlbedo() noexcept;
 
   inline float roughness() const noexcept;
   void setRoughness(float newValue) noexcept;
-  inline void resetRoughness() noexcept;
 
   inline float specularStrength() const noexcept;
   void setSpecularStrength(float newValue) noexcept;
-  inline void resetSpecularStrength() noexcept;
 
   inline float metallic() const noexcept;
   void setMetallic(float newValue) noexcept;
-  inline void resetMetallic() noexcept;
 
   inline float opaqueFactor() const noexcept;
   void setOpaqueFactor(float newValue) noexcept;
-  inline void resetOpaqueFactor() noexcept;
 
   inline float reflectionFactor() const noexcept;
   void setReflectionFactor(float newValue) noexcept;
-  inline void resetReflectionFactor() noexcept;
 
   inline const glm::vec3& emissionColor() const noexcept;
   void setEmissionColor(const glm::vec3& newValue) noexcept;
-  inline void resetEmissionColor() noexcept;
 
   inline float emissionFactor() const noexcept;
   void setEmissionFactor(float newValue) noexcept;
-  inline void resetEmissionFactor() noexcept;
 
   inline const QString& albedoTexture() const noexcept;
   void setAlbedoTexture(const QString& newValue) noexcept;
-  inline void resetAlbedoTexture() noexcept;
   
   inline bool useAlphaFromAlbedoTexture() const noexcept;
   void setUseAlphaFromAlbedoTexture(bool newValue) noexcept;
-  inline void resetUseAlphaFromAlbedoTexture() noexcept;
 
   inline const QString& opaqueTexture() const noexcept;
   void setOpaqueTexture(const QString & newValue) noexcept;
-  inline void resetOpaqueTexture() noexcept;
 
   inline const QString& specularTexture() const noexcept;
   void setSpecularTexture(const QString& newValue) noexcept;
-  inline void resetSpecularTexture() noexcept;
-  
+
   inline const QString& normalTexture() const noexcept;
   void setNormalTexture(const QString& newValue) noexcept;
-  inline void resetNormalTexture() noexcept;
 
   inline const QString& emissionTexture() const noexcept;
   void setEmissionTexture(const QString& newValue) noexcept;
-  inline void resetEmissionTexture() noexcept;
-  
+
   inline const QString& reflectionTexture() const noexcept;
   void setReflectionTexture(const QString& newValue) noexcept;
-  inline void resetReflectionTexture() noexcept;
 
 signals:
   void materialDataChanged(const mtt::SurfaceMaterialData& newData);
@@ -312,46 +282,6 @@ inline float MaterialObject::emissionFactor() const noexcept
   return _emissionFactor;
 }
 
-inline void MaterialObject::resetAlbedo() noexcept
-{
-  setAlbedo(glm::vec3(1));
-}
-
-inline void MaterialObject::resetRoughness() noexcept
-{
-  setRoughness(1);
-}
-
-inline void MaterialObject::resetSpecularStrength() noexcept
-{
-  setSpecularStrength(1);
-}
-
-inline void MaterialObject::resetMetallic() noexcept
-{
-  setMetallic(0);
-}
-
-inline void MaterialObject::resetOpaqueFactor() noexcept
-{
-  setOpaqueFactor(1);
-}
-
-inline void MaterialObject::resetReflectionFactor() noexcept
-{
-  setReflectionFactor(0);
-}
-
-inline void MaterialObject::resetEmissionColor() noexcept
-{
-  setEmissionColor(glm::vec3(1));
-}
-
-inline void MaterialObject::resetEmissionFactor() noexcept
-{
-  setEmissionFactor(0);
-}
-
 inline const QString& MaterialObject::albedoTexture() const noexcept
 {
   return _albedoTexture;
@@ -365,11 +295,6 @@ inline bool MaterialObject::useAlphaFromAlbedoTexture() const noexcept
 inline const QString& MaterialObject::opaqueTexture() const noexcept
 {
   return _opaqueTexture;
-}
-
-inline void MaterialObject::resetUseAlphaFromAlbedoTexture() noexcept
-{
-  setUseAlphaFromAlbedoTexture(false);
 }
 
 inline const QString& MaterialObject::specularTexture() const noexcept
@@ -390,34 +315,4 @@ inline const QString& MaterialObject::emissionTexture() const noexcept
 inline const QString& MaterialObject::reflectionTexture() const noexcept
 {
   return _reflectionTexture;
-}
-
-inline void MaterialObject::resetAlbedoTexture() noexcept
-{
-  setAlbedoTexture("");
-}
-
-inline void MaterialObject::resetOpaqueTexture() noexcept
-{
-  setOpaqueTexture("");
-}
-
-inline void MaterialObject::resetSpecularTexture() noexcept
-{
-  setSpecularTexture("");
-}
-
-inline void MaterialObject::resetNormalTexture() noexcept
-{
-  setNormalTexture("");
-}
-
-inline void MaterialObject::resetEmissionTexture() noexcept
-{
-  setEmissionTexture("");
-}
-
-inline void MaterialObject::resetReflectionTexture() noexcept
-{
-  setReflectionTexture("");
 }

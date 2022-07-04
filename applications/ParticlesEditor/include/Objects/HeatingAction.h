@@ -15,7 +15,6 @@ class HeatingAction : public AnimationAction
   Q_PROPERTY( uint emittedEnergy
               READ emittedEnergy
               WRITE setEmittedEnergy
-              RESET resetEmittedEnergy
               NOTIFY emittedEnergyChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -32,7 +31,6 @@ public:
 
   inline float emittedEnergy() const noexcept;
   void setEmittedEnergy(float newValue) noexcept;
-  inline void resetEmittedEnergy() noexcept;
 
   inline mtt::ObjectRef<HeaterObject>& heaterRef() noexcept;
   inline const mtt::ObjectRef<HeaterObject>& heaterRef() const noexcept;
@@ -57,11 +55,6 @@ private:
 inline float HeatingAction::emittedEnergy() const noexcept
 {
   return _emittedEnergy;
-}
-
-inline void HeatingAction::resetEmittedEnergy() noexcept
-{
-  setEmittedEnergy(0.f);
 }
 
 inline mtt::ObjectRef<HeaterObject>& HeatingAction::heaterRef() noexcept

@@ -14,7 +14,6 @@ class GravityModificator : public ModificatorObject
   Q_PROPERTY( float acceleration
               READ acceleration
               WRITE setAcceleration
-              RESET resetAcceleration
               NOTIFY accelerationChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -31,7 +30,6 @@ public:
 
   inline float acceleration() const noexcept;
   void setAcceleration(float newValue) noexcept;
-  inline void resetAcceleration() noexcept;
 
   virtual void simulationStep(mtt::TimeRange time) override;
 
@@ -45,9 +43,4 @@ private:
 inline float GravityModificator::acceleration() const noexcept
 {
   return _acceleration;
-}
-
-inline void GravityModificator::resetAcceleration() noexcept
-{
-  setAcceleration(9.8f);
 }

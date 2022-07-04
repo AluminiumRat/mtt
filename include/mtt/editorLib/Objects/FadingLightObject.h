@@ -18,7 +18,6 @@ namespace mtt
     Q_PROPERTY( clPipeline::LightingFade fadeType
                 READ fadeType
                 WRITE setFadeType
-                RESET resetFadeType
                 NOTIFY fadeTypeChanged
                 DESIGNABLE true
                 SCRIPTABLE true
@@ -35,7 +34,6 @@ namespace mtt
 
     inline clPipeline::LightingFade fadeType() const noexcept;
     void setFadeType(clPipeline::LightingFade newValue) noexcept;
-    inline void resetFadeType() noexcept;
 
   signals:
     void fadeTypeChanged(clPipeline::LightingFade newValue);
@@ -48,10 +46,5 @@ namespace mtt
                                     FadingLightObject::fadeType() const noexcept
   {
     return _fadeType;
-  }
-
-  inline void FadingLightObject::resetFadeType() noexcept
-  {
-    setFadeType(clPipeline::NO_FADE);
   }
 }

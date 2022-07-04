@@ -17,7 +17,6 @@ namespace mtt
     Q_PROPERTY( glm::quat rotation
                 READ rotation
                 WRITE setRotation
-                RESET resetRotation
                 NOTIFY rotationChanged
                 DESIGNABLE true
                 SCRIPTABLE true
@@ -33,7 +32,6 @@ namespace mtt
 
     inline const glm::quat& rotation() const noexcept;
     virtual void setRotation(const glm::quat& newValue) noexcept;
-    inline void resetRotation() noexcept;
 
   signals:
     void rotationChanged(const glm::quat& newValue);
@@ -48,10 +46,5 @@ namespace mtt
   inline const glm::quat& RotatableObject::rotation() const noexcept
   {
     return _rotation;
-  }
-
-  inline void RotatableObject::resetRotation() noexcept
-  {
-    setRotation(glm::quat());
   }
 }

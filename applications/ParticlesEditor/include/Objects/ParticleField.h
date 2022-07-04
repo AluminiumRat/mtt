@@ -62,7 +62,6 @@ public:
   Q_PROPERTY( glm::vec3 size
               READ size
               WRITE setSize
-              RESET resetSize
               NOTIFY sizeChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -72,7 +71,6 @@ public:
   Q_PROPERTY( ParticleTextureDescriptions textureDescriptions
               READ textureDescriptions
               WRITE setTextureDescriptions
-              RESET resetTextureDescriptions
               NOTIFY textureDescriptionsChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -82,7 +80,6 @@ public:
   Q_PROPERTY( float lodMppx
               READ lodMppx
               WRITE setLodMppx
-              RESET resetLodMppx
               NOTIFY lodMppxChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -92,7 +89,6 @@ public:
   Q_PROPERTY( float lodSmoothing
               READ lodSmoothing
               WRITE setLodSmoothing
-              RESET resetLodSmoothing
               NOTIFY lodSmoothingChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -102,7 +98,6 @@ public:
   Q_PROPERTY( LightingType lightingType
               READ lightingType
               WRITE setLightingType
-              RESET resetLightingType
               NOTIFY lightingTypeChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -119,7 +114,6 @@ public:
 
   inline const glm::vec3& size() const noexcept;
   void setSize(const glm::vec3& newValue);
-  inline void resetSize();
 
   inline const std::vector<ParticleIndex>& workIndices() const noexcept;
   inline const std::vector<ParticleData>& particlesData() const noexcept;
@@ -138,19 +132,15 @@ public:
                                           textureDescriptions() const noexcept;
   void setTextureDescriptions(
                             const ParticleTextureDescriptions& newDescriptions);
-  inline void resetTextureDescriptions();
 
   inline float lodMppx() const noexcept;
   void setLodMppx(float newValue) noexcept;
-  inline void resetLodMppx() noexcept;
 
   inline float lodSmoothing() const noexcept;
   void setLodSmoothing(float newValue) noexcept;
-  inline void resetLodSmoothing() noexcept;
 
   inline LightingType lightingType() const noexcept;
   void setLightingType(LightingType newValue) noexcept;
-  inline void resetLightingType() noexcept;
 
   inline FluidObject& fluid() noexcept;
   inline const FluidObject& fluid() const noexcept;
@@ -216,20 +206,10 @@ inline const glm::vec3& ParticleField::size() const noexcept
   return _size;
 }
 
-inline void ParticleField::resetSize()
-{
-  setSize(glm::vec3(10.f, 10.f, 10.f));
-}
-
 inline const ParticleTextureDescriptions&
                             ParticleField::textureDescriptions() const noexcept
 {
   return _textureDescriptions;
-}
-
-inline void ParticleField::resetTextureDescriptions()
-{
-  setTextureDescriptions(ParticleTextureDescriptions());
 }
 
 inline float ParticleField::lodMppx() const noexcept
@@ -237,29 +217,14 @@ inline float ParticleField::lodMppx() const noexcept
   return _lodMppx;
 }
 
-inline void ParticleField::resetLodMppx() noexcept
-{
-  setLodMppx(.005f);
-}
-
 inline float ParticleField::lodSmoothing() const noexcept
 {
   return _lodSmoothing;
 }
 
-inline void ParticleField::resetLodSmoothing() noexcept
-{
-  setLodSmoothing(1.f);
-}
-
 inline ParticleField::LightingType ParticleField::lightingType() const noexcept
 {
   return _lightingType;
-}
-
-inline void ParticleField::resetLightingType() noexcept
-{
-  setLightingType(PER_PIXEL_LIGHTING);
 }
 
 inline FluidObject& ParticleField::fluid() noexcept

@@ -25,7 +25,6 @@ public:
   Q_PROPERTY( Shape shape
               READ shape
               WRITE setShape
-              RESET resetShape
               NOTIFY shapeChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -35,7 +34,6 @@ public:
   Q_PROPERTY( float size
               READ size
               WRITE setSize
-              RESET resetSize
               NOTIFY sizeChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -52,11 +50,9 @@ public:
 
   inline Shape shape() const noexcept;
   void setShape(Shape newValue) noexcept;
-  inline void resetShape() noexcept;
 
   inline float size() const noexcept;
   void setSize(float newValue) noexcept;
-  inline void resetSize() noexcept;
 
   bool isPointInside(const glm::vec3& point) noexcept;
 
@@ -85,17 +81,7 @@ inline BlockerObject::Shape BlockerObject::shape() const noexcept
   return _shape;
 }
 
-inline void BlockerObject::resetShape() noexcept
-{
-  setShape(SPHERE_SHAPE);
-}
-
 inline float BlockerObject::size() const noexcept
 {
   return _size;
-}
-
-inline void BlockerObject::resetSize() noexcept
-{
-  setSize(1.f);
 }

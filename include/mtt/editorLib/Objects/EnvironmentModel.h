@@ -15,7 +15,6 @@ namespace mtt
     Q_PROPERTY( QString filename
                 READ filename
                 WRITE setFilename
-                RESET resetFilename
                 NOTIFY filenameChanged
                 DESIGNABLE true
                 SCRIPTABLE true
@@ -31,7 +30,6 @@ namespace mtt
 
     inline const QString& filename() const noexcept;
     virtual void setFilename(const QString& newValue) noexcept;
-    inline void resetFilename() noexcept;
 
   signals:
     void filenameChanged(const QString&);
@@ -43,10 +41,5 @@ namespace mtt
   inline const QString& EnvironmentModel::filename() const noexcept
   {
     return _filename;
-  }
-
-  inline void EnvironmentModel::resetFilename() noexcept
-  {
-    setFilename(QString());
   }
 }

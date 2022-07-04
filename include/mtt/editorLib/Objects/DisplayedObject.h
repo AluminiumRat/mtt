@@ -16,7 +16,6 @@ namespace mtt
     Q_PROPERTY( bool visible
                 READ visible
                 WRITE setVisible
-                RESET resetVisible
                 NOTIFY visibleChanged
                 DESIGNABLE true
                 SCRIPTABLE true
@@ -32,7 +31,6 @@ namespace mtt
 
     inline bool visible() const noexcept;
     void setVisible(bool newValue) noexcept;
-    inline void resetVisible() noexcept;
 
     inline bool parentVisible() const noexcept;
     void setParentVisible(bool newValue) noexcept;
@@ -59,11 +57,6 @@ namespace mtt
   inline bool DisplayedObject::visible() const noexcept
   {
     return _visible;
-  }
-
-  inline void DisplayedObject::resetVisible() noexcept
-  {
-    setVisible(true);
   }
 
   inline bool DisplayedObject::parentVisible() const noexcept

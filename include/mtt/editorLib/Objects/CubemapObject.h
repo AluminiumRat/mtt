@@ -18,7 +18,6 @@ namespace mtt
     Q_PROPERTY( std::array<QString, 6> textures
                 READ textures
                 WRITE setTextures
-                RESET resetTextures
                 NOTIFY texturesChanged
                 DESIGNABLE true
                 SCRIPTABLE true
@@ -49,7 +48,6 @@ namespace mtt
     inline const Textures& textures() const noexcept;
     inline const QString& sideTexture(Side side) const noexcept;
     void setTextures(const Textures& newValue) noexcept;
-    inline void resetTextures() noexcept;
 
   signals:
     void texturesChanged(const Textures& newValue);
@@ -66,10 +64,5 @@ namespace mtt
   inline const QString& CubemapObject::sideTexture(Side side) const noexcept
   {
     return _textures[side];
-  }
-
-  inline void CubemapObject::resetTextures() noexcept
-  {
-    setTextures({});
   }
 }

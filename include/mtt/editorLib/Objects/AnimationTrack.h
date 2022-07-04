@@ -20,7 +20,6 @@ namespace mtt
     Q_PROPERTY( bool enabled
                 READ enabled
                 WRITE setEnabled
-                RESET resetEnabled
                 NOTIFY enabledChanged
                 DESIGNABLE true
                 SCRIPTABLE true
@@ -37,7 +36,6 @@ namespace mtt
 
     inline bool enabled() const noexcept;
     void setEnabled(bool newValue);
-    inline void resetEnabled();
 
     inline const TimeRange& timeRange() const noexcept;
 
@@ -63,11 +61,6 @@ namespace mtt
   inline bool AnimationTrack::enabled() const noexcept
   {
     return _enabled;
-  }
-
-  inline void AnimationTrack::resetEnabled()
-  {
-    setEnabled(true);
   }
 
   inline const TimeRange& AnimationTrack::timeRange() const noexcept

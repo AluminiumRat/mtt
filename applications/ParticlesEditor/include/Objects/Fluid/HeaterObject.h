@@ -14,7 +14,6 @@ class HeaterObject : public FluidModificator
   Q_PROPERTY( float power
               READ power
               WRITE setPower
-              RESET resetPower
               NOTIFY powerChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -31,7 +30,6 @@ public:
 
   inline float power() const noexcept;
   void setPower(float newValue) noexcept;
-  inline void resetPower() noexcept;
 
   void emitEnergy(float energy);
 
@@ -47,9 +45,4 @@ private:
 inline float HeaterObject::power() const noexcept
 {
   return _power;
-}
-
-inline void HeaterObject::resetPower() noexcept
-{
-  setPower(1000.f);
 }

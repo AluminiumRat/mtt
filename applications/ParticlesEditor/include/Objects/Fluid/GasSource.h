@@ -15,7 +15,6 @@ class GasSource : public FluidModificator
   Q_PROPERTY( float flowRate
               READ flowRate
               WRITE setFlowRate
-              RESET resetFlowRate
               NOTIFY flowRateChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -25,7 +24,6 @@ class GasSource : public FluidModificator
   Q_PROPERTY( float temperature
               READ temperature
               WRITE setTemperature
-              RESET resetTemperature
               NOTIFY temperatureChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -42,11 +40,9 @@ public:
 
   inline float flowRate() const noexcept;
   void setFlowRate(float newValue) noexcept;
-  inline void resetFlowRate() noexcept;
 
   inline float temperature() const noexcept;
   void setTemperature(float newValue) noexcept;
-  inline void resetTemperature() noexcept;
 
   void emitGas(float volume);
 
@@ -66,17 +62,7 @@ inline float GasSource::flowRate() const noexcept
   return _flowRate;
 }
 
-inline void GasSource::resetFlowRate() noexcept
-{
-  setFlowRate(0.f);
-}
-
 inline float GasSource::temperature() const noexcept
 {
   return _temperature;
-}
-
-inline void GasSource::resetTemperature() noexcept
-{
-  setTemperature(FluidObject::defaultTemperature);
 }

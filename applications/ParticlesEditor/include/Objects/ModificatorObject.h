@@ -19,7 +19,6 @@ class ModificatorObject : public HierarhicalObject
   Q_PROPERTY( bool enabled
               READ enabled
               WRITE setEnabled
-              RESET resetEnabled
               NOTIFY enabledChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -29,7 +28,6 @@ class ModificatorObject : public HierarhicalObject
   Q_PROPERTY( uint32_t typeMask
               READ typeMask
               WRITE setTypeMask
-              RESET resetTypeMask
               NOTIFY typeMaskChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -47,13 +45,11 @@ public:
 
   inline bool enabled() const noexcept;
   void setEnabled(bool newValue) noexcept;
-  inline void resetEnabled() noexcept;
 
   inline ParticleField::ModificatorApplyTime applyTime() const noexcept;
 
   inline uint32_t typeMask() const noexcept;
   void setTypeMask(uint32_t newValue) noexcept;
-  inline void resetTypeMask() noexcept;
 
   inline mtt::ObjectRef<ParticleField>& fieldRef() noexcept;
   inline const mtt::ObjectRef<ParticleField>& fieldRef() const noexcept;
@@ -91,19 +87,9 @@ inline ParticleField::ModificatorApplyTime
   return _applyTime;
 }
 
-inline void ModificatorObject::resetEnabled() noexcept
-{
-  setEnabled(true);
-}
-
 inline uint32_t ModificatorObject::typeMask() const noexcept
 {
   return _typeMask;
-}
-
-inline void ModificatorObject::resetTypeMask() noexcept
-{
-  setTypeMask(1);
 }
 
 inline mtt::ObjectRef<ParticleField>& ModificatorObject::fieldRef() noexcept

@@ -27,7 +27,6 @@ class FluidObject : public mtt::Object
   Q_PROPERTY( uint32_t typeMask
               READ typeMask
               WRITE setTypeMask
-              RESET resetTypeMask
               NOTIFY typeMaskChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -37,7 +36,6 @@ class FluidObject : public mtt::Object
   Q_PROPERTY( float cellSize
               READ cellSize
               WRITE setCellSize
-              RESET resetCellSize
               NOTIFY cellSizeChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -47,7 +45,6 @@ class FluidObject : public mtt::Object
   Q_PROPERTY( glm::vec3 wind
               READ wind
               WRITE setWind
-              RESET resetWind
               NOTIFY windChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -57,7 +54,6 @@ class FluidObject : public mtt::Object
   Q_PROPERTY( size_t solverIterations
               READ solverIterations
               WRITE setSolverIterations
-              RESET resetSolverIterations
               NOTIFY solverIterationsChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -82,21 +78,17 @@ public:
 
   inline uint32_t typeMask() const noexcept;
   void setTypeMask(uint32_t newValue) noexcept;
-  inline void resetTypeMask() noexcept;
 
   inline float cellSize() const noexcept;
   void setCellSize(float newValue) noexcept;
-  inline void resetCellSize() noexcept;
 
   inline float cellVolume() noexcept;
 
   inline const glm::vec3& wind() const noexcept;
   void setWind(const glm::vec3& newValue) noexcept;
-  inline void resetWind() noexcept;
 
   inline size_t solverIterations() const noexcept;
   void setSolverIterations(size_t newValue) noexcept;
-  inline void resetSolverIterations() noexcept;
 
   virtual void simulationStep(mtt::TimeRange time);
   void clear() noexcept;
@@ -209,11 +201,6 @@ inline uint32_t FluidObject::typeMask() const noexcept
   return _typeMask;
 }
 
-inline void FluidObject::resetTypeMask() noexcept
-{
-  setTypeMask(1);
-}
-
 inline float FluidObject::cellSize() const noexcept
 {
   return _cellSize;
@@ -224,29 +211,14 @@ inline float FluidObject::cellVolume() noexcept
   return _cellVolume;
 }
 
-inline void FluidObject::resetCellSize() noexcept
-{
-  setCellSize(1.f);
-}
-
 inline const glm::vec3& FluidObject::wind() const noexcept
 {
   return _wind;
 }
 
-inline void FluidObject::resetWind() noexcept
-{
-  setWind(glm::vec3(0.f));
-}
-
 inline size_t FluidObject::solverIterations() const noexcept
 {
   return _solverIterations;
-}
-
-inline void FluidObject::resetSolverIterations() noexcept
-{
-  setSolverIterations(30);
 }
 
 inline FluidMatrix<float>* FluidObject::temperatureMatrix() noexcept

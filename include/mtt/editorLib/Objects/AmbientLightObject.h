@@ -17,7 +17,6 @@ namespace mtt
     Q_PROPERTY( float saturationDistance
                 READ saturationDistance
                 WRITE setSaturationDistance
-                RESET resetSaturationDistance
                 NOTIFY saturationDistanceChanged
                 DESIGNABLE true
                 SCRIPTABLE true
@@ -34,7 +33,6 @@ namespace mtt
 
     inline float saturationDistance() const noexcept;
     virtual void setSaturationDistance(float newValue) noexcept;
-    inline void resetSaturationDistance() noexcept;
 
     inline CubemapObject& ambientMap() noexcept;
     inline const CubemapObject& ambientMap() const noexcept;
@@ -50,11 +48,6 @@ namespace mtt
   inline float AmbientLightObject::saturationDistance() const noexcept
   {
     return _saturationDistance;
-  }
-
-  inline void AmbientLightObject::resetSaturationDistance() noexcept
-  {
-    setSaturationDistance(0);
   }
 
   inline CubemapObject& AmbientLightObject::ambientMap() noexcept

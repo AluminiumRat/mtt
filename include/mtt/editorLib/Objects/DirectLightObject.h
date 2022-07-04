@@ -15,7 +15,6 @@ namespace mtt
     Q_PROPERTY( float shadowDistance
                 READ shadowDistance
                 WRITE setShadowDistance
-                RESET resetShadowDistance
                 NOTIFY shadowDistanceChanged
                 DESIGNABLE true
                 SCRIPTABLE true
@@ -25,7 +24,6 @@ namespace mtt
     Q_PROPERTY( size_t cascadeSize
                 READ cascadeSize
                 WRITE setCascadeSize
-                RESET resetCascadeSize
                 NOTIFY cascadeSizeChanged
                 DESIGNABLE true
                 SCRIPTABLE true
@@ -41,11 +39,9 @@ namespace mtt
 
     inline float shadowDistance() const noexcept;
     void setShadowDistance(float newValue) noexcept;
-    inline void resetShadowDistance() noexcept;
 
     inline size_t cascadeSize() const noexcept;
     virtual void setCascadeSize(size_t newValue) noexcept;
-    inline void resetCascadeSize() noexcept;
 
   signals:
     void shadowDistanceChanged(float newValue);
@@ -61,18 +57,8 @@ namespace mtt
     return _shadowDistance;
   }
 
-  inline void DirectLightObject::resetShadowDistance() noexcept
-  {
-    setShadowDistance(50.f);
-  }
-
   inline size_t DirectLightObject::cascadeSize() const noexcept
   {
     return _cascadeSize;
-  }
-
-  inline void DirectLightObject::resetCascadeSize() noexcept
-  {
-    setCascadeSize(1);
   }
 }

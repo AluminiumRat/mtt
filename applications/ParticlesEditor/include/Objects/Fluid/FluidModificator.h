@@ -16,7 +16,6 @@ class FluidModificator : public ModificatorObject
   Q_PROPERTY( float size
               READ size
               WRITE setSize
-              RESET resetSize
               NOTIFY sizeChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -33,7 +32,6 @@ public:
 
   inline float size() const noexcept;
   void setSize(float newValue) noexcept;
-  inline void resetSize() noexcept;
 
 signals:
   void sizeChanged(float newValue);
@@ -54,9 +52,4 @@ private:
 inline float FluidModificator::size() const noexcept
 {
   return _size;
-}
-
-inline void FluidModificator::resetSize() noexcept
-{
-  setSize(1.f);
 }

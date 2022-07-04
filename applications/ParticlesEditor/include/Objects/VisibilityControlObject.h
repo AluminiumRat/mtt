@@ -16,7 +16,6 @@ class VisibilityControlObject : public ModificatorObject
   Q_PROPERTY( mtt::Range<float> saturationRange
               READ saturationRange
               WRITE setSaturationRange
-              RESET resetSaturationRange
               NOTIFY saturationRangeChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -33,7 +32,6 @@ public:
 
   inline const mtt::Range<float>& saturationRange() const noexcept;
   void setSaturationRange(const mtt::Range<float>& newValue) noexcept;
-  inline void resetSaturationRange() noexcept;
 
   virtual void simulationStep(mtt::TimeRange time) override;
 
@@ -48,9 +46,4 @@ inline const mtt::Range<float>&
                       VisibilityControlObject::saturationRange() const noexcept
 {
   return _saturationRange;
-}
-
-inline void VisibilityControlObject::resetSaturationRange() noexcept
-{
-  setSaturationRange(mtt::Range(0.f, 1.f));
 }

@@ -16,7 +16,6 @@ class AnimationAction : public mtt::AnimationTrack
   Q_PROPERTY( mtt::TimeT startTime
               READ startTime
               WRITE setStartTime
-              RESET resetStartTime
               NOTIFY startTimeChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -26,7 +25,6 @@ class AnimationAction : public mtt::AnimationTrack
   Q_PROPERTY( mtt::TimeT duration
               READ duration
               WRITE setDuration
-              RESET resetDuration
               NOTIFY durationChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -43,11 +41,9 @@ public:
 
   inline mtt::TimeT startTime() const noexcept;
   void setStartTime(mtt::TimeT newValue) noexcept;
-  inline void resetStartTime() noexcept;
 
   inline mtt::TimeT duration() const noexcept;
   void setDuration(mtt::TimeT newValue) noexcept;
-  inline void resetDuration() noexcept;
 
   virtual void update(mtt::TimeRange time) override;
   virtual std::unique_ptr<mtt::AbstractEditCommand>
@@ -70,17 +66,7 @@ inline mtt::TimeT AnimationAction::startTime() const noexcept
   return _startTime;
 }
 
-inline void AnimationAction::resetStartTime() noexcept
-{
-  setStartTime(mtt::TimeT(0));
-}
-
 inline mtt::TimeT AnimationAction::duration() const noexcept
 {
   return _duration;
-}
-
-inline void AnimationAction::resetDuration() noexcept
-{
-  setDuration(mtt::TimeT(0));
 }

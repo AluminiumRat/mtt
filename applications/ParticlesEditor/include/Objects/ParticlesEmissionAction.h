@@ -15,7 +15,6 @@ class ParticlesEmissionAction : public AnimationAction
   Q_PROPERTY( uint particlesNumber
               READ particlesNumber
               WRITE setParticlesNumber
-              RESET resetParticlesNumber
               NOTIFY particlesNumberChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -32,7 +31,6 @@ public:
 
   inline uint particlesNumber() const noexcept;
   void setParticlesNumber(uint newValue) noexcept;
-  inline void resetParticlesNumber() noexcept;
 
   inline mtt::ObjectRef<EmitterObject>& emitterRef() noexcept;
   inline const mtt::ObjectRef<EmitterObject>& emitterRef() const noexcept;
@@ -57,11 +55,6 @@ private:
 inline uint ParticlesEmissionAction::particlesNumber() const noexcept
 {
   return _particlesNumber;
-}
-
-inline void ParticlesEmissionAction::resetParticlesNumber() noexcept
-{
-  setParticlesNumber(0);
 }
 
 inline mtt::ObjectRef<EmitterObject>&

@@ -17,7 +17,6 @@ namespace mtt
     Q_PROPERTY( glm::vec3 scale
                 READ scale
                 WRITE setScale
-                RESET resetScale
                 NOTIFY scaleChanged
                 DESIGNABLE true
                 SCRIPTABLE true
@@ -33,7 +32,6 @@ namespace mtt
 
     inline const glm::vec3& scale() const noexcept;
     virtual void setScale(const glm::vec3& newValue) noexcept;
-    inline void resetScale() noexcept;
 
   signals:
     void scaleChanged(const glm::vec3& newValue);
@@ -48,10 +46,5 @@ namespace mtt
   inline const glm::vec3& ScalableObject::scale() const noexcept
   {
     return _scale;
-  }
-
-  inline void ScalableObject::resetScale() noexcept
-  {
-    setScale(glm::vec3(1));
   }
 }

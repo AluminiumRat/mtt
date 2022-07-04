@@ -17,7 +17,6 @@ class ParticleAnimation : public mtt::AnimationObject
   Q_PROPERTY( mtt::TimeT duration
               READ duration
               WRITE setDuration
-              RESET resetDuration
               NOTIFY durationChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -34,7 +33,6 @@ public:
 
   inline mtt::TimeT duration() const noexcept;
   void setDuration(mtt::TimeT newValue) noexcept;
-  inline void resetDuration() noexcept;
 
   inline mtt::ObjectRef<ParticleField>& fieldRef() noexcept;
   inline const mtt::ObjectRef<ParticleField>& fieldRef() const noexcept;
@@ -61,11 +59,6 @@ private:
 inline mtt::TimeT ParticleAnimation::duration() const noexcept
 {
   return _duration;
-}
-
-inline void ParticleAnimation::resetDuration() noexcept
-{
-  setDuration(10 * mtt::second);
 }
 
 inline mtt::ObjectRef<ParticleField>& ParticleAnimation::fieldRef() noexcept

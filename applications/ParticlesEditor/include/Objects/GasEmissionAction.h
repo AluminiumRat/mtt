@@ -15,7 +15,6 @@ class GasEmissionAction : public AnimationAction
   Q_PROPERTY( uint emittedVolume
               READ emittedVolume
               WRITE setEmittedVolume
-              RESET resetEmittedVolume
               NOTIFY emittedVolumeChanged
               DESIGNABLE true
               SCRIPTABLE true
@@ -32,7 +31,6 @@ public:
 
   inline float emittedVolume() const noexcept;
   void setEmittedVolume(float newValue) noexcept;
-  inline void resetEmittedVolume() noexcept;
 
   inline mtt::ObjectRef<GasSource>& gasSourceRef() noexcept;
   inline const mtt::ObjectRef<GasSource>& gasSourceRef() const noexcept;
@@ -57,11 +55,6 @@ private:
 inline float GasEmissionAction::emittedVolume() const noexcept
 {
   return _emittedVolume;
-}
-
-inline void GasEmissionAction::resetEmittedVolume() noexcept
-{
-  setEmittedVolume(0.f);
 }
 
 inline mtt::ObjectRef<GasSource>& GasEmissionAction::gasSourceRef() noexcept

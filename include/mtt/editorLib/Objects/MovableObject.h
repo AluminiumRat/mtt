@@ -17,7 +17,6 @@ namespace mtt
     Q_PROPERTY( glm::vec3 position
                 READ position
                 WRITE setPosition
-                RESET resetPosition
                 NOTIFY positionChanged
                 DESIGNABLE true
                 SCRIPTABLE true
@@ -34,7 +33,6 @@ namespace mtt
 
     inline const glm::vec3& position() const noexcept;
     virtual void setPosition(const glm::vec3& newValue) noexcept;
-    inline void resetPosition() noexcept;
 
   signals:
     void positionChanged(const glm::vec3& newValue);
@@ -49,10 +47,5 @@ namespace mtt
   inline const glm::vec3& MovableObject::position() const noexcept
   {
     return _position;
-  }
-
-  inline void MovableObject::resetPosition() noexcept
-  {
-    setPosition(glm::vec3(0));
   }
 }

@@ -15,7 +15,6 @@ namespace mtt
     Q_PROPERTY( bool shadowsEnabled
                 READ shadowsEnabled
                 WRITE setShadowsEnabled
-                RESET resetShadowsEnabled
                 NOTIFY shadowsEnabledChanged
                 DESIGNABLE true
                 SCRIPTABLE true
@@ -25,7 +24,6 @@ namespace mtt
     Q_PROPERTY( size_t shadowmapSize
                 READ shadowmapSize
                 WRITE setShadowmapSize
-                RESET resetShadowmapSize
                 NOTIFY shadowmapSizeChanged
                 DESIGNABLE true
                 SCRIPTABLE true
@@ -35,7 +33,6 @@ namespace mtt
     Q_PROPERTY( float shadowBlur
                 READ shadowBlur
                 WRITE setShadowBlur
-                RESET resetShadowBlur
                 NOTIFY shadowBlurChanged
                 DESIGNABLE true
                 SCRIPTABLE true
@@ -52,16 +49,13 @@ namespace mtt
 
     inline bool shadowsEnabled() const noexcept;
     virtual void setShadowsEnabled(bool newValue) noexcept;
-    inline void resetShadowsEnabled() noexcept;
 
     inline size_t shadowmapSize() const noexcept;
     virtual void setShadowmapSize(size_t newValue) noexcept;
-    inline void resetShadowmapSize() noexcept;
 
     /// blur size in radians or meters
     inline float shadowBlur() const noexcept;
     virtual void setShadowBlur(float newValue) noexcept;
-    inline void resetShadowBlur() noexcept;
 
   signals:
     void shadowsEnabledChanged(bool newValue);
@@ -79,28 +73,13 @@ namespace mtt
     return _shadowsEnabled;
   }
 
-  inline void LightWithShadowsObject::resetShadowsEnabled() noexcept
-  {
-    setShadowsEnabled(false);
-  }
-
   inline size_t LightWithShadowsObject::shadowmapSize() const noexcept
   {
     return _shadowmapSize;
   }
 
-  inline void LightWithShadowsObject::resetShadowmapSize() noexcept
-  {
-    setShadowmapSize(256);
-  }
-
   inline float LightWithShadowsObject::shadowBlur() const noexcept
   {
     return _shadowBlur;
-  }
-
-  inline void LightWithShadowsObject::resetShadowBlur() noexcept
-  {
-    setShadowBlur(0.f);
   }
 }
