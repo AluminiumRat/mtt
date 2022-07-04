@@ -8,6 +8,7 @@ SpotLightObject::SpotLightObject( const QString& name,
   FadingLightObject(name, canBeRenamed, theId),
   _angle(glm::pi<float>() / 4.f)
 {
+  setDistance(5.f);
 }
 
 void SpotLightObject::setAngle(float newValue) noexcept

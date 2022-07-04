@@ -14,4 +14,6 @@ PointLightObject::PointLightObject( const QString& name,
                                                                   cubemapId));
   _filterCubemap = filterCubemap.get();
   addSubobject(std::move(filterCubemap));
+
+  setDistance(5.f);
 }

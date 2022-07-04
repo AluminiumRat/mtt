@@ -13,7 +13,7 @@ namespace mtt
                                         bool canBeRenamed,
                                         UID uid) :
     LightWithShadowsObject(name, canBeRenamed, uid),
-    _fadeType(clPipeline::NO_FADE)
+    _fadeType(clPipeline::INVERSE_LINEAR_FADE)
   {
   }
 
