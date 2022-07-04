@@ -42,6 +42,9 @@ namespace mtt
     void setCircleGeometry(float radius, unsigned int segmentNumber);
     void setBoxGeometry(glm::vec3 size);
 
+    /// Create pyramid along the Z axys with apex at the zero point.
+    void setPyramidGeometry(float height, float baseSize);
+
   private:
     Mesh _mesh;
   };

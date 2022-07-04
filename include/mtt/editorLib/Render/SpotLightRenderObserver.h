@@ -27,7 +27,7 @@ namespace mtt
     void _updateDistance() noexcept;
     void _updateFade() noexcept;
     void _updateAngle() noexcept;
-    void _updateConeMesh() noexcept;
+    void _updatePyramidMesh() noexcept;
     void _updateFilterImage() noexcept;
     void _updateShadowsEnabled() noexcept;
     void _updateShadowMapSize() noexcept;

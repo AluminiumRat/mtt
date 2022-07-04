@@ -25,8 +25,11 @@ void $APPLY_FUNCTION$()
   float toLightDistance = length(localCoord.xyz);
   if(localCoord.z > 0.f || toLightDistance > lightData$INDEX$.distance) return;
 
-  float areaRadius = -localCoord.z * lightData$INDEX$.halfangleTan;
-  if(length(localCoord.xy) > areaRadius) return;
+  float areaHalfsize = -localCoord.z * lightData$INDEX$.halfangleTan;
+  if(abs(localCoord.x) > areaHalfsize || abs(localCoord.y) > areaHalfsize)
+  {
+    return;
+  }
 
   #if $LAMBERT_SPECULAR_LUMINANCE_MODEL$
     vec3 lightInverseDirection = normalize(
@@ -38,7 +41,7 @@ void $APPLY_FUNCTION$()
 
   vec3 illuminance = lightData$INDEX$.illuminance;
   vec2 textureCoord = vec2(localCoord.x, -localCoord.y);
-  textureCoord /= 2.f * areaRadius;
+  textureCoord /= 2.f * areaHalfsize;
   textureCoord += vec2(.5f, .5f);
 
   #if $FILTER_SAMPLER_ENABLED$
@@ -50,7 +53,7 @@ void $APPLY_FUNCTION$()
   #if $SHADOW_MAP_ENABLED$
     float slopeFactor = min(1.f / lightDotNorm, 10.f);
     float shadowmapSlope =
-                    2.f * areaRadius * slopeFactor / lightData$INDEX$.distance;
+                  2.f * areaHalfsize * slopeFactor / lightData$INDEX$.distance;
 
     illuminance *= getShadowFactor$INDEX$(
                                       textureCoord,

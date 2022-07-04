@@ -11,9 +11,6 @@
 #define ICON_FILE ":/editorLib/spotLight.png"
 #define ICON_SIZE 32
 
-#define CAP_SEGMENTS 32
-#define BODY_SEGMENTS 6
-
 using namespace mtt;
 
 SpotLightRenderObserver::SpotLightRenderObserver( SpotLightObject& object,
@@ -97,7 +94,7 @@ void SpotLightRenderObserver::_updateIlluminance() noexcept
 void SpotLightRenderObserver::_updateDistance() noexcept
 {
   _light.setDistance(_lightObject.distance());
-  _updateConeMesh();
+  _updatePyramidMesh();
 }
 
 void SpotLightRenderObserver::_updateFade() noexcept
@@ -119,10 +116,10 @@ void SpotLightRenderObserver::_updateAngle() noexcept
   {
     Log() << "SpotLightRenderObserver::_updateAngle: unknown error";
   }
-  _updateConeMesh();
+  _updatePyramidMesh();
 }
 
-void SpotLightRenderObserver::_updateConeMesh() noexcept
+void SpotLightRenderObserver::_updatePyramidMesh() noexcept
 {
   if (_lightObject.angle() <= 0.f || _lightObject.distance() <= 0.f)
   {
@@ -132,13 +129,9 @@ void SpotLightRenderObserver::_updateConeMesh() noexcept
 
   try
   {
-    float height = _lightObject.distance() * cos(_lightObject.angle() / 2.f);
-    float radius = height * tan(_lightObject.angle() / 2.f);
-    hullNode().setConeGeometry( radius,
-                                height,
-                                0.f,
-                                BODY_SEGMENTS,
-                                CAP_SEGMENTS);
+    float height = _lightObject.distance();
+    float baseSize = 2.f * height * tan(_lightObject.angle() / 2.f);
+    hullNode().setPyramidGeometry(height, baseSize);
   }
   catch (std::exception& error)
   {

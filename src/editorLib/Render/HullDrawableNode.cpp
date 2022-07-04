@@ -419,3 +419,57 @@ void HullDrawableNode::setBoxGeometry(glm::vec3 size)
     throw;
   }
 }
+
+void HullDrawableNode::setPyramidGeometry(float height, float baseSize)
+{
+  if (height <= 0.f)
+  {
+    Log() << "HullDrawableNode::setPyramidGeometry: height <= 0";
+    resetGeometry();
+    return;
+  }
+
+  if (baseSize <= 0.f)
+  {
+    Log() << "HullDrawableNode::setPyramidGeometry: baseSize <= 0";
+    resetGeometry();
+    return;
+  }
+
+  try
+  {
+    float halfSize = baseSize / 2.f;
+
+    std::vector<glm::vec3> newVertices;
+    newVertices.push_back(glm::vec3(-halfSize, -halfSize, -height));
+    newVertices.push_back(glm::vec3(halfSize, -halfSize, -height));
+
+    newVertices.push_back(glm::vec3(halfSize, -halfSize, -height));
+    newVertices.push_back(glm::vec3(halfSize, halfSize, -height));
+
+    newVertices.push_back(glm::vec3(halfSize, halfSize, -height));
+    newVertices.push_back(glm::vec3(-halfSize, halfSize, -height));
+
+    newVertices.push_back(glm::vec3(-halfSize, halfSize, -height));
+    newVertices.push_back(glm::vec3(-halfSize, -halfSize, -height));
+
+    newVertices.push_back(glm::vec3(-halfSize, -halfSize, -height));
+    newVertices.push_back(glm::vec3(0, 0, 0));
+
+    newVertices.push_back(glm::vec3(halfSize, -halfSize, -height));
+    newVertices.push_back(glm::vec3(0, 0, 0));
+
+    newVertices.push_back(glm::vec3(halfSize, halfSize, -height));
+    newVertices.push_back(glm::vec3(0, 0, 0));
+
+    newVertices.push_back(glm::vec3(-halfSize, halfSize, -height));
+    newVertices.push_back(glm::vec3(0, 0, 0));
+
+    setGeometry(newVertices);
+  }
+  catch (...)
+  {
+    resetGeometry();
+    throw;
+  }
+}
