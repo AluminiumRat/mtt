@@ -51,8 +51,10 @@ namespace mtt
 
       inline const CameraNode& shadowmapCamera() const noexcept;
 
-      inline unsigned int shadowmapExtent() const noexcept;
-      inline void setShadowmapExtent(unsigned int newValue);
+      inline unsigned int opaqueShadowmapExtent() const noexcept;
+      inline unsigned int transparentShadowmapExtent() const noexcept;
+      inline void setShadowmapExtent( unsigned int opaqueShadowmapExtent,
+                                      unsigned int transparentShadowmapExtent);
 
       inline AbstractField* shadowmapField() const noexcept;
       inline void setShadowmapField(AbstractField* newField);
@@ -90,7 +92,8 @@ namespace mtt
 
       CameraNode _shadowmapCamera;
       std::unique_ptr<ShadowMapProvider> _shadowMapProvider;
-      unsigned int _shadowmapExtent;
+      unsigned int _opaqueShadowmapExtent;
+      unsigned int _transparentShadowmapExtent;
       AbstractField* _shadowmapField;
       std::unique_ptr<Sampler> _opaqueShadowmapSampler;
       std::unique_ptr<Sampler> _transparentShadowmapSampler;
@@ -175,22 +178,35 @@ namespace mtt
       return _shadowMapProvider.get();
     }
 
-    inline unsigned int SpotLight::shadowmapExtent() const noexcept
+    inline unsigned int SpotLight::opaqueShadowmapExtent() const noexcept
     {
-      return _shadowmapExtent;
+      return _opaqueShadowmapExtent;
     }
 
-    inline void SpotLight::setShadowmapExtent(unsigned int newValue)
+    inline unsigned int SpotLight::transparentShadowmapExtent() const noexcept
     {
-      if(_shadowmapExtent == newValue) return;
-      _shadowmapExtent = newValue;
+      return _transparentShadowmapExtent;
+    }
+
+    inline void SpotLight::setShadowmapExtent(
+                                        unsigned int opaqueShadowmapExtent,
+                                        unsigned int transparentShadowmapExtent)
+    {
+      if( _opaqueShadowmapExtent == opaqueShadowmapExtent &&
+          _transparentShadowmapExtent == transparentShadowmapExtent) return;
+
+      _opaqueShadowmapExtent = opaqueShadowmapExtent;
+      _transparentShadowmapExtent = transparentShadowmapExtent;
+
       _updateShadowmapCamera();
       _updateShadowmapProvider();
       if (_shadowMapProvider != nullptr)
       {
         try
         {
-          _shadowMapProvider->setFrameExtent(glm::uvec2(_shadowmapExtent));
+          _shadowMapProvider->setMapExtent(
+                                      glm::uvec2(_opaqueShadowmapExtent),
+                                      glm::uvec2(_transparentShadowmapExtent));
         }
         catch (...)
         {

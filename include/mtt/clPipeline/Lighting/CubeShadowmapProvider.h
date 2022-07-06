@@ -44,14 +44,17 @@ namespace mtt
 
     public:
       CubeShadowmapProvider(size_t framePoolsNumber,
-                            uint32_t frameExtent,
+                            uint32_t opaqueMapExtent,
+                            uint32_t transparentMapExtnt,
                             LogicalDevice& device);
       CubeShadowmapProvider(const CubeShadowmapProvider&) = delete;
       CubeShadowmapProvider& operator = (const CubeShadowmapProvider&) = delete;
       virtual ~CubeShadowmapProvider() noexcept = default;
 
-      inline uint32_t frameExtent() const noexcept;
-      void setFrameExtent(uint32_t frameExtent);
+      inline uint32_t opaqueMapExtent() const noexcept;
+      inline uint32_t transparentMapExtent() const noexcept;
+      void setMapExtent(uint32_t opaqueMapExtent,
+                        uint32_t transparentMapExtent);
 
       inline AbstractField* targetField() const noexcept;
       void setTargetField(AbstractField* newField) noexcept;
@@ -111,7 +114,8 @@ namespace mtt
                             ViewInfo& rootViewInfo);
 
     private:
-      uint32_t _frameExtent;
+      uint32_t _opaqueMapExtent;
+      uint32_t _transparentMapExtent;
       OpaqueShadowmapBuilder _opaqueFrameBuilder;
       TransparentShadowmapBuilder _transparentFrameBuilder;
 
@@ -123,9 +127,14 @@ namespace mtt
       AbstractField* _targetField;
     };
 
-    inline uint32_t CubeShadowmapProvider::frameExtent() const noexcept
+    inline uint32_t CubeShadowmapProvider::opaqueMapExtent() const noexcept
     {
-      return _frameExtent;
+      return _opaqueMapExtent;
+    }
+
+    inline uint32_t CubeShadowmapProvider::transparentMapExtent() const noexcept
+    {
+      return _transparentMapExtent;
     }
 
     inline AbstractField* CubeShadowmapProvider::targetField() const noexcept

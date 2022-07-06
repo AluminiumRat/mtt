@@ -127,7 +127,7 @@ void PointLightAreaModificator::adjustPipeline(
       blurShiftsBindingName += indexStr;
       targetPipeline.addResource( blurShiftsBindingName,
                                   *_light.blurShiftsBuffer(),
-                                  VK_SHADER_STAGE_FRAGMENT_BIT);
+                                  targetShader.type());
     }
 
     ShaderModule::Fragment& mainFragment = targetShader.newFragment();
@@ -168,7 +168,7 @@ void PointLightAreaModificator::adjustPipeline(
       filterBindingName += indexStr;
       targetPipeline.addResource( filterBindingName,
                                   *filterSampler,
-                                  VK_SHADER_STAGE_FRAGMENT_BIT);
+                                  targetShader.type());
       mainFragment.replace("$FILTER_SAMPLER_ENABLED$", "1");
     }
     else mainFragment.replace("$FILTER_SAMPLER_ENABLED$", "0");

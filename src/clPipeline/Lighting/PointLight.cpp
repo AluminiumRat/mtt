@@ -15,7 +15,8 @@ PointLight::PointLight( bool forwardLightingEnabled,
                         LogicalDevice& device) :
   _device(device),
   _shadowmapProvider(nullptr),
-  _shadowmapExtent(256),
+  _opaqueShadowmapExtent(256),
+  _transparentShadowmapExtent(128),
   _shadowmapField(nullptr),
   _illuminance(1.f),
   _distance(50.f),
@@ -104,7 +105,9 @@ void PointLight::_resetShadowmapProvider() noexcept
 
 void PointLight::_updateShadowmapProvider()
 {
-  bool shadowsEnabled = _shadowmapExtent != 0 && _shadowmapField != nullptr;
+  bool shadowsEnabled = _opaqueShadowmapExtent != 0 &&
+                        _transparentShadowmapExtent != 0 &&
+                        _shadowmapField != nullptr;
   if (!shadowsEnabled)
   {
     if(_shadowmapProvider == nullptr) return;
@@ -117,9 +120,10 @@ void PointLight::_updateShadowmapProvider()
     try
     {
       _shadowmapProvider.reset(new clPipeline::CubeShadowmapProvider(
-                                                              2,
-                                                              _shadowmapExtent,
-                                                              _device));
+                                                    2,
+                                                    _opaqueShadowmapExtent,
+                                                    _transparentShadowmapExtent,
+                                                    _device));
       _shadowmapProvider->setTargetField(_shadowmapField);
 
       _opaqueShadowmapSampler.reset(new Sampler(1,
@@ -214,9 +218,8 @@ PointLightData PointLight::buildDrawData(
   drawData.endSample = 0;
   if (_shadowmapProvider != nullptr)
   {
-    uint32_t extent = _shadowmapProvider->frameExtent();
     float mapBlurRadius = blurAngle() / glm::pi<float>();
-    float radiusInTexel = mapBlurRadius * extent;
+    float radiusInTexel = mapBlurRadius * _opaqueShadowmapExtent;
     float texelsNumber = glm::pi<float>() * radiusInTexel * radiusInTexel;
 
     uint32_t samplerChunkIndex = uint32_t(sqrt(texelsNumber / 2.f));

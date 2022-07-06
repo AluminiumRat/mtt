@@ -12,7 +12,8 @@ SpotLight::SpotLight( bool forwardLightingEnabled,
                           LogicalDevice& device) :
   _device(device),
   _shadowMapProvider(nullptr),
-  _shadowmapExtent(256),
+  _opaqueShadowmapExtent(256),
+  _transparentShadowmapExtent(128),
   _shadowmapField(nullptr),
   _illuminance(1.f),
   _distance(50.f),
@@ -65,9 +66,9 @@ void SpotLight::setFilterTexture(std::shared_ptr<Texture2D> newTexture)
 void SpotLight::_updateShadowmapCamera() noexcept
 {
   float shadowmapAngle = _angle + _blurAngle / 2.f;
-  if (_shadowmapExtent != 0)
+  if (_opaqueShadowmapExtent != 0)
   {
-    shadowmapAngle += _angle / _shadowmapExtent;
+    shadowmapAngle += _angle / _opaqueShadowmapExtent;
   }
   _shadowmapCamera.setPerspectiveProjection(shadowmapAngle,
                                             1,
@@ -107,7 +108,8 @@ void SpotLight::_resetShadowmapProvider() noexcept
 void SpotLight::_updateShadowmapProvider()
 {
   bool shadowsEnabled = _angle != 0 &&
-                        _shadowmapExtent != 0 &&
+                        _opaqueShadowmapExtent != 0 &&
+                        _transparentShadowmapExtent != 0 &&
                         _shadowmapField != nullptr;
   if(!shadowsEnabled)
   {
@@ -121,9 +123,10 @@ void SpotLight::_updateShadowmapProvider()
     try
     {
       _shadowMapProvider.reset(
-                            new ShadowMapProvider(2,
-                                                  glm::uvec2(_shadowmapExtent),
-                                                  _device));
+                  new ShadowMapProvider(2,
+                                        glm::uvec2(_opaqueShadowmapExtent),
+                                        glm::uvec2(_transparentShadowmapExtent),
+                                        _device));
       _shadowMapProvider->setTargetField(_shadowmapField);
 
       _opaqueShadowmapSampler.reset(new Sampler(1,
@@ -171,7 +174,7 @@ SpotLightData SpotLight::buildDrawData(
   if(angle() >= 0.f)
   {
     drawData.blurRadius = blurAngle() / angle() / 2.f;
-    drawData.blurRadius += .5f / shadowmapExtent();
+    drawData.blurRadius += .5f / opaqueShadowmapExtent();
   }
   else drawData.blurRadius = 0.f;
 

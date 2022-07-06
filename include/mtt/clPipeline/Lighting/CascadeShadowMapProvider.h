@@ -33,7 +33,8 @@ namespace mtt
 
     public:
       CascadeShadowMapProvider( size_t framePoolsNumber,
-                                glm::uvec2 frameExtent,
+                                glm::uvec2 opaqueMapExtent,
+                                glm::uvec2 transparentMapExtent,
                                 LogicalDevice& device);
       CascadeShadowMapProvider(const CascadeShadowMapProvider&) = delete;
       CascadeShadowMapProvider& operator = (

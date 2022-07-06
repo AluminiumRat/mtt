@@ -201,9 +201,9 @@ void SpotLightRenderObserver::_updateShadowMapSize() noexcept
   try
   {
     unsigned int frameSize = std::max(
-                                    1u,
+                                    64u,
                                     unsigned int(_lightObject.shadowmapSize()));
-    _light.setShadowmapExtent(frameSize);
+    _light.setShadowmapExtent(frameSize, frameSize / 2);
   }
   catch (std::exception& error)
   {

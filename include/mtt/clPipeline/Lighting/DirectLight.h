@@ -45,8 +45,10 @@ namespace mtt
       inline AbstractField* shadowmapField() const noexcept;
       inline void setShadowmapField(AbstractField* newField);
 
-      inline unsigned int shadowmapExtent() const noexcept;
-      inline void setShadowmapExtent(unsigned int newValue);
+      inline unsigned int opaqueShadowmapExtent() const noexcept;
+      inline unsigned int transparentShadowmapExtent() const noexcept;
+      inline void setShadowmapExtent( unsigned int opaqueShadowmapExtent,
+                                      unsigned int transparentShadowmapExtent);
 
       inline size_t cascadeSize() const noexcept;
       inline void setCascadeSize(size_t newValue);
@@ -89,7 +91,8 @@ namespace mtt
 
       glm::mat4 _shadowmapProjectionMatrix;
       std::unique_ptr<CascadeShadowMapProvider> _shadowmapProvider;
-      unsigned int _shadowmapExtent;
+      unsigned int _opaqueShadowmapExtent;
+      unsigned int _transparentShadowmapExtent;
       AbstractField* _shadowmapField;
       std::unique_ptr<Sampler> _opaqueShadowmapSampler;
       std::unique_ptr<Sampler> _transparentShadowmapSampler;
@@ -168,21 +171,34 @@ namespace mtt
       return _shadowmapProvider.get();
     }
 
-    inline unsigned int DirectLight::shadowmapExtent() const noexcept
+    inline unsigned int DirectLight::opaqueShadowmapExtent() const noexcept
     {
-      return _shadowmapExtent;
+      return _opaqueShadowmapExtent;
     }
 
-    inline void DirectLight::setShadowmapExtent(unsigned int newValue)
+    inline unsigned int DirectLight::transparentShadowmapExtent() const noexcept
     {
-      if (_shadowmapExtent == newValue) return;
-      _shadowmapExtent = newValue;
+      return _transparentShadowmapExtent;
+    }
+
+    inline void DirectLight::setShadowmapExtent(
+                                        unsigned int opaqueShadowmapExtent,
+                                        unsigned int transparentShadowmapExtent)
+    {
+      if( _opaqueShadowmapExtent == opaqueShadowmapExtent &&
+          _transparentShadowmapExtent == transparentShadowmapExtent) return;
+
+      _opaqueShadowmapExtent = opaqueShadowmapExtent;
+      _transparentShadowmapExtent = transparentShadowmapExtent;
+
       _updateShadowmapProvider();
       if (_shadowmapProvider != nullptr)
       {
         try
         {
-          _shadowmapProvider->setFrameExtent(glm::uvec2(_shadowmapExtent));
+          _shadowmapProvider->setMapExtent(
+                                      glm::uvec2(_opaqueShadowmapExtent),
+                                      glm::uvec2(_transparentShadowmapExtent));
         }
         catch (...)
         {
@@ -236,7 +252,7 @@ namespace mtt
                                         float coordMultiplicator) const noexcept
     {
       return blurSize() / shadowDistance() / 4.f * coordMultiplicator +
-                                                        .5f / _shadowmapExtent;
+                                                  .5f / _opaqueShadowmapExtent;
     }
 
     inline Sampler* DirectLight::opaqueShadowmapSampler() noexcept

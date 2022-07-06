@@ -14,9 +14,11 @@ static constexpr VkImageUsageFlags shadowmapUsage =
                                             VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
 ShadowMapProvider::ShadowMapProvider( size_t framePoolsNumber,
-                                      glm::uvec2 frameExtent,
+                                      glm::uvec2 opaqueMapExtent,
+                                      glm::uvec2 transparentMapExtent,
                                       LogicalDevice& device) :
-  _frameExtent(frameExtent),
+  _opaqueMapExtent(opaqueMapExtent),
+  _transparentMapExtent(transparentMapExtent),
   _opaqueFrameBuilder(opaqueMapFormat, shadowmapLayout, device),
   _transparentFrameBuilder(transparentMapFormat, shadowmapLayout, device),
   _framePools(framePoolsNumber),
@@ -24,15 +26,19 @@ ShadowMapProvider::ShadowMapProvider( size_t framePoolsNumber,
   _targetField(nullptr)
 {
   if(framePoolsNumber == 0) Abort("ShadowMapProvider::ShadowMapProvider: framePoolsNumber = 0");
-  if(frameExtent.x == 0 || frameExtent.y == 0) Abort("ShadowMapProvider::ShadowMapProvider: wrong frame extent.");
+  if(opaqueMapExtent.x == 0 || opaqueMapExtent.y == 0) Abort("ShadowMapProvider::ShadowMapProvider: wrong opaque map extent.");
+  if(transparentMapExtent.x == 0 || transparentMapExtent.y == 0) Abort("ShadowMapProvider::ShadowMapProvider: wrong transparent map extent.");
 }
 
-void ShadowMapProvider::setFrameExtent(glm::uvec2 frameExtent)
+void ShadowMapProvider::setMapExtent( glm::uvec2 opaqueMapExtent,
+                                      glm::uvec2 transparentMapExtent)
 {
-  if (frameExtent.x == 0 || frameExtent.y == 0) Abort("ShadowMapProvider::setFrameExtent: wrong frame extent.");
+  if (opaqueMapExtent.x == 0 || opaqueMapExtent.y == 0) Abort("ShadowMapProvider::setMapExtent: wrong opaque map extent.");
+  if (transparentMapExtent.x == 0 || transparentMapExtent.y == 0) Abort("ShadowMapProvider::setMapExtent: wrong transparent map extent.");
 
   for(FramePool& pool : _framePools) pool.clear();
-  _frameExtent = frameExtent;
+  _opaqueMapExtent = opaqueMapExtent;
+  _transparentMapExtent = transparentMapExtent;
 }
 
 void ShadowMapProvider::setTargetField(AbstractField* newField) noexcept
@@ -116,7 +122,7 @@ ShadowMapProvider::FrameRecord&
                                         shadowmapUsage,
                                         0,
                                         opaqueMapFormat,
-                                        glm::uvec3(_frameExtent, 1),
+                                        glm::uvec3(_opaqueMapExtent, 1),
                                         VK_SAMPLE_COUNT_1_BIT,
                                         1,
                                         1,
@@ -128,7 +134,8 @@ ShadowMapProvider::FrameRecord&
                                               shadowmapUsage,
                                               0,
                                               transparentMapFormat,
-                                              glm::uvec3(_frameExtent, 1),
+                                              glm::uvec3( _transparentMapExtent,
+                                                          1),
                                               VK_SAMPLE_COUNT_1_BIT,
                                               1,
                                               1,
@@ -195,20 +202,23 @@ void ShadowMapProvider::_buildNewMap( const CameraNode& renderCamera,
   drawPlan.addDependency(transparentFramePlan, dependentFrame);
 
 
-  VkViewport viewport { 0.f,
-                        0.f,
-                        float(_frameExtent.x),
-                        float(_frameExtent.y),
-                        0.f,
-                        1.f};
-  VkRect2D scissor {0, 0, uint32_t(_frameExtent.x), uint32_t(_frameExtent.y)};
+  VkViewport opaqueViewport { 0.f,
+                              0.f,
+                              float(_opaqueMapExtent.x),
+                              float(_opaqueMapExtent.y),
+                              0.f,
+                              1.f};
+  VkRect2D opaqueScissor {0,
+                          0,
+                          uint32_t(_opaqueMapExtent.x),
+                          uint32_t(_opaqueMapExtent.y)};
 
   DrawPlanBuildInfo opaquePlanBuildInfo(drawPlan);
-  opaquePlanBuildInfo.adjustFrameRender(viewport,
-                                  scissor,
-                                  opaqueFramePlan,
-                                  renderCamera,
-                                  &rootViewInfo);
+  opaquePlanBuildInfo.adjustFrameRender(opaqueViewport,
+                                        opaqueScissor,
+                                        opaqueFramePlan,
+                                        renderCamera,
+                                        &rootViewInfo);
 
   DrawVisitor opaqueDrawVisitor(opaquePlanBuildInfo);
   ViewFrustum localFrustum = opaquePlanBuildInfo.viewFrustum;
@@ -216,10 +226,20 @@ void ShadowMapProvider::_buildNewMap( const CameraNode& renderCamera,
             glm::transpose(opaquePlanBuildInfo.drawMatrices.localToViewMatrix));
   _targetField->pass(opaqueDrawVisitor, localFrustum);
 
+  VkViewport transparentViewport {0.f,
+                                  0.f,
+                                  float(_transparentMapExtent.x),
+                                  float(_transparentMapExtent.y),
+                                  0.f,
+                                  1.f};
+  VkRect2D transparentScissor { 0,
+                                0,
+                                uint32_t(_transparentMapExtent.x),
+                                uint32_t(_transparentMapExtent.y)};
 
   DrawPlanBuildInfo transparentPlanBuildInfo(drawPlan);
-  transparentPlanBuildInfo.adjustFrameRender( viewport,
-                                              scissor,
+  transparentPlanBuildInfo.adjustFrameRender( transparentViewport,
+                                              transparentScissor,
                                               transparentFramePlan,
                                               renderCamera,
                                               &rootViewInfo);

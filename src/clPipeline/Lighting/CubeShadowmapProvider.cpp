@@ -14,9 +14,11 @@ static constexpr VkImageUsageFlags shadowmapUsage =
                                             VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
 CubeShadowmapProvider::CubeShadowmapProvider( size_t framePoolsNumber,
-                                              uint32_t frameExtent,
+                                              uint32_t opaqueMapExtent,
+                                              uint32_t transparentMapExtent,
                                               LogicalDevice& device) :
-  _frameExtent(frameExtent),
+  _opaqueMapExtent(opaqueMapExtent),
+  _transparentMapExtent(transparentMapExtent),
   _opaqueFrameBuilder(opaqueMapFormat, shadowmapLayout, device),
   _transparentFrameBuilder(transparentMapFormat, shadowmapLayout, device),
   _framePools(framePoolsNumber),
@@ -24,15 +26,19 @@ CubeShadowmapProvider::CubeShadowmapProvider( size_t framePoolsNumber,
   _targetField(nullptr)
 {
   if(framePoolsNumber == 0) Abort("CubeShadowmapProvider::CubeShadowmapProvider: framePoolsNumber = 0");
-  if(_frameExtent == 0) Abort("CubeShadowmapProvider::CubeShadowmapProvider: wrong frame extent.");
+  if(_opaqueMapExtent == 0) Abort("CubeShadowmapProvider::CubeShadowmapProvider: wrong opaque map extent.");
+  if (_transparentMapExtent == 0) Abort("CubeShadowmapProvider::CubeShadowmapProvider: wrong transparent map extent.");
 }
 
-void CubeShadowmapProvider::setFrameExtent(uint32_t frameExtent)
+void CubeShadowmapProvider::setMapExtent( uint32_t opaqueMapExtent,
+                                          uint32_t transparentMapExtent)
 {
-  if (frameExtent == 0) Abort("CubeShadowmapProvider::setFrameExtent: wrong frame extent.");
+  if (opaqueMapExtent == 0) Abort("CubeShadowmapProvider::setMapExtent: wrong opaque map extent.");
+  if (transparentMapExtent == 0) Abort("CubeShadowmapProvider::setMapExtent: wrong transparent map extent.");
 
   for(FramePool& pool : _framePools) pool.clear();
-  _frameExtent = frameExtent;
+  _opaqueMapExtent = opaqueMapExtent;
+  _transparentMapExtent = transparentMapExtent;
 }
 
 void CubeShadowmapProvider::setTargetField(AbstractField* newField) noexcept
@@ -143,8 +149,8 @@ CubeShadowmapProvider::ShadowmapRecord&
                                         shadowmapUsage,
                                         VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT,
                                         opaqueMapFormat,
-                                        glm::uvec3( _frameExtent,
-                                                    _frameExtent,
+                                        glm::uvec3( _opaqueMapExtent,
+                                                    _opaqueMapExtent,
                                                     1),
                                         VK_SAMPLE_COUNT_1_BIT,
                                         6,
@@ -158,8 +164,8 @@ CubeShadowmapProvider::ShadowmapRecord&
                                             shadowmapUsage,
                                             VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT,
                                             transparentMapFormat,
-                                            glm::uvec3( _frameExtent,
-                                                        _frameExtent,
+                                            glm::uvec3( _transparentMapExtent,
+                                                        _transparentMapExtent,
                                                         1),
                                             VK_SAMPLE_COUNT_1_BIT,
                                             6,
@@ -334,17 +340,17 @@ void CubeShadowmapProvider::_buildFramePlan(
   drawPlan.addFramePlan(std::move(transparentFramePlanPtr));
   drawPlan.addDependency(transparentFramePlan, dependentFrame);
 
-  VkViewport viewport { 0.f,
-                        0.f,
-                        float(_frameExtent),
-                        float(_frameExtent),
-                        0.f,
-                        1.f};
-  VkRect2D scissor {0, 0, _frameExtent, _frameExtent};
+  VkViewport opaqueViewport { 0.f,
+                              0.f,
+                              float(_opaqueMapExtent),
+                              float(_opaqueMapExtent),
+                              0.f,
+                              1.f};
+  VkRect2D opaqueScissor {0, 0, _opaqueMapExtent, _opaqueMapExtent };
 
   DrawPlanBuildInfo opaquePlanBuildInfo(drawPlan);
-  opaquePlanBuildInfo.adjustFrameRender(viewport,
-                                  scissor,
+  opaquePlanBuildInfo.adjustFrameRender(opaqueViewport,
+                                  opaqueScissor,
                                   opaqueFramePlan,
                                   renderCamera,
                                   &rootViewInfo);
@@ -355,10 +361,20 @@ void CubeShadowmapProvider::_buildFramePlan(
             glm::transpose(opaquePlanBuildInfo.drawMatrices.localToViewMatrix));
   _targetField->pass(opaqueDrawVisitor, localFrustum);
 
+  VkViewport transparentViewport{ 0.f,
+                                  0.f,
+                                  float(_transparentMapExtent),
+                                  float(_transparentMapExtent),
+                                  0.f,
+                                  1.f };
+  VkRect2D transparentScissor{0,
+                              0,
+                              _transparentMapExtent,
+                              _transparentMapExtent };
 
   DrawPlanBuildInfo transparentPlanBuildInfo(drawPlan);
-  transparentPlanBuildInfo.adjustFrameRender( viewport,
-                                              scissor,
+  transparentPlanBuildInfo.adjustFrameRender( transparentViewport,
+                                              transparentScissor,
                                               transparentFramePlan,
                                               renderCamera,
                                               &rootViewInfo);

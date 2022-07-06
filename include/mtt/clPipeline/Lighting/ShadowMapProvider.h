@@ -45,14 +45,17 @@ namespace mtt
 
     public:
       ShadowMapProvider(size_t framePoolsNumber,
-                        glm::uvec2 frameExtent,
+                        glm::uvec2 opaqueMapExtent,
+                        glm::uvec2 transparentMapExtent,
                         LogicalDevice& device);
       ShadowMapProvider(const ShadowMapProvider&) = delete;
       ShadowMapProvider& operator = (const ShadowMapProvider&) = delete;
       virtual ~ShadowMapProvider() noexcept = default;
 
-      inline glm::uvec2 frameExtent() const noexcept;
-      void setFrameExtent(glm::uvec2 frameExtent);
+      inline glm::uvec2 opaqueMapExtent() const noexcept;
+      inline glm::uvec2 transparentMapExtent() const noexcept;
+      void setMapExtent(glm::uvec2 opaqueMapExtent,
+                        glm::uvec2 transparentMapExtent);
 
       inline AbstractField* targetField() const noexcept;
       void setTargetField(AbstractField* newField) noexcept;
@@ -92,7 +95,8 @@ namespace mtt
       FrameRecord& _getOrCreateFrame(size_t index);
 
     private:
-      glm::uvec2 _frameExtent;
+      glm::uvec2 _opaqueMapExtent;
+      glm::uvec2 _transparentMapExtent;
       OpaqueShadowmapBuilder _opaqueFrameBuilder;
       TransparentShadowmapBuilder _transparentFrameBuilder;
 
@@ -104,9 +108,14 @@ namespace mtt
       AbstractField* _targetField;
     };
 
-    inline glm::uvec2 ShadowMapProvider::frameExtent() const noexcept
+    inline glm::uvec2 ShadowMapProvider::opaqueMapExtent() const noexcept
     {
-      return _frameExtent;
+      return _opaqueMapExtent;
+    }
+
+    inline glm::uvec2 ShadowMapProvider::transparentMapExtent() const noexcept
+    {
+      return _transparentMapExtent;
     }
 
     inline AbstractField* ShadowMapProvider::targetField() const noexcept

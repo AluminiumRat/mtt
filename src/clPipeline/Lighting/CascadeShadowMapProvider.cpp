@@ -9,10 +9,15 @@
 using namespace mtt;
 using namespace mtt::clPipeline;
 
-CascadeShadowMapProvider::CascadeShadowMapProvider( size_t framePoolsNumber,
-                                                    glm::uvec2 frameExtent,
-                                                    LogicalDevice& device) :
-  ShadowMapProvider(framePoolsNumber, frameExtent, device)
+CascadeShadowMapProvider::CascadeShadowMapProvider(
+                                                size_t framePoolsNumber,
+                                                glm::uvec2 opaqueMapExtent,
+                                                glm::uvec2 transparentMapExtent,
+                                                LogicalDevice& device) :
+  ShadowMapProvider(framePoolsNumber,
+                    opaqueMapExtent,
+                    transparentMapExtent,
+                    device)
 {
 }
 
@@ -83,7 +88,7 @@ CascadeShadowMapProvider::Area CascadeShadowMapProvider::_alignArea(
   areaSize = exp2(sizeOrder);
   if(areaSize > 2.f) areaSize = 2.f;
 
-  float granularity = areaSize / frameExtent().x * 2.f;
+  float granularity = areaSize / opaqueMapExtent().x * 2.f;
 
   glm::vec2 sourceCenter = source.topleftCorner + source.size / 2.f;
   glm::vec2 alignedCorner = sourceCenter - glm::vec2(areaSize) / 2.f;

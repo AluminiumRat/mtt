@@ -47,8 +47,10 @@ namespace mtt
 
       inline const CameraNode& shadowmapFrontCamera() const noexcept;
 
-      inline unsigned int shadowmapExtent() const noexcept;
-      inline void setShadowmapExtent(unsigned int newValue);
+      inline unsigned int opaqueShadowmapExtent() const noexcept;
+      inline unsigned int transparentShadowmapExtent() const noexcept;
+      inline void setShadowmapExtent( unsigned int opaqueShadowmapExtent,
+                                      unsigned int transparentShadowmapExtent);
 
       inline AbstractField* shadowmapField() const noexcept;
       inline void setShadowmapField(AbstractField* newField);
@@ -88,7 +90,8 @@ namespace mtt
 
       CameraNode _shadowmapFrontCamera;
       std::unique_ptr<CubeShadowmapProvider> _shadowmapProvider;
-      unsigned int _shadowmapExtent;
+      unsigned int _opaqueShadowmapExtent;
+      unsigned int _transparentShadowmapExtent;
       AbstractField* _shadowmapField;
       std::unique_ptr<Sampler> _opaqueShadowmapSampler;
       std::unique_ptr<Sampler> _transparentShadowmapSampler;
@@ -150,31 +153,43 @@ namespace mtt
       return static_cast<CubeTexture*>(_filterSampler->attachedTexture(0));
     }
 
-    inline const CameraNode& PointLight::shadowmapFrontCamera() const noexcept
+    inline const CameraNode & PointLight::shadowmapFrontCamera() const noexcept
     {
       return _shadowmapFrontCamera;
     }
 
-    inline CubeShadowmapProvider* PointLight::shadowmapProvider() noexcept
+    inline CubeShadowmapProvider * PointLight::shadowmapProvider() noexcept
     {
       return _shadowmapProvider.get();
     }
 
-    inline unsigned int PointLight::shadowmapExtent() const noexcept
+    inline unsigned int PointLight::opaqueShadowmapExtent() const noexcept
     {
-      return _shadowmapExtent;
+      return _opaqueShadowmapExtent;
     }
 
-    inline void PointLight::setShadowmapExtent(unsigned int newValue)
+    inline unsigned int PointLight::transparentShadowmapExtent() const noexcept
     {
-      if(_shadowmapExtent == newValue) return;
-      _shadowmapExtent = newValue;
+      return _transparentShadowmapExtent;
+    }
+
+    inline void PointLight::setShadowmapExtent(
+                                        unsigned int opaqueShadowmapExtent,
+                                        unsigned int transparentShadowmapExtent)
+    {
+      if( _opaqueShadowmapExtent == opaqueShadowmapExtent &&
+          _transparentShadowmapExtent == transparentShadowmapExtent) return;
+
+      _opaqueShadowmapExtent = opaqueShadowmapExtent;
+      _transparentShadowmapExtent = transparentShadowmapExtent;
+
       _updateShadowmapProvider();
       if (_shadowmapProvider != nullptr)
       {
         try
         {
-          _shadowmapProvider->setFrameExtent(_shadowmapExtent);
+          _shadowmapProvider->setMapExtent( _opaqueShadowmapExtent,
+                                            _transparentShadowmapExtent);
         }
         catch (...)
         {

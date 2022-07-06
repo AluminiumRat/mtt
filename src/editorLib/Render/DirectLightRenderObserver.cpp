@@ -144,11 +144,11 @@ void DirectLightRenderObserver::_updateShadowsEnabled() noexcept
 
 void DirectLightRenderObserver::_updateShadowMapSize() noexcept
 {
-  unsigned int frameSize = std::max(1u,
+  unsigned int frameSize = std::max(64u,
                                     unsigned int(_lightObject.shadowmapSize()));
   try
   {
-    _light.setShadowmapExtent(frameSize);
+    _light.setShadowmapExtent(frameSize, frameSize / 2);
   }
   catch (std::exception& error)
   {

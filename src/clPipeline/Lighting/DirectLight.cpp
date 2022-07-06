@@ -15,7 +15,8 @@ DirectLight::DirectLight( bool forwardLightingEnabled,
                           LogicalDevice& device) :
   _device(device),
   _shadowmapProjectionMatrix(1.f),
-  _shadowmapExtent(256),
+  _opaqueShadowmapExtent(256),
+  _transparentShadowmapExtent(128),
   _shadowmapField(nullptr),
   _illuminance(1.f),
   _shadowDistance(50.f),
@@ -77,7 +78,8 @@ void DirectLight::_resetShadowmapProvider() noexcept
 
 void DirectLight::_updateShadowmapProvider()
 {
-  bool shadowsEnabled = _shadowmapExtent != 0 &&
+  bool shadowsEnabled = _opaqueShadowmapExtent != 0 &&
+                        _transparentShadowmapExtent != 0 &&
                         _shadowDistance != 0 &&
                         _cascadeSize != 0 &&
                         _shadowmapField != nullptr;
@@ -94,9 +96,10 @@ void DirectLight::_updateShadowmapProvider()
     try
     {
       _shadowmapProvider.reset(new CascadeShadowMapProvider(
-                                                  2,
-                                                  glm::uvec2(_shadowmapExtent),
-                                                  _device));
+                                        2,
+                                        glm::uvec2(_opaqueShadowmapExtent),
+                                        glm::uvec2(_transparentShadowmapExtent),
+                                        _device));
       _shadowmapProvider->setTargetField(_shadowmapField);
 
       _opaqueShadowmapSampler.reset(new Sampler(cascadeSize(),
@@ -180,7 +183,7 @@ void DirectLight::updateCameras(
 glm::mat4 DirectLight::_getShiftMatrix(
                               const DrawPlanBuildInfo& buildInfo) const noexcept
 {
-  if(_shadowmapExtent == 0) return glm::mat4(1.f);
+  if(_opaqueShadowmapExtent == 0) return glm::mat4(1.f);
 
   glm::mat4 viewToLocalMatrix =
                         glm::inverse(buildInfo.drawMatrices.localToViewMatrix);
@@ -192,7 +195,7 @@ glm::mat4 DirectLight::_getShiftMatrix(
                             viewCenter.y + slope.y * viewCenter.z,
                             0.f);
 
-  float texelSize = 2.f * _shadowDistance / _shadowmapExtent;
+  float texelSize = 2.f * _shadowDistance / _opaqueShadowmapExtent;
   cameraPosition = glm::round(cameraPosition / texelSize) * texelSize;
 
   return glm::translate(cameraPosition);
