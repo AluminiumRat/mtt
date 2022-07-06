@@ -1,7 +1,11 @@
 //cubeShadowmapLib.glsl
 
 layout( set = volatileSet,
-        binding = shadowMapBinding$INDEX$) uniform samplerCube shadowMap$INDEX$;
+        binding = opaqueShadowMapBinding$INDEX$)
+                                    uniform samplerCube opaqueShadowMap$INDEX$;
+layout( set = volatileSet,
+        binding = transparentShadowMapBinding$INDEX$)
+                                uniform samplerCube transparentShadowMap$INDEX$;
 
 layout( set = staticSet,
         binding = blurShiftsBinding$INDEX$) uniform BlurShift$INDEX$
@@ -18,7 +22,7 @@ float getOpaqueShadowFactor$INDEX$( vec3 cubeCoord,
                                     vec3 tangent,
                                     vec3 cotangent)
 {
-  float mapSize = textureSize(shadowMap$INDEX$, 0).x;
+  float mapSize = textureSize(opaqueShadowMap$INDEX$, 0).x;
   float texelSlope = shadowmapSlope / mapSize;
   float slope = blurRadius * shadowmapSlope + texelSlope;
   normalizedDistanceToLight -= slope;
@@ -31,7 +35,9 @@ float getOpaqueShadowFactor$INDEX$( vec3 cubeCoord,
     vec3 shift = planeShift.x * tangent + planeShift.y * cotangent;
     shift *= blurRadius;
 
-    vec4 shadowDepth = textureGather(shadowMap$INDEX$, cubeCoord + shift, 0);
+    vec4 shadowDepth = textureGather( opaqueShadowMap$INDEX$,
+                                      cubeCoord + shift,
+                                      0);
     shadows += step(normalizedDistanceToLight, shadowDepth);
   }
 
@@ -42,7 +48,9 @@ float getOpaqueShadowFactor$INDEX$( vec3 cubeCoord,
 float getTransparentShadowFactor$INDEX$(vec3 cubeCoord,
                                         float normalizedDistanceToLight)
 {
-  vec3 variadicValues = textureLod(shadowMap$INDEX$, cubeCoord, 0).gba;
+  vec3 variadicValues = textureLod( transparentShadowMap$INDEX$,
+                                    cubeCoord,
+                                    0).gba;
   if(variadicValues.z == 0.f) return 1.f;
 
   float avgDistance = variadicValues.x / variadicValues.z;

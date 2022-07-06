@@ -87,8 +87,12 @@ void DirectLightApplicator::DrawTechnique::_adjustPipeline()
     shadowLibFragment.replace("$SHADOW_CASCADE_SIZE$",
                               std::to_string(_light.cascadeSize()));
 
-    _pipeline->addResource( "shadowMapBinding",
-                            *_light.shadowmapSampler(),
+    _pipeline->addResource( "opaqueShadowMapBinding",
+                            *_light.opaqueShadowmapSampler(),
+                            VK_SHADER_STAGE_FRAGMENT_BIT);
+
+    _pipeline->addResource( "transparentShadowMapBinding",
+                            *_light.transparentShadowmapSampler(),
                             VK_SHADER_STAGE_FRAGMENT_BIT);
 
     _pipeline->addResource( "shadowCoordsCorrectionBinding",
@@ -161,27 +165,34 @@ void DirectLightApplicator::DrawTechnique::_makeShadowCommand(
                       const DirectLightData& lightData,
                       const CascadeShadowMapProvider::CascadeInfo& cascadeInfo)
 {
-  std::vector<Texture2D*> shadowTextures;
-  shadowTextures.reserve(cascadeInfo.size());
+  std::vector<Texture2D*>shadowTextures;
+  shadowTextures.reserve(2 * cascadeInfo.size());
   std::vector<ImageView*> shadowImageViews;
-  shadowImageViews.reserve(cascadeInfo.size());
+  shadowImageViews.reserve(2 * cascadeInfo.size());
+  std::vector<Texture2D*> transparentShadowTextures;
   CoordsCorrectionData correctionData;
   correctionData.reserve(cascadeInfo.size());
 
-  Sampler& shadowmapSampler = *_light.shadowmapSampler();
+  Sampler& opaqueShadowmapSampler = *_light.opaqueShadowmapSampler();
+  Sampler& transparentShadowmapSampler = *_light.transparentShadowmapSampler();
+
   for(size_t layerIndex = 0; layerIndex < cascadeInfo.size(); layerIndex++)
   {
     float multiplicator = cascadeInfo[layerIndex].coordCorrection.multiplicator;
     float blurRadius = _light.blurRelativeRadius(multiplicator);
-
     correctionData.push_back(glm::vec4(
                           cascadeInfo[layerIndex].coordCorrection.multiplicator,
                           cascadeInfo[layerIndex].coordCorrection.shift.x,
                           cascadeInfo[layerIndex].coordCorrection.shift.y,
                           blurRadius));
-    shadowTextures.push_back(
-        static_cast<Texture2D*>(shadowmapSampler.attachedTexture(layerIndex)));
-    shadowImageViews.push_back(cascadeInfo[layerIndex].map);
+
+    shadowTextures.push_back(static_cast<Texture2D*>(
+                          opaqueShadowmapSampler.attachedTexture(layerIndex)));
+    shadowImageViews.push_back(cascadeInfo[layerIndex].maps.opaqueMap);
+
+    shadowTextures.push_back(static_cast<Texture2D*>(
+                      transparentShadowmapSampler.attachedTexture(layerIndex)));
+    shadowImageViews.push_back(cascadeInfo[layerIndex].maps.transparentMap);
   }
 
   DrawBin* renderBin = buildInfo.currentFramePlan->getBin(lightingStage);
@@ -277,7 +288,7 @@ void DirectLightApplicator::buildDrawActions(DrawPlanBuildInfo& buildInfo)
     CameraNode viewCamera;
     _light.updateCameras(shadowmapCamera, viewCamera, buildInfo);
 
-    cascadeInfo = _light.shadowmapProvider()->getShadowMap(
+    cascadeInfo = _light.shadowmapProvider()->getShadowMaps(
                                                           shadowmapCamera,
                                                           viewCamera,
                                                           _light.cascadeSize(),

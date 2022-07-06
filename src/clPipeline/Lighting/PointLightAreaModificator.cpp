@@ -26,13 +26,16 @@ void PointLightAreaModificator::buildPrepareActions(
 
   PointLightData lightData = _light.buildDrawData(buildInfo);
 
-  ImageView* shadowMapView = nullptr;
   if(_light.shadowmapProvider() != nullptr)
   {
-    ImageView& shadowMapView = _light.shadowmapProvider()->getShadowMap(
+    CubeShadowmapProvider::Shadowmaps shadowmaps =
+                        _light.shadowmapProvider()->getShadowMaps(
                                                   _light.shadowmapFrontCamera(),
                                                   buildInfo);
-    _makeShadowCommand(buildInfo, lightData, shadowMapView);
+    _makeShadowCommand( buildInfo,
+                        lightData,
+                        *shadowmaps.opaqueMap,
+                        *shadowmaps.transparentMap);
   }
   else
   {
@@ -56,11 +59,16 @@ void PointLightAreaModificator::_makeNonshadowCommand(
 void PointLightAreaModificator::_makeShadowCommand(
                                                 DrawPlanBuildInfo& buildInfo,
                                                 const PointLightData& lightData,
-                                                ImageView& shadowMapView)
+                                                ImageView& opaqueShadowmap,
+                                                ImageView& transparentShadowmap)
 {
-  Sampler& shadowmapSampler = *_light.shadowmapSampler();
-  CubeTexture* shadowTexture =
-                static_cast<CubeTexture*>(shadowmapSampler.attachedTexture(0));
+  Sampler& opaqueShadowmapSampler = *_light.opaqueShadowmapSampler();
+  CubeTexture* opaqueShadowTexture =
+          static_cast<CubeTexture*>(opaqueShadowmapSampler.attachedTexture(0));
+
+  Sampler& transparentShadowmapSampler = *_light.transparentShadowmapSampler();
+  CubeTexture* transparentShadowTexture =
+      static_cast<CubeTexture*>(transparentShadowmapSampler.attachedTexture(0));
 
   DrawBin* renderBin =
                   buildInfo.currentFramePlan->getBin(modificatorsPrepareStage);
@@ -69,12 +77,16 @@ void PointLightAreaModificator::_makeShadowCommand(
   using Action = UpdateResourcesAction< VolatileUniform<PointLightData>,
                                         PointLightData,
                                         CubeTexture,
+                                        ImageView&,
+                                        CubeTexture,
                                         ImageView&>;
   renderBin->createAction<Action>(0,
                                   _lightDataUniform,
                                   lightData,
-                                  *shadowTexture,
-                                  shadowMapView);
+                                  *opaqueShadowTexture,
+                                  opaqueShadowmap,
+                                  *transparentShadowTexture,
+                                  transparentShadowmap);
 }
 
 void PointLightAreaModificator::adjustPipeline(
@@ -99,10 +111,16 @@ void PointLightAreaModificator::adjustPipeline(
 
       shadowLibFragment.replace("$INDEX$", indexStr);
 
-      std::string shadowSamplerBindingName("shadowMapBinding");
+      std::string shadowSamplerBindingName("opaqueShadowMapBinding");
       shadowSamplerBindingName += indexStr;
       targetPipeline.addResource( shadowSamplerBindingName,
-                                  *_light.shadowmapSampler(),
+                                  *_light.opaqueShadowmapSampler(),
+                                  targetShader.type());
+
+      shadowSamplerBindingName = "transparentShadowMapBinding";
+      shadowSamplerBindingName += indexStr;
+      targetPipeline.addResource( shadowSamplerBindingName,
+                                  *_light.transparentShadowmapSampler(),
                                   targetShader.type());
 
       std::string blurShiftsBindingName("blurShiftsBinding");

@@ -1,7 +1,12 @@
 //shadowmapLib.glsl
 
 layout( set = volatileSet,
-        binding = shadowMapBinding$INDEX$) uniform sampler2D shadowMap$INDEX$;
+        binding = opaqueShadowMapBinding$INDEX$)
+                                      uniform sampler2D opaqueShadowMap$INDEX$;
+
+layout( set = volatileSet,
+        binding = transparentShadowMapBinding$INDEX$)
+                                  uniform sampler2D transparentShadowMap$INDEX$;
 
 float getOpaqueShadowFactor$INDEX$( vec2 shadowCoords,
                                     float normalizedDistanceToLight,
@@ -11,7 +16,7 @@ float getOpaqueShadowFactor$INDEX$( vec2 shadowCoords,
   float slopeCorrection = 2.f * blurRadius * shadowmapSlope;
   normalizedDistanceToLight -= slopeCorrection;
 
-  float mapSize = textureSize(shadowMap$INDEX$, 0).x;
+  float mapSize = textureSize(opaqueShadowMap$INDEX$, 0).x;
 
   vec2 startTexel = mapSize * (shadowCoords - vec2(blurRadius));
   ivec2 iStartTexel = ivec2(startTexel);
@@ -31,7 +36,7 @@ float getOpaqueShadowFactor$INDEX$( vec2 shadowCoords,
     float yWeight = startWeights.y;
     for(; iTexelCoord.y <= iFinishTexel.y;)
     {
-      float shadowDepth = texelFetch( shadowMap$INDEX$,
+      float shadowDepth = texelFetch( opaqueShadowMap$INDEX$,
                                       iTexelCoord,
                                       0).x;
       float currentWeight = xWeight * yWeight;
@@ -53,7 +58,7 @@ float getOpaqueShadowFactor$INDEX$( vec2 shadowCoords,
 float getTransparentShadowFactor$INDEX$(vec2 shadowCoords,
                                         float normalizedDistanceToLight)
 {
-  vec3 variadicValues = textureLod( shadowMap$INDEX$,
+  vec3 variadicValues = textureLod( transparentShadowMap$INDEX$,
                                     shadowCoords,
                                     0).gba;
   if(variadicValues.z == 0.f) return 1.f;

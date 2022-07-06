@@ -73,7 +73,7 @@ OpaqueShadowmapPass::OpaqueShadowmapPass( VkFormat shadowmapFormat,
   subpassInfo.blentAttachments.push_back(blendingState);
   subpasses[0].subpassInfo = subpassInfo;
 
-  subpasses[0].stages.push_back(opaqueShadowmapStage);
+  subpasses[0].stages.push_back(shadowmapStage);
 
   setup(dependencies, attachments, 0, subpasses);
 }

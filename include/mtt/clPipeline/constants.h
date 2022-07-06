@@ -10,7 +10,8 @@ namespace mtt
     constexpr FrameType colorFrameType = baseFrameTypes::colorFrameType;
     constexpr FrameType uidFrameType = baseFrameTypes::uidFrameType;
     constexpr FrameType depthmapFrameType = baseFrameTypes::depthmapFrameType;
-    constexpr FrameType shadowmapFrameType(3);
+    constexpr FrameType opaqueShadowmapFrameType(3);
+    constexpr FrameType transparentShadowmapFrameType(4);
 
     constexpr StageIndex subsidiaryStage = baseStages::subsidiaryStage;
 
@@ -25,9 +26,7 @@ namespace mtt
     constexpr StageIndex forwardLightStage(6);
     constexpr StageIndex selectionStage(7);
 
-    /// Stages for shadowmap render
-    constexpr StageIndex opaqueShadowmapStage(0);
-    constexpr StageIndex transparentShadowmapStage(1);
+    constexpr StageIndex shadowmapStage(0);
 
     /// Single stage for uid render
     constexpr StageIndex uidStage = baseStages::uidStage;

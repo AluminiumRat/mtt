@@ -49,7 +49,7 @@ MeshRenderObserver::MeshRenderObserver( MeshObject& object,
   std::unique_ptr<mtt::clPipeline::ShadowmapMeshTechnique> shadowmapTechnique;
   shadowmapTechnique.reset(new mtt::clPipeline::ShadowmapMeshTechnique(
                                           VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST));
-  _mesh.setTechnique( mtt::clPipeline::shadowmapFrameType,
+  _mesh.setTechnique( mtt::clPipeline::opaqueShadowmapFrameType,
                       std::move(shadowmapTechnique));
 
   _drawableNode.setDrawable(&_mesh, mtt::Sphere());

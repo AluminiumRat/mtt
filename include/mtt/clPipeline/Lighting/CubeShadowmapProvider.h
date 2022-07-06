@@ -5,7 +5,8 @@
 
 #include <glm/vec2.hpp>
 
-#include <mtt/clPipeline/Lighting/ShadowmapBuilder.h>
+#include <mtt/clPipeline/Lighting/OpaqueShadowmapBuilder.h>
+#include <mtt/clPipeline/Lighting/TransparentShadowmapBuilder.h>
 #include <mtt/render/SceneGraph/CameraNode.h>
 
 namespace mtt
@@ -21,15 +22,25 @@ namespace mtt
     {
     public:
       /// R component is normalized linear distance to occluder
-      /// G component is weighted average distance to transparent objects
-      /// B component is weighted average square of distance to transparent
+      static constexpr VkFormat opaqueMapFormat = VK_FORMAT_R16_UNORM;
+
+      /// R component is weighted average distance to transparent objects
+      /// G component is weighted average square of distance to transparent
       /// objects
-      /// A component is weight weight for G and B components
-      /// If A component is 0 then no transparent objects rendered to this
+      /// B component is weight weight for G and B components
+      /// If B component is 0 then no transparent objects rendered to this
       /// texel.
-      static constexpr VkFormat shadowmapFormat = VK_FORMAT_R16G16B16A16_UNORM;
+      static constexpr VkFormat transparentMapFormat =
+                                                  VK_FORMAT_R16G16B16A16_UNORM;
+
       static constexpr VkImageLayout shadowmapLayout =
                                       VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+      struct Shadowmaps
+      {
+        ImageView* opaqueMap;
+        ImageView* transparentMap;
+      };
 
     public:
       CubeShadowmapProvider(size_t framePoolsNumber,
@@ -45,19 +56,26 @@ namespace mtt
       inline AbstractField* targetField() const noexcept;
       void setTargetField(AbstractField* newField) noexcept;
 
-      ImageView& getShadowMap(const CameraNode& frontCamera,
-                              DrawPlanBuildInfo& buildInfo);
+      Shadowmaps getShadowMaps( const CameraNode& frontCamera,
+                                DrawPlanBuildInfo& buildInfo);
 
     private:
       struct ShadowmapRecord
       {
-        std::unique_ptr<AbstractFrame> rightFrame;
-        std::unique_ptr<AbstractFrame> leftFrame;
-        std::unique_ptr<AbstractFrame> upFrame;
-        std::unique_ptr<AbstractFrame> bottomFrame;
-        std::unique_ptr<AbstractFrame> frontFrame;
-        std::unique_ptr<AbstractFrame> backFrame;
-        Ref<ImageView> samplerImageView;
+        std::unique_ptr<AbstractFrame> rightOpaqueFrame;
+        std::unique_ptr<AbstractFrame> rightTransparentFrame;
+        std::unique_ptr<AbstractFrame> leftOpaqueFrame;
+        std::unique_ptr<AbstractFrame> leftTransparentFrame;
+        std::unique_ptr<AbstractFrame> upOpaqueFrame;
+        std::unique_ptr<AbstractFrame> upTransparentFrame;
+        std::unique_ptr<AbstractFrame> bottomOpaqueFrame;
+        std::unique_ptr<AbstractFrame> bottomTransparentFrame;
+        std::unique_ptr<AbstractFrame> frontOpaqueFrame;
+        std::unique_ptr<AbstractFrame> frontTransparentFrame;
+        std::unique_ptr<AbstractFrame> backOpaqueFrame;
+        std::unique_ptr<AbstractFrame> backTransparentFrame;
+        Ref<ImageView> opaqueMapView;
+        Ref<ImageView> transparentMapView;
 
         ShadowmapRecord() noexcept = default;
         ShadowmapRecord(ShadowmapRecord&& other) noexcept = default;
@@ -68,27 +86,34 @@ namespace mtt
       };
 
     private:
-      ImageView* _tryUseExistingPlan(
+      ShadowmapRecord* _tryUseExistingPlan(
                                   const std::vector<AbstractFramePlan*>& plans,
                                   const CameraNode& frontCamera,
                                   DrawPlan& drawPlan,
                                   const AbstractFramePlan& dependentFrame);
       ShadowmapRecord& _getOrCreateBlankShadowmap(size_t index);
-      std::unique_ptr<AbstractFrame> _createFrame(Image& target, uint32_t face);
+
+      template<typename Builder>
+      std::unique_ptr<AbstractFrame> _createFrame(Builder& builder,
+                                                  Image& shadowMap,
+                                                  uint32_t face);
+
       void _buildNewMap(const CameraNode& frontCamera,
                         ShadowmapRecord& shadowmapRecord,
                         DrawPlan& drawPlan,
                         const AbstractFramePlan& dependentFrame,
                         ViewInfo& rootViewInfo);
       void _buildFramePlan( const CameraNode& renderCamera,
-                            AbstractFrame& frame,
+                            AbstractFrame& opaqueFrame,
+                            AbstractFrame& transparentFrame,
                             DrawPlan& drawPlan,
                             const AbstractFramePlan& dependentFrame,
                             ViewInfo& rootViewInfo);
 
     private:
       uint32_t _frameExtent;
-      ShadowmapBuilder _frameBuilder;
+      OpaqueShadowmapBuilder _opaqueFrameBuilder;
+      TransparentShadowmapBuilder _transparentFrameBuilder;
 
       using FramePool = std::vector<ShadowmapRecord>;
       using FramePools = std::vector<FramePool>;

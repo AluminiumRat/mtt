@@ -69,7 +69,8 @@ namespace mtt
       void updateCameras( CameraNode& shadowmapCamera,
                           CameraNode& viewCamera,
                           const DrawPlanBuildInfo& buildInfo) const noexcept;
-      inline Sampler* shadowmapSampler() noexcept;
+      inline Sampler* opaqueShadowmapSampler() noexcept;
+      inline Sampler* transparentShadowmapSampler() noexcept;
 
       /// Blur radius in UV coordinates, i.e. blur radius relative to light
       /// diameter
@@ -90,7 +91,8 @@ namespace mtt
       std::unique_ptr<CascadeShadowMapProvider> _shadowmapProvider;
       unsigned int _shadowmapExtent;
       AbstractField* _shadowmapField;
-      std::unique_ptr<Sampler> _shadowmapSampler;
+      std::unique_ptr<Sampler> _opaqueShadowmapSampler;
+      std::unique_ptr<Sampler> _transparentShadowmapSampler;
 
       glm::vec3 _illuminance;
       float _height;
@@ -237,9 +239,14 @@ namespace mtt
                                                         .5f / _shadowmapExtent;
     }
 
-    inline Sampler* DirectLight::shadowmapSampler() noexcept
+    inline Sampler* DirectLight::opaqueShadowmapSampler() noexcept
     {
-      return _shadowmapSampler.get();
+      return _opaqueShadowmapSampler.get();
+    }
+
+    inline Sampler* DirectLight::transparentShadowmapSampler() noexcept
+    {
+      return _transparentShadowmapSampler.get();
     }
   }
 }

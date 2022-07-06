@@ -37,7 +37,7 @@ void ModelTechniquesFactory::setupTechniques(Mesh& mesh)
 
   if (_createShadowmapTechnique)
   {
-    mesh.setTechnique(shadowmapFrameType,
+    mesh.setTechnique(opaqueShadowmapFrameType,
                       std::make_unique<ShadowmapMeshTechnique>(_topology));
   }
 

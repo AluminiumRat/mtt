@@ -1,8 +1,12 @@
 //cascadeShadowmapLib.glsl
 
 layout( set = volatileSet,
-        binding = shadowMapBinding$INDEX$)
-                      uniform sampler2D shadowMap$INDEX$[$SHADOW_CASCADE_SIZE$];
+        binding = opaqueShadowMapBinding$INDEX$)
+                uniform sampler2D opaqueShadowMap$INDEX$[$SHADOW_CASCADE_SIZE$];
+
+layout( set = volatileSet,
+        binding = transparentShadowMapBinding$INDEX$)
+          uniform sampler2D transparentShadowMap$INDEX$[$SHADOW_CASCADE_SIZE$];
 
 layout( set = volatileSet,
         binding = shadowCoordsCorrectionBinding$INDEX$)
@@ -40,7 +44,7 @@ float getOpaqueShadowFactor$INDEX$( int layer,
   float slopeCorrection = 2.f * blurRadius * shadowmapSlope;
   normalizedDistanceToLight -= slopeCorrection;
 
-  float mapSize = textureSize(shadowMap$INDEX$[layer], 0).x;
+  float mapSize = textureSize(opaqueShadowMap$INDEX$[layer], 0).x;
 
   vec2 startTexel = mapSize * (centerCoords - vec2(blurRadius));
   ivec2 iStartTexel = ivec2(startTexel);
@@ -60,7 +64,7 @@ float getOpaqueShadowFactor$INDEX$( int layer,
     float yWeight = startWeights.y;
     for(; iTexelCoord.y <= iFinishTexel.y;)
     {
-      float shadowDepth = texelFetch( shadowMap$INDEX$[layer],
+      float shadowDepth = texelFetch( opaqueShadowMap$INDEX$[layer],
                                       iTexelCoord,
                                       0).x;
       float currentWeight = xWeight * yWeight;
@@ -83,7 +87,7 @@ float getTransparentShadowFactor$INDEX$(int layer,
                                         vec2 centerCoords,
                                         float normalizedDistanceToLight)
 {
-  vec3 variadicValues = textureLod( shadowMap$INDEX$[layer],
+  vec3 variadicValues = textureLod( transparentShadowMap$INDEX$[layer],
                                     centerCoords,
                                     0).gba;
   if(variadicValues.z == 0.f) return 1.f;
@@ -107,8 +111,6 @@ float getShadowFactor$INDEX$( vec2 shadowCoords,
 {
   int layer = getLayer$INDEX$(shadowCoords);
   if(layer == -1) return 1.f;
-
-  //return float(layer) / ($SHADOW_CASCADE_SIZE$ - 1);
 
   vec4 coordsCorrection = shadowCoordsCorrection$INDEX$.values[layer];
   vec2 centerCoords = shadowCoords * coordsCorrection.x + coordsCorrection.yz;

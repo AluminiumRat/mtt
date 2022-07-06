@@ -71,7 +71,8 @@ namespace mtt
                             const DrawPlanBuildInfo& buildInfo) const noexcept;
       inline Sampler* filterSampler() noexcept;
       inline CubeShadowmapProvider* shadowmapProvider() noexcept;
-      inline Sampler* shadowmapSampler() noexcept;
+      inline Sampler* opaqueShadowmapSampler() noexcept;
+      inline Sampler* transparentShadowmapSampler() noexcept;
       inline Buffer* blurShiftsBuffer() noexcept;
 
     private:
@@ -89,7 +90,8 @@ namespace mtt
       std::unique_ptr<CubeShadowmapProvider> _shadowmapProvider;
       unsigned int _shadowmapExtent;
       AbstractField* _shadowmapField;
-      std::unique_ptr<Sampler> _shadowmapSampler;
+      std::unique_ptr<Sampler> _opaqueShadowmapSampler;
+      std::unique_ptr<Sampler> _transparentShadowmapSampler;
 
       std::optional<Buffer> _blurShiftsBuffer;
       std::vector<uint32_t> _startShifts;
@@ -220,9 +222,14 @@ namespace mtt
       return nullptr;
     }
 
-    inline Sampler* PointLight::shadowmapSampler() noexcept
+    inline Sampler* PointLight::opaqueShadowmapSampler() noexcept
     {
-      return _shadowmapSampler.get();
+      return _opaqueShadowmapSampler.get();
+    }
+
+    inline Sampler* PointLight::transparentShadowmapSampler() noexcept
+    {
+      return _transparentShadowmapSampler.get();
     }
 
     inline Buffer* PointLight::blurShiftsBuffer() noexcept

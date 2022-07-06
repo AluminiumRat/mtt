@@ -24,7 +24,7 @@ TransparentShadowmapPass::TransparentShadowmapPass(
   VkAttachmentDescription mapAttachment{};
   mapAttachment.format = _shadowmapFormat;
   mapAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-  mapAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+  mapAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
   mapAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
   mapAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
   mapAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
@@ -64,7 +64,7 @@ TransparentShadowmapPass::TransparentShadowmapPass(
   subpassInfo.blentAttachments.push_back(blendingState);
 
   subpasses[0].subpassInfo = subpassInfo;
-  subpasses[0].stages.push_back(transparentShadowmapStage);
+  subpasses[0].stages.push_back(shadowmapStage);
 
   setup(dependencies, attachments, 0, subpasses);
 }

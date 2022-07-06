@@ -42,8 +42,7 @@ namespace mtt
     clPipeline::LightingFade _fadeType;
   };
 
-  inline clPipeline::LightingFade
-                                    FadingLightObject::fadeType() const noexcept
+  inline clPipeline::LightingFade FadingLightObject::fadeType() const noexcept
   {
     return _fadeType;
   }

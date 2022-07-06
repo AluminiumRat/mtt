@@ -100,7 +100,8 @@ void SpotLight::_resetShadowmapProvider() noexcept
 {
   _resetPipelines();
   _shadowMapProvider.reset();
-  _shadowmapSampler.reset();
+  _opaqueShadowmapSampler.reset();
+  _transparentShadowmapSampler.reset();
 }
 
 void SpotLight::_updateShadowmapProvider()
@@ -125,17 +126,28 @@ void SpotLight::_updateShadowmapProvider()
                                                   _device));
       _shadowMapProvider->setTargetField(_shadowmapField);
 
-      _shadowmapSampler.reset(new Sampler(1,
-                                          PipelineResource::VOLATILE,
-                                          _device));
-      _shadowmapSampler->setAttachedTexture(
+      _opaqueShadowmapSampler.reset(new Sampler(1,
+                                                PipelineResource::VOLATILE,
+                                                _device));
+      _opaqueShadowmapSampler->setAttachedTexture(
                                           std::make_shared<Texture2D>(_device),
                                           0);
-      _shadowmapSampler->setMinFilter(VK_FILTER_LINEAR);
-      _shadowmapSampler->setMagFilter(VK_FILTER_LINEAR);
-      _shadowmapSampler->setMipmapMode(VK_SAMPLER_MIPMAP_MODE_NEAREST);
-      _shadowmapSampler->setAddressModeU(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
-      _shadowmapSampler->setAddressModeV(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
+
+      _transparentShadowmapSampler.reset(
+                                        new Sampler(1,
+                                                    PipelineResource::VOLATILE,
+                                                    _device));
+      _transparentShadowmapSampler->setAttachedTexture(
+                                          std::make_shared<Texture2D>(_device),
+                                          0);
+      _transparentShadowmapSampler->setMinFilter(VK_FILTER_LINEAR);
+      _transparentShadowmapSampler->setMagFilter(VK_FILTER_LINEAR);
+      _transparentShadowmapSampler->setMipmapMode(
+                                              VK_SAMPLER_MIPMAP_MODE_NEAREST);
+      _transparentShadowmapSampler->setAddressModeU(
+                                        VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
+      _transparentShadowmapSampler->setAddressModeV(
+                                        VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
     }
     catch (...)
     {

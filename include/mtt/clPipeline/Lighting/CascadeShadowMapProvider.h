@@ -20,16 +20,16 @@ namespace mtt
     class CascadeShadowMapProvider : public ShadowMapProvider
     {
     public:
-      struct ShadowMapInfo
+      struct ShadowMapsInfo
       {
-        ImageView* map;
+        Shadowmaps maps;
         struct
         {
           float multiplicator;
           glm::vec2 shift;
         } coordCorrection; //resultCoord = originCoord * multiplicator + shift
       };
-      using CascadeInfo = std::vector<ShadowMapInfo>;
+      using CascadeInfo = std::vector<ShadowMapsInfo>;
 
     public:
       CascadeShadowMapProvider( size_t framePoolsNumber,
@@ -40,7 +40,7 @@ namespace mtt
                                       const CascadeShadowMapProvider&) = delete;
       virtual ~CascadeShadowMapProvider() noexcept = default;
 
-      CascadeInfo getShadowMap( const CameraNode& shadowmapCamera,
+      CascadeInfo getShadowMaps(const CameraNode& shadowmapCamera,
                                 const CameraNode& viewCamera,
                                 size_t cascadeSize,
                                 DrawPlanBuildInfo& buildInfo);

@@ -90,8 +90,12 @@ void SpotLightApplicator::DrawTechnique::_adjustPipeline()
 
     shadowLibFragment.replace("$INDEX$", "");
 
-    _pipeline->addResource( "shadowMapBinding",
-                            *_light.shadowmapSampler(),
+    _pipeline->addResource( "opaqueShadowMapBinding",
+                            *_light.opaqueShadowmapSampler(),
+                            VK_SHADER_STAGE_FRAGMENT_BIT);
+
+    _pipeline->addResource( "transparentShadowMapBinding",
+                            *_light.transparentShadowmapSampler(),
                             VK_SHADER_STAGE_FRAGMENT_BIT);
   }
   fragmentShader->newFragment().loadFromFile(
@@ -121,8 +125,9 @@ void SpotLightApplicator::DrawTechnique::_adjustPipeline()
 }
 
 void SpotLightApplicator::DrawTechnique::addToDrawPlan(
-                                                  DrawPlanBuildInfo& buildInfo,
-                                                  ImageView* shadowMapView)
+                                              DrawPlanBuildInfo& buildInfo,
+                                              ImageView* opaqueShadowMap,
+                                              ImageView* transparentShadowMap)
 {
   AbstractRenderPass* renderPass = buildInfo.builder->stagePass(lightingStage);
   if(renderPass == nullptr) return;
@@ -136,13 +141,17 @@ void SpotLightApplicator::DrawTechnique::addToDrawPlan(
 
   SpotLightData lightData = _light.buildDrawData(buildInfo);
 
-  if(shadowMapView == nullptr)
+  if(transparentShadowMap == nullptr || opaqueShadowMap == nullptr)
   {
     _makeNonshadowCommand(buildInfo, pointsNumber, lightData);
   }
   else
   {
-    _makeShadowCommand( buildInfo, pointsNumber, lightData, *shadowMapView);
+    _makeShadowCommand( buildInfo,
+                        pointsNumber,
+                        lightData,
+                        *opaqueShadowMap,
+                        *transparentShadowMap);
   }
 }
 
@@ -190,11 +199,16 @@ void SpotLightApplicator::DrawTechnique::_makeShadowCommand(
                                                 DrawPlanBuildInfo& buildInfo,
                                                 uint32_t pointsNumber,
                                                 const SpotLightData& lightData,
-                                                ImageView& shadowMapView)
+                                                ImageView& opaqueShadowMap,
+                                                ImageView& transparentShadowMap)
 {
-  Sampler& shadowmapSampler = *_light.shadowmapSampler();
-  Texture2D* shadowTexture =
-                    static_cast<Texture2D*>(shadowmapSampler.attachedTexture(0));
+  Sampler& opaqueShadowmapSampler = *_light.opaqueShadowmapSampler();
+  Texture2D* opaqueShadowTexture =
+            static_cast<Texture2D*>(opaqueShadowmapSampler.attachedTexture(0));
+
+  Sampler& transparentShadowmapSampler = *_light.transparentShadowmapSampler();
+  Texture2D* transparentShadowTexture =
+        static_cast<Texture2D*>(transparentShadowmapSampler.attachedTexture(0));
 
   DrawBin* renderBin = buildInfo.currentFramePlan->getBin(lightingStage);
   if(renderBin == nullptr) Abort("SpotLightApplicator::DrawTechnique::_makeShadowCommand: light render bin is not supported.");
@@ -203,6 +217,8 @@ void SpotLightApplicator::DrawTechnique::_makeShadowCommand(
                                     SpotLightData,
                                     VolatileUniform<DrawMatrices>,
                                     DrawMatrices,
+                                    Texture2D,
+                                    ImageView&,
                                     Texture2D,
                                     ImageView&,
                                     Texture2D,
@@ -222,8 +238,10 @@ void SpotLightApplicator::DrawTechnique::_makeShadowCommand(
                                       lightData,
                                       _applicator._matricesUniform,
                                       buildInfo.drawMatrices,
-                                      *shadowTexture,
-                                      shadowMapView,
+                                      *opaqueShadowTexture,
+                                      opaqueShadowMap,
+                                      *transparentShadowTexture,
+                                      transparentShadowMap,
                                       *_applicator._depthTexture,
                                       LightingPass::depthSamplerMapIndex,
                                       *_applicator._normalTexture,
@@ -297,17 +315,27 @@ void SpotLightApplicator::buildDrawActions(DrawPlanBuildInfo& buildInfo)
   if (_light.angle() <= .0f) return;
   if (_light.distance() <= 0.f) return;
 
-  ImageView* shadowmapView = nullptr;
+  ImageView* opaqueShadowmap = nullptr;
+  ImageView* transparentShadowmap = nullptr;
   if(_light.shadowMapProvider() != nullptr)
   {
-    shadowmapView = &_light.shadowMapProvider()->getShadowMap(
-                                                      _light.shadowmapCamera(),
+    ShadowMapProvider::Shadowmaps shadowmaps =
+            _light.shadowMapProvider()->getShadowMaps(_light.shadowmapCamera(),
                                                       buildInfo);
+    opaqueShadowmap = shadowmaps.opaqueMap;
+    transparentShadowmap = shadowmaps.transparentMap;
   }
 
   if (_fullscreen(buildInfo))
   {
-    _fullscreenTechnique.addToDrawPlan(buildInfo, shadowmapView);
+    _fullscreenTechnique.addToDrawPlan( buildInfo,
+                                        opaqueShadowmap,
+                                        transparentShadowmap);
   }
-  else _shapeTechnique.addToDrawPlan(buildInfo, shadowmapView);
+  else
+  {
+    _shapeTechnique.addToDrawPlan(buildInfo,
+                                  opaqueShadowmap,
+                                  transparentShadowmap);
+  }
 }

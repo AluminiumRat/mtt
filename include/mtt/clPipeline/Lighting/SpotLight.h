@@ -74,7 +74,8 @@ namespace mtt
       SpotLightData buildDrawData(
                             const DrawPlanBuildInfo& buildInfo) const noexcept;
       inline Sampler* filterSampler() noexcept;
-      inline Sampler* shadowmapSampler() noexcept;
+      inline Sampler* opaqueShadowmapSampler() noexcept;
+      inline Sampler* transparentShadowmapSampler() noexcept;
       inline ShadowMapProvider* shadowMapProvider() noexcept;
 
     private:
@@ -91,7 +92,8 @@ namespace mtt
       std::unique_ptr<ShadowMapProvider> _shadowMapProvider;
       unsigned int _shadowmapExtent;
       AbstractField* _shadowmapField;
-      std::unique_ptr<Sampler> _shadowmapSampler;
+      std::unique_ptr<Sampler> _opaqueShadowmapSampler;
+      std::unique_ptr<Sampler> _transparentShadowmapSampler;
 
       glm::vec3 _illuminance;
       float _distance;
@@ -240,10 +242,14 @@ namespace mtt
       return nullptr;
     }
 
-    inline Sampler* SpotLight::shadowmapSampler() noexcept
+    inline Sampler* SpotLight::opaqueShadowmapSampler() noexcept
     {
-      return _shadowmapSampler.get();
+      return _opaqueShadowmapSampler.get();
     }
 
+    inline Sampler* SpotLight::transparentShadowmapSampler() noexcept
+    {
+      return _transparentShadowmapSampler.get();
+    }
   }
 }

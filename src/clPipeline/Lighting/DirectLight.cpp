@@ -71,7 +71,8 @@ void DirectLight::_resetShadowmapProvider() noexcept
 {
   _resetPipelines();
   _shadowmapProvider.reset();
-  _shadowmapSampler.reset();
+  _opaqueShadowmapSampler.reset();
+  _transparentShadowmapSampler.reset();
 }
 
 void DirectLight::_updateShadowmapProvider()
@@ -98,22 +99,36 @@ void DirectLight::_updateShadowmapProvider()
                                                   _device));
       _shadowmapProvider->setTargetField(_shadowmapField);
 
-      _shadowmapSampler.reset(new Sampler(cascadeSize(),
-                                          PipelineResource::VOLATILE,
-                                          _device));
-
+      _opaqueShadowmapSampler.reset(new Sampler(cascadeSize(),
+                                                PipelineResource::VOLATILE,
+                                                _device));
       for(size_t layerIndex = 0; layerIndex < cascadeSize(); layerIndex++)
       {
-        _shadowmapSampler->setAttachedTexture(
+        _opaqueShadowmapSampler->setAttachedTexture(
                                           std::make_shared<Texture2D>(_device),
                                           layerIndex);
       }
 
-      _shadowmapSampler->setMinFilter(VK_FILTER_LINEAR);
-      _shadowmapSampler->setMagFilter(VK_FILTER_LINEAR);
-      _shadowmapSampler->setMipmapMode(VK_SAMPLER_MIPMAP_MODE_NEAREST);
-      _shadowmapSampler->setAddressModeU(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
-      _shadowmapSampler->setAddressModeV(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
+      _transparentShadowmapSampler.reset(
+                                        new Sampler(cascadeSize(),
+                                                    PipelineResource::VOLATILE,
+                                                    _device));
+
+      for(size_t layerIndex = 0; layerIndex < cascadeSize(); layerIndex++)
+      {
+        _transparentShadowmapSampler->setAttachedTexture(
+                                          std::make_shared<Texture2D>(_device),
+                                          layerIndex);
+      }
+
+      _transparentShadowmapSampler->setMinFilter(VK_FILTER_LINEAR);
+      _transparentShadowmapSampler->setMagFilter(VK_FILTER_LINEAR);
+      _transparentShadowmapSampler->setMipmapMode(
+                                                VK_SAMPLER_MIPMAP_MODE_NEAREST);
+      _transparentShadowmapSampler->setAddressModeU(
+                                        VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
+      _transparentShadowmapSampler->setAddressModeV(
+                                        VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
     }
     catch (...)
     {

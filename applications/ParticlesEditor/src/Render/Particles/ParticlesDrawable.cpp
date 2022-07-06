@@ -135,7 +135,7 @@ void ParticlesDrawable::buildDrawActions(mtt::DrawPlanBuildInfo& buildInfo)
   {
     _colorTechnique.addToDrawPlan(buildInfo);
   }
-  if(buildInfo.frameType == mtt::clPipeline::shadowmapFrameType)
+  if(buildInfo.frameType == mtt::clPipeline::transparentShadowmapFrameType)
   {
     _shadowmapTechnique.addToDrawPlan(buildInfo);
   }

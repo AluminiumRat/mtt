@@ -91,8 +91,12 @@ void PointLightApplicator::DrawTechnique::_adjustPipeline()
 
     shadowLibFragment.replace("$INDEX$", "");
 
-    _pipeline->addResource( "shadowMapBinding",
-                            *_light.shadowmapSampler(),
+    _pipeline->addResource( "opaqueShadowMapBinding",
+                            *_light.opaqueShadowmapSampler(),
+                            VK_SHADER_STAGE_FRAGMENT_BIT);
+
+    _pipeline->addResource( "transparentShadowMapBinding",
+                            *_light.transparentShadowmapSampler(),
                             VK_SHADER_STAGE_FRAGMENT_BIT);
 
     _pipeline->addResource( "blurShiftsBinding",
@@ -126,8 +130,9 @@ void PointLightApplicator::DrawTechnique::_adjustPipeline()
 }
 
 void PointLightApplicator::DrawTechnique::addToDrawPlan(
-                                                  DrawPlanBuildInfo& buildInfo,
-                                                  ImageView* shadowMapView)
+                                              DrawPlanBuildInfo& buildInfo,
+                                              ImageView* opaqueShadowmap,
+                                              ImageView* transparentShadowmap)
 {
   AbstractRenderPass* renderPass = buildInfo.builder->stagePass(lightingStage);
   if(renderPass == nullptr) return;
@@ -141,13 +146,17 @@ void PointLightApplicator::DrawTechnique::addToDrawPlan(
 
   PointLightData lightData = _light.buildDrawData(buildInfo);
 
-  if(shadowMapView == nullptr)
+  if(opaqueShadowmap == nullptr || transparentShadowmap == nullptr)
   {
     _makeNonshadowCommand(buildInfo, pointsNumber, lightData);
   }
   else
   {
-    _makeShadowCommand( buildInfo, pointsNumber, lightData, *shadowMapView);
+    _makeShadowCommand( buildInfo,
+                        pointsNumber,
+                        lightData,
+                        *opaqueShadowmap,
+                        *transparentShadowmap);
   }
 }
 
@@ -195,11 +204,16 @@ void PointLightApplicator::DrawTechnique::_makeShadowCommand(
                                                 DrawPlanBuildInfo& buildInfo,
                                                 uint32_t pointsNumber,
                                                 const PointLightData& lightData,
-                                                ImageView& shadowMapView)
+                                                ImageView& opaqueShadowmap,
+                                                ImageView& transparentShadowmap)
 {
-  Sampler& shadowmapSampler = *_light.shadowmapSampler();
-  CubeTexture* shadowTexture =
-                static_cast<CubeTexture*>(shadowmapSampler.attachedTexture(0));
+  Sampler& opaqueShadowmapSampler = *_light.opaqueShadowmapSampler();
+  CubeTexture* opaqueShadowTexture =
+          static_cast<CubeTexture*>(opaqueShadowmapSampler.attachedTexture(0));
+
+  Sampler& transparentShadowmapSampler = *_light.transparentShadowmapSampler();
+  CubeTexture* transparentShadowTexture =
+      static_cast<CubeTexture*>(transparentShadowmapSampler.attachedTexture(0));
 
   DrawBin* renderBin = buildInfo.currentFramePlan->getBin(lightingStage);
   if(renderBin == nullptr) Abort("PointLightApplicator::DrawTechnique::_makeShadowCommand: light render bin is not supported.");
@@ -208,6 +222,8 @@ void PointLightApplicator::DrawTechnique::_makeShadowCommand(
                                     PointLightData,
                                     VolatileUniform<DrawMatrices>,
                                     DrawMatrices,
+                                    CubeTexture,
+                                    ImageView&,
                                     CubeTexture,
                                     ImageView&,
                                     Texture2D,
@@ -227,8 +243,10 @@ void PointLightApplicator::DrawTechnique::_makeShadowCommand(
                                       lightData,
                                       _applicator._matricesUniform,
                                       buildInfo.drawMatrices,
-                                      *shadowTexture,
-                                      shadowMapView,
+                                      *opaqueShadowTexture,
+                                      opaqueShadowmap,
+                                      *transparentShadowTexture,
+                                      transparentShadowmap,
                                       *_applicator._depthTexture,
                                       LightingPass::depthSamplerMapIndex,
                                       *_applicator._normalTexture,
@@ -301,17 +319,21 @@ void PointLightApplicator::buildDrawActions(DrawPlanBuildInfo& buildInfo)
   if (buildInfo.frameType != colorFrameType) return;
   if (_light.distance() <= 0.f) return;
 
-  ImageView* shadowmapView = nullptr;
+  CubeShadowmapProvider::Shadowmaps shadowmaps;
   if(_light.shadowmapProvider() != nullptr)
   {
-    shadowmapView = &_light.shadowmapProvider()->getShadowMap(
+    shadowmaps = _light.shadowmapProvider()->getShadowMaps(
                                                   _light.shadowmapFrontCamera(),
                                                   buildInfo);
   }
 
   if (_fullscreen(buildInfo))
   {
-    _fullscreenTechnique.addToDrawPlan(buildInfo, shadowmapView);
+    _fullscreenTechnique.addToDrawPlan( buildInfo,
+                                        shadowmaps.opaqueMap,
+                                        shadowmaps.transparentMap);
   }
-  else _shapeTechnique.addToDrawPlan(buildInfo, shadowmapView);
+  else _shapeTechnique.addToDrawPlan( buildInfo,
+                                      shadowmaps.opaqueMap,
+                                      shadowmaps.transparentMap);
 }

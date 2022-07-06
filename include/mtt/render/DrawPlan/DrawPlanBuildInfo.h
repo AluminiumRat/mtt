@@ -49,7 +49,7 @@ namespace mtt
                                               /// clip distance.
   };
 
-  /// mppx = frondDistance * slope + intercept
+  /// mppx = frontDistance * slope + intercept
   struct MppxDistanceFunction
   {
     alignas(4) float intercept;

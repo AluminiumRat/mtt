@@ -25,13 +25,15 @@ void SpotLightAreaModificator::buildPrepareActions(
 
   SpotLightData lightData = _light.buildDrawData(buildInfo);
 
-  ImageView* shadowMapView = nullptr;
   if(_light.shadowMapProvider() != nullptr)
   {
-    ImageView& shadowMapView = _light.shadowMapProvider()->getShadowMap(
-                                                      _light.shadowmapCamera(),
+    ShadowMapProvider::Shadowmaps shadowmaps =
+            _light.shadowMapProvider()->getShadowMaps(_light.shadowmapCamera(),
                                                       buildInfo);
-    _makeShadowCommand(buildInfo, lightData, shadowMapView);
+    _makeShadowCommand( buildInfo,
+                        lightData,
+                        *shadowmaps.opaqueMap,
+                        *shadowmaps.transparentMap);
   }
   else
   {
@@ -55,11 +57,16 @@ void SpotLightAreaModificator::_makeNonshadowCommand(
 void SpotLightAreaModificator::_makeShadowCommand(
                                                 DrawPlanBuildInfo& buildInfo,
                                                 const SpotLightData& lightData,
-                                                ImageView& shadowMapView)
+                                                ImageView& opaqueShadowMap,
+                                                ImageView& transparentShadowMap)
 {
-  Sampler& shadowmapSampler = *_light.shadowmapSampler();
-  Texture2D* shadowTexture =
-                    static_cast<Texture2D*>(shadowmapSampler.attachedTexture(0));
+  Sampler& opaqueShadowmapSampler = *_light.opaqueShadowmapSampler();
+  Texture2D* opaqueShadowTexture =
+            static_cast<Texture2D*>(opaqueShadowmapSampler.attachedTexture(0));
+
+  Sampler& transparentShadowmapSampler = *_light.transparentShadowmapSampler();
+  Texture2D* transparentShadowTexture =
+        static_cast<Texture2D*>(transparentShadowmapSampler.attachedTexture(0));
 
   DrawBin* renderBin =
                   buildInfo.currentFramePlan->getBin(modificatorsPrepareStage);
@@ -68,12 +75,16 @@ void SpotLightAreaModificator::_makeShadowCommand(
   using Action = UpdateResourcesAction< VolatileUniform<SpotLightData>,
                                         SpotLightData,
                                         Texture2D,
+                                        ImageView&,
+                                        Texture2D,
                                         ImageView&>;
   renderBin->createAction<Action>(0,
                                   _lightDataUniform,
                                   lightData,
-                                  *shadowTexture,
-                                  shadowMapView);
+                                  *opaqueShadowTexture,
+                                  opaqueShadowMap,
+                                  *transparentShadowTexture,
+                                  transparentShadowMap);
 }
 
 void SpotLightAreaModificator::adjustPipeline(
@@ -98,10 +109,16 @@ void SpotLightAreaModificator::adjustPipeline(
 
       shadowLibFragment.replace("$INDEX$", indexStr);
 
-      std::string shadowSamplerBindingName("shadowMapBinding");
+      std::string shadowSamplerBindingName("opaqueShadowMapBinding");
       shadowSamplerBindingName += indexStr;
       targetPipeline.addResource( shadowSamplerBindingName,
-                                  *_light.shadowmapSampler(),
+                                  *_light.opaqueShadowmapSampler(),
+                                  targetShader.type());
+
+      shadowSamplerBindingName = "transparentShadowMapBinding";
+      shadowSamplerBindingName += indexStr;
+      targetPipeline.addResource( shadowSamplerBindingName,
+                                  *_light.transparentShadowmapSampler(),
                                   targetShader.type());
     }
 

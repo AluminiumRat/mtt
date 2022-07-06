@@ -17,7 +17,8 @@ ShadowMapProvider::ShadowMapProvider( size_t framePoolsNumber,
                                       glm::uvec2 frameExtent,
                                       LogicalDevice& device) :
   _frameExtent(frameExtent),
-  _frameBuilder(shadowmapFormat, shadowmapLayout, device),
+  _opaqueFrameBuilder(opaqueMapFormat, shadowmapLayout, device),
+  _transparentFrameBuilder(transparentMapFormat, shadowmapLayout, device),
   _framePools(framePoolsNumber),
   _currentPoolIndex(0),
   _targetField(nullptr)
@@ -39,33 +40,39 @@ void ShadowMapProvider::setTargetField(AbstractField* newField) noexcept
   _targetField = newField;
 }
 
-ImageView& ShadowMapProvider::getShadowMap( const CameraNode& camera,
-                                            DrawPlanBuildInfo& buildInfo)
+ShadowMapProvider::Shadowmaps ShadowMapProvider::getShadowMaps(
+                                                  const CameraNode& camera,
+                                                  DrawPlanBuildInfo& buildInfo)
 {
   DrawPlan& drawPlan = buildInfo.drawPlan;
 
   std::vector<AbstractFramePlan*> existingPlans =
-                                        drawPlan.findFramePlans(_frameBuilder);
-  ImageView* existingMap = _tryUseExistingPlan( existingPlans,
-                                                camera,
-                                                drawPlan,
-                                                *buildInfo.currentFramePlan);
-  if(existingMap != nullptr) return *existingMap;
+                                  drawPlan.findFramePlans(_opaqueFrameBuilder);
+  FrameRecord* existingMap = _tryUseExistingPlan( existingPlans,
+                                                  camera,
+                                                  drawPlan,
+                                                  *buildInfo.currentFramePlan);
+  if(existingMap != nullptr)
+  {
+    return {existingMap->opaqueMapView.get(),
+            existingMap->transparentMapView.get()};
+  }
 
   size_t frameIndex = existingPlans.size();
   FrameRecord& frameRecord = _getOrCreateFrame(frameIndex);
-  AbstractFrame& frame = *frameRecord.frame;
 
   _buildNewMap( camera,
-                frame,
+                *frameRecord.opaqueFrame,
+                *frameRecord.transparentFrame,
                 drawPlan,
                 *buildInfo.currentFramePlan,
                 buildInfo.rootViewInfo);
 
-  return *frameRecord.samplerImageView;
+  return {frameRecord.opaqueMapView.get(),
+          frameRecord.transparentMapView.get()};
 }
 
-ImageView* ShadowMapProvider::_tryUseExistingPlan(
+ShadowMapProvider::FrameRecord* ShadowMapProvider::_tryUseExistingPlan(
                                   const std::vector<AbstractFramePlan*>& plans,
                                   const CameraNode& renderCamera,
                                   DrawPlan& drawPlan,
@@ -76,16 +83,16 @@ ImageView* ShadowMapProvider::_tryUseExistingPlan(
 
   for (AbstractFramePlan* framePlan : plans)
   {
-    ShadowmapBuilder::ShadowMapFramePlan& shadowmapPlan =
-                static_cast<ShadowmapBuilder::ShadowMapFramePlan&>(*framePlan);
+    OpaqueShadowmapBuilder::FramePlan& shadowmapPlan =
+                    static_cast<OpaqueShadowmapBuilder::FramePlan&>(*framePlan);
     if (shadowmapPlan.viewProjectionMatrix == viewProjectionMatrix)
     {
       for (FrameRecord& frameRecord : _framePools[_currentPoolIndex])
       {
-        if (frameRecord.frame.get() == &shadowmapPlan.frame())
+        if (frameRecord.opaqueFrame.get() == &shadowmapPlan.frame())
         {
           drawPlan.addDependency(*framePlan, dependentFrame);
-          return frameRecord.samplerImageView.get();
+          return &frameRecord;
         }
       }
     }
@@ -104,17 +111,29 @@ ShadowMapProvider::FrameRecord&
   FramePool& pool = _framePools[_currentPoolIndex];
   while(pool.size() < index + 1)
   {
-    mtt::Ref<Image> targetImage(new Image(VK_IMAGE_TYPE_2D,
-                                          shadowmapLayout,
-                                          shadowmapUsage,
-                                          0,
-                                          shadowmapFormat,
-                                          glm::uvec3(_frameExtent, 1),
-                                          VK_SAMPLE_COUNT_1_BIT,
-                                          1,
-                                          1,
-                                          VK_IMAGE_ASPECT_COLOR_BIT,
-                                          _frameBuilder.device()));
+    mtt::Ref<Image> opaqueMap(new Image(VK_IMAGE_TYPE_2D,
+                                        shadowmapLayout,
+                                        shadowmapUsage,
+                                        0,
+                                        opaqueMapFormat,
+                                        glm::uvec3(_frameExtent, 1),
+                                        VK_SAMPLE_COUNT_1_BIT,
+                                        1,
+                                        1,
+                                        VK_IMAGE_ASPECT_COLOR_BIT,
+                                        _opaqueFrameBuilder.device()));
+
+    mtt::Ref<Image> transparentMap(new Image( VK_IMAGE_TYPE_2D,
+                                              shadowmapLayout,
+                                              shadowmapUsage,
+                                              0,
+                                              transparentMapFormat,
+                                              glm::uvec3(_frameExtent, 1),
+                                              VK_SAMPLE_COUNT_1_BIT,
+                                              1,
+                                              1,
+                                              VK_IMAGE_ASPECT_COLOR_BIT,
+                                              _opaqueFrameBuilder.device()));
 
     VkComponentMapping colorMapping;
     colorMapping.r = VK_COMPONENT_SWIZZLE_IDENTITY;
@@ -129,14 +148,22 @@ ShadowMapProvider::FrameRecord&
     subresourceRange.baseArrayLayer = 0;
     subresourceRange.layerCount = 1;
 
-    Ref<ImageView> targetView(new ImageView(*targetImage,
-                                            VK_IMAGE_VIEW_TYPE_2D,
-                                            colorMapping,
-                                            subresourceRange));
+    Ref<ImageView> opaqueMapView(new ImageView( *opaqueMap,
+                                                VK_IMAGE_VIEW_TYPE_2D,
+                                                colorMapping,
+                                                subresourceRange));
+
+    Ref<ImageView> transparentMapView(new ImageView(*transparentMap,
+                                                    VK_IMAGE_VIEW_TYPE_2D,
+                                                    colorMapping,
+                                                    subresourceRange));
 
     FrameRecord newRecord;
-    newRecord.frame = _frameBuilder.createFrame(*targetView);
-    newRecord.samplerImageView = targetView;
+    newRecord.opaqueFrame = _opaqueFrameBuilder.createFrame(*opaqueMapView);
+    newRecord.opaqueMapView = opaqueMapView;
+    newRecord.transparentFrame =
+                      _transparentFrameBuilder.createFrame(*transparentMapView);
+    newRecord.transparentMapView = transparentMapView;
     pool.push_back(std::move(newRecord));
   }
 
@@ -144,11 +171,30 @@ ShadowMapProvider::FrameRecord&
 }
 
 void ShadowMapProvider::_buildNewMap( const CameraNode& renderCamera,
-                                      AbstractFrame& frame,
+                                      AbstractFrame& opaqueFrame,
+                                      AbstractFrame& transparentFrame,
                                       DrawPlan& drawPlan,
                                       const AbstractFramePlan& dependentFrame,
                                       ViewInfo& rootViewInfo)
 {
+  if (_targetField == nullptr) return;
+
+  std::unique_ptr<AbstractFramePlan> opaqueFramePlanPtr =
+                              _opaqueFrameBuilder.createFramePlan(opaqueFrame);
+  OpaqueShadowmapBuilder::FramePlan& opaqueFramePlan =
+          static_cast<OpaqueShadowmapBuilder::FramePlan&>(*opaqueFramePlanPtr);
+  opaqueFramePlan.viewProjectionMatrix =
+                    renderCamera.projectionMatrix() * renderCamera.viewMatrix();
+  drawPlan.addFramePlan(std::move(opaqueFramePlanPtr));
+  drawPlan.addDependency(opaqueFramePlan, dependentFrame);
+
+  std::unique_ptr<AbstractFramePlan> transparentFramePlanPtr =
+                    _transparentFrameBuilder.createFramePlan(transparentFrame);
+  AbstractFramePlan& transparentFramePlan = *transparentFramePlanPtr;
+  drawPlan.addFramePlan(std::move(transparentFramePlanPtr));
+  drawPlan.addDependency(transparentFramePlan, dependentFrame);
+
+
   VkViewport viewport { 0.f,
                         0.f,
                         float(_frameExtent.x),
@@ -157,28 +203,27 @@ void ShadowMapProvider::_buildNewMap( const CameraNode& renderCamera,
                         1.f};
   VkRect2D scissor {0, 0, uint32_t(_frameExtent.x), uint32_t(_frameExtent.y)};
 
-  std::unique_ptr<AbstractFramePlan> framePlanPtr =
-                                          _frameBuilder.createFramePlan(frame);
-  ShadowmapBuilder::ShadowMapFramePlan& framePlan = 
-              static_cast<ShadowmapBuilder::ShadowMapFramePlan&>(*framePlanPtr);
-  framePlan.viewProjectionMatrix =
-                    renderCamera.projectionMatrix() * renderCamera.viewMatrix();
-  drawPlan.addFramePlan(std::move(framePlanPtr));
-  drawPlan.addDependency(framePlan, dependentFrame);
-
-  DrawPlanBuildInfo planBuildInfo(drawPlan);
-  planBuildInfo.adjustFrameRender(viewport,
+  DrawPlanBuildInfo opaquePlanBuildInfo(drawPlan);
+  opaquePlanBuildInfo.adjustFrameRender(viewport,
                                   scissor,
-                                  framePlan,
+                                  opaqueFramePlan,
                                   renderCamera,
                                   &rootViewInfo);
 
-  if(_targetField != nullptr)
-  {
-    DrawVisitor drawVisitor(planBuildInfo);
-    ViewFrustum localFrustum = planBuildInfo.viewFrustum;
-    localFrustum.fastTranslate(
-                  glm::transpose(planBuildInfo.drawMatrices.localToViewMatrix));
-    _targetField->pass(drawVisitor, localFrustum);
-  }
+  DrawVisitor opaqueDrawVisitor(opaquePlanBuildInfo);
+  ViewFrustum localFrustum = opaquePlanBuildInfo.viewFrustum;
+  localFrustum.fastTranslate(
+            glm::transpose(opaquePlanBuildInfo.drawMatrices.localToViewMatrix));
+  _targetField->pass(opaqueDrawVisitor, localFrustum);
+
+
+  DrawPlanBuildInfo transparentPlanBuildInfo(drawPlan);
+  transparentPlanBuildInfo.adjustFrameRender( viewport,
+                                              scissor,
+                                              transparentFramePlan,
+                                              renderCamera,
+                                              &rootViewInfo);
+
+  DrawVisitor transparentDrawVisitor(transparentPlanBuildInfo);
+  _targetField->pass(transparentDrawVisitor, localFrustum);
 }

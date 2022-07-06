@@ -98,7 +98,7 @@ CascadeShadowMapProvider::Area CascadeShadowMapProvider::_alignArea(
 }
 
 CascadeShadowMapProvider::CascadeInfo
-                    CascadeShadowMapProvider::getShadowMap(
+                    CascadeShadowMapProvider::getShadowMaps(
                                               const CameraNode& shadowmapCamera,
                                               const CameraNode& viewCamera,
                                               size_t cascadeSize,
@@ -126,8 +126,8 @@ CascadeShadowMapProvider::CascadeInfo
     CameraNode renderCamera;
     _setupRenderCamera(shadowmapCamera, renderCamera, alignedArea);
 
-    ShadowMapInfo info{};
-    info.map = &ShadowMapProvider::getShadowMap(renderCamera, buildInfo);
+    ShadowMapsInfo info{};
+    info.maps = ShadowMapProvider::getShadowMaps(renderCamera, buildInfo);
 
     glm::vec2 uvAreaSize = alignedArea.size / 2.f;
     glm::vec2 uvAreaCorner =

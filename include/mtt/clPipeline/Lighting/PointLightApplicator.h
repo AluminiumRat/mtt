@@ -47,7 +47,8 @@ namespace mtt
 
         void invalidatePipeline() noexcept;
         void addToDrawPlan( DrawPlanBuildInfo& buildInfo,
-                            ImageView* shadowMapView);
+                            ImageView* opaqueShadowmap,
+                            ImageView* transparentShadowmap);
 
       private:
         void _rebuildPipeline(AbstractRenderPass& renderPass);
@@ -60,7 +61,8 @@ namespace mtt
         void _makeShadowCommand(DrawPlanBuildInfo& buildInfo,
                                 uint32_t pointsNumber,
                                 const PointLightData& lightData,
-                                ImageView& shadowMapView);
+                                ImageView& opaqueShadowmap,
+                                ImageView& transparentShadowmap);
 
       private:
         bool _fullscreenRender;

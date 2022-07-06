@@ -40,7 +40,8 @@ namespace mtt
                                   const PointLightData& lightData);
       void _makeShadowCommand(DrawPlanBuildInfo& buildInfo,
                               const PointLightData& lightData,
-                              ImageView& shadowMapView);
+                              ImageView& opaqueShadowmap,
+                              ImageView& transparentShadowmap);
 
     private:
       PointLight& _light;
