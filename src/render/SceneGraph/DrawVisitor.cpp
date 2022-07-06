@@ -6,11 +6,18 @@
 using namespace mtt;
 
 DrawVisitor::DrawVisitor(DrawPlanBuildInfo& buildInfo) :
-  _buildInfo(buildInfo),
-  _localFrustum(_buildInfo.viewFrustum)
+  _buildInfos{&buildInfo},
+  _viewFrustum(buildInfo.viewFrustum)
 {
-  _localFrustum.fastTranslate(
-                    glm::transpose(_buildInfo.drawMatrices.localToViewMatrix));
+  _viewFrustum.fastTranslate(
+                      glm::transpose(buildInfo.drawMatrices.localToViewMatrix));
+}
+
+DrawVisitor::DrawVisitor( const std::vector<DrawPlanBuildInfo*>& buildInfos,
+                          const ViewFrustum& viewFrustum) :
+  _buildInfos(buildInfos),
+  _viewFrustum(viewFrustum)
+{
 }
 
 void DrawVisitor::startPass()
@@ -20,19 +27,18 @@ void DrawVisitor::startPass()
 
 void DrawVisitor::finishPass()
 {
-  for (AreaModificator* modificator : _modificators)
+  for(DrawPlanBuildInfo* buildInfo : _buildInfos)
   {
-    modificator->addToDrawPlan(_buildInfo);
+    for (AreaModificator* modificator : _modificators)
+    {
+      modificator->addToDrawPlan(*buildInfo);
+    }
   }
 }
 
 void DrawVisitor::visit(const FieldArea& area)
 {
   if(area.drawables().empty()) return;
-
-  ScopedSetter<const AreaModificatorSet*> setAreaModificators(
-                                                    _buildInfo.areaModificators,
-                                                    area.modificators());
 
   if(area.modificators() != nullptr)
   {
@@ -42,11 +48,18 @@ void DrawVisitor::visit(const FieldArea& area)
     }
   }
 
-  for(DrawableNode* node : area.drawables())
+  for (DrawPlanBuildInfo* buildInfo : _buildInfos)
   {
-    if(_localFrustum.intersect(node->transformedBoundSphere()))
+    ScopedSetter<const AreaModificatorSet*> setAreaModificators(
+                                                    buildInfo->areaModificators,
+                                                    area.modificators());
+
+    for(DrawableNode* node : area.drawables())
     {
-      node->addToDrawPlan(_buildInfo);
+      if(_viewFrustum.intersect(node->transformedBoundSphere()))
+      {
+        node->addToDrawPlan(*buildInfo);
+      }
     }
   }
 }

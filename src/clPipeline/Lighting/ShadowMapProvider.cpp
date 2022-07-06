@@ -220,12 +220,6 @@ void ShadowMapProvider::_buildNewMap( const CameraNode& renderCamera,
                                         renderCamera,
                                         &rootViewInfo);
 
-  DrawVisitor opaqueDrawVisitor(opaquePlanBuildInfo);
-  ViewFrustum localFrustum = opaquePlanBuildInfo.viewFrustum;
-  localFrustum.fastTranslate(
-            glm::transpose(opaquePlanBuildInfo.drawMatrices.localToViewMatrix));
-  _targetField->pass(opaqueDrawVisitor, localFrustum);
-
   VkViewport transparentViewport {0.f,
                                   0.f,
                                   float(_transparentMapExtent.x),
@@ -244,6 +238,11 @@ void ShadowMapProvider::_buildNewMap( const CameraNode& renderCamera,
                                               renderCamera,
                                               &rootViewInfo);
 
-  DrawVisitor transparentDrawVisitor(transparentPlanBuildInfo);
-  _targetField->pass(transparentDrawVisitor, localFrustum);
+  ViewFrustum localFrustum = opaquePlanBuildInfo.viewFrustum;
+  localFrustum.fastTranslate(
+            glm::transpose(opaquePlanBuildInfo.drawMatrices.localToViewMatrix));
+
+  DrawVisitor drawVisitor({&opaquePlanBuildInfo, &transparentPlanBuildInfo},
+                          localFrustum);
+  _targetField->pass(drawVisitor, localFrustum);
 }

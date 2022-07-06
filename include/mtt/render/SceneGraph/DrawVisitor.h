@@ -1,6 +1,7 @@
 #pragma once
 
 #include <set>
+#include <vector>
 
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
 #include <mtt/render/SceneGraph/AbstractField.h>
@@ -13,6 +14,9 @@ namespace mtt
   {
   public:
     explicit DrawVisitor(DrawPlanBuildInfo& buildInfo);
+    /// View frustum in local coordinates of visited field
+    DrawVisitor(const std::vector<DrawPlanBuildInfo*>& buildInfos,
+                const ViewFrustum& viewFrustum);
     DrawVisitor(const DrawVisitor&) = delete;
     DrawVisitor& operator = (const DrawVisitor&) = delete;
     virtual ~DrawVisitor() = default;
@@ -22,8 +26,8 @@ namespace mtt
     virtual void finishPass() override;
 
   private:
-    DrawPlanBuildInfo& _buildInfo;
-    ViewFrustum _localFrustum;
+    std::vector<DrawPlanBuildInfo*> _buildInfos;
+    ViewFrustum _viewFrustum;
     std::set<AreaModificator*> _modificators;
   };
 }
