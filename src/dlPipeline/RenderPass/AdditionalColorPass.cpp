@@ -74,7 +74,8 @@ AdditionalColorPass::AdditionalColorPass( VkFormat colorBufferFormat,
   SubpassInfo subpassInfo{};
   subpassInfo.subpassIndex = 0;
   fillMultisampling(subpassInfo);
-  subpassInfo.blentAttachments.push_back(premultipledColorBlendingState);
+  subpassInfo.blentAttachments.push_back(
+                                    premultipledColorBlendingInverseAlphaState);
   subpasses[0].subpassInfo = subpassInfo;
 
   subpasses[0].stages.push_back(_stage);

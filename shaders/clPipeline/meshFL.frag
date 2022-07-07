@@ -62,6 +62,4 @@ void main()
   #ifdef ENABLE_ALPHA_TEST
     if(outColor == vec4(0)) discard;
   #endif
-
-  outColor.a = 1.f - outColor.a;
 }

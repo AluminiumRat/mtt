@@ -11,7 +11,7 @@ layout (set = volatileSet,
 
 layout(location = 0) in vec4 inColor;
 layout(location = 1) in flat float inNearDepth;
-layout(location = 2) in flat float inFarDepth;
+layout(location = 2) in flat float inNearFarDepth;
 
 #ifdef COLOR_SAMPLER_ENABLED
   layout(location = 3) in vec2 inTexCoords;
@@ -33,9 +33,8 @@ void main()
 
   ivec2 fragCoord = ivec2(gl_FragCoord.xy);
   float depth = texelFetch(depthMap, fragCoord, 0).r;
-  float fading = (depth - inFarDepth) / (inNearDepth - inFarDepth);
-  fading = 1.f - clamp(fading, 0.f, 1.f);
-  outColor *= fading;
+  float fading = (inNearDepth - depth) / inNearFarDepth;
+  outColor *= clamp(fading, 0.f, 1.f);
 
-  outColor.a = 1.f - outColor.a;
+  if(outColor.r == .0f && outColor.g == .0f && outColor.b == .0f) discard;
 }

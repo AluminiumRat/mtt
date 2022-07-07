@@ -26,6 +26,8 @@ namespace mtt
     static const VkPipelineColorBlendAttachmentState
                                                 premultipledColorBlendingState;
     static const VkPipelineColorBlendAttachmentState
+                                    premultipledColorBlendingInverseAlphaState;
+    static const VkPipelineColorBlendAttachmentState
                                                   accamulateColorBlendingState;
 
   public:

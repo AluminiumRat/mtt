@@ -11,7 +11,7 @@ layout (set = volatileSet,
 
 layout(location = 0) in flat vec4 inAlbedo;
 layout(location = 1) in flat float inNearDepth;
-layout(location = 2) in flat float inFarDepth;
+layout(location = 2) in flat float inNearFarDepth;
 
 #ifdef COLOR_SAMPLER_ENABLED
   layout(location = 3) in vec2 inTexCoords;
@@ -36,6 +36,17 @@ void applyLight(vec3 illuminance)
 
 void main()
 {
+  #ifdef COLOR_SAMPLER_ENABLED
+    uint textureIndex = clamp(inTextureIndex, 0, TEXTURES_NUMBER - 1);
+    vec4 textureColor = texture(colorSampler[textureIndex], inTexCoords);
+    if(textureColor.a == .0f) discard;
+  #endif
+
+  ivec2 fragCoord = ivec2(gl_FragCoord.xy);
+  float depth = texelFetch(depthMap, fragCoord, 0).r;
+  float fading = (inNearDepth - depth) / inNearFarDepth;
+  if(fading == 0.f) discard;
+
   viewCoord = inViewCoord;
 
   APPLY_AMBIENT_WEIGHT
@@ -46,19 +57,11 @@ void main()
   outColor.rgb += inEmission;
 
   #ifdef COLOR_SAMPLER_ENABLED
-    uint textureIndex = clamp(inTextureIndex, 0, TEXTURES_NUMBER - 1);
-    vec4 textureColor = texture(colorSampler[textureIndex], inTexCoords);
     outColor.rgb *= textureColor.a;
     outColor *= textureColor;
   #endif
 
-  ivec2 fragCoord = ivec2(gl_FragCoord.xy);
-  float depth = texelFetch(depthMap, fragCoord, 0).r;
-  float fading = (depth - inFarDepth) / (inNearDepth - inFarDepth);
-  fading = 1.f - clamp(fading, 0.f, 1.f);
-  outColor *= fading;
+  outColor *= clamp(fading, 0.f, 1.f);
 
   APPLY_POSTEFFECT
-
-  outColor.a = 1.f - outColor.a;
 }

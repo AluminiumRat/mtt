@@ -19,7 +19,7 @@ layout(location = 3) in uint inTileIndex[];
 layout(location = 0) out vec4 outColor;
 
 layout(location = 1) out flat float outNearDepth;
-layout(location = 2) out flat float outFarDepth;
+layout(location = 2) out flat float outNearFarDepth;
 
 #ifdef COLOR_SAMPLER_ENABLED
   layout(location = 3) out vec2 outTexCoords;
@@ -53,7 +53,7 @@ void main()
 
   vec4 farProjected = drawMatrices.projectionMatrix *
                                     (center + vec4(0.f, 0.f, -size / 2.f, 0.f));
-  float farDepth = farProjected.z / farProjected.w;
+  float nearFarDepth = nearDepth - farProjected.z / farProjected.w;
 
   #ifdef COLOR_SAMPLER_ENABLED
     uint textureExtent = textureExtent[inTextureIndex[0]];
@@ -74,7 +74,7 @@ void main()
     outColor = inColor[0];
 
     outNearDepth = nearDepth;
-    outFarDepth = farDepth;
+    outNearFarDepth = nearFarDepth;
 
     #ifdef COLOR_SAMPLER_ENABLED
       outTexCoords = texCoordStart + texCoords[pointIndex] * texCoordWidth;
