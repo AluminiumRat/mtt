@@ -1,14 +1,16 @@
 #include <limits>
 #include <random>
 
-#include <mtt/application/Application.h>
+#include <mtt/clPipeline/Particles/ParticlesDrawable.h>
 #include <mtt/clPipeline/constants.h>
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
 #include <mtt/utilities/Abort.h>
 
-#include <Render/Particles/ParticlesDrawable.h>
+using namespace mtt;
+using namespace mtt::clPipeline;
 
-ParticlesDrawable::ParticlesDrawable() :
+ParticlesDrawable::ParticlesDrawable(LogicalDevice& device) :
+  _commonData(device),
   _colorTechnique(_commonData),
   _shadowmapTechnique(_commonData)
 {
@@ -33,7 +35,7 @@ void ParticlesDrawable::setData(const std::vector<glm::vec3>& positionData,
       positionData.size() != emissionData.size() ||
       positionData.size() != textureIndexData.size() ||
       positionData.size() != tileIndexData.size() ||
-      positionData.size() != tagData.size()) mtt::Abort("ParticlesDrawable::setData: data vectors have different sizes");
+      positionData.size() != tagData.size()) Abort("ParticlesDrawable::setData: data vectors have different sizes");
 
   _commonData.particlesNumber = 0;
 
@@ -86,15 +88,14 @@ void ParticlesDrawable::setParticleTextures(
   try
   {
     _commonData.textureData = textures;
-    _commonData.textureSampler.emplace(
-                                  textures.size(),
-                                  mtt::PipelineResource::STATIC,
-                                  mtt::Application::instance().displayDevice());
+    _commonData.textureSampler.emplace( textures.size(),
+                                        PipelineResource::STATIC,
+                                        _commonData.device);
     for ( size_t textureIndex = 0;
           textureIndex < textures.size();
           textureIndex++)
     {
-      if(textures[textureIndex].texture == nullptr) mtt::Abort("ParticlesDrawable::setParticleTextures: textures array contain nullptr");
+      if(textures[textureIndex].texture == nullptr) Abort("ParticlesDrawable::setParticleTextures: textures array contain nullptr");
       _commonData.textureSampler->setAttachedTexture(
                                                 textures[textureIndex].texture,
                                                 textureIndex);
@@ -128,26 +129,26 @@ void ParticlesDrawable::setLightingType(
   _shadowmapTechnique.clearPipeline();
 }
 
-void ParticlesDrawable::buildDrawActions(mtt::DrawPlanBuildInfo& buildInfo)
+void ParticlesDrawable::buildDrawActions(DrawPlanBuildInfo& buildInfo)
 {
   if(_commonData.particlesNumber == 0) return;
-  if(buildInfo.frameType == mtt::clPipeline::colorFrameType)
+  if(buildInfo.frameType == clPipeline::colorFrameType)
   {
     _colorTechnique.addToDrawPlan(buildInfo);
   }
-  if(buildInfo.frameType == mtt::clPipeline::transparentShadowmapFrameType)
+  if(buildInfo.frameType == clPipeline::transparentShadowmapFrameType)
   {
     _shadowmapTechnique.addToDrawPlan(buildInfo);
   }
 }
 
-void ParticlesDrawable::registerAreaModificators(mtt::AreaModificatorSet& set)
+void ParticlesDrawable::registerAreaModificators(AreaModificatorSet& set)
 {
   _colorTechnique.registerAreaModificators(set);
 }
 
 void ParticlesDrawable::unregisterAreaModificators(
-                                          mtt::AreaModificatorSet& set) noexcept
+                                              AreaModificatorSet& set) noexcept
 {
   _colorTechnique.unregisterAreaModificators(set);
 }

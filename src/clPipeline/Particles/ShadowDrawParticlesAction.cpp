@@ -1,21 +1,23 @@
+#include <mtt/clPipeline/Particles/ShadowDrawParticlesAction.h>
 #include <mtt/clPipeline/RenderPass/ForwardLightPass.h>
 
-#include <Render/Particles/ShadowDrawParticlesAction.h>
+using namespace mtt;
+using namespace mtt::clPipeline;
 
 ShadowDrawParticlesAction::ShadowDrawParticlesAction(
-          mtt::GraphicsPipeline& pipeline,
-          VkViewport viewport,
-          VkRect2D scissor,
-          uint32_t pointsNumber,
-          mtt::PlainBuffer& indicesBuffer,
-          mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform,
-          const mtt::DrawMatrices& drawMatrices,
-          MaxDistanceUniform& maxDistanceUniform,
-          float maxDistance,
-          mtt::VolatileUniform<mtt::MppxDistanceFunction>& mppxFunctionUniform,
-          mtt::MppxDistanceFunction mppxFunctionValues,
-          mtt::VolatileUniform<glm::vec2>& falloffUniform,
-          glm::vec2 falloffValue) :
+                    GraphicsPipeline& pipeline,
+                    VkViewport viewport,
+                    VkRect2D scissor,
+                    uint32_t pointsNumber,
+                    PlainBuffer& indicesBuffer,
+                    VolatileUniform<DrawMatrices>& matricesUniform,
+                    const DrawMatrices& drawMatrices,
+                    MaxDistanceUniform& maxDistanceUniform,
+                    float maxDistance,
+                    VolatileUniform<MppxDistanceFunction>& mppxFunctionUniform,
+                    MppxDistanceFunction mppxFunctionValues,
+                    VolatileUniform<glm::vec2>& falloffUniform,
+                    glm::vec2 falloffValue) :
   _pipeline(pipeline),
   _viewport(viewport),
   _scissor(scissor),
@@ -32,7 +34,7 @@ ShadowDrawParticlesAction::ShadowDrawParticlesAction(
 {
 }
 
-void ShadowDrawParticlesAction::execute(mtt::DrawContext& context)
+void ShadowDrawParticlesAction::execute(DrawContext& context)
 {
   _matricesUniform.setValuePtr(&_drawMatrices);
   _maxDistanceUniform.setValuePtr(&_maxDistance);
@@ -42,8 +44,7 @@ void ShadowDrawParticlesAction::execute(mtt::DrawContext& context)
   _pipeline.setScissor(_scissor);
   _pipeline.setViewport(_viewport);
 
-  constexpr uint32_t depthSamplerIndex =
-                        mtt::clPipeline::ForwardLightPass::depthSamplerIndex;
+  constexpr uint32_t depthSamplerIndex = ForwardLightPass::depthSamplerIndex;
 
   _pipeline.scheduleBind(context.drawProducer);
   _pipeline.indices().scheduleBindData(*_indicesBuffer, context.drawProducer);

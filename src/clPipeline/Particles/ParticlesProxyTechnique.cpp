@@ -1,5 +1,8 @@
-#include <Render/Particles/ParticlesColorTechnique.h>
-#include <Render/Particles/ParticlesProxyTechnique.h>
+#include <mtt/clPipeline/Particles/ParticlesColorTechnique.h>
+#include <mtt/clPipeline/Particles/ParticlesProxyTechnique.h>
+
+using namespace mtt;
+using namespace mtt::clPipeline;
 
 ParticlesProxyTechnique::ParticlesProxyTechnique(
                                           ParticlesDrawCommonData& commonData) :
@@ -19,9 +22,8 @@ void ParticlesProxyTechnique::clearPipelines() noexcept
   }
 }
 
-std::unique_ptr<mtt::AbstractMeshTechnique>
-          ParticlesProxyTechnique::createTechnique(
-                                                  mtt::AreaModificatorSet& set)
+std::unique_ptr<AbstractMeshTechnique>
+              ParticlesProxyTechnique::createTechnique(AreaModificatorSet& set)
 {
   return std::make_unique<ParticlesColorTechnique>(_commonData, set);
 }

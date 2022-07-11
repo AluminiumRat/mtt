@@ -6,16 +6,16 @@
 #include <QtCore/QString>
 
 #include <mtt/application/AsyncTasks/AbstractAsyncTask.h>
+#include <mtt/clPipeline/Particles/ParticlesDrawable.h>
 #include <mtt/render/Pipeline/Texture2D.h>
 
 #include <Objects/ParticleTextureDescription.h>
-#include <Render/Particles/ParticlesDrawable.h>
 
 class UploadParticleTexturesTask : public mtt::AbstractAsyncTask
 {
 public:
   UploadParticleTexturesTask( const ParticleTextureDescriptions& descriptions,
-                              ParticlesDrawable& drawable);
+                              mtt::clPipeline::ParticlesDrawable& drawable);
   UploadParticleTexturesTask(const UploadParticleTexturesTask&) = delete;
   UploadParticleTexturesTask& operator = (
                                     const UploadParticleTexturesTask&) = delete;
@@ -27,7 +27,7 @@ protected:
 
 private:
   ParticleTextureDescriptions _descriptions;
-  ParticlesDrawable& _drawable;
+  mtt::clPipeline::ParticlesDrawable& _drawable;
 
-  std::vector<ParticlesDrawable::TextureData> _textures;
+  std::vector<mtt::clPipeline::ParticlesDrawable::TextureData> _textures;
 };

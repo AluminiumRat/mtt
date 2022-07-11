@@ -1,11 +1,10 @@
 #pragma once
 
+#include <mtt/application/AsyncTasks/AsyncTaskQueue.h>
+#include <mtt/clPipeline/Particles/ParticlesDrawable.h>
 #include <mtt/editorLib/Render/HullDrawableNode.h>
 #include <mtt/editorLib/Render/Object3DRenderObserver.h>
 #include <mtt/render/SceneGraph/SimpleDrawableNode.h>
-#include <mtt/application/AsyncTasks/AsyncTaskQueue.h>
-
-#include <Render/Particles/ParticlesDrawable.h>
 
 class ParticleField;
 
@@ -32,7 +31,7 @@ private:
 
   mtt::HullDrawableNode _hullNode;
 
-  ParticlesDrawable _particlesDrawable;
+  mtt::clPipeline::ParticlesDrawable _particlesDrawable;
   mtt::SimpleDrawableNode _particlesNode;
 
   uint8_t _randomTable[256];

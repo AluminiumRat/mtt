@@ -1,12 +1,14 @@
+#include <mtt/clPipeline/Particles/ParticlesAbstractTechnique.h>
 #include <mtt/render/RenderPass/GeneralRenderPass.h>
-
-#include <Render/Particles/ParticlesAbstractTechnique.h>
 
 #define MIN_PARTICLES 10
 
+using namespace mtt;
+using namespace mtt::clPipeline;
+
 ParticlesAbstractTechnique::ParticlesAbstractTechnique(
                                       ParticlesDrawCommonData& commonData,
-                                      mtt::StageIndex stage,
+                                      StageIndex stage,
                                       uint8_t thinningFactor) :
   _commonData(commonData),
   _stage(stage),
@@ -34,47 +36,47 @@ std::string ParticlesAbstractTechnique::_makeTextureExtentDefine() const
 }
 
 void ParticlesAbstractTechnique::_rebuildPipeline(
-                                            mtt::AbstractRenderPass& renderPass)
+                                                AbstractRenderPass& renderPass)
 {
   _pipeline.emplace(renderPass, _stage);
   try
   {
-    mtt::VertexAttribute& positionAtribute =
+    VertexAttribute& positionAtribute =
                             _pipeline->getOrCreateAttribute("positionLocation");
-    positionAtribute.adjustDataType(mtt::VertexAttribute::FLOAT_VEC3_TYPE);
+    positionAtribute.adjustDataType(VertexAttribute::FLOAT_VEC3_TYPE);
     positionAtribute.attachBuffer(&_commonData.positionBuffer);
 
-    mtt::VertexAttribute& sizeRotationAtribute =
+    VertexAttribute& sizeRotationAtribute =
                         _pipeline->getOrCreateAttribute("sizeRotationLocation");
-    sizeRotationAtribute.adjustDataType(mtt::VertexAttribute::FLOAT_VEC2_TYPE);
+    sizeRotationAtribute.adjustDataType(VertexAttribute::FLOAT_VEC2_TYPE);
     sizeRotationAtribute.attachBuffer(&_commonData.sizeRotationBuffer);
 
-    mtt::VertexAttribute& albedoAtribute =
+    VertexAttribute& albedoAtribute =
                               _pipeline->getOrCreateAttribute("albedoLocation");
-    albedoAtribute.adjustDataType(mtt::VertexAttribute::FLOAT_VEC4_TYPE);
+    albedoAtribute.adjustDataType(VertexAttribute::FLOAT_VEC4_TYPE);
     albedoAtribute.attachBuffer(&_commonData.albedoBuffer);
 
-    mtt::VertexAttribute& emissionAtribute =
+    VertexAttribute& emissionAtribute =
                             _pipeline->getOrCreateAttribute("emissionLocation");
-    emissionAtribute.adjustDataType(mtt::VertexAttribute::FLOAT_VEC4_TYPE);
+    emissionAtribute.adjustDataType(VertexAttribute::FLOAT_VEC4_TYPE);
     emissionAtribute.attachBuffer(&_commonData.emissionBuffer);
 
-    mtt::VertexAttribute& textureIndexAtribute =
+    VertexAttribute& textureIndexAtribute =
                         _pipeline->getOrCreateAttribute("textureIndexLocation");
-    textureIndexAtribute.adjustDataType(mtt::VertexAttribute::UINT32_TYPE);
+    textureIndexAtribute.adjustDataType(VertexAttribute::UINT32_TYPE);
     textureIndexAtribute.attachBuffer(&_commonData.textureIndexBuffer);
 
-    mtt::VertexAttribute& tileIndexAtribute =
+    VertexAttribute& tileIndexAtribute =
                           _pipeline->getOrCreateAttribute("tileIndexLocation");
-    tileIndexAtribute.adjustDataType(mtt::VertexAttribute::UINT32_TYPE);
+    tileIndexAtribute.adjustDataType(VertexAttribute::UINT32_TYPE);
     tileIndexAtribute.attachBuffer(&_commonData.tileIndexBuffer);
 
-    mtt::VertexAttribute& falloffFactorAtribute =
+    VertexAttribute& falloffFactorAtribute =
                     _pipeline->getOrCreateAttribute("falloffFactorLocation");
-    falloffFactorAtribute.adjustDataType(mtt::VertexAttribute::FLOAT_TYPE);
+    falloffFactorAtribute.adjustDataType(VertexAttribute::FLOAT_TYPE);
     falloffFactorAtribute.attachBuffer(&_commonData.falloffFactorBuffer);
 
-    _pipeline->addResource( mtt::DrawMatrices::bindingName,
+    _pipeline->addResource( DrawMatrices::bindingName,
                             _matricesUniform,
                             VK_SHADER_STAGE_VERTEX_BIT |
                               VK_SHADER_STAGE_GEOMETRY_BIT);
@@ -116,10 +118,9 @@ void ParticlesAbstractTechnique::_rebuildPipeline(
   }
 }
 
-void ParticlesAbstractTechnique::addToDrawPlan(
-                                              mtt::DrawPlanBuildInfo& buildInfo)
+void ParticlesAbstractTechnique::addToDrawPlan(DrawPlanBuildInfo& buildInfo)
 {
-  mtt::AbstractRenderPass* renderPass = buildInfo.builder->stagePass(_stage);
+  AbstractRenderPass* renderPass = buildInfo.builder->stagePass(_stage);
   if (renderPass == nullptr) return;
 
   if (!_pipeline.has_value() || !_pipeline->isCompatible(*renderPass))
@@ -127,8 +128,8 @@ void ParticlesAbstractTechnique::addToDrawPlan(
     _rebuildPipeline(*renderPass);
   }
 
-  mtt::DrawBin* renderBin = buildInfo.currentFramePlan->getBin(_stage);
-  if (renderBin == nullptr) mtt::Abort("ParticlesAbstractTechnique::buildDrawActions: render bin is not supported.");
+  DrawBin* renderBin = buildInfo.currentFramePlan->getBin(_stage);
+  if (renderBin == nullptr) Abort("ParticlesAbstractTechnique::buildDrawActions: render bin is not supported.");
 
   IndicesData indices = _makeIndices(buildInfo, renderPass->device());
   if(indices.pointsNumber == 0) return;
@@ -140,7 +141,7 @@ void ParticlesAbstractTechnique::addToDrawPlan(
   buildDrawAction(*renderBin,
                   buildInfo,
                   *_pipeline,
-                  indices.pointsNumber,
+                  uint32_t(indices.pointsNumber),
                   *indices.buffer,
                   _matricesUniform,
                   _mppxFunctionUniform,
@@ -150,12 +151,12 @@ void ParticlesAbstractTechnique::addToDrawPlan(
 
 ParticlesAbstractTechnique::IndicesData
                             ParticlesAbstractTechnique::_makeIndices(
-                                        const mtt::DrawPlanBuildInfo& buildInfo,
-                                        mtt::LogicalDevice& device) const
+                                            const DrawPlanBuildInfo& buildInfo,
+                                            LogicalDevice& device) const
 {
   float baseFallofFinishMppx =
             _commonData.falloffBaseMppx * (1.f + _commonData.falloffSmoothing);
-  mtt::MppxDistanceFunction mppxFunction =
+  MppxDistanceFunction mppxFunction =
                                       buildInfo.currentViewInfo.mppxFunction();
 
   std::vector<float> distances;
@@ -184,8 +185,8 @@ ParticlesAbstractTechnique::IndicesData
 
   if (indicesData.size() == 0)
   {
-    return IndicesData{ mtt::Ref<mtt::PlainBuffer>(), // buffer
-                        0 };                          // pointsNumber
+    return IndicesData{ Ref<PlainBuffer>(), // buffer
+                        0 };                // pointsNumber
   }
 
   std::sort(indicesData.begin(),
@@ -195,7 +196,7 @@ ParticlesAbstractTechnique::IndicesData
               return distances[firstIndex] > distances[secondIndex];
             });
 
-  mtt::Ref<mtt::PlainBuffer> indexBuffer(new mtt::PlainBuffer(
+  Ref<PlainBuffer> indexBuffer(new PlainBuffer(
                                           device,
                                           indicesData.size() * sizeof(uint16_t),
                                           VMA_MEMORY_USAGE_CPU_TO_GPU,

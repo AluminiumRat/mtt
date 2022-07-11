@@ -68,6 +68,15 @@ set(HEADERS
     "../../include/mtt/clPipeline/MeshTechniques/TransparentProxyTechnique.h"
     "../../include/mtt/clPipeline/MeshTechniques/UnlightedColorTechnique.h"
 
+    "../../include/mtt/clPipeline/Particles/ColorDrawParticlesAction.h"
+    "../../include/mtt/clPipeline/Particles/ParticlesAbstractTechnique.h"
+    "../../include/mtt/clPipeline/Particles/ParticlesColorTechnique.h"
+    "../../include/mtt/clPipeline/Particles/ParticlesDrawable.h"
+    "../../include/mtt/clPipeline/Particles/ParticlesDrawCommonData.h"
+    "../../include/mtt/clPipeline/Particles/ParticlesProxyTechnique.h"
+    "../../include/mtt/clPipeline/Particles/ParticlesShadowmapTechnique.h"
+    "../../include/mtt/clPipeline/Particles/ShadowDrawParticlesAction.h"
+
     "../../include/mtt/clPipeline/RenderPass/AmbientWeightPass.h"
     "../../include/mtt/clPipeline/RenderPass/BackgroundPass.h"
     "../../include/mtt/clPipeline/RenderPass/EmissionPass.h"
@@ -116,6 +125,15 @@ set(SOURCES
     "MeshTechniques/ShadowmapMeshTechnique.cpp"
     "MeshTechniques/TransparentProxyTechnique.cpp"
     "MeshTechniques/UnlightedColorTechnique.cpp"
+
+    "Particles/ColorDrawParticlesAction.cpp"
+    "Particles/ParticlesAbstractTechnique.cpp"
+    "Particles/ParticlesColorTechnique.cpp"
+    "Particles/ParticlesDrawable.cpp"
+    "Particles/ParticlesDrawCommonData.cpp"
+    "Particles/ParticlesProxyTechnique.cpp"
+    "Particles/ParticlesShadowmapTechnique.cpp"
+    "Particles/ShadowDrawParticlesAction.cpp"
 
     "RenderPass/AmbientWeightPass.cpp"
     "RenderPass/BackgroundPass.cpp"

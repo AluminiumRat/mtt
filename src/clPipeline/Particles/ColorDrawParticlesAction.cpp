@@ -1,20 +1,22 @@
+#include <mtt/clPipeline/Particles/ColorDrawParticlesAction.h>
 #include <mtt/clPipeline/RenderPass/ForwardLightPass.h>
 
-#include <Render/Particles/ColorDrawParticlesAction.h>
+using namespace mtt;
+using namespace mtt::clPipeline;
 
 ColorDrawParticlesAction::ColorDrawParticlesAction(
-          mtt::GraphicsPipeline& pipeline,
+          GraphicsPipeline& pipeline,
           VkViewport viewport,
           VkRect2D scissor,
           uint32_t pointsNumber,
-          mtt::PlainBuffer& indicesBuffer,
-          mtt::VolatileUniform<mtt::DrawMatrices>& matricesUniform,
-          const mtt::DrawMatrices& drawMatrices,
-          mtt::VolatileUniform<mtt::MppxDistanceFunction>& mppxFunctionUniform,
-          mtt::MppxDistanceFunction mppxFunctionValues,
-          mtt::VolatileUniform<glm::vec2>& falloffUniform,
+          PlainBuffer& indicesBuffer,
+          VolatileUniform<DrawMatrices>& matricesUniform,
+          const DrawMatrices& drawMatrices,
+          VolatileUniform<MppxDistanceFunction>& mppxFunctionUniform,
+          MppxDistanceFunction mppxFunctionValues,
+          VolatileUniform<glm::vec2>& falloffUniform,
           glm::vec2 falloffValue,
-          mtt::Texture2D& depthSamplerTexture) :
+          Texture2D& depthSamplerTexture) :
   _pipeline(pipeline),
   _viewport(viewport),
   _scissor(scissor),
@@ -30,7 +32,7 @@ ColorDrawParticlesAction::ColorDrawParticlesAction(
 {
 }
 
-void ColorDrawParticlesAction::execute(mtt::DrawContext& context)
+void ColorDrawParticlesAction::execute(DrawContext& context)
 {
   _matricesUniform.setValuePtr(&_drawMatrices);
   _mppxFunctionUniform.setValuePtr(&_mppxFunctionValues);
@@ -39,11 +41,10 @@ void ColorDrawParticlesAction::execute(mtt::DrawContext& context)
   _pipeline.setScissor(_scissor);
   _pipeline.setViewport(_viewport);
 
-  constexpr uint32_t depthSamplerIndex =
-                        mtt::clPipeline::ForwardLightPass::depthSamplerIndex;
+  constexpr uint32_t depthSamplerIndex = ForwardLightPass::depthSamplerIndex;
 
   _depthSamplerTexture.setImageView(
-                          context.frameBuffer->samplerMap(depthSamplerIndex));
+                            context.frameBuffer->samplerMap(depthSamplerIndex));
 
   _pipeline.scheduleBind(context.drawProducer);
   _pipeline.indices().scheduleBindData(*_indicesBuffer, context.drawProducer);

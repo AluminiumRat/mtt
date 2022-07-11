@@ -2,6 +2,7 @@
 #include <random>
 #include <stdexcept>
 
+#include <mtt/application/Application.h>
 #include <mtt/clPipeline/MeshTechniques/InstrumentalCompositeTechnique.h>
 #include <mtt/clPipeline/constants.h>
 #include <mtt/editorLib/EditorApplication.h>
@@ -15,6 +16,7 @@
 
 FieldRenderObserver::FieldRenderObserver( ParticleField& object,
                                           mtt::CommonEditData& commonData) :
+  _particlesDrawable(mtt::Application::instance().displayDevice()),
   Object3DRenderObserver(object, commonData),
   _field(object)
 {
@@ -200,10 +202,11 @@ void FieldRenderObserver::_updateLightingType() noexcept
   if (_field.lightingType() == ParticleField::PER_PARTICLE_LIGHTING)
   {
     _particlesDrawable.setLightingType(
-                                      ParticlesDrawable::PER_PARTICLE_LIGHTING);
+                    mtt::clPipeline::ParticlesDrawable::PER_PARTICLE_LIGHTING);
   }
   else
   {
-    _particlesDrawable.setLightingType(ParticlesDrawable::PER_PIXEL_LIGHTING);
+    _particlesDrawable.setLightingType(
+                        mtt::clPipeline::ParticlesDrawable::PER_PIXEL_LIGHTING);
   }
 }
