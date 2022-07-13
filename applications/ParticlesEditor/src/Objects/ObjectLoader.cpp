@@ -148,7 +148,7 @@ void ObjectLoader::visitParticleField(ParticleField& object)
   for (; texturesCount != 0; texturesCount--)
   {
     ParticleTextureDescription description;
-    stream() >> description.filename;
+    description.filename = readFilename();
     description.extent = stream().readUint8();
     descriptions.push_back(description);
   }

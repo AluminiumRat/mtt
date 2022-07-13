@@ -212,15 +212,20 @@ void AsyncTaskQueue::_finalizeTask(AbstractAsyncTask& task) noexcept
       try
       {
         if(!exceptionEmitted && !task.aborted()) task.finalize();
+        else task.restoreState();
       }
       catch(std::exception& error)
       {
+        exceptionEmitted = true;
         emit errorEmitted(task, error);
       }
       catch(...)
       {
+        exceptionEmitted = true;
         emit errorEmitted(task, std::runtime_error("Unknown error"));
       }
+
+      if(exceptionEmitted || task.aborted()) task.restoreState();
 
       _invalidateStopper(task);
 

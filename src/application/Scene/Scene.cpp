@@ -58,7 +58,11 @@ void Scene::registerObject(Object& object)
 
 void Scene::unregisterObject(Object& object) noexcept
 {
-  if(object.scene() != this) Abort("Scene::unregisterObject: the object is not registered in scene.");
+  if(object.scene() != this)
+  {
+    Log() << "Scene::unregisterObject: the object is not registered in scene.";
+    return;
+  }
   if(inDestruction()) return;
 
   try

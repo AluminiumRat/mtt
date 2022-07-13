@@ -42,13 +42,13 @@ void AnimationPlayer::start(AnimationObject& animation) noexcept
     _restoreCommand.reset();
     _currentAnimation = nullptr;
     Log() << error.what();
-    Log() << "AnimationPlayer::start: unable to strt animation.";
+    Log() << "AnimationPlayer::start: unable to start animation.";
   }
   catch(...)
   {
     _restoreCommand.reset();
     _currentAnimation = nullptr;
-    Log() << "AnimationPlayer::start: unable to strt animation.";
+    Log() << "AnimationPlayer::start: unable to start animation.";
   }
 }
 
@@ -68,11 +68,11 @@ void AnimationPlayer::stop() noexcept
   catch (std::exception& error)
   {
     Log() << error.what();
-    Abort("AnimationPlayer::stop: unable to restor initail state.");
+    Abort("AnimationPlayer::stop: unable to restore initail state.");
   }
   catch(...)
   {
-    Abort("AnimationPlayer::stop: unable to restor initail state.");
+    Abort("AnimationPlayer::stop: unable to restore initail state.");
   }
 
   emit animationStopped(*animation);

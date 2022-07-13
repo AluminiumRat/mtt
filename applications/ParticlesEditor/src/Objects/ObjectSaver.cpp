@@ -153,7 +153,7 @@ void ObjectSaver::visitConstParticleField(const ParticleField& object)
   {
     const ParticleTextureDescription& description =
                                     object.textureDescriptions()[textureIndex];
-    stream() << description.filename;
+    writeFilename(description.filename);
     stream() << uint8_t(description.extent);
   }
 

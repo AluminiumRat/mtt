@@ -36,10 +36,6 @@ public:
   inline ParticleField& particleField() noexcept;
   inline const ParticleField& particleField() const noexcept;
 
-signals:
-  void animationChanged(ParticleAnimation& newAnimation);
-  void particleFieldChanged(ParticleField& newField);
-
 private:
   ModificatorGroup* _modificatorsGroup;
   ParticleAnimation* _animation;

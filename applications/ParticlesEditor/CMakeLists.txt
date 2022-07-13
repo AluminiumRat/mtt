@@ -46,6 +46,7 @@ add_definitions(${Qt5Core_DEFINITIONS}
 set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 
 set(HEADERS
+    "include/AsyncTasks/EffectExportTask.h"
     "include/AsyncTasks/ImportAnimationTask.h"
     "include/AsyncTasks/LoadEffectTask.h"
     "include/AsyncTasks/SaveEffectTask.h"
@@ -105,6 +106,7 @@ set(HEADERS
     "include/Render/RenderObserverFactory.h"
 
     "include/EditMenu.h"
+    "include/ExportOptionsDialog.h"
     "include/FileMenu.h"
     "include/MainWindow.h"
     "include/ParticlesEditorCommonData.h"
@@ -113,6 +115,7 @@ set(HEADERS
     )
 
 set(SOURCES
+    "src/AsyncTasks/EffectExportTask.cpp"
     "src/AsyncTasks/ImportAnimationTask.cpp"
     "src/AsyncTasks/LoadEffectTask.cpp"
     "src/AsyncTasks/UploadParticleTexturesTask.cpp"
@@ -169,6 +172,7 @@ set(SOURCES
     "src/Render/RenderObserverFactory.cpp"
 
     "src/EditMenu.cpp"
+    "src/ExportOptionsDialog.cpp"
     "src/FileMenu.cpp"
     "src/MainWindow.cpp"
     "src/ParticlesEditor.cpp"
@@ -193,6 +197,7 @@ set(UI_FILES
     "src/PropertiesWidget/SizeControlWidget.ui"
     "src/PropertiesWidget/TypeMaskWidget.ui"
     "src/PropertiesWidget/VisibilityControlWidget.ui"
+    "src/ExportOptionsDialog.ui"
     )
 
 set(QRC_FILES

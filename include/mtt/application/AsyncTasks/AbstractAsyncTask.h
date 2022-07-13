@@ -38,6 +38,7 @@ namespace mtt
     void prepare(AsyncTaskQueue& queue);
     void make();
     void finalize();
+    void restoreState() noexcept;
 
     inline void notifyAbort() noexcept;
     inline bool aborted() const noexcept;
@@ -46,6 +47,8 @@ namespace mtt
     virtual void preparePart();
     virtual void asyncPart();
     virtual void finalizePart();
+    /// Restore data state if task is aborted or an exception will was thrown
+    virtual void restorePart() noexcept;
 
   protected:
     void reportStage(const QString& stageName) noexcept;

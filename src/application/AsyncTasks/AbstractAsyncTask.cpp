@@ -46,6 +46,15 @@ void AbstractAsyncTask::finalizePart()
 {
 }
 
+void AbstractAsyncTask::restoreState() noexcept
+{
+  restorePart();
+}
+
+void AbstractAsyncTask::restorePart() noexcept
+{
+}
+
 void AbstractAsyncTask::reportStage(const QString& stageName) noexcept
 {
   if(_queue == nullptr) return;

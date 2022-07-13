@@ -22,6 +22,7 @@ private:
   void _saveEffect() noexcept;
   void _saveEffectAs() noexcept;
   void _saveToFile(const QString& file) noexcept;
+  void _export() noexcept;
 
 private:
   QWidget& _window;
