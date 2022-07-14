@@ -1,8 +1,8 @@
 ﻿cmake_minimum_required (VERSION 3.8)
 
-project (ParticlesExample)
+project (EmptyExmple)
 
-set(CMAKE_MODULE_PATH &{CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}../../../cmake)
+set(CMAKE_MODULE_PATH &{CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}../../../../cmake)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -29,22 +29,21 @@ find_path(VKMEMALLOC_PATH
           HINTS "$ENV{VKMEMALLOC_PATH}"
           REQUIRED)
 
-include_directories("../../include/"
+include_directories("../../../include/"
                     ${GLM_PATH}
                     ${Vulkan_INCLUDE_DIRS}
                     ${Shaderc_INCLUDE_DIRS}
-                    ${VKMEMALLOC_PATH}
-                    )
+                    ${VKMEMALLOC_PATH})
 
 add_definitions(${Qt5Core_DEFINITIONS}
                 ${Qt5Widgets_DEFINITIONS})
 
 set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 
-add_executable (ParticlesExample
+add_executable (EmptyExample
                 "main.cpp")
 
-target_link_libraries(ParticlesExample
+target_link_libraries(EmptyExample
                       ${Vulkan_LIBRARIES}
                       ${Shaderc_LIBRARIES}
                       Qt5::Core
