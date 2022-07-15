@@ -199,14 +199,6 @@ void FieldRenderObserver::_updateLodSmoothing() noexcept
 
 void FieldRenderObserver::_updateLightingType() noexcept
 {
-  if (_field.lightingType() == ParticleField::PER_PARTICLE_LIGHTING)
-  {
-    _particlesDrawable.setLightingType(
-                    mtt::clPipeline::ParticlesDrawable::PER_PARTICLE_LIGHTING);
-  }
-  else
-  {
-    _particlesDrawable.setLightingType(
-                        mtt::clPipeline::ParticlesDrawable::PER_PIXEL_LIGHTING);
-  }
+  _particlesDrawable.setLightingType(
+      static_cast<mtt::ParticlesDrawable::LightingType>(_field.lightingType()));
 }

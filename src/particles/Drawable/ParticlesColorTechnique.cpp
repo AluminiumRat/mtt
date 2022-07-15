@@ -1,24 +1,24 @@
 #include <mtt/clPipeline/Background/BackgroundAreaModificator.h>
 #include <mtt/clPipeline/Lighting/LightAreaModificator.h>
-#include <mtt/clPipeline/Particles/ColorDrawParticlesAction.h>
-#include <mtt/clPipeline/Particles/ParticlesColorTechnique.h>
 #include <mtt/clPipeline/constants.h>
+#include <mtt/particles/Drawable/ColorDrawParticlesAction.h>
+#include <mtt/particles/Drawable/ParticlesColorTechnique.h>
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
 #include <mtt/render/SceneGraph/AreaModificatorSet.h>
 
 using namespace mtt;
-using namespace mtt::clPipeline;
 
 ParticlesColorTechnique::ParticlesColorTechnique(
                                           ParticlesDrawCommonData& commonData,
                                           AreaModificatorSet& modificatorSet) :
-  ParticlesAbstractTechnique(commonData, forwardLightStage, 1),
+  ParticlesAbstractTechnique(commonData, clPipeline::forwardLightStage, 1),
   _modificatorSet(modificatorSet)
 {
   for (AreaModificator* modificator : _modificatorSet.modificators())
   {
-    if( modificator->type() == BackgroundAreaModificator::typeIndex ||
-        modificator->type() == LightAreaModificator::typeIndex)
+    if( modificator->type() ==
+                            clPipeline::BackgroundAreaModificator::typeIndex ||
+        modificator->type() == clPipeline::LightAreaModificator::typeIndex)
     {
       modificator->addConsumer(*this);
     }
@@ -29,8 +29,9 @@ ParticlesColorTechnique::~ParticlesColorTechnique()
 {
   for (AreaModificator* modificator : _modificatorSet.modificators())
   {
-    if (modificator->type() == BackgroundAreaModificator::typeIndex ||
-        modificator->type() == LightAreaModificator::typeIndex)
+    if (modificator->type() ==
+                            clPipeline::BackgroundAreaModificator::typeIndex ||
+        modificator->type() == clPipeline::LightAreaModificator::typeIndex)
     {
       modificator->removeConsumer(*this);
     }
@@ -56,22 +57,22 @@ void ParticlesColorTechnique::_applyAreaModifictors(ShaderModule& shader,
   {
     AreaModificator& modificator =
                               *_modificatorSet.modificators()[modificatorIndex];
-    if(modificator.type() == BackgroundAreaModificator::typeIndex)
+    if(modificator.type() == clPipeline::BackgroundAreaModificator::typeIndex)
     {
-      BackgroundAreaModificator& backgroundModificator =
-                          static_cast<BackgroundAreaModificator&>(modificator);
+      clPipeline::BackgroundAreaModificator& backgroundModificator =
+              static_cast<clPipeline::BackgroundAreaModificator&>(modificator);
       backgroundModificator.adjustPipeline(pipeline, shader, modificatorIndex);
     }
 
-    if (modificator.type() == LightAreaModificator::typeIndex)
+    if (modificator.type() == clPipeline::LightAreaModificator::typeIndex)
     {
-      LightAreaModificator& lightModificator =
-                  static_cast<LightAreaModificator&>(modificator);
+      clPipeline::LightAreaModificator& lightModificator =
+                    static_cast<clPipeline::LightAreaModificator&>(modificator);
       lightModificator.adjustPipeline(
-                                pipeline,
-                                shader,
-                                LightAreaModificator::OVERALL_ILLUMINANCE_MODEL,
-                                modificatorIndex);
+                    pipeline,
+                    shader,
+                    clPipeline::LightAreaModificator::OVERALL_ILLUMINANCE_MODEL,
+                    modificatorIndex);
     }
   }
 }

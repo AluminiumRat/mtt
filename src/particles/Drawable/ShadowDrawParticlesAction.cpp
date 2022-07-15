@@ -1,8 +1,7 @@
-#include <mtt/clPipeline/Particles/ShadowDrawParticlesAction.h>
 #include <mtt/clPipeline/RenderPass/ForwardLightPass.h>
+#include <mtt/particles/Drawable/ShadowDrawParticlesAction.h>
 
 using namespace mtt;
-using namespace mtt::clPipeline;
 
 ShadowDrawParticlesAction::ShadowDrawParticlesAction(
                     GraphicsPipeline& pipeline,
@@ -44,7 +43,8 @@ void ShadowDrawParticlesAction::execute(DrawContext& context)
   _pipeline.setScissor(_scissor);
   _pipeline.setViewport(_viewport);
 
-  constexpr uint32_t depthSamplerIndex = ForwardLightPass::depthSamplerIndex;
+  constexpr uint32_t depthSamplerIndex =
+                                clPipeline::ForwardLightPass::depthSamplerIndex;
 
   _pipeline.scheduleBind(context.drawProducer);
   _pipeline.indices().scheduleBindData(*_indicesBuffer, context.drawProducer);

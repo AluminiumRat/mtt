@@ -10,6 +10,7 @@
 #include <glm/vec4.hpp>
 
 #include <mtt/application/TimeT.h>
+#include <mtt/particles/Drawable/ParticlesDrawCommonData.h>
 #include <mtt/render/Pipeline/Texture2D.h>
 
 class QDir;
@@ -24,14 +25,6 @@ namespace mtt
   class ParticlesDataSource
   {
   public:
-    struct TileMap
-    {
-      std::shared_ptr<Texture2D> texture;
-      uint8_t extent;                       /// Extent of texture in tiles in
-                                            /// one dimension
-    };
-    using TileMaps = std::vector<TileMap>;
-
     static const inline std::string fileHead = "PSTFile";
     static constexpr uint32_t fileVersion = 0;
 
@@ -49,7 +42,8 @@ namespace mtt
 
     inline TimeT duration() const noexcept;
 
-    inline const TileMaps& tileMaps() const noexcept;
+    inline const ParticlesDrawCommonData::TextureDataSet&
+                                                      textures() const noexcept;
 
     inline float lodMppx() const noexcept;
     inline float lodSmoothing() const noexcept;
@@ -115,7 +109,7 @@ namespace mtt
   private:
     Frames _frames;
     TimeT _duration;
-    TileMaps _tileMaps;
+    ParticlesDrawCommonData::TextureDataSet _textures;
     float _lodMppx;
     float _lodSmoothing;
   };
@@ -125,10 +119,10 @@ namespace mtt
     return _duration;
   }
 
-  inline const ParticlesDataSource::TileMaps&
-                                  ParticlesDataSource::tileMaps() const noexcept
+  inline const ParticlesDrawCommonData::TextureDataSet&
+                                  ParticlesDataSource::textures() const noexcept
   {
-    return _tileMaps;
+    return _textures;
   }
 
   inline float ParticlesDataSource::lodMppx() const noexcept

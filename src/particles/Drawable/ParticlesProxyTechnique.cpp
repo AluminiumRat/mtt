@@ -1,8 +1,7 @@
-#include <mtt/clPipeline/Particles/ParticlesColorTechnique.h>
-#include <mtt/clPipeline/Particles/ParticlesProxyTechnique.h>
+#include <mtt/particles/Drawable/ParticlesColorTechnique.h>
+#include <mtt/particles/Drawable/ParticlesProxyTechnique.h>
 
 using namespace mtt;
-using namespace mtt::clPipeline;
 
 ParticlesProxyTechnique::ParticlesProxyTechnique(
                                           ParticlesDrawCommonData& commonData) :

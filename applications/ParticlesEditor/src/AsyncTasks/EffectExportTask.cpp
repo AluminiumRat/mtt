@@ -5,7 +5,7 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QFile>
 
-#include <mtt/application/ParticlesDataSource/ParticlesDataSource.h>
+#include <mtt/particles/DataSource/ParticlesDataSource.h>
 #include <mtt/utilities/Abort.h>
 
 #include <AsyncTasks/EffectExportTask.h>

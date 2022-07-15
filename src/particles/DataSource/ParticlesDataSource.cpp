@@ -5,9 +5,9 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QFile>
 
-#include <mtt/application/ParticlesDataSource/ParticlesDataSource.h>
 #include <mtt/application/ResourceManager/Texture2DLibrary.h>
 #include <mtt/application/DataStream.h>
+#include <mtt/particles/DataSource/ParticlesDataSource.h>
 
 using namespace mtt;
 
@@ -69,11 +69,11 @@ void ParticlesDataSource::_loadTextures(DataStream& stream,
     QFileInfo fileInfo(fileDirectory.absoluteFilePath(relativePath));
     QString textureFilename = fileInfo.canonicalFilePath();
 
-    TileMap newTileMap;
-    newTileMap.texture = textureLibrary->load(textureFilename, device, true);
-    stream >> newTileMap.extent;
+    ParticlesDrawCommonData::TextureData newTexture;
+    newTexture.texture = textureLibrary->load(textureFilename, device, true);
+    stream >> newTexture.extent;
 
-    _tileMaps.push_back(newTileMap);
+    _textures.push_back(newTexture);
   }
 }
 

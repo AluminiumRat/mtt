@@ -220,5 +220,6 @@ target_link_libraries(ParticlesEditor
                       clPipeline
                       editorLib
                       fbx
+                      particles
                       render
                       utilities)

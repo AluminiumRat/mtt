@@ -1,14 +1,13 @@
-#include <mtt/clPipeline/Particles/ParticlesShadowmapTechnique.h>
-#include <mtt/clPipeline/Particles/ShadowDrawParticlesAction.h>
 #include <mtt/clPipeline/constants.h>
+#include <mtt/particles/Drawable/ParticlesShadowmapTechnique.h>
+#include <mtt/particles/Drawable/ShadowDrawParticlesAction.h>
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
 
 using namespace mtt;
-using namespace mtt::clPipeline;
 
 ParticlesShadowmapTechnique::ParticlesShadowmapTechnique(
                                           ParticlesDrawCommonData& commonData) :
-  ParticlesAbstractTechnique(commonData, shadowmapStage, 3)
+  ParticlesAbstractTechnique(commonData, clPipeline::shadowmapStage, 3)
 {
 }
 

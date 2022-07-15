@@ -1,8 +1,7 @@
-#include <mtt/clPipeline/Particles/ColorDrawParticlesAction.h>
 #include <mtt/clPipeline/RenderPass/ForwardLightPass.h>
+#include <mtt/particles/Drawable/ColorDrawParticlesAction.h>
 
 using namespace mtt;
-using namespace mtt::clPipeline;
 
 ColorDrawParticlesAction::ColorDrawParticlesAction(
           GraphicsPipeline& pipeline,
@@ -41,7 +40,8 @@ void ColorDrawParticlesAction::execute(DrawContext& context)
   _pipeline.setScissor(_scissor);
   _pipeline.setViewport(_viewport);
 
-  constexpr uint32_t depthSamplerIndex = ForwardLightPass::depthSamplerIndex;
+  constexpr uint32_t depthSamplerIndex =
+                                clPipeline::ForwardLightPass::depthSamplerIndex;
 
   _depthSamplerTexture.setImageView(
                             context.frameBuffer->samplerMap(depthSamplerIndex));

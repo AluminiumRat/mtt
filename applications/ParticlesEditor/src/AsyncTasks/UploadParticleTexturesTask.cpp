@@ -6,7 +6,7 @@
 
 UploadParticleTexturesTask::UploadParticleTexturesTask(
                                 const ParticleTextureDescriptions& descriptions,
-                                mtt::clPipeline::ParticlesDrawable& drawable) :
+                                mtt::ParticlesDrawable& drawable) :
   AbstractAsyncTask(QObject::tr("Texture loading"),
                     AbstractAsyncTask::INDEPENDENT,
                     AbstractAsyncTask::SILENT),
@@ -29,7 +29,7 @@ void UploadParticleTexturesTask::asyncPart()
                                                           description.filename,
                                                           device,
                                                           true);
-    mtt::clPipeline::ParticlesDrawable::TextureData newData;
+    mtt::ParticlesDrawable::TextureData newData;
     newData.texture = texture;
     newData.extent = description.extent;
     _textures.push_back(newData);

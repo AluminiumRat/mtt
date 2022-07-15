@@ -1,13 +1,12 @@
 #include <limits>
 #include <random>
 
-#include <mtt/clPipeline/Particles/ParticlesDrawable.h>
 #include <mtt/clPipeline/constants.h>
+#include <mtt/particles/Drawable/ParticlesDrawable.h>
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
 #include <mtt/utilities/Abort.h>
 
 using namespace mtt;
-using namespace mtt::clPipeline;
 
 ParticlesDrawable::ParticlesDrawable(LogicalDevice& device) :
   _commonData(device),

@@ -1,10 +1,9 @@
-#include <mtt/clPipeline/Particles/ParticlesAbstractTechnique.h>
+#include <mtt/particles/Drawable/ParticlesAbstractTechnique.h>
 #include <mtt/render/RenderPass/GeneralRenderPass.h>
 
 #define MIN_PARTICLES 10
 
 using namespace mtt;
-using namespace mtt::clPipeline;
 
 ParticlesAbstractTechnique::ParticlesAbstractTechnique(
                                       ParticlesDrawCommonData& commonData,

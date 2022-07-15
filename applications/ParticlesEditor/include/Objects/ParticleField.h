@@ -7,6 +7,7 @@
 
 #include <mtt/application/TimeT.h>
 #include <mtt/editorLib/Objects/MovableObject.h>
+#include <mtt/particles/Drawable/ParticlesDrawable.h>
 
 #include <Objects/ParticleTextureDescription.h>
 #include <Objects/PEVisitorExtension.h>
@@ -54,8 +55,8 @@ public:
 
   enum LightingType
   {
-    PER_PARTICLE_LIGHTING = 0,
-    PER_PIXEL_LIGHTING = 1
+    PER_PARTICLE_LIGHTING = mtt::ParticlesDrawable::PER_PARTICLE_LIGHTING,
+    PER_PIXEL_LIGHTING = mtt::ParticlesDrawable::PER_PIXEL_LIGHTING
   };
   const static std::map<LightingType, QString> lightingTypeNames;
 

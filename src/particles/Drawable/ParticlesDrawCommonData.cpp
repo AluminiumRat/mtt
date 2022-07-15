@@ -1,9 +1,8 @@
 #include <memory>
 
-#include <mtt/clPipeline/Particles/ParticlesDrawCommonData.h>
+#include <mtt/particles/Drawable/ParticlesDrawCommonData.h>
 
 using namespace mtt;
-using namespace mtt::clPipeline;
 
 ParticlesDrawCommonData::ParticlesDrawCommonData(LogicalDevice& theDevice) :
   device(theDevice),

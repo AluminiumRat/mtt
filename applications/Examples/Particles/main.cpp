@@ -1,13 +1,13 @@
 #include <glm/gtx/transform.hpp>
 
-#include <mtt/application/ParticlesDataSource/ParticlesDataSource.h>
 #include <mtt/application/Widgets/RenderWidget/OrbitalCameraController.h>
 #include <mtt/application/Widgets/RenderWidget/RenderWidget.h>
 #include <mtt/application/Application.h>
 #include <mtt/clPipeline/Lighting/DirectLight.h>
 #include <mtt/clPipeline/ColorFrameBuilder.h>
+#include <mtt/particles/DataSource/ParticlesDataSource.h>
 #include <mtt/render/SceneGraph/CameraNode.h>
-#include <mtt/render//RenderScene.h>
+#include <mtt/render/RenderScene.h>
 
 int main(int argc, char* argv[])
 {

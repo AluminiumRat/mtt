@@ -50,5 +50,6 @@ target_link_libraries(Particles
                       Qt5::Widgets
                       application
                       clPipeline
+                      particles
                       render
                       utilities)
