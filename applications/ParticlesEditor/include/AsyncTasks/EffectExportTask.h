@@ -1,7 +1,6 @@
 #pragma once
 
 #include <limits>
-#include <string>
 #include <vector>
 
 #include <QtCore/QObject>
@@ -22,9 +21,6 @@ class EffectExportTask :  public QObject,
   Q_OBJECT
 
 public:
-  static const inline std::string fileHead = "PSTFile";
-  static constexpr uint32_t fileVersion = 0;
-
   struct ExportOptions
   {
     mtt::TimeT startTime;   // Must be greater than or equal to 0
@@ -50,8 +46,6 @@ protected:
   virtual void restorePart() noexcept override;
 
 private:
-  static constexpr uint32_t notIndex = std::numeric_limits<uint16_t>::max();
-
   struct Particle
   {
     glm::vec3 position;

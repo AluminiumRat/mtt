@@ -1,5 +1,6 @@
 #include <glm/gtx/transform.hpp>
 
+#include <mtt/application/ParticlesDataSource/ParticlesDataSource.h>
 #include <mtt/application/Widgets/RenderWidget/OrbitalCameraController.h>
 #include <mtt/application/Widgets/RenderWidget/RenderWidget.h>
 #include <mtt/application/Application.h>
@@ -31,6 +32,10 @@ int main(int argc, char* argv[])
 
   mtt::clPipeline::DirectLight light(true, true, application.displayDevice());
   light.setTransformMatrix(glm::translate(glm::vec3(0.f, 0.f, 10.f)));
+
+  mtt::ParticlesDataSource dataSource("C:/Projects/models/pst/1.pst",
+                                      nullptr,
+                                      application.displayDevice());
 
   mtt::RenderScene scene;
   scene.addCompositeObject(light);

@@ -75,6 +75,8 @@ set(HEADERS
     "../../include/mtt/application/Manipulator/Simple3DManipulator.h"
     "../../include/mtt/application/Manipulator/UniformScale3DManipulator.h"
 
+    "../../include/mtt/application/ParticlesDataSource/ParticlesDataSource.h"
+
     "../../include/mtt/application/ResourceManager/CubeTextureDescription.h"
     "../../include/mtt/application/ResourceManager/CubeTextureLibrary.h"
     "../../include/mtt/application/ResourceManager/FbxModelDescription.h"
@@ -182,6 +184,8 @@ set(SOURCES
     "Manipulator/RingRotation3DManipulator.cpp"
     "Manipulator/Simple3DManipulator.cpp"
     "Manipulator/UniformScale3DManipulator.cpp"
+
+    "ParticlesDataSource/ParticlesDataSource.cpp"
 
     "ResourceManager/CubeTextureLibrary.cpp"
     "ResourceManager/FbxModelLibrary.cpp"

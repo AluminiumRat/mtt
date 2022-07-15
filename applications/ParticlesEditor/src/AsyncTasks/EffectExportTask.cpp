@@ -5,6 +5,7 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QFile>
 
+#include <mtt/application/ParticlesDataSource/ParticlesDataSource.h>
 #include <mtt/utilities/Abort.h>
 
 #include <AsyncTasks/EffectExportTask.h>
@@ -40,8 +41,9 @@ void EffectExportTask::preparePart()
 
 void EffectExportTask::_writeHead(QFile& file, mtt::DataStream& stream)
 {
-  file.write(fileHead.c_str(), fileHead.length());
-  stream << fileVersion;
+  file.write( mtt::ParticlesDataSource::fileHead.c_str(),
+              mtt::ParticlesDataSource::fileHead.length());
+  stream << mtt::ParticlesDataSource::fileVersion;
 }
 
 void EffectExportTask::_writeFieldInfo( mtt::DataStream& stream,
@@ -63,8 +65,6 @@ void EffectExportTask::_writeFieldInfo( mtt::DataStream& stream,
 
   stream << field.lodMppx();
   stream << field.lodSmoothing();
-
-  stream << uint8_t(field.lightingType());
 }
 
 void EffectExportTask::saveData(QFile& file,
@@ -161,7 +161,7 @@ void EffectExportTask::_markDeleted(
     {
       if (particle.nextIndex == deletedIndex)
       {
-        particle.nextIndex = notIndex;
+        particle.nextIndex = mtt::ParticlesDataSource::notIndex;
         break;
       }
     }
@@ -179,7 +179,11 @@ void EffectExportTask::_connectFrames()
 
     for (Particle& currentFrameParticle : currentFrame.particles)
     {
-      if(currentFrameParticle.nextIndex == notIndex) continue;
+      if(currentFrameParticle.nextIndex == mtt::ParticlesDataSource::notIndex)
+      {
+        continue;
+      }
+
       for (;nextParticleIndex < nextFrame.particles.size(); nextParticleIndex++)
       {
         Particle& nextFrameParticle = nextFrame.particles[nextParticleIndex];
@@ -196,7 +200,7 @@ void EffectExportTask::_connectFrames()
 
 void EffectExportTask::_writeFrames(QFile& file, mtt::DataStream& stream)
 {
-  stream << _frames.size();
+  stream << uint32_t(_frames.size());
 
   for (size_t frameIndex = 0; frameIndex < _frames.size(); frameIndex++)
   {
@@ -216,6 +220,7 @@ void EffectExportTask::_writeFrames(QFile& file, mtt::DataStream& stream)
       stream << particle.textureIndex;
       stream << particle.tileIndex;
       stream << particle.tag;
+      stream << particle.nextIndex;
     }
 
     reportPercent(frameIndex * 100 / _frames.size());
