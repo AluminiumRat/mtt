@@ -12,6 +12,7 @@
 #include <mtt/application/TimeT.h>
 #include <mtt/particles/Drawable/ParticlesDrawCommonData.h>
 #include <mtt/render/Pipeline/Texture2D.h>
+#include <mtt/utilities/Sphere.h>
 
 class QDir;
 class QFile;
@@ -22,7 +23,7 @@ namespace mtt
   class LogicalDevice;
   class Texture2DLibrary;
 
-  class ParticlesDataSource
+  class PSTDataSource
   {
   public:
     static const inline std::string fileHead = "PSTFile";
@@ -33,14 +34,15 @@ namespace mtt
   public:
     /// If textureLibrary is nullptr then textures will be loaded without
     /// resource management
-    ParticlesDataSource(const QString& filename,
-                        Texture2DLibrary* textureLibrary,
-                        LogicalDevice& device);
-    ParticlesDataSource(const ParticlesDataSource&) = delete;
-    ParticlesDataSource& operator = (const ParticlesDataSource&) = delete;
-    virtual ~ParticlesDataSource() noexcept = default;
+    PSTDataSource(const QString& filename,
+                  Texture2DLibrary* textureLibrary,
+                  LogicalDevice& device);
+    PSTDataSource(const PSTDataSource&) = delete;
+    PSTDataSource& operator = (const PSTDataSource&) = delete;
+    virtual ~PSTDataSource() noexcept = default;
 
     inline TimeT duration() const noexcept;
+    inline const Sphere& boundSphere() const noexcept;
 
     inline const ParticlesDrawCommonData::TextureDataSet&
                                                       textures() const noexcept;
@@ -109,28 +111,35 @@ namespace mtt
   private:
     Frames _frames;
     TimeT _duration;
+    Sphere _boundSphere;
+
     ParticlesDrawCommonData::TextureDataSet _textures;
     float _lodMppx;
     float _lodSmoothing;
   };
 
-  inline TimeT ParticlesDataSource::duration() const noexcept
+  inline TimeT PSTDataSource::duration() const noexcept
   {
     return _duration;
   }
 
+  inline const Sphere& PSTDataSource::boundSphere() const noexcept
+  {
+    return _boundSphere;
+  }
+
   inline const ParticlesDrawCommonData::TextureDataSet&
-                                  ParticlesDataSource::textures() const noexcept
+                                        PSTDataSource::textures() const noexcept
   {
     return _textures;
   }
 
-  inline float ParticlesDataSource::lodMppx() const noexcept
+  inline float PSTDataSource::lodMppx() const noexcept
   {
     return _lodMppx;
   }
 
-  inline float ParticlesDataSource::lodSmoothing() const noexcept
+  inline float PSTDataSource::lodSmoothing() const noexcept
   {
     return _lodSmoothing;
   }

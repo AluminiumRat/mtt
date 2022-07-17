@@ -5,7 +5,7 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QFile>
 
-#include <mtt/particles/DataSource/ParticlesDataSource.h>
+#include <mtt/particles/PSTEffect/PSTDataSource.h>
 #include <mtt/utilities/Abort.h>
 
 #include <AsyncTasks/EffectExportTask.h>
@@ -41,9 +41,9 @@ void EffectExportTask::preparePart()
 
 void EffectExportTask::_writeHead(QFile& file, mtt::DataStream& stream)
 {
-  file.write( mtt::ParticlesDataSource::fileHead.c_str(),
-              mtt::ParticlesDataSource::fileHead.length());
-  stream << mtt::ParticlesDataSource::fileVersion;
+  file.write( mtt::PSTDataSource::fileHead.c_str(),
+              mtt::PSTDataSource::fileHead.length());
+  stream << mtt::PSTDataSource::fileVersion;
 }
 
 void EffectExportTask::_writeFieldInfo( mtt::DataStream& stream,
@@ -74,10 +74,6 @@ void EffectExportTask::saveData(QFile& file,
 {
   reportStage(QObject::tr("header writing"));
   _writeHead(file, stream);
-  _writeFieldInfo(stream, targetFileInfo);
-
-  _indexPtrPos = file.pos();
-  stream << qint64(0);
 
   _sceneData->particleField().clear();
 
@@ -99,6 +95,13 @@ void EffectExportTask::saveData(QFile& file,
     reportPercent(frameStart.count() * 100 /
                               (_options.startTime + _options.duration).count());
   }
+
+  stream << _boundSphere.center;
+  stream << _boundSphere.radius;
+  _writeFieldInfo(stream, targetFileInfo);
+
+  _indexPtrPos = file.pos();
+  stream << qint64(0);
 
   reportStage(QObject::tr("frames connection"));
   _connectFrames();
@@ -143,6 +146,8 @@ void EffectExportTask::_addFrame(mtt::TimeT time)
     newParticle.nextIndex = index;
 
     newFrame.particles.push_back(newParticle);
+
+    _boundSphere.extend(mtt::Sphere(data.position, data.size / 2.f));
   }
 
   _frames.push_back(std::move(newFrame));
@@ -161,7 +166,7 @@ void EffectExportTask::_markDeleted(
     {
       if (particle.nextIndex == deletedIndex)
       {
-        particle.nextIndex = mtt::ParticlesDataSource::notIndex;
+        particle.nextIndex = mtt::PSTDataSource::notIndex;
         break;
       }
     }
@@ -173,13 +178,13 @@ void EffectExportTask::_connectFrames()
   for (size_t frameIndex = 0; frameIndex < _frames.size() - 1; frameIndex++)
   {
     Frame& currentFrame = _frames[frameIndex];
-    Frame& nextFrame = _frames[frameIndex++];
+    Frame& nextFrame = _frames[frameIndex + 1];
 
     uint16_t nextParticleIndex = 0;
 
     for (Particle& currentFrameParticle : currentFrame.particles)
     {
-      if(currentFrameParticle.nextIndex == mtt::ParticlesDataSource::notIndex)
+      if(currentFrameParticle.nextIndex == mtt::PSTDataSource::notIndex)
       {
         continue;
       }

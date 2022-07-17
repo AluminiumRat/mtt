@@ -1,11 +1,13 @@
 #include <glm/gtx/transform.hpp>
 
+#include <QtCore/QTimer>
+
 #include <mtt/application/Widgets/RenderWidget/OrbitalCameraController.h>
 #include <mtt/application/Widgets/RenderWidget/RenderWidget.h>
 #include <mtt/application/Application.h>
 #include <mtt/clPipeline/Lighting/DirectLight.h>
 #include <mtt/clPipeline/ColorFrameBuilder.h>
-#include <mtt/particles/DataSource/ParticlesDataSource.h>
+#include <mtt/particles/PSTEffect/PSTEffect.h>
 #include <mtt/render/SceneGraph/CameraNode.h>
 #include <mtt/render/RenderScene.h>
 
@@ -33,12 +35,26 @@ int main(int argc, char* argv[])
   mtt::clPipeline::DirectLight light(true, true, application.displayDevice());
   light.setTransformMatrix(glm::translate(glm::vec3(0.f, 0.f, 10.f)));
 
-  mtt::ParticlesDataSource dataSource("C:/Projects/models/pst/1.pst",
-                                      nullptr,
-                                      application.displayDevice());
+  mtt::PSTEffect effect("C:/Projects/models/pst/1.pst",
+                        nullptr,
+                        application.displayDevice());
+  QTimer updateTimer;
+  updateTimer.setSingleShot(false);
+  QTimer::connect(&updateTimer,
+                  &QTimer::timeout,
+                  [&]
+                  {
+                    effect.setTime(
+                                effect.currentTime() + 100 * mtt::millisecond);
+                  });
+  updateTimer.start(100);
 
   mtt::RenderScene scene;
   scene.addCompositeObject(light);
+  scene.addCulledDrawable(effect);
+
+  light.setShadowmapField(&scene.culledData());
+  light.setShadowmapExtent(512, 512);
 
   window.setSource(&scene, &camera);
 

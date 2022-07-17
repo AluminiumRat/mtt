@@ -38,8 +38,6 @@ include_directories("../../include"
 add_definitions(${Qt5Core_DEFINITIONS})
 
 set(HEADERS
-    "../../include/mtt/particles/DataSource/ParticlesDataSource.h"
-
     "../../include/mtt/particles/Drawable/ColorDrawParticlesAction.h"
     "../../include/mtt/particles/Drawable/ParticlesAbstractTechnique.h"
     "../../include/mtt/particles/Drawable/ParticlesColorTechnique.h"
@@ -48,11 +46,12 @@ set(HEADERS
     "../../include/mtt/particles/Drawable/ParticlesProxyTechnique.h"
     "../../include/mtt/particles/Drawable/ParticlesShadowmapTechnique.h"
     "../../include/mtt/particles/Drawable/ShadowDrawParticlesAction.h"
+
+    "../../include/mtt/particles/PSTEffect/PSTDataSource.h"
+    "../../include/mtt/particles/PSTEffect/PSTEffect.h"
     )
 
 set(SOURCES
-    "DataSource/ParticlesDataSource.cpp"
-
     "Drawable/ColorDrawParticlesAction.cpp"
     "Drawable/ParticlesAbstractTechnique.cpp"
     "Drawable/ParticlesColorTechnique.cpp"
@@ -61,6 +60,9 @@ set(SOURCES
     "Drawable/ParticlesProxyTechnique.cpp"
     "Drawable/ParticlesShadowmapTechnique.cpp"
     "Drawable/ShadowDrawParticlesAction.cpp"
+
+    "PSTEffect/PSTDataSource.cpp"
+    "PSTEffect/PSTEffect.cpp"
     )
 
 add_library(particles

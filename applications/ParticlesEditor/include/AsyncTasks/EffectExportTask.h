@@ -9,6 +9,7 @@
 #include <mtt/application/EditCommands/AbstractEditCommand.h>
 #include <mtt/application/Scene/Scene.h>
 #include <mtt/application/TimeT.h>
+#include <mtt/utilities/Sphere.h>
 
 #include <Objects/ParticleField.h>
 #include <Objects/RootObject.h>
@@ -95,6 +96,7 @@ private:
   std::unique_ptr<mtt::AbstractEditCommand> _restoreCommand;
 
   Frames _frames;
+  mtt::Sphere _boundSphere;
 
   qint64 _indexPtrPos;
 

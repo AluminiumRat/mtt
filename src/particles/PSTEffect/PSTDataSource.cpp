@@ -7,13 +7,13 @@
 
 #include <mtt/application/ResourceManager/Texture2DLibrary.h>
 #include <mtt/application/DataStream.h>
-#include <mtt/particles/DataSource/ParticlesDataSource.h>
+#include <mtt/particles/PSTEffect/PSTDataSource.h>
 
 using namespace mtt;
 
-ParticlesDataSource::ParticlesDataSource( const QString& filename,
-                                          Texture2DLibrary* textureLibrary,
-                                          LogicalDevice& device) :
+PSTDataSource::PSTDataSource( const QString& filename,
+                              Texture2DLibrary* textureLibrary,
+                              LogicalDevice& device) :
   _duration(0),
   _lodMppx(0.f),
   _lodSmoothing(1.f)
@@ -24,6 +24,10 @@ ParticlesDataSource::ParticlesDataSource( const QString& filename,
   QDir fileDirectory(QFileInfo(filename).dir());
 
   _checkHead(file, stream);
+
+  stream >> _boundSphere.center;
+  stream >>_boundSphere.radius;
+
   _loadTextures(stream, fileDirectory, textureLibrary, device);
 
   stream >> _lodMppx;
@@ -36,7 +40,7 @@ ParticlesDataSource::ParticlesDataSource( const QString& filename,
   if(!_frames.empty()) _duration = _frames.back().time;
 }
 
-void ParticlesDataSource::_checkHead(QFile& file, DataStream& stream)
+void PSTDataSource::_checkHead(QFile& file, DataStream& stream)
 {
   std::string head;
   head.resize(fileHead.size());
@@ -47,7 +51,7 @@ void ParticlesDataSource::_checkHead(QFile& file, DataStream& stream)
   if(fileVersion > fileVersion) throw std::runtime_error("Unsupported file version");
 }
 
-void ParticlesDataSource::_loadTextures(DataStream& stream,
+void PSTDataSource::_loadTextures(DataStream& stream,
                                         const QDir& fileDirectory,
                                         Texture2DLibrary* textureLibrary,
                                         LogicalDevice& device)
@@ -77,7 +81,7 @@ void ParticlesDataSource::_loadTextures(DataStream& stream,
   }
 }
 
-void ParticlesDataSource::_loadFrames(DataStream& stream)
+void PSTDataSource::_loadFrames(DataStream& stream)
 {
   uint32_t framesNumber = stream.readUint32();
   _frames.reserve(framesNumber);
@@ -115,7 +119,7 @@ void ParticlesDataSource::_loadFrames(DataStream& stream)
   }
 }
 
-void ParticlesDataSource::updateData( std::vector<glm::vec3>& positionData,
+void PSTDataSource::updateData( std::vector<glm::vec3>& positionData,
                                       std::vector<glm::vec2>& sizeRotationData,
                                       std::vector<glm::vec4>& albedoData,
                                       std::vector<glm::vec4>& emissionData,
@@ -131,7 +135,7 @@ void ParticlesDataSource::updateData( std::vector<glm::vec3>& positionData,
   tileIndexData.clear();
   tagData.clear();
 
-  ParticlesDataSource::FramesPosition frames = findFrames(time);
+  PSTDataSource::FramesPosition frames = findFrames(time);
   if (frames.prev == nullptr || frames.next == nullptr) return;
 
   size_t toReserve = frames.prev->particles.size();
@@ -168,8 +172,8 @@ void ParticlesDataSource::updateData( std::vector<glm::vec3>& positionData,
   }
 }
 
-ParticlesDataSource::FramesPosition
-                      ParticlesDataSource::findFrames(TimeT time) const noexcept
+PSTDataSource::FramesPosition
+                            PSTDataSource::findFrames(TimeT time) const noexcept
 {
   if (time >= _duration || _frames.size() < 2 || time < _frames.front().time)
   {
@@ -179,7 +183,7 @@ ParticlesDataSource::FramesPosition
   size_t firstIndex = 0;
   size_t secondIndex = _frames.size() - 1;
 
-  while (secondIndex - firstIndex > 2)
+  while (secondIndex - firstIndex > 1)
   {
     size_t middle = (firstIndex + secondIndex) / 2;
     if (_frames[middle].time > time) secondIndex = middle;
