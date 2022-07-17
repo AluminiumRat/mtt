@@ -90,7 +90,11 @@ void EffectExportTask::saveData(QFile& file,
   {
     mtt::TimeRange frameTime(frameStart, frameStart + _options.timeStep);
     _sceneData->animation().update(frameTime);
-    _addFrame(frameTime.finish());
+
+    if (frameStart >= _options.startTime)
+    {
+      _addFrame(frameTime.finish() - _options.startTime);
+    }
 
     reportPercent(frameStart.count() * 100 /
                               (_options.startTime + _options.duration).count());
