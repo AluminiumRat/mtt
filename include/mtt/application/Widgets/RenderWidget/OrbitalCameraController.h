@@ -33,7 +33,19 @@ namespace mtt
     OrbitalCameraController& operator = (
                                       const OrbitalCameraController&) = delete;
     virtual ~OrbitalCameraController() noexcept = default;
-  
+
+    inline const glm::vec3& centerPosition() const noexcept;
+    inline void setCenterPosition(const glm::vec3& newValue) noexcept;
+
+    inline float distance() const noexcept;
+    inline void setDistance(float newValue) noexcept;
+
+    inline float zAngle() const noexcept;
+    inline void setZAngle(float newValue) noexcept;
+
+    inline float yAngle() const noexcept;
+    inline void setYAngle(float newValue) noexcept;
+
     inline float rotateSensitivity() const noexcept;
     void setRotateSensitivity(float newValue) noexcept;
 
@@ -80,6 +92,52 @@ namespace mtt
     float _movingSensitivity;
     float _approachSensitivity;
   };
+
+  inline const glm::vec3&
+                        OrbitalCameraController::centerPosition() const noexcept
+  {
+    return _centerPosition;
+  }
+
+  inline void OrbitalCameraController::setCenterPosition(
+                                            const glm::vec3& newValue) noexcept
+  {
+    _centerPosition = newValue;
+    _updateCameraPosition();
+  }
+
+  inline float OrbitalCameraController::distance() const noexcept
+  {
+    return _distance;
+  }
+
+  inline void OrbitalCameraController::setDistance(float newValue) noexcept
+  {
+    _distance = newValue;
+    _updateCameraPosition();
+  }
+
+  inline float OrbitalCameraController::zAngle() const noexcept
+  {
+    return _zAngle;
+  }
+
+  inline void OrbitalCameraController::setZAngle(float newValue) noexcept
+  {
+    _zAngle = newValue;
+    _updateCameraPosition();
+  }
+
+  inline float OrbitalCameraController::yAngle() const noexcept
+  {
+    return _yAngle;
+  }
+
+  inline void OrbitalCameraController::setYAngle(float newValue) noexcept
+  {
+    _yAngle = newValue;
+    _updateCameraPosition();
+  }
 
   inline float OrbitalCameraController::rotateSensitivity() const noexcept
   {

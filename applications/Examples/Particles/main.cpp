@@ -64,6 +64,9 @@ int main(int argc, char* argv[])
   window.setFrameBuilder(&colorFrameBuilder);
 
   mtt::OrbitalCameraController cameraController(window, nullptr);
+  cameraController.setCenterPosition(glm::vec3(0.f, 0.f, 0.5f));
+  cameraController.setDistance(1.f);
+  cameraController.setYAngle(0.f);
 
   return application.exec();
 }
