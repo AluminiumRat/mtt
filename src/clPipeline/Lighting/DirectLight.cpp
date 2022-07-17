@@ -36,6 +36,8 @@ DirectLight::DirectLight( bool forwardLightingEnabled,
     _defferedLightApplicator.reset(new DirectLightApplicator(*this, device));
     addChildProtected(*_defferedLightApplicator);
   }
+
+  _updateShadowmapProjection();
 }
 
 void DirectLight::_updateShadowmapProjection() noexcept

@@ -38,6 +38,7 @@ PointLight::PointLight( bool forwardLightingEnabled,
   }
 
   _updateBound();
+  _updateShadowmapCamera();
 }
 
 void PointLight::setFilterTexture(std::shared_ptr<CubeTexture> newTexture)

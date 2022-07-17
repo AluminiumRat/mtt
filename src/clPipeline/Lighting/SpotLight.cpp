@@ -36,6 +36,7 @@ SpotLight::SpotLight( bool forwardLightingEnabled,
   }
 
   _updateBound();
+  _updateShadowmapCamera();
 }
 
 void SpotLight::setFilterTexture(std::shared_ptr<Texture2D> newTexture)
