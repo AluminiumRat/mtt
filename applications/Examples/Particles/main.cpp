@@ -45,9 +45,9 @@ int main(int argc, char* argv[])
                   [&]
                   {
                     effect.setTime(
-                                effect.currentTime() + 100 * mtt::millisecond);
+                                effect.currentTime() + 30 * mtt::millisecond);
                   });
-  updateTimer.start(100);
+  updateTimer.start(30);
 
   mtt::RenderScene scene;
   scene.addCompositeObject(light);

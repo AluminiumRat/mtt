@@ -192,7 +192,7 @@ PSTDataSource::FramesPosition
 
   const Frame& firstFrame = _frames[firstIndex];
   const Frame& secondFrame = _frames[secondIndex];
-  float factor = toFloatTime(secondFrame.time - time) /
+  float factor = toFloatTime(time - firstFrame.time) /
                                 toFloatTime(secondFrame.time - firstFrame.time);
   return {&firstFrame, &secondFrame, factor};
 }
