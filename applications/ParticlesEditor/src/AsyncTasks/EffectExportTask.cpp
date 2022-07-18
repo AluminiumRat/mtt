@@ -72,54 +72,126 @@ void EffectExportTask::saveData(QFile& file,
                                 const QFileInfo& targetFileInfo,
                                 const QFileInfo& tmpFileInfo)
 {
-  reportStage(QObject::tr("header writing"));
-  _writeHead(file, stream);
-
-  _sceneData->particleField().clear();
-
-  connect(&_sceneData->particleField(),
-          &ParticleField::particlesDeleted,
-          this,
-          &EffectExportTask::_markDeleted,
-          Qt::DirectConnection);
-
-  reportStage(QObject::tr("simulation"));
-  for ( mtt::TimeT frameStart(0);
-        frameStart < _options.startTime + _options.duration;
-        frameStart += _options.timeStep)
+  try
   {
-    mtt::TimeRange frameTime(frameStart, frameStart + _options.timeStep);
-    _sceneData->animation().update(frameTime);
+    _sceneData->particleField().clear();
 
-    if (frameStart >= _options.startTime)
+    mtt::TimeT timeCursor(0);
+    reportStage(QObject::tr("presimulation"));
+    _presimulation(timeCursor);
+
+    connect(&_sceneData->particleField(),
+            &ParticleField::particlesDeleted,
+            this,
+            &EffectExportTask::_markDeleted,
+            Qt::DirectConnection);
+
+    reportStage(QObject::tr("simulation"));
+    _simulation(timeCursor);
+
+    _finalFramesNumber = _frames.size();
+
+    if (_options.looped)
     {
-      _addFrame(frameTime.finish() - _options.startTime);
+      reportStage(QObject::tr("postsimulation"));
+      _postsimulation(timeCursor);
     }
 
-    reportPercent(frameStart.count() * 100 /
-                              (_options.startTime + _options.duration).count());
+    disconnect( &_sceneData->particleField(),
+                &ParticleField::particlesDeleted,
+                this,
+                &EffectExportTask::_markDeleted);
+
+    reportStage(QObject::tr("frames connection"));
+    _connectFrames();
+
+    if (_options.looped)
+    {
+      reportStage(QObject::tr("overlap"));
+      _overlapFrames();
+    }
+
+    reportStage(QObject::tr("header writing"));
+    _writeHead(file, stream);
+
+    stream << _boundSphere.center;
+    stream << _boundSphere.radius;
+    _writeFieldInfo(stream, targetFileInfo);
+    stream << _options.looped;
+
+    _indexPtrPos = file.pos();
+    stream << qint64(0);          // Write empty index pointer
+
+    reportStage(QObject::tr("frames writing"));
+    _writeFrames(file, stream);
+
+    reportStage(QObject::tr("index writing"));
+    _writeIndex(file, stream);
+  }
+  catch (...)
+  {
+    disconnect(this);
+    throw;
+  }
+}
+
+void EffectExportTask::_presimulation(mtt::TimeT& timeCursor)
+{
+  for (; timeCursor < _options.startTime; timeCursor += _options.timeStep)
+  {
+    mtt::TimeRange frameTime(timeCursor, timeCursor + _options.timeStep);
+    _sceneData->animation().update(frameTime);
+    reportPercent(timeCursor.count() * 100 / _options.startTime.count());
   }
 
-  stream << _boundSphere.center;
-  stream << _boundSphere.radius;
-  _writeFieldInfo(stream, targetFileInfo);
+  if (_options.looped)
+  {
+    _addToCanceled(_sceneData->particleField().workIndices());
+  }
+}
 
-  _indexPtrPos = file.pos();
-  stream << qint64(0);
+void EffectExportTask::_simulation(mtt::TimeT& timeCursor)
+{
+  for ( ;
+        timeCursor < _options.startTime + _options.duration;
+        timeCursor += _options.timeStep)
+  {
+    mtt::TimeRange frameTime(timeCursor, timeCursor + _options.timeStep);
+    _sceneData->animation().update(frameTime);
 
-  reportStage(QObject::tr("frames connection"));
-  _connectFrames();
+    _addFrame(frameTime.finish() - _options.startTime);
+
+    reportPercent((timeCursor - _options.startTime).count() * 100 /
+                                                    _options.duration.count());
+  }
+}
+
+void EffectExportTask::_postsimulation(mtt::TimeT& timeCursor)
+{
+  if(_frames.empty()) return;
+
+  connect(&_sceneData->particleField(),
+          &ParticleField::particlesAdded,
+          this,
+          &EffectExportTask::_addToCanceled,
+          Qt::DirectConnection);
+
+  while (!_frames.back().particles.empty())
+  {
+    mtt::TimeRange frameTime(timeCursor, timeCursor + _options.timeStep);
+    _sceneData->animation().update(frameTime);
+    _addFrame(frameTime.finish() - _options.startTime);
+
+    timeCursor += _options.timeStep;
+    if (_sceneData->animation().duration() < timeCursor) break;
+  }
+
+  _frames.pop_back();
 
   disconnect( &_sceneData->particleField(),
-              &ParticleField::particlesDeleted,
+              &ParticleField::particlesAdded,
               this,
-              &EffectExportTask::_markDeleted);
-
-  reportStage(QObject::tr("frames writing"));
-  _writeFrames(file, stream);
-
-  reportStage(QObject::tr("index writing"));
-  _writeIndex(file, stream);
+              &EffectExportTask::_addToCanceled);
 }
 
 void EffectExportTask::_addFrame(mtt::TimeT time)
@@ -132,6 +204,8 @@ void EffectExportTask::_addFrame(mtt::TimeT time)
 
   for (ParticleField::ParticleIndex index : field.workIndices())
   {
+    if(_canceled.contains(index)) continue;
+
     const ParticleField::ParticleData& data = field.particlesData()[index];
     Particle newParticle;
     newParticle.position = data.position;
@@ -160,9 +234,13 @@ void EffectExportTask::_addFrame(mtt::TimeT time)
 void EffectExportTask::_markDeleted(
                       const std::vector<ParticleField::ParticleIndex>& indices)
 {
+  for (ParticleField::ParticleIndex deletedIndex : indices)
+  {
+    _canceled.erase(deletedIndex);
+  }
+
   if(_frames.empty()) return;
   Frame& lastFrame = _frames.back();
-  Particles::iterator iParticle = lastFrame.particles.begin();
 
   for (ParticleField::ParticleIndex deletedIndex : indices)
   {
@@ -174,6 +252,15 @@ void EffectExportTask::_markDeleted(
         break;
       }
     }
+  }
+}
+
+void EffectExportTask::_addToCanceled(
+                      const std::vector<ParticleField::ParticleIndex>& indices)
+{
+  for (ParticleField::ParticleIndex index : indices)
+  {
+    _canceled.insert(index);
   }
 }
 
@@ -205,6 +292,44 @@ void EffectExportTask::_connectFrames()
       if(nextParticleIndex == nextFrame.particles.size()) mtt::Abort("EffectExportTask::_connectFrames: next frame index not found");
     }
   }
+
+  for (Particle& currentFrameParticle : _frames.back().particles)
+  {
+    currentFrameParticle.nextIndex = mtt::PSTDataSource::notIndex;
+  }
+}
+
+void EffectExportTask::_overlapFrames()
+{
+  if(_finalFramesNumber <= 1) return;
+
+  for (Particle& particle : _frames[_finalFramesNumber - 1].particles)
+  {
+    particle.nextIndex += _frames[0].particles.size();
+  }
+
+  for(size_t currentFrameIndex = _finalFramesNumber;
+      currentFrameIndex < _frames.size();
+      currentFrameIndex++)
+  {
+    size_t targetFrameIndex = currentFrameIndex % _finalFramesNumber;
+    Particles& targetPlace = _frames[targetFrameIndex].particles;
+
+    size_t nextFrameIndex = (targetFrameIndex + 1) % _finalFramesNumber;
+    uint16_t indexIncrement =
+                            uint16_t(_frames[nextFrameIndex].particles.size());
+
+    for (Particle& particle : _frames[currentFrameIndex].particles)
+    {
+      if (particle.nextIndex != mtt::PSTDataSource::notIndex)
+      {
+        particle.nextIndex += indexIncrement;
+      }
+      targetPlace.push_back(particle);
+    }
+  }
+
+  _frames.resize(_finalFramesNumber);
 }
 
 void EffectExportTask::_writeFrames(QFile& file, mtt::DataStream& stream)

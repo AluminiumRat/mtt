@@ -19,5 +19,6 @@ EffectExportTask::ExportOptions ExportOptionsDialog::getOptions() noexcept
   options.startTime = mtt::toTimeT(_ui->startTimeSpin->value());
   options.duration = mtt::toTimeT(_ui->durationSpin->value());
   options.timeStep = mtt::toTimeT(_ui->stepSpin->value());
+  options.looped = _ui->loopedCheck->isChecked();
   return options;
 }

@@ -15,6 +15,7 @@ PSTDataSource::PSTDataSource( const QString& filename,
                               Texture2DLibrary* textureLibrary,
                               LogicalDevice& device) :
   _duration(0),
+  _looped(false),
   _lodMppx(0.f),
   _lodSmoothing(1.f)
 {
@@ -32,6 +33,8 @@ PSTDataSource::PSTDataSource( const QString& filename,
 
   stream >> _lodMppx;
   stream >> _lodSmoothing;
+
+  stream >> _looped;
 
   stream.readInt64();
 
@@ -135,6 +138,10 @@ void PSTDataSource::updateData( std::vector<glm::vec3>& positionData,
   tileIndexData.clear();
   tagData.clear();
 
+  if(time.count() < 0) return;
+
+  if(_looped) time = time % _duration;
+
   PSTDataSource::FramesPosition frames = findFrames(time);
   if (frames.prev == nullptr || frames.next == nullptr) return;
 
@@ -175,9 +182,17 @@ void PSTDataSource::updateData( std::vector<glm::vec3>& positionData,
 PSTDataSource::FramesPosition
                             PSTDataSource::findFrames(TimeT time) const noexcept
 {
-  if (time >= _duration || _frames.size() < 2 || time < _frames.front().time)
+  if (time >= _duration || _frames.size() < 2)
   {
     return {nullptr, nullptr, 0.f};
+  }
+
+  if (time < _frames.front().time)
+  {
+    if (!_looped) return { nullptr, nullptr, 0.f };
+    return {&_frames.back(),
+            &_frames.front(),
+            toFloatTime(time) / toFloatTime(_frames.front().time)};
   }
 
   size_t firstIndex = 0;

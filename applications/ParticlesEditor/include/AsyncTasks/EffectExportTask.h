@@ -1,6 +1,7 @@
 #pragma once
 
 #include <limits>
+#include <set>
 #include <vector>
 
 #include <QtCore/QObject>
@@ -27,6 +28,7 @@ public:
     mtt::TimeT startTime;   // Must be greater than or equal to 0
     mtt::TimeT duration;    // Must be greater than 0
     mtt::TimeT timeStep;    // Must be greater than 0
+    bool looped;
   };
 
 public:
@@ -80,10 +82,16 @@ private:
   using Frames = std::vector<Frame>;
 
   void _writeHead(QFile& file, mtt::DataStream& stream);
-  void _writeFieldInfo(mtt::DataStream& stream, const QFileInfo& targetFileInfo);
+  void _writeFieldInfo( mtt::DataStream& stream,
+                        const QFileInfo& targetFileInfo);
+  void _presimulation(mtt::TimeT& timeCursor);
+  void _simulation(mtt::TimeT& timeCursor);
+  void _postsimulation(mtt::TimeT& timeCursor);
   void _addFrame(mtt::TimeT time);
   void _markDeleted(const std::vector<ParticleField::ParticleIndex>& indices);
+  void _addToCanceled(const std::vector<ParticleField::ParticleIndex>& indices);
   void _connectFrames();
+  void _overlapFrames();
   void _writeFrames(QFile& file, mtt::DataStream& stream);
   void _writeIndex(QFile& file, mtt::DataStream& stream);
   void _restoreScene() noexcept;
@@ -96,6 +104,8 @@ private:
   std::unique_ptr<mtt::AbstractEditCommand> _restoreCommand;
 
   Frames _frames;
+  size_t _finalFramesNumber;
+  std::set<ParticleField::ParticleIndex> _canceled;
   mtt::Sphere _boundSphere;
 
   qint64 _indexPtrPos;

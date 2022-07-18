@@ -42,6 +42,7 @@ namespace mtt
     virtual ~PSTDataSource() noexcept = default;
 
     inline TimeT duration() const noexcept;
+    inline bool looped() const noexcept;
     inline const Sphere& boundSphere() const noexcept;
 
     inline const ParticlesDrawCommonData::TextureDataSet&
@@ -111,6 +112,7 @@ namespace mtt
   private:
     Frames _frames;
     TimeT _duration;
+    bool _looped;
     Sphere _boundSphere;
 
     ParticlesDrawCommonData::TextureDataSet _textures;
@@ -121,6 +123,11 @@ namespace mtt
   inline TimeT PSTDataSource::duration() const noexcept
   {
     return _duration;
+  }
+
+  inline bool PSTDataSource::looped() const noexcept
+  {
+    return _looped;
   }
 
   inline const Sphere& PSTDataSource::boundSphere() const noexcept
