@@ -41,7 +41,8 @@ add_definitions(${Qt5Core_DEFINITIONS}
 set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 
 add_executable (Particles
-                "main.cpp")
+                "main.cpp"
+                "resources.qrc")
 
 target_link_libraries(Particles
                       ${Vulkan_LIBRARIES}

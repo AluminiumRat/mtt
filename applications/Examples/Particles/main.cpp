@@ -5,7 +5,7 @@
 #include <mtt/application/Widgets/RenderWidget/OrbitalCameraController.h>
 #include <mtt/application/Widgets/RenderWidget/RenderWidget.h>
 #include <mtt/application/Application.h>
-#include <mtt/clPipeline/Lighting/DirectLight.h>
+#include <mtt/clPipeline/Lighting/PointLight.h>
 #include <mtt/clPipeline/ColorFrameBuilder.h>
 #include <mtt/particles/PSTEffect/PSTEffect.h>
 #include <mtt/render/SceneGraph/CameraNode.h>
@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
                                 { 0, 0, 0 },
                                 VK_API_VERSION_1_2,
                                 features,
-                                true);
+                                false);
 
   mtt::RenderWidget window;
   window.setFixedSize(800, 600);
@@ -32,10 +32,11 @@ int main(int argc, char* argv[])
   mtt::CameraNode camera;
   camera.setPerspectiveProjection(glm::pi<float>() / 2.f, 1.33f, 0.1f, 50.f);
 
-  mtt::clPipeline::DirectLight light(true, true, application.displayDevice());
-  light.setTransformMatrix(glm::translate(glm::vec3(0.f, 0.f, 10.f)));
+  mtt::clPipeline::PointLight light(true, true, application.displayDevice());
+  light.setDistance(5);
+  light.setIlluminance(glm::vec3(.225f, .12f, .04f));
 
-  mtt::PSTEffect effect("C:/Projects/models/pst/1.pst",
+  mtt::PSTEffect effect(":/fireExample/fire.pst",
                         nullptr,
                         application.displayDevice());
   QTimer updateTimer;
@@ -53,9 +54,6 @@ int main(int argc, char* argv[])
   scene.addCompositeObject(light);
   scene.addCulledDrawable(effect);
 
-  light.setShadowmapField(&scene.culledData());
-  light.setShadowmapExtent(512, 512);
-
   window.setSource(&scene, &camera);
 
   mtt::clPipeline::ColorFrameBuilder colorFrameBuilder(
@@ -65,7 +63,7 @@ int main(int argc, char* argv[])
 
   mtt::OrbitalCameraController cameraController(window, nullptr);
   cameraController.setCenterPosition(glm::vec3(0.f, 0.f, 0.5f));
-  cameraController.setDistance(1.f);
+  cameraController.setDistance(1.5f);
   cameraController.setYAngle(0.f);
 
   return application.exec();
