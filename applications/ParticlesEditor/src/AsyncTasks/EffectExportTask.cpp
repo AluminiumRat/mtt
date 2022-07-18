@@ -249,6 +249,8 @@ void EffectExportTask::_markDeleted(
       if (particle.nextIndex == deletedIndex)
       {
         particle.nextIndex = mtt::PSTDataSource::notIndex;
+        particle.albedo.a = 0;
+        particle.emission = glm::vec3(0);
         break;
       }
     }
@@ -293,9 +295,11 @@ void EffectExportTask::_connectFrames()
     }
   }
 
-  for (Particle& currentFrameParticle : _frames.back().particles)
+  for (Particle& particle : _frames.back().particles)
   {
-    currentFrameParticle.nextIndex = mtt::PSTDataSource::notIndex;
+    particle.nextIndex = mtt::PSTDataSource::notIndex;
+    particle.albedo.a = 0;
+    particle.emission = glm::vec3(0);
   }
 }
 
