@@ -17,6 +17,7 @@ namespace mtt
     PSTEffect(const QString& filename,
               Texture2DLibrary* textureLibrary,
               LogicalDevice& device);
+    PSTEffect(std::shared_ptr<PSTDataSource> dataSource);
     PSTEffect(const PSTEffect&) = delete;
     PSTEffect& operator = (const PSTEffect&) = delete;
     virtual ~PSTEffect() noexcept = default;

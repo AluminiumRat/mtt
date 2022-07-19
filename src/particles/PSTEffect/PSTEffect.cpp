@@ -16,6 +16,18 @@ PSTEffect::PSTEffect( const QString& filename,
   _drawable.setFalloffSmoothing(_dataSource->lodSmoothing());
 }
 
+PSTEffect::PSTEffect(std::shared_ptr<PSTDataSource> dataSource) :
+  _dataSource(dataSource),
+  _drawable(dataSource->device()),
+  _currentTime(0),
+  _needUpdate(true)
+{
+  setDrawable(&_drawable, _dataSource->boundSphere());
+  _drawable.setParticleTextures(_dataSource->textures());
+  _drawable.setFalloffBaseMppx(_dataSource->lodMppx());
+  _drawable.setFalloffSmoothing(_dataSource->lodSmoothing());
+}
+
 void PSTEffect::setTime(TimeT newValue) noexcept
 {
   if(newValue == _currentTime) return;

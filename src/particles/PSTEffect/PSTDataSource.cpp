@@ -14,6 +14,7 @@ using namespace mtt;
 PSTDataSource::PSTDataSource( const QString& filename,
                               Texture2DLibrary* textureLibrary,
                               LogicalDevice& device) :
+  _device(device),
   _duration(0),
   _looped(false),
   _lodMppx(0.f),

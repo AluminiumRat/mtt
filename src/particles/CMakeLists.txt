@@ -49,6 +49,7 @@ set(HEADERS
 
     "../../include/mtt/particles/PSTEffect/PSTDataSource.h"
     "../../include/mtt/particles/PSTEffect/PSTEffect.h"
+    "../../include/mtt/particles/PSTEffect/PSTEffectLibrary.h"
     )
 
 set(SOURCES
@@ -63,6 +64,7 @@ set(SOURCES
 
     "PSTEffect/PSTDataSource.cpp"
     "PSTEffect/PSTEffect.cpp"
+    "PSTEffect/PSTEffectLibrary.cpp"
     )
 
 add_library(particles

@@ -65,6 +65,8 @@ namespace mtt
                     std::vector<uint8_t>& tagData,
                     TimeT time) const;
 
+    inline LogicalDevice& device() const noexcept;
+
   private:
     struct ParticleData
     {
@@ -110,6 +112,8 @@ namespace mtt
     FramesPosition findFrames(TimeT time) const noexcept;
 
   private:
+    LogicalDevice& _device;
+
     Frames _frames;
     TimeT _duration;
     bool _looped;
@@ -149,5 +153,10 @@ namespace mtt
   inline float PSTDataSource::lodSmoothing() const noexcept
   {
     return _lodSmoothing;
+  }
+
+  inline LogicalDevice& PSTDataSource::device() const noexcept
+  {
+    return _device;
   }
 }
