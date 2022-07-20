@@ -1,5 +1,6 @@
 #include <memory>
 
+#include <mtt/application/DrawModel/FbxModelLoader.h>
 #include <mtt/clPipeline/MeshTechniques/ModelTechniquesFactory.h>
 #include <mtt/editorLib/EditorApplication.h>
 
@@ -26,23 +27,17 @@ EditorApplication::EditorApplication(
               VK_API_VERSION_1_2,
               displayDeviceFeatures,
               enableValidation),
-  mmdModelLibrary(std::make_unique<mtt::clPipeline::ModelTechniquesFactory>(
+  drawModelLibrary( std::make_unique<mtt::clPipeline::ModelTechniquesFactory>(
                                           true,
                                           true,
                                           true,
                                           true,
                                           true,
                                           VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST),
-                  textureLibrary),
-  fbxModelLibrary(std::make_unique<mtt::clPipeline::ModelTechniquesFactory>(
-                                          true,
-                                          true,
-                                          true,
-                                          true,
-                                          true,
-                                          VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST),
-                  textureLibrary)
+                    textureLibrary)
 {
   Q_INIT_RESOURCE(editorLibResources);
   _instance = this;
+
+  modelLoaderRegistry.registerLoader<FbxModelLoader>("fbx");
 }

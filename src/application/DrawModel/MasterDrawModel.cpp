@@ -1,12 +1,55 @@
 #include <algorithm>
+#include <memory>
+#include <stdexcept>
 
 #include <mtt/application/DrawModel/MasterDrawModel.h>
+#include <mtt/application/ResourceManager/Texture2DLibrary.h>
+#include <mtt/application/Application.h>
 
 using namespace mtt;
 
 MasterDrawModel::MasterDrawModel() :
   _locked(false)
 {
+}
+
+MasterDrawModel::MasterDrawModel( const QString& filename,
+                                  MeshTechniquesFactory& techniqueFactory,
+                                  Texture2DLibrary* textureLibrary,
+                                  LogicalDevice& device) :
+  _locked(false)
+{
+  if(filename.isEmpty()) return;
+
+  std::unique_ptr<Texture2DLibrary> internalTextureLib;
+  if (textureLibrary == nullptr)
+  {
+    internalTextureLib.reset(new Texture2DLibrary());
+    textureLibrary = internalTextureLib.get();
+  }
+
+  std::unique_ptr<AbstractDrawModelLoader> loader =
+              Application::instance().modelLoaderRegistry.getLoader(
+                                                              filename,
+                                                              techniqueFactory,
+                                                              *textureLibrary,
+                                                              device);
+  if(loader == nullptr)
+  {
+    std::string errorString("Could not find model loader for file ");
+    errorString += filename.toLocal8Bit().data();
+    throw std::runtime_error(errorString);
+  }
+  loader->load(*this);
+}
+
+void MasterDrawModel::clear() noexcept
+{
+  if (_locked) mtt::Abort("MasterDrawModel::clear: model is locked");
+  _animations.clear();
+  _meshes.clear();
+  _joints.clear();
+  _transformTable.clear();
 }
 
 std::optional<size_t> MasterDrawModel::findJoint(

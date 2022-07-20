@@ -4,6 +4,9 @@
 
 #include <QtGui/QWindow>
 
+#include <vulkan/vulkan.h>
+
+#include <mtt/application/DrawModel/MMDModelLoader.h>
 #include <mtt/application/Application.h>
 #include <mtt/application/ApplicationShaderLoader.h>
 #include <mtt/render/RenderSurface.h>
@@ -34,6 +37,8 @@ Application::Application( int& argc,
                                   std::make_unique<ApplicationShaderLoader>());
 
   startTimer(0);
+
+  modelLoaderRegistry.registerLoader<MMDModelLoader>("mmd");
 }
 
 void Application::createDisplayDevice(const VkPhysicalDeviceFeatures& features)

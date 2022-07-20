@@ -24,22 +24,8 @@ void LoadEnvironmentModelTask::asyncPart()
 {
   LogicalDevice& device = EditorApplication::instance().displayDevice();
 
-  QFileInfo fileInfo(_filename);
-  QString extension = fileInfo.suffix();
-
-  if(extension == "mmd")
-  {
-    MMDModelLibrary& library = EditorApplication::instance().mmdModelLibrary;
-    _model = library.load(_filename, device);
-  }
-  else if (extension == "fbx")
-  {
-    FbxModelLibrary& library = EditorApplication::instance().fbxModelLibrary;
-    _model = library.load(_filename,
-                          BaseFbxImporter::blenderMaterialOptions,
-                          device);
-  }
-  else throw std::runtime_error("Model file type is not supported");
+  DrawModelLibrary& library = EditorApplication::instance().drawModelLibrary;
+  _model = library.load(_filename, device);
 }
 
 void LoadEnvironmentModelTask::finalizePart()

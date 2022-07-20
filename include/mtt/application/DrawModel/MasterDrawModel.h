@@ -16,13 +16,24 @@
 
 namespace mtt
 {
+  class LogicalDevice;
+  class MeshTechniquesFactory;
+  class Texture2DLibrary;
+
   class MasterDrawModel : public CombinedDrawableNode
   {
   public:
     MasterDrawModel();
+    /// If textureLibrary is nullptr then no resource management is used
+    MasterDrawModel(const QString& filename,
+                    MeshTechniquesFactory& techniqueFactory,
+                    Texture2DLibrary* textureLibrary,
+                    LogicalDevice& device);
     MasterDrawModel(const MasterDrawModel&) = delete;
     MasterDrawModel& operator = (const MasterDrawModel&) = delete;
     virtual ~MasterDrawModel() noexcept = default;
+
+    virtual void clear() noexcept;
 
     inline TransformTable& transformTable() noexcept;
     inline const TransformTable& transformTable() const noexcept;

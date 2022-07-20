@@ -8,12 +8,12 @@ namespace mtt
 {
   class LogicalDevice;
 
-  struct MMDModelDescription
+  struct DrawModelDescription
   {
     QString name = "";
     LogicalDevice* device = nullptr;
 
     std::strong_ordering operator <=> (
-                          const MMDModelDescription&) const noexcept = default;
+                          const DrawModelDescription&) const noexcept = default;
   };
 }

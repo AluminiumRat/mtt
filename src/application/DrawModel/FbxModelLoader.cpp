@@ -26,25 +26,46 @@ FbxModelLoader::FbxModelLoader(
 {
 }
 
-std::unique_ptr<MasterDrawModel> FbxModelLoader::load()
+FbxModelLoader::FbxModelLoader( const QString& filename,
+                                MeshTechniquesFactory& techniqueFactory,
+                                Texture2DLibrary& textureLibrary,
+                                LogicalDevice& device) :
+  _filename(filename),
+  _materialOptions(BaseFbxImporter::blenderMaterialOptions),
+  _techniquesFactory(techniqueFactory),
+  _textureLibrary(textureLibrary),
+  _device(device),
+  _animationLayer(nullptr),
+  _model(nullptr),
+  _animation(nullptr)
 {
-  _jointsStack.clear();
-  _jointsMap.clear();
-  _animationLayer = nullptr;
-  std::unique_ptr<MasterDrawModel> model(new MasterDrawModel());
-  _model = model.get();
-  _animation = nullptr;
+}
 
-  startImporting(_filename.toUtf8().data());
-
-  for ( size_t meshIndex = 0;
-        meshIndex < model->meshNodeNumber();
-        meshIndex++)
+void FbxModelLoader::load(MasterDrawModel& model)
+{
+  try
   {
-    model->getMeshNode(meshIndex).updateSkinFromBones();
-  }
+    _jointsStack.clear();
+    _jointsMap.clear();
+    _animationLayer = nullptr;
+    _model = &model;
+    _animation = nullptr;
+    model.clear();
 
-  return model;
+    startImporting(_filename.toUtf8().data());
+
+    for ( size_t meshIndex = 0;
+          meshIndex < model.meshNodeNumber();
+          meshIndex++)
+    {
+      model.getMeshNode(meshIndex).updateSkinFromBones();
+    }
+  }
+  catch (...)
+  {
+    model.clear();
+    throw;
+  }
 }
 
 void FbxModelLoader::processScene(FbxScene& scene)

@@ -31,6 +31,8 @@ namespace mtt
                               const glm::mat4& transform) noexcept;
     inline const glm::mat4& getTransform(Index boneIndex) const noexcept;
 
+    inline void clear() noexcept;
+
   private:
     std::vector<glm::mat4> _table;
   };
@@ -73,5 +75,10 @@ namespace mtt
                                                 Index boneIndex) const noexcept
   {
     return _table[boneIndex];
+  }
+
+  inline void TransformTable::clear() noexcept
+  {
+    _table.clear();
   }
 }

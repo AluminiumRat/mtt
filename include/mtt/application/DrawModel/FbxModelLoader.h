@@ -5,6 +5,7 @@
 
 #include <QtCore/QString>
 
+#include <mtt/application/DrawModel/AbstractDrawModelLoader.h>
 #include <mtt/application/DrawModel/MasterDrawModel.h>
 #include <mtt/fbx/BaseFbxImporter.h>
 #include <mtt/render/Pipeline/Sampler.h>
@@ -16,7 +17,8 @@ namespace mtt
   class MeshTechniquesFactory;
   class Texture2DLibrary;
 
-  class FbxModelLoader : private BaseFbxImporter
+  class FbxModelLoader :  public AbstractDrawModelLoader,
+                          private BaseFbxImporter
   {
   public:
     FbxModelLoader( const QString& filename,
@@ -24,11 +26,17 @@ namespace mtt
                     MeshTechniquesFactory& techniqueFactory,
                     Texture2DLibrary& textureLibrary,
                     LogicalDevice& device);
+
+    FbxModelLoader( const QString& filename,
+                    MeshTechniquesFactory& techniqueFactory,
+                    Texture2DLibrary& textureLibrary,
+                    LogicalDevice& device);
+
     FbxModelLoader(const FbxModelLoader&) = delete;
     FbxModelLoader& operator = (const FbxModelLoader&) = delete;
     virtual ~FbxModelLoader() noexcept = default;
 
-    std::unique_ptr<MasterDrawModel> load();
+    virtual void load(MasterDrawModel& model) override;
 
   protected:
     virtual void processScene(FbxScene& scene) override;

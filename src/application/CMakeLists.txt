@@ -46,7 +46,9 @@ set(HEADERS
     "../../include/mtt/application/AsyncTasks/AsyncTaskQueue.h"
     "../../include/mtt/application/AsyncTasks/SaveToFileTask.h"
 
+    "../../include/mtt/application/DrawModel/AbstractDrawModelLoader.h"
     "../../include/mtt/application/DrawModel/DrawModelAnimation.h"
+    "../../include/mtt/application/DrawModel/DrawModelLoaderRegistry.h"
     "../../include/mtt/application/DrawModel/FbxModelLoader.h"
     "../../include/mtt/application/DrawModel/DrawModelAnimationTrack.h"
     "../../include/mtt/application/DrawModel/MasterDrawModel.h"
@@ -77,10 +79,8 @@ set(HEADERS
 
     "../../include/mtt/application/ResourceManager/CubeTextureDescription.h"
     "../../include/mtt/application/ResourceManager/CubeTextureLibrary.h"
-    "../../include/mtt/application/ResourceManager/FbxModelDescription.h"
-    "../../include/mtt/application/ResourceManager/FbxModelLibrary.h"
-    "../../include/mtt/application/ResourceManager/MMDModelDescription.h"
-    "../../include/mtt/application/ResourceManager/MMDModelLibrary.h"
+    "../../include/mtt/application/ResourceManager/DrawModelDescription.h"
+    "../../include/mtt/application/ResourceManager/DrawModelLibrary.h"
     "../../include/mtt/application/ResourceManager/ResourceLibrary.h"
     "../../include/mtt/application/ResourceManager/Texture2DDescription.h"
     "../../include/mtt/application/ResourceManager/Texture2DLibrary.h"
@@ -161,6 +161,7 @@ set(SOURCES
 
     "DrawModel/DrawModelAnimation.cpp"
     "DrawModel/DrawModelAnimationTrack.cpp"
+    "DrawModel/DrawModelLoaderRegistry.cpp"
     "DrawModel/FbxModelLoader.cpp"
     "DrawModel/MasterDrawModel.cpp"
     "DrawModel/MeshControlNode.cpp"
@@ -184,8 +185,7 @@ set(SOURCES
     "Manipulator/UniformScale3DManipulator.cpp"
 
     "ResourceManager/CubeTextureLibrary.cpp"
-    "ResourceManager/FbxModelLibrary.cpp"
-    "ResourceManager/MMDModelLibrary.cpp"
+    "ResourceManager/DrawModelLibrary.cpp"
     "ResourceManager/Texture2DLibrary.cpp"
 
     "Scene/Object.cpp"

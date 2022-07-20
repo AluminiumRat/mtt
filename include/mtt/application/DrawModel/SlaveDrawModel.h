@@ -14,7 +14,7 @@ namespace mtt
   class SlaveDrawModel : public CombinedDrawableNode
   {
   public:
-    SlaveDrawModel(std::shared_ptr<MasterDrawModel> masterModel);
+    explicit SlaveDrawModel(std::shared_ptr<MasterDrawModel> masterModel);
     SlaveDrawModel(const SlaveDrawModel&) = delete;
     SlaveDrawModel& operator = (const SlaveDrawModel&) = delete;
     virtual ~SlaveDrawModel() noexcept = default;

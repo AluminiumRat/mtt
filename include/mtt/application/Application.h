@@ -5,6 +5,7 @@
 
 #include <QtWidgets/QApplication>
 
+#include <mtt/application/DrawModel/DrawModelLoaderRegistry.h>
 #include <mtt/application/WorkCycle/WorkCycle.h>
 #include <mtt/application/ApplicationStatistic.h>
 #include <mtt/render/LogicalDevice.h>
@@ -39,6 +40,8 @@ namespace mtt
   public:
     RenderLibInstance renderLibInstance;
     WorkCycle workCycle;
+
+    DrawModelLoaderRegistry modelLoaderRegistry;
 
   signals:
     void statisticUpdated(const ApplicationStatistic& statstic);

@@ -30,32 +30,39 @@ MMDModelLoader::MMDModelLoader( const QString& filename,
 {
 }
 
-std::unique_ptr<MasterDrawModel> MMDModelLoader::load()
+void MMDModelLoader::load(MasterDrawModel& model)
 {
-  if (!_fileDirectory.exists()) throw std::runtime_error("The file directory does not exist");
+  model.clear();
 
-  QFile file(_filename);
-  if (!file.open(QFile::ReadOnly)) throw std::runtime_error("Unable to open model file");
-  _file = &file;
+  try
+  {
+    if (!_fileDirectory.exists()) throw std::runtime_error("The file directory does not exist");
 
-  mtt::DataStream stream(&file);
-  _stream = &stream;
+    QFile file(_filename);
+    if (!file.open(QFile::ReadOnly)) throw std::runtime_error("Unable to open model file");
+    _file = &file;
 
-  _checkHead();
+    mtt::DataStream stream(&file);
+    _stream = &stream;
 
-  ObjectHeader rootHeader = _loadObjectHeader();
-  if(rootHeader.objectTypeIndex != 7) throw std::runtime_error("Wrong type index of root object");
+    _checkHead();
 
-  _loadMaterials();
+    ObjectHeader rootHeader = _loadObjectHeader();
+    if(rootHeader.objectTypeIndex != 7) throw std::runtime_error("Wrong type index of root object");
 
-  std::unique_ptr<MasterDrawModel> model(new MasterDrawModel);
-  _model = model.get();
+    _loadMaterials();
 
-  _loadBones();
-  _loadGeometry();
-  _loadAnimations();
+    _model = &model;
 
-  return model;
+    _loadBones();
+    _loadGeometry();
+    _loadAnimations();
+  }
+  catch (...)
+  {
+    model.clear();
+    throw;
+  }
 }
 
 void MMDModelLoader::_checkHead()

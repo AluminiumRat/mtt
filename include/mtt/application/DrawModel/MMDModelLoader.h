@@ -8,6 +8,7 @@
 #include <QtCore/QDir>
 #include <QtCore/QString>
 
+#include <mtt/application/DrawModel/AbstractDrawModelLoader.h>
 #include <mtt/application/DrawModel/DrawModelAnimation.h>
 #include <mtt/application/DrawModel/DrawModelAnimationTrack.h>
 #include <mtt/application/DrawModel/MasterDrawModel.h>
@@ -25,7 +26,7 @@ namespace mtt
   class Texture2DLibrary;
   class Joint;
 
-  class MMDModelLoader
+  class MMDModelLoader : public AbstractDrawModelLoader
   {
   public:
     static const inline std::string fileHead = "MMDModelFile";
@@ -40,7 +41,7 @@ namespace mtt
     MMDModelLoader& operator = (const MMDModelLoader&) = delete;
     virtual ~MMDModelLoader() noexcept = default;
 
-    std::unique_ptr<MasterDrawModel> load();
+    virtual void load(MasterDrawModel& model) override;
 
   private:
     struct MaterialData : public SurfaceMaterialData
