@@ -69,6 +69,12 @@ ParticleFieldWidget::ParticleFieldWidget( ParticleField& object,
           &ParticleFieldWidget::_addTexture,
           Qt::DirectConnection);
 
+  connect(_ui->reloadTexturesButton,
+          &QPushButton::pressed,
+          this,
+          &ParticleFieldWidget::_reloadTextures,
+          Qt::DirectConnection);
+
   connect(_ui->textureRemoveButton,
           &QPushButton::pressed,
           this,
@@ -196,6 +202,24 @@ void ParticleFieldWidget::_addTexture() noexcept
   catch (...)
   {
     mtt::Log() << "ParticleFieldWidget::_addTexture: unknown error";
+  }
+}
+
+void ParticleFieldWidget::_reloadTextures() noexcept
+{
+  try
+  {
+    ParticleTextureDescriptions textureFiles = _field.textureDescriptions();
+    _setTextureFiles(ParticleTextureDescriptions{});
+    _setTextureFiles(textureFiles);
+  }
+  catch (std::exception& error)
+  {
+    mtt::Log() << "ParticleFieldWidget::_removeTexture: " << error.what();
+  }
+  catch (...)
+  {
+    mtt::Log() << "ParticleFieldWidget::_removeTexture: unknown error";
   }
 }
 

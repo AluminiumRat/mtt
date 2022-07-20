@@ -1,5 +1,6 @@
 #include <QtCore/QObject>
 
+#include <mtt/application/ResourceManager/Texture2DLibrary.h>
 #include <mtt/editorLib/EditorApplication.h>
 
 #include <AsyncTasks/UploadParticleTexturesTask.h>
@@ -19,14 +20,12 @@ void UploadParticleTexturesTask::asyncPart()
 {
   if(_descriptions.empty()) return;
 
-  mtt::Texture2DLibrary& textureLibrary =
-                              mtt::EditorApplication::instance().textureLibrary;
   mtt::LogicalDevice& device = mtt::Application::instance().displayDevice();
 
   for(const ParticleTextureDescription& description : _descriptions)
   {
-    std::shared_ptr<mtt::Texture2D> texture = textureLibrary.load(
-                                                          description.filename,
+    std::shared_ptr<mtt::Texture2D> texture =
+                      mtt::Texture2DLibrary::loadTexture( description.filename,
                                                           device,
                                                           true);
     mtt::ParticlesDrawable::TextureData newData;

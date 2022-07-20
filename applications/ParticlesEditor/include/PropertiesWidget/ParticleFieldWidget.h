@@ -34,6 +34,7 @@ private:
   void _setExtentValue() noexcept;
   void _setTextureFiles(const ParticleTextureDescriptions& files);
   void _addTexture() noexcept;
+  void _reloadTextures() noexcept;
   void _removeTexture() noexcept;
   void _moveTextureUp() noexcept;
   void _moveTextureDown() noexcept;
