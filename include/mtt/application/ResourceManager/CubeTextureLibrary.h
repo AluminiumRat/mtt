@@ -23,7 +23,15 @@ namespace mtt
                                       LogicalDevice& device,
                                       bool generateLods);
 
-    /// Load texture without adding to library
+    /// Remove the record about resource from the library
+    /// This will allow you to reload resource if it has changed
+    /// Thread safe method
+    void release( std::array<QString, 6> filenames,
+                  LogicalDevice& device,
+                  bool generateLods) noexcept;
+
+    /// Load texture without adding to library.
+    /// Thread safe meyhod
     static std::unique_ptr<CubeTexture> loadTexture(
                                               std::array<QString, 6> filenames,
                                               LogicalDevice& device,

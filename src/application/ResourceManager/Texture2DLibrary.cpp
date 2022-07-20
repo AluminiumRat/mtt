@@ -18,6 +18,17 @@ std::shared_ptr<Texture2D> Texture2DLibrary::load(const QString& filename,
   return getOrCreate(description);
 }
 
+void Texture2DLibrary::release( const QString& filename,
+                                LogicalDevice& device,
+                                bool generateLods) noexcept
+{
+  Texture2DDescription description{ filename,
+                                    &device,
+                                    VK_SAMPLE_COUNT_1_BIT,
+                                    generateLods};
+  ResourceLibrary::release(description);
+}
+
 std::unique_ptr<Texture2D> Texture2DLibrary::loadTexture(
                                                         const QString& filename,
                                                         LogicalDevice& device,

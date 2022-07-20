@@ -22,6 +22,16 @@ std::unique_ptr<SlaveDrawModel> DrawModelLibrary::load( const QString& filename,
   return std::unique_ptr<SlaveDrawModel>(new SlaveDrawModel(masterModel));
 }
 
+void DrawModelLibrary::release( const QString& filename,
+                                LogicalDevice& device) noexcept
+{
+  DrawModelDescription description;
+  description.name = filename;
+  description.device = &device;
+
+  ResourceLibrary::release(description);
+}
+
 std::shared_ptr<MasterDrawModel> DrawModelLibrary::buildResource(
                                         const DrawModelDescription& description)
 {

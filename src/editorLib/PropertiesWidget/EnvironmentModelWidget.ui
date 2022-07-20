@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>266</width>
-    <height>28</height>
+    <height>50</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,6 +41,33 @@
        </property>
        <property name="text">
         <string>File</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QWidget" name="emptyWidget" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="reloadButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>3</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Reload model</string>
        </property>
       </widget>
      </item>

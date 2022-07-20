@@ -22,6 +22,16 @@ std::unique_ptr<PSTEffect> PSTEffectLibrary::load(const QString& filename,
   return std::make_unique<PSTEffect>(dataSource);
 }
 
+void PSTEffectLibrary::release( const QString& filename,
+                                LogicalDevice& device) noexcept
+{
+  PSTEffectDescription description;
+  description.name = filename;
+  description.device = &device;
+
+  ResourceLibrary::release(description);
+}
+
 std::shared_ptr<PSTDataSource> PSTEffectLibrary::buildResource(
                                         const PSTEffectDescription& description)
 {

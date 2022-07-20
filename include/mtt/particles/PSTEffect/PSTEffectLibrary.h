@@ -36,6 +36,11 @@ namespace mtt
     std::unique_ptr<PSTEffect> load(const QString& filename,
                                     LogicalDevice& device);
 
+    /// Remove the record about resource from the library
+    /// This will allow you to reload resource if it has changed
+    /// Thread safe method
+    void release(const QString& filename, LogicalDevice& device) noexcept;
+
   protected:
     virtual std::shared_ptr<PSTDataSource> buildResource(
                               const PSTEffectDescription& description) override;

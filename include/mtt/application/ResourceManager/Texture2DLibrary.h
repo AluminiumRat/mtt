@@ -23,6 +23,13 @@ namespace mtt
                                     LogicalDevice& device,
                                     bool generateLods);
 
+    /// Remove the record about resource from the library
+    /// This will allow you to reload resource if it has changed
+    /// Thread safe method
+    void release( const QString& filename,
+                  LogicalDevice& device,
+                  bool generateLods) noexcept;
+
     /// Load texture without adding to library
     static std::unique_ptr<Texture2D> loadTexture(const QString& filename,
                                                   LogicalDevice& device,

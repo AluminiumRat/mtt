@@ -18,6 +18,17 @@ std::shared_ptr<CubeTexture> CubeTextureLibrary::load(
   return getOrCreate(description);
 }
 
+void CubeTextureLibrary::release( std::array<QString, 6> filenames,
+                                  LogicalDevice& device,
+                                  bool generateLods) noexcept
+{
+  CubeTextureDescription description{ filenames,
+                                      &device,
+                                      VK_SAMPLE_COUNT_1_BIT,
+                                      generateLods};
+  ResourceLibrary::release(description);
+}
+
 std::shared_ptr<CubeTexture> CubeTextureLibrary::buildResource(
                                       const CubeTextureDescription& description)
 {

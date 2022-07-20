@@ -33,7 +33,12 @@ namespace mtt
     /// Thread safe method
     inline bool add(std::shared_ptr<ResourceType> resource,
                     const DescriptionType& description);
-  
+
+    /// Remove the record about resource from the library
+    /// This will allow you to reload resource if it has changed
+    /// Thread safe method
+    inline void release(const DescriptionType& description);
+
   protected:
     virtual std::shared_ptr<ResourceType> buildResource(
                                       const DescriptionType& description) = 0;
@@ -87,5 +92,13 @@ namespace mtt
     if (iRecord != _resourceMap.end()) return false;
     _resourceMap[description] = resource;
     return true;
+  }
+
+  template <typename ResourceType, typename DescriptionType>
+  inline void ResourceLibrary<ResourceType, DescriptionType>::release(
+                                            const DescriptionType& description)
+  {
+    std::lock_guard<std::mutex> lock(_resourceMapMutex);
+    _resourceMap.erase(description);
   }
 }

@@ -26,6 +26,9 @@ namespace mtt
     virtual ~EnvironmentModelWidget() noexcept;
 
   private:
+    void _reloadModel() noexcept;
+
+  private:
     std::unique_ptr<Ui::EnvironmentModelWidget> _ui;
 
     EnvironmentModel& _object;
