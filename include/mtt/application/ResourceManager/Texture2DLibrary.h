@@ -22,7 +22,12 @@ namespace mtt
     std::shared_ptr<Texture2D> load(const QString& filename,
                                     LogicalDevice& device,
                                     bool generateLods);
- 
+
+    /// Load texture without adding to library
+    static std::unique_ptr<Texture2D> loadTexture(const QString& filename,
+                                                  LogicalDevice& device,
+                                                  bool generateLods);
+
   protected:
     virtual std::shared_ptr<Texture2D> buildResource(
                               const Texture2DDescription& description) override;

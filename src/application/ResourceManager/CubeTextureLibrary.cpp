@@ -23,7 +23,17 @@ std::shared_ptr<CubeTexture> CubeTextureLibrary::buildResource(
 {
   if(description.samples != VK_SAMPLE_COUNT_1_BIT) Abort("CubeTextureLibrary::_readFromFile: wrong samples number in description.");
 
-  std::array<QImage, 6> images = _readData(description);
+  return std::shared_ptr<CubeTexture>(loadTexture(description.sideNames,
+                                                  *description.device,
+                                                  description.lods));
+}
+
+std::unique_ptr<CubeTexture> CubeTextureLibrary::loadTexture(
+                                              std::array<QString, 6> filenames,
+                                              LogicalDevice& device,
+                                              bool generateLods)
+{
+  std::array<QImage, 6> images = _readData(filenames);
   uint extent = _getExtent(images);
   _checkExtent(extent, images);
 
@@ -36,31 +46,31 @@ std::shared_ptr<CubeTexture> CubeTextureLibrary::buildResource(
     dataInfo[side].srcRowLength = images[side].bytesPerLine() / 4;
   }
 
-  std::shared_ptr<CubeTexture> newTexture(new CubeTexture(*description.device));
+  std::unique_ptr<CubeTexture> newTexture(new CubeTexture(device));
 
   newTexture->setData(VK_FORMAT_R8G8B8A8_SRGB,
                       images[0].width(),
                       VK_SAMPLE_COUNT_1_BIT,
                       dataInfo,
-                      true);
+                      generateLods);
 
   return newTexture;
 }
 
 std::array<QImage, 6> CubeTextureLibrary::_readData(
-                                      const CubeTextureDescription& description)
+                                              std::array<QString, 6> filenames)
 {
   std::array<QImage, 6> images;
 
   for(size_t side = 0; side < 6; side++)
   {
-    if(description.sideNames[side].isEmpty()) continue;
-    QImage image(description.sideNames[side]);
+    if(filenames[side].isEmpty()) continue;
+    QImage image(filenames[side]);
 
     if(image.isNull() || image.width() == 0 || image.height() == 0)
     {
       std::string errorString("Unable to read image from ");
-      errorString += description.sideNames[side].toLocal8Bit().data();
+      errorString += filenames[side].toLocal8Bit().data();
       throw std::runtime_error(errorString);
     }
     if(image.format() != QImage::Format_RGBA8888)
@@ -74,7 +84,7 @@ std::array<QImage, 6> CubeTextureLibrary::_readData(
   return images;
 }
 
-uint CubeTextureLibrary::_getExtent(const std::array<QImage, 6>& images) const
+uint CubeTextureLibrary::_getExtent(const std::array<QImage, 6>& images)
 {
   for(const QImage& image : images)
   {

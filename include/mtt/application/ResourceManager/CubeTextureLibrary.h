@@ -22,14 +22,20 @@ namespace mtt
     std::shared_ptr<CubeTexture> load(std::array<QString, 6> filenames,
                                       LogicalDevice& device,
                                       bool generateLods);
- 
+
+    /// Load texture without adding to library
+    static std::unique_ptr<CubeTexture> loadTexture(
+                                              std::array<QString, 6> filenames,
+                                              LogicalDevice& device,
+                                              bool generateLods);
+
   protected:
     virtual std::shared_ptr<CubeTexture> buildResource(
                            const CubeTextureDescription& description) override;
 
   private:
-    std::array<QImage, 6> _readData(const CubeTextureDescription& description);
-    uint _getExtent(const std::array<QImage, 6>& images) const;
-    void _checkExtent(uint extent, std::array<QImage, 6>& images);
+    static std::array<QImage, 6> _readData(std::array<QString, 6> filenames);
+    static uint _getExtent(const std::array<QImage, 6>& images);
+    static void _checkExtent(uint extent, std::array<QImage, 6>& images);
   };
 };

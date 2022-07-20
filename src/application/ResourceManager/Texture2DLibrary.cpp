@@ -18,16 +18,16 @@ std::shared_ptr<Texture2D> Texture2DLibrary::load(const QString& filename,
   return getOrCreate(description);
 }
 
-std::shared_ptr<Texture2D> Texture2DLibrary::buildResource(
-                                        const Texture2DDescription& description)
+std::unique_ptr<Texture2D> Texture2DLibrary::loadTexture(
+                                                        const QString& filename,
+                                                        LogicalDevice& device,
+                                                        bool generateLods)
 {
-  if(description.samples != VK_SAMPLE_COUNT_1_BIT) Abort("Texture2DLibrary::_readFromFile: wrong samples number in description.");
-
-  QImage image(description.name);
+  QImage image(filename);
   if(image.isNull() || image.width() == 0 || image.height() == 0)
   {
     std::string errorString("Unable to read image from ");
-    errorString += description.name.toLocal8Bit().data();
+    errorString += filename.toLocal8Bit().data();
     throw std::runtime_error(errorString);
   }
   if(image.format() != QImage::Format_RGBA8888)
@@ -36,15 +36,24 @@ std::shared_ptr<Texture2D> Texture2DLibrary::buildResource(
     if(image.isNull()) throw std::runtime_error("Unable to convert texture image to rgba format.");
   }
 
-  std::shared_ptr<Texture2D> newTexture(new Texture2D(*description.device));
+  std::unique_ptr<Texture2D> newTexture(new Texture2D(device));
 
   newTexture->setData(image.constBits(),
                       image.sizeInBytes(),
                       VK_FORMAT_R8G8B8A8_SRGB,
                       glm::uvec2(image.width(), image.height()),
-                      description.samples,
+                      VK_SAMPLE_COUNT_1_BIT,
                       image.bytesPerLine() / 4,
-                      description.lods);
+                      generateLods);
 
   return newTexture;
+}
+
+std::shared_ptr<Texture2D> Texture2DLibrary::buildResource(
+                                        const Texture2DDescription& description)
+{
+  if(description.samples != VK_SAMPLE_COUNT_1_BIT) Abort("Texture2DLibrary::_readFromFile: wrong samples number in description.");
+  return std::shared_ptr<Texture2D>(loadTexture(description.name,
+                                                *description.device,
+                                                description.lods));
 }
