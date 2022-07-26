@@ -115,6 +115,7 @@ void BaseFbxImporter::_importMesh(FbxMesh& mesh)
 
   _readLayers(mesh);
   _readSkinData(mesh);
+  _normalizeSkinWeights();
   _distributePoints(mesh);
   
   for(size_t materialIndex = 0;
@@ -220,7 +221,7 @@ void BaseFbxImporter::_readSkinData(FbxMesh& mesh)
       newRef.weight = weights[pointIndex];
 
       SkeletonRef& skeletonRef = _skeletonRefs[indices[pointIndex]];
-      if(skeletonRef.bonesNumber <CommonMeshGeometry::MAX_BONES_PER_VERTEX)
+      if(skeletonRef.bonesNumber < CommonMeshGeometry::MAX_BONES_PER_VERTEX)
       {
         skeletonRef.bones[skeletonRef.bonesNumber] = newRef;
         skeletonRef.bonesNumber++;
@@ -228,7 +229,44 @@ void BaseFbxImporter::_readSkinData(FbxMesh& mesh)
       else
       {
         Log() << "BaseFbxImporter::_readSkinData: Too many bones attached to the vertex";
+        size_t bestIndex = 0;
+        float bestWeight = skeletonRef.bones[0].weight;
+        for ( size_t refIndex = 1;
+              refIndex < CommonMeshGeometry::MAX_BONES_PER_VERTEX;
+              refIndex++)
+        {
+          if (skeletonRef.bones[refIndex].weight < bestWeight)
+          {
+            bestIndex = refIndex;
+            bestWeight = skeletonRef.bones[refIndex].weight;
+          }
+        }
+
+        if(bestWeight < newRef.weight) skeletonRef.bones[bestIndex] = newRef;
       }
+    }
+  }
+}
+
+void BaseFbxImporter::_normalizeSkinWeights()
+{
+  for (SkeletonRef& skeletonRef : _skeletonRefs)
+  {
+    if(skeletonRef.bonesNumber == 0) continue;
+
+    float summWeight = 0.f;
+    for(uint16_t boneIndex = 0;
+        boneIndex < skeletonRef.bonesNumber;
+        boneIndex++)
+    {
+      summWeight += skeletonRef.bones[boneIndex].weight;
+    }
+
+    for(uint16_t boneIndex = 0;
+        boneIndex < skeletonRef.bonesNumber;
+        boneIndex++)
+    {
+      skeletonRef.bones[boneIndex].weight /= summWeight;
     }
   }
 }

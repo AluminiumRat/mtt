@@ -83,6 +83,7 @@ namespace mtt
     void _importMesh(FbxMesh& mesh);
     void _readLayers(FbxMesh& mesh);
     void _readSkinData(FbxMesh& mesh);
+    void _normalizeSkinWeights();
     uint16_t _getOrCreateBone(FbxCluster& cluster);
     void _distributePoints(FbxMesh& mesh);
     void _addPolygonIndices(int materialIndex, int polygonSize);
