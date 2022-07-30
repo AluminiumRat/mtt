@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mtt/application/Scene/Object.h>
+#include <mtt/application/Scene/Scene.h>
 #include <mtt/utilities/UID.h>
 
 namespace mtt
@@ -30,7 +31,6 @@ namespace mtt
   protected:
     inline void addToObserver(Object& observer);
     inline void removeFromObserver(Object & observer) noexcept;
-    inline void updateFromObserver() noexcept;
 
   protected:
     virtual void link(Object& referenced) = 0;
@@ -102,7 +102,11 @@ namespace mtt
       {
         Observer& observerRef =
                               static_cast<Observer&>(ObjectRefBase::observer());
-        (observerRef.*unlinkPtr)(static_cast<Referenced&>(referenced));
+        if( observerRef.scene() == nullptr ||
+            !observerRef.scene()->inDestruction())
+        {
+          (observerRef.*unlinkPtr)(static_cast<Referenced&>(referenced));
+        }
       }
     }
 
@@ -157,12 +161,13 @@ namespace mtt
     _referencedId = UID();
     setReferencedPtr(nullptr);
     _referencedId = newValue;
-    updateFromObserver();
-  }
 
-  inline void ObjectRefBase::updateFromObserver() noexcept
-  {
-    _observer.updateLink(*this);
+    Object& observer = ObjectRefBase::observer();
+    if (observer.scene() != nullptr)
+    {
+      Object* newReferenced = observer.scene()->findObject(_referencedId);
+      setReferencedPtr(newReferenced);
+    }
   }
 
   inline void ObjectRefBase::addToObserver(Object& observer)
@@ -172,7 +177,11 @@ namespace mtt
 
   inline void ObjectRefBase::removeFromObserver(Object& observer) noexcept
   {
-    observer.removeLink(*this);
+    if( observer.scene() == nullptr ||
+        !observer.scene()->inDestruction())
+    {
+      observer.removeLink(*this);
+    }
   }
 
   template <typename Referenced>

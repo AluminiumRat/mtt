@@ -217,10 +217,3 @@ void Object::removeLink(ObjectRefBase& link) noexcept
   link.setReferencedPtr(nullptr);
   _links.erase(iLink);
 }
-
-void Object::updateLink(ObjectRefBase& link)
-{
-  Object* referenced = nullptr;
-  if (_scene != nullptr) referenced = _scene->findObject(link._referencedId);
-  link.setReferencedPtr(referenced);
-}

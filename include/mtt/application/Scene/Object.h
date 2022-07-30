@@ -128,7 +128,6 @@ namespace mtt
     friend class ObjectRefBase;
     virtual void addLink(ObjectRefBase& link);
     virtual void removeLink(ObjectRefBase& link) noexcept;
-    virtual void updateLink(ObjectRefBase& link);
 
   private:
     void _setParent(Object* newParent) noexcept;
