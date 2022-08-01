@@ -10,39 +10,47 @@
 
 int main(int argc, char* argv[])
 {
-  VkPhysicalDeviceFeatures features{};
-  features.samplerAnisotropy = VK_TRUE;
-  features.geometryShader = VK_TRUE;
+  try
+  {
+    VkPhysicalDeviceFeatures features{};
+    features.samplerAnisotropy = VK_TRUE;
+    features.geometryShader = VK_TRUE;
 
-  mtt::Application application( argc,
-                                argv,
-                                "Mtt particles example",
-                                { 0, 0, 0 },
-                                VK_API_VERSION_1_2,
-                                features,
-                                true);
+    mtt::Application application( argc,
+                                  argv,
+                                  "Mtt particles example",
+                                  { 0, 0, 0 },
+                                  VK_API_VERSION_1_2,
+                                  features,
+                                  true);
 
-  mtt::RenderWidget window;
-  window.setFixedSize(800, 600);
-  window.show();
+    mtt::RenderWidget window;
+    window.setFixedSize(800, 600);
+    window.show();
 
-  mtt::CameraNode camera;
-  camera.setPerspectiveProjection(glm::pi<float>() / 2.f, 1.33f, 0.1f, 50.f);
+    mtt::CameraNode camera;
+    camera.setPerspectiveProjection(glm::pi<float>() / 2.f, 1.33f, 0.1f, 50.f);
 
-  mtt::clPipeline::DirectLight light(true, true, application.displayDevice());
-  light.setTransformMatrix(glm::translate(glm::vec3(0.f, 0.f, 10.f)));
+    mtt::clPipeline::DirectLight light(true, true, application.displayDevice());
+    light.setTransformMatrix(glm::translate(glm::vec3(0.f, 0.f, 10.f)));
 
-  mtt::RenderScene scene;
-  scene.addCompositeObject(light);
+    mtt::RenderScene scene;
+    scene.addCompositeObject(light);
 
-  window.setSource(&scene, &camera);
+    window.setSource(&scene, &camera);
 
-  mtt::clPipeline::ColorFrameBuilder colorFrameBuilder(
-                                                  window.surfaceFormat(),
-                                                  application.displayDevice());
-  window.setFrameBuilder(&colorFrameBuilder);
+    mtt::clPipeline::ColorFrameBuilder colorFrameBuilder(
+                                                    window.surfaceFormat(),
+                                                    application.displayDevice());
+    window.setFrameBuilder(&colorFrameBuilder);
 
-  mtt::OrbitalCameraController cameraController(window, nullptr);
+    mtt::OrbitalCameraController cameraController(window, nullptr);
 
-  return application.exec();
+    return application.exec();
+  }
+  catch (std::exception& error)
+  {
+    mtt::Log() << error.what();
+    return 1;
+  }
 }
