@@ -19,7 +19,7 @@ Fence::Fence(LogicalDevice& device) :
                       nullptr,
                       &_handle) != VK_SUCCESS)
     {
-      throw std::runtime_error("Failed to create fence.");
+      throw std::runtime_error("Fence: Failed to create fence.");
     }
   }
   catch(...)
@@ -39,7 +39,7 @@ void Fence::wait(uint64_t timeout)
                       VK_TRUE,
                       timeout) != VK_SUCCESS)
   {
-    throw std::runtime_error("Unable to wait fence.");
+    throw std::runtime_error("Fence: Unable to wait fence.");
   }
 }
 
@@ -47,7 +47,7 @@ void Fence::reset()
 {
   if (vkResetFences(_device.handle(), 1, &_handle) != VK_SUCCESS)
   {
-    throw std::runtime_error("Unable to reset fence.");
+    throw std::runtime_error("Fence: Unable to reset fence.");
   }
 }
 

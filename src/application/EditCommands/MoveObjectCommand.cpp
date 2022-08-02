@@ -22,9 +22,21 @@ inline void MoveObjectCommand::make()
   if (_object.parent() != &_oldParent) Abort("MoveObjectCommand::make: wrong parent.");
   std::unique_ptr<Object> objectKeeper =
                                   _oldParent.tryRemoveSubobject(_object, false);
-  if(objectKeeper == nullptr) throw std::runtime_error("Unable to remove subobject from group.");
+  if(objectKeeper == nullptr)
+  {
+    std::string errorString("MoveObjectCommand: Unable to remove subobject from ");
+    errorString += _oldParent.name().toLocal8Bit().data();
+    throw std::runtime_error(errorString);
+  }
+
   objectKeeper = _newParent.tryAddSubobject(std::move(objectKeeper));
-  if (objectKeeper != nullptr) throw std::runtime_error("Unable to insert subobject to group.");
+
+  if (objectKeeper != nullptr)
+  {
+    std::string errorString("MoveObjectCommand: Unable to insert subobject to ");
+    errorString += _newParent.name().toLocal8Bit().data();
+    throw std::runtime_error(errorString);
+  }
 }
 
 inline void MoveObjectCommand::undo()
@@ -32,7 +44,19 @@ inline void MoveObjectCommand::undo()
   if (_object.parent() != &_newParent) Abort("MoveObjectCommand::make: wrong parent.");
   std::unique_ptr<Object> objectKeeper =
                                   _newParent.tryRemoveSubobject(_object, false);
-  if(objectKeeper == nullptr) throw std::runtime_error("Unable to remove subobject from group.");
+  if(objectKeeper == nullptr)
+  {
+    std::string errorString("MoveObjectCommand: Unable to remove subobject from ");
+    errorString += _newParent.name().toLocal8Bit().data();
+    throw std::runtime_error(errorString);
+  }
+
   objectKeeper = _oldParent.tryAddSubobject(std::move(objectKeeper));
-  if (objectKeeper != nullptr) throw std::runtime_error("Unable to insert subobject to group.");
+
+  if (objectKeeper != nullptr)
+  {
+    std::string errorString("MoveObjectCommand: Unable to insert subobject to ");
+    errorString += _oldParent.name().toLocal8Bit().data();
+    throw std::runtime_error(errorString);
+  }
 }

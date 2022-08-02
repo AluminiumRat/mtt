@@ -44,7 +44,7 @@ FrameBuffer::FrameBuffer( AbstractRenderPass& renderPass,
                             nullptr,
                             &_handle) != VK_SUCCESS)
     {
-      throw std::runtime_error("Failed to create framebuffer.");
+      throw std::runtime_error("FrameBuffer: Failed to create framebuffer.");
     }
   }
   catch(...)

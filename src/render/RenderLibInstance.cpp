@@ -59,7 +59,7 @@ bool RenderLibInstance::_isValidationSupported() const
   uint32_t layerCount = 0;
   if(vkEnumerateInstanceLayerProperties(&layerCount, nullptr) != VK_SUCCESS)
   {
-    throw std::runtime_error("Unable to get vk layers count.");
+    throw std::runtime_error("RenderLibInstance: Unable to get vk layers count.");
   }
 
   if(layerCount == 0) return false;
@@ -68,7 +68,7 @@ bool RenderLibInstance::_isValidationSupported() const
   if(vkEnumerateInstanceLayerProperties(&layerCount,
                                         availableLayers.data()) != VK_SUCCESS)
   {
-    throw std::runtime_error("Unable to enumerate vk layers.");
+    throw std::runtime_error("RenderLibInstance: Unable to enumerate vk layers.");
   }
 
   for(const VkLayerProperties& layer : availableLayers)
@@ -84,7 +84,7 @@ void RenderLibInstance::_createVKInstance(const char* applicationName,
 {
   if (_isValidationEnabled && !_isValidationSupported())
   {
-    throw std::runtime_error("Validation is not supported.");
+    throw std::runtime_error("RenderLibInstance: Validation is not supported.");
   }
 
   VkApplicationInfo appInfo{};
@@ -123,7 +123,7 @@ void RenderLibInstance::_createVKInstance(const char* applicationName,
 
   if (vkCreateInstance(&createInfo, nullptr, &_handle) != VK_SUCCESS)
   {
-    throw std::runtime_error("Failed to create vk instance.");
+    throw std::runtime_error("RenderLibInstance: Failed to create vk instance.");
   }
 }
 
@@ -157,7 +157,7 @@ void RenderLibInstance::_setupDebugMessenger()
                                             "vkCreateDebugUtilsMessengerEXT");
   if(createFunc == nullptr)
   {
-    throw std::runtime_error("vkGetInstanceProcAddr is not supported.");
+    throw std::runtime_error("RenderLibInstance: vkGetInstanceProcAddr is not supported.");
   }
 
   if (createFunc( _handle,
@@ -165,7 +165,7 @@ void RenderLibInstance::_setupDebugMessenger()
                   nullptr,
                   &_debugMessenger) != VK_SUCCESS)
   {
-    throw std::runtime_error("Unable to create debug messenger.");
+    throw std::runtime_error("RenderLibInstance: Unable to create debug messenger.");
   }
 }
 
@@ -174,7 +174,7 @@ void RenderLibInstance::_receivePhysicalDevices()
   uint32_t deviceCount = 0;
   if(vkEnumeratePhysicalDevices(_handle, &deviceCount, nullptr) != VK_SUCCESS)
   {
-    throw std::runtime_error("Unable to get physical device count.");
+    throw std::runtime_error("RenderLibInstance: Unable to get physical device count.");
   }
 
   if(deviceCount == 0) return;
@@ -186,7 +186,7 @@ void RenderLibInstance::_receivePhysicalDevices()
                                 &deviceCount,
                                 devices.data()) != VK_SUCCESS)
   {
-    throw std::runtime_error("Unable to enumerate physical devices.");
+    throw std::runtime_error("RenderLibInstance: Unable to enumerate physical devices.");
   }
 
   for(VkPhysicalDevice deviceHandle : devices)

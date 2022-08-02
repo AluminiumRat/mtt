@@ -26,10 +26,20 @@ LoadEffectTask::LoadEffectTask( ParticlesEditorScene& scene,
 
 void LoadEffectTask::asyncPart()
 {
-  if(!_fileDirectory.exists()) throw std::runtime_error("The file directory does not exist");
+  if (!_fileDirectory.exists())
+  {
+    std::string errorString("LoadEffectTask: The directory does not exist: ");
+    errorString += _fileDirectory.canonicalPath().toLocal8Bit().data();
+    throw std::runtime_error(errorString);
+  }
 
   QFile file(_filename);
-  if(!file.open(QFile::ReadOnly)) throw std::runtime_error("Unable to open effect file");
+  if(!file.open(QFile::ReadOnly))
+  {
+    std::string errorString("LoadEffectTask: Unable to open file: ");
+    errorString += _filename.toLocal8Bit().data();
+    throw std::runtime_error(errorString);
+  }
   _file = &file;
 
   mtt::DataStream stream(&file);
@@ -52,10 +62,15 @@ void LoadEffectTask::_checkHead()
   std::string head;
   head.resize(SaveEffectTask::fileHead.size());
   _file->read(head.data(), head.size());
-  if(head != SaveEffectTask::fileHead) throw std::runtime_error("Invalid pee file header");
+  if(head != SaveEffectTask::fileHead) throw std::runtime_error("LoadEffectTask: Invalid pee file header");
   uint32_t fileVersion;
   *_stream >> fileVersion;
-  if(fileVersion > SaveEffectTask::fileVersion) throw std::runtime_error("Unsupported version of pee file");
+  if(fileVersion > SaveEffectTask::fileVersion)
+  {
+    std::string errorString("LoadEffectTask: Unsupported version of pee file: ");
+    errorString += std::to_string(fileVersion);
+    throw std::runtime_error(errorString);
+  }
 }
 
 void LoadEffectTask::finalizePart()

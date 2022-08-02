@@ -25,7 +25,11 @@ void Scene::registerObject(Object& object)
   if(iObject != _objectsMap.end())
   {
     if(iObject->second == &object) Abort("Scene::registerObject: the object is already registered in the scene.");
-    throw std::runtime_error("Unable to add an object to the scene. Duplicate object id.");
+    std::string errorString("Unable to add ");
+    errorString += object.name().toLocal8Bit().data();
+    errorString += " to the scene. Duplicate object id: ";
+    errorString += std::to_string(object.id().value());
+    throw std::runtime_error(errorString);
   }
 
   object._setScene(this);

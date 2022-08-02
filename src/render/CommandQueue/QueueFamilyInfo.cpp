@@ -31,7 +31,7 @@ bool QueueFamilyInfo::isPresentSupported(const RenderSurface& surface) const
                                           surface.handle(),
                                           &presentSupport) != VK_SUCCESS)
   {
-    throw std::runtime_error("Unable to get present support.");
+    throw std::runtime_error("QueueFamilyInfo: Unable to get present support.");
   }
   return presentSupport;
 }

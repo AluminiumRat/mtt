@@ -205,7 +205,7 @@ void AsyncTaskQueue::_finalizeTask(AbstractAsyncTask& task) noexcept
       }
       catch(...)
       {
-        emit errorEmitted(task, std::runtime_error("Unknown error"));
+        emit errorEmitted(task, std::runtime_error("AsyncTaskQueue: Unknown error"));
         exceptionEmitted = true;
       }
       
@@ -222,7 +222,7 @@ void AsyncTaskQueue::_finalizeTask(AbstractAsyncTask& task) noexcept
       catch(...)
       {
         exceptionEmitted = true;
-        emit errorEmitted(task, std::runtime_error("Unknown error"));
+        emit errorEmitted(task, std::runtime_error("AsyncTaskQueue: Unknown error"));
       }
 
       if(exceptionEmitted || task.aborted()) task.restoreState();

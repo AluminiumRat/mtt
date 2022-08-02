@@ -19,7 +19,7 @@ PhysicalDevice::PhysicalDevice( RenderLibInstance& renderLibInstance,
   if( memoryProperties.memoryTypeCount == 0 ||
       memoryProperties.memoryHeapCount == 0)
   {
-    throw std::runtime_error("Unable to get devices memory properties.");
+    throw std::runtime_error("PhysicalDevice: Unable to get devices memory properties.");
   }
   
   _memoryInfo.reserve(memoryProperties.memoryTypeCount);
@@ -57,16 +57,16 @@ PhysicalDevice::SwapChainSupport PhysicalDevice::surface—ompatibility(
                                         surface.handle(),
                                         &support.capabilities) != VK_SUCCESS)
   {
-    throw std::runtime_error("Unable to get surface capabilities.");
+    throw std::runtime_error("PhysicalDevice: Unable to get surface capabilities.");
   }
-    
+
   uint32_t formatCount;
   if(vkGetPhysicalDeviceSurfaceFormatsKHR( _handle,
                                           surface.handle(),
                                           &formatCount,
                                           nullptr) != VK_SUCCESS)
   {
-    throw std::runtime_error("Unable to get surface format count.");
+    throw std::runtime_error("PhysicalDevice: Unable to get surface format count.");
   }
 
   if (formatCount != 0)
@@ -78,7 +78,7 @@ PhysicalDevice::SwapChainSupport PhysicalDevice::surface—ompatibility(
                                         &formatCount,
                                         support.formats.data()) != VK_SUCCESS)
     {
-      throw std::runtime_error("Unable to get surface formats.");
+      throw std::runtime_error("PhysicalDevice: Unable to get surface formats.");
     }
   }
 
@@ -88,7 +88,7 @@ PhysicalDevice::SwapChainSupport PhysicalDevice::surface—ompatibility(
                                                 &presentModeCount,
                                                 nullptr) != VK_SUCCESS)
   {
-    throw std::runtime_error("Unable to get surface present mode count.");
+    throw std::runtime_error("PhysicalDevice: Unable to get surface present mode count.");
   }
 
   if (presentModeCount != 0)
@@ -100,7 +100,7 @@ PhysicalDevice::SwapChainSupport PhysicalDevice::surface—ompatibility(
                                     &presentModeCount,
                                     support.presentModes.data()) != VK_SUCCESS)
     {
-      throw std::runtime_error("Unable to get surface present modes.");
+      throw std::runtime_error("PhysicalDevice: Unable to get surface present modes.");
     }
   }
 

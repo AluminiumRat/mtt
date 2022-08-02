@@ -19,7 +19,9 @@ void ObjectSaver::saveObject( const mtt::Object& object,
   uint16_t typeIndex = objectFactory.getTypeIndex(object);
   if (typeIndex == ObjectFactory::notIndex)
   {
-    throw std::runtime_error("Unsupported object type");
+    std::string errorString("ObjectSaver: Unsupported object type: ");
+    errorString += object.metaObject()->className();
+    throw std::runtime_error(errorString);
   }
   stream << typeIndex;
   stream << object.id();

@@ -28,7 +28,7 @@ ImageView::ImageView( Image& image,
                           nullptr,
                           &_handle) != VK_SUCCESS)
     {
-      throw std::runtime_error("Failed to create image views.");
+      throw std::runtime_error("ImageView: Failed to create image views.");
     }
   }
   catch(...)

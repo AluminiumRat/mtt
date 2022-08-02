@@ -37,7 +37,7 @@ CommandBuffer::CommandBuffer( VkCommandPool pool,
                                   &allocInfo,
                                   &_handle) != VK_SUCCESS)
     {
-      throw std::runtime_error("Failed to allocate command buffer.");
+      throw std::runtime_error("CommandBuffer: Failed to allocate command buffer.");
     }
   }
   catch(...)

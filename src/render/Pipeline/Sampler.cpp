@@ -125,7 +125,7 @@ void Sampler::_buildSampler()
                       nullptr,
                       &newHandle->value) != VK_SUCCESS)
   {
-    throw std::runtime_error("Failed to create texture sampler.");
+    throw std::runtime_error("Sampler: Failed to create texture sampler.");
   }
 
   _samplerHandle = std::move(newHandle);

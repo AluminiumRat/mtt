@@ -72,7 +72,7 @@ void CommandQueue::_cleanup() noexcept
 
 void CommandQueue::waitIdle() const
 {
-  if(vkQueueWaitIdle(_handle) != VK_SUCCESS) throw std::runtime_error("Failed to wait device queue.");
+  if(vkQueueWaitIdle(_handle) != VK_SUCCESS) throw std::runtime_error("CommandQueue: Failed to wait device queue.");
 }
 
 std::unique_ptr<CommandProducer> CommandQueue::startCommands()
@@ -165,7 +165,7 @@ void CommandQueue::submit(CommandBuffer& buffer,
                     &submitInfo,
                     fenceHandle) != VK_SUCCESS)
   {
-    throw std::runtime_error("Failed to submit command buffer.");
+    throw std::runtime_error("CommandQueue: Failed to submit command buffer.");
   }
 }
 

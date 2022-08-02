@@ -36,10 +36,20 @@ void MMDModelLoader::load(MasterDrawModel& model)
 
   try
   {
-    if (!_fileDirectory.exists()) throw std::runtime_error("The file directory does not exist");
+    if (!_fileDirectory.exists())
+    {
+      std::string errorString("MMDModelLoader: The directory does not exist: ");
+      errorString += _fileDirectory.canonicalPath().toLocal8Bit().data();
+      throw std::runtime_error(errorString);
+    }
 
     QFile file(_filename);
-    if (!file.open(QFile::ReadOnly)) throw std::runtime_error("Unable to open model file");
+    if (!file.open(QFile::ReadOnly))
+    {
+      std::string errorString("MMDModelLoader: Unable to open file ");
+      errorString += _filename.toLocal8Bit().data();
+      throw std::runtime_error(errorString);
+    }
     _file = &file;
 
     mtt::DataStream stream(&file);
@@ -48,7 +58,10 @@ void MMDModelLoader::load(MasterDrawModel& model)
     _checkHead();
 
     ObjectHeader rootHeader = _loadObjectHeader();
-    if(rootHeader.objectTypeIndex != 7) throw std::runtime_error("Wrong type index of root object");
+    if(rootHeader.objectTypeIndex != 7)
+    {
+      throw std::runtime_error("MMDModelLoader: Wrong type index of root object");
+    }
 
     _loadMaterials();
 
@@ -70,10 +83,15 @@ void MMDModelLoader::_checkHead()
   std::string head;
   head.resize(fileHead.size());
   _file->read(head.data(), head.size());
-  if (head != fileHead) throw std::runtime_error("Invalid mmd file header");
+  if (head != fileHead) throw std::runtime_error("MMDModelLoader:Invalid mmd file header");
   uint32_t fileVersion;
   *_stream >> fileVersion;
-  if (fileVersion > lastFileVersion) throw std::runtime_error("Unsupported version of mmd file");
+  if (fileVersion > lastFileVersion)
+  {
+    std::string errorString("MMDModelLoader: Unsupported version of mmd file: ");
+    errorString += std::to_string(fileVersion);
+    throw std::runtime_error(errorString);
+  }
 }
 
 QString MMDModelLoader::_loadTextureFilename()
@@ -296,7 +314,8 @@ SkinControlNode::BoneRefs MMDModelLoader::_loadBoneRefs()
     if(iBone == _boneSet.end())
     {
       QString errorString =
-                      QString("Unable to find bone % for skin mesh.").arg(name);
+              QString("MMDModelLoader::Unable to find bone % for skin mesh.").
+                                                                      arg(name);
       throw std::runtime_error(errorString.toLocal8Bit().data());
     }
 

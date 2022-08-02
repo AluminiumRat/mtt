@@ -29,15 +29,15 @@ std::unique_ptr<AnimationObject> FbxAnimationImporter::import(
 void FbxAnimationImporter::processScene(FbxScene& scene)
 {
   FbxAnimStack* animStack = scene.GetCurrentAnimationStack();
-  if(animStack == nullptr) throw std::runtime_error("No animation stacks in the file.");
+  if(animStack == nullptr) throw std::runtime_error("FbxAnimationImporter: No animation stacks in the file.");
 
   int numAnimLayers = animStack->GetMemberCount(
                                 FbxCriteria::ObjectType(FbxAnimLayer::ClassId));
-  if(numAnimLayers < 1) throw std::runtime_error("No animation layers in the file.");
+  if(numAnimLayers < 1) throw std::runtime_error("FbxAnimationImporter: No animation layers in the file.");
   _baseLayer = static_cast<FbxAnimLayer*>(animStack->GetMember(
                                 FbxCriteria::ObjectType(FbxAnimLayer::ClassId),
                                 0));
-  if(_baseLayer == nullptr) throw std::runtime_error("Unable to get animation layer from file.");
+  if(_baseLayer == nullptr) throw std::runtime_error("FbxAnimationImporter: Unable to get animation layer from file.");
 }
 
 void FbxAnimationImporter::pushTranslation(FbxNode& node)

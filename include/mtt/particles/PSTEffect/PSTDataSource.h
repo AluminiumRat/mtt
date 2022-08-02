@@ -27,7 +27,7 @@ namespace mtt
   {
   public:
     static const inline std::string fileHead = "PSTFile";
-    static constexpr uint32_t fileVersion = 0;
+    static constexpr uint32_t lastfileVersion = 0;
 
     static constexpr uint32_t notIndex = std::numeric_limits<uint16_t>::max();
 

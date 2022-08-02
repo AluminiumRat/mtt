@@ -171,7 +171,7 @@ void SwapChain::_createSwapchain(
                             nullptr,
                             &_handle) != VK_SUCCESS)
   {
-    throw std::runtime_error("Failed to create swap chain.");
+    throw std::runtime_error("SwapChain: Failed to create swap chain.");
   }
 
   if(vkGetSwapchainImagesKHR( _device.handle(),
@@ -179,7 +179,7 @@ void SwapChain::_createSwapchain(
                               &imageCount,
                               nullptr) != VK_SUCCESS)
   {
-    throw std::runtime_error("Unable to get images count from swapchain.");
+    throw std::runtime_error("SwapChain: Unable to get images count from swapchain.");
   }
 
   _frames.resize(imageCount);
@@ -189,7 +189,7 @@ void SwapChain::_createSwapchain(
                               &imageCount,
                               images.data()) != VK_SUCCESS)
   {
-    throw std::runtime_error("Unable to get images from swapchain.");
+    throw std::runtime_error("SwapChain: Unable to get images from swapchain.");
   }
   for(size_t frameIndex = 0; frameIndex < _frames.size(); frameIndex++)
   {
@@ -253,7 +253,7 @@ size_t SwapChain::_lockFrame(Semaphore& imageAvailableSemaphore)
                             VK_NULL_HANDLE,
                             &frameIndex) != VK_SUCCESS)
   {
-    throw std::runtime_error("Failed to acquire next image from swapchain.");
+    throw std::runtime_error("SwapChain: Failed to acquire next image from swapchain.");
   }
 
   _frames[frameIndex].endDrawningFence->wait();
@@ -289,7 +289,7 @@ void SwapChain::_unlockFrame(Semaphore& endDrawningSemaphore)
                   &submitInfo,
                   _frames[frameIndex].endDrawningFence->handle()) != VK_SUCCESS)
   {
-    throw std::runtime_error("Failed to submit frame fence.");
+    throw std::runtime_error("SwapChain: Failed to submit frame fence.");
   }
 
   VkPresentInfoKHR presentInfo{};

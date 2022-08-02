@@ -32,7 +32,7 @@ void ShaderModule::Fragment::loadFromFile(const std::string& filename)
 {
   ShaderLoader& loader = RenderLibInstance::instance().shaderLoader();
   std::string text = loader.loadText(filename);
-  if(text.empty()) throw std::runtime_error("Shader file " + filename + " is empty.");
+  if(text.empty()) throw std::runtime_error("ShaderModule: Shader file " + filename + " is empty.");
 
   setText(text, filename);
 }
@@ -193,7 +193,7 @@ VkShaderModule ShaderModule::_buildFromSPIR(const uint32_t* data,
                             nullptr,
                             &newHandle) != VK_SUCCESS)
   {
-    throw std::runtime_error("Failed to create shader module.");
+    throw std::runtime_error("ShaderModule: Failed to create shader module.");
   }
   return newHandle;
 }

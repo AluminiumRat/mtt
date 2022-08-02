@@ -80,14 +80,14 @@ std::array<QImage, 6> CubeTextureLibrary::_readData(
 
     if(image.isNull() || image.width() == 0 || image.height() == 0)
     {
-      std::string errorString("Unable to read image from ");
+      std::string errorString("CubeTextureLibrary: Unable to read image from ");
       errorString += filenames[side].toLocal8Bit().data();
       throw std::runtime_error(errorString);
     }
     if(image.format() != QImage::Format_RGBA8888)
     {
       image = image.convertToFormat(QImage::Format_RGBA8888);
-      if(image.isNull()) throw std::runtime_error("Unable to convert texture image to rgba format.");
+      if(image.isNull()) throw std::runtime_error("CubeTextureLibrary: Unable to convert texture image to rgba format.");
     }
     images[side] = image;
   }
@@ -118,11 +118,11 @@ void CubeTextureLibrary::_checkExtent(uint extent,
     {
       if(image.width() != extent)
       {
-        throw std::runtime_error("Images are of different sizes.");
+        throw std::runtime_error("CubeTextureLibrary: Images are of different sizes.");
       }
       if (image.width() != image.height())
       {
-        throw std::runtime_error("Image width is not equal to height.");
+        throw std::runtime_error("CubeTextureLibrary: Image width is not equal to height.");
       }
     }
   }

@@ -292,7 +292,7 @@ VkPipeline GraphicsPipeline::createPipeline(
                                 nullptr,
                                 &result) != VK_SUCCESS)
   {
-    throw std::runtime_error("Failed to create graphics pipeline.");
+    throw std::runtime_error("GraphicsPipeline: Failed to create pipeline.");
   }
 
   return result;

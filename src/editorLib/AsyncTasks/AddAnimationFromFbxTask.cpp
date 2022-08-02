@@ -58,7 +58,7 @@ void AddAnimationFromFbxTask::finalizePart()
   AnimationObject* animationPtr = _animation.get();
   if(_animation->childsNumber() == 0)
   {
-    throw std::runtime_error("Animation not found in fbx file");
+    throw std::runtime_error("AddAnimationFromFbxTask: Animation not found in fbx file");
   }
 
   if(_targetSearchGroup != nullptr)

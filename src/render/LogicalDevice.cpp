@@ -105,7 +105,7 @@ LogicalDevice::LogicalDevice( PhysicalDevice& physicalDevice,
                         nullptr,
                         &_handle) != VK_SUCCESS)
     {
-      throw std::runtime_error("failed to create logical device.");
+      throw std::runtime_error("LogicalDevice: Failed to create logical device.");
     }
 
     VmaAllocatorCreateInfo allocatorInfo = {};
@@ -116,7 +116,7 @@ LogicalDevice::LogicalDevice( PhysicalDevice& physicalDevice,
     allocatorInfo.instance = _physicalDevice.renderInstance().handle();
     if(vmaCreateAllocator(&allocatorInfo, &_allocator) != VK_SUCCESS)
     {
-      throw std::runtime_error("failed to create memory allocator.");
+      throw std::runtime_error("LogicalDevice: Failed to create memory allocator.");
     }
 
     _buildQueues(presentationTargetExample != nullptr);
@@ -168,12 +168,12 @@ void LogicalDevice::_searchFamilies(RenderSurface* presentationTargetExample)
     }
   }
 
-  if (_drawFamilyIndex == queuesInfo.size()) throw std::runtime_error("No suitable draw queue found");
+  if (_drawFamilyIndex == queuesInfo.size()) throw std::runtime_error("LogicalDevice: No suitable draw queue found");
   if (needPresentation && _presentationFamilyIndex == queuesInfo.size())
   {
-    throw std::runtime_error("No suitable presentation queue found");
+    throw std::runtime_error("LogicalDevice: No suitable presentation queue found");
   }
-  if (_transferFamilyIndex == queuesInfo.size()) throw std::runtime_error("No suitable transfer queue found");
+  if (_transferFamilyIndex == queuesInfo.size()) throw std::runtime_error("LogicalDevice: No suitable transfer queue found");
 }
 
 void LogicalDevice::_buildQueues(bool presentationEnabled)

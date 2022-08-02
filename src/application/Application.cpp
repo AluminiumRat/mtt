@@ -55,7 +55,7 @@ void Application::createDisplayDevice(const VkPhysicalDeviceFeatures& features)
                               nullptr,
                               &surfaceHandle) != VK_SUCCESS)
   {
-    throw std::runtime_error("Failed to create Vulkan surface");
+    throw std::runtime_error("Application: Failed to create Vulkan surface");
   }
   RenderSurface surface(renderLibInstance, surfaceHandle);
 
@@ -71,11 +71,9 @@ void Application::createDisplayDevice(const VkPhysicalDeviceFeatures& features)
       break;
     }
   }
-  if(gpu == nullptr) throw std::runtime_error("No suitable GPU found");
+  if(gpu == nullptr) throw std::runtime_error("Application: No suitable GPU found");
 
-  _displayDevice.emplace( *gpu,
-                          features,
-                          &surface);
+  _displayDevice.emplace( *gpu, features, &surface);
 }
 
 Application::~Application() noexcept

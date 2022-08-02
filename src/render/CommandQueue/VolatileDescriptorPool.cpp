@@ -31,7 +31,7 @@ VolatileDescriptorPool::VolatileDescriptorPool(
                               nullptr,
                               &_handle) != VK_SUCCESS)
     {
-      throw std::runtime_error("Failed to create descriptor pool.");
+      throw std::runtime_error("VolatileDescriptorPool: Failed to create descriptor pool.");
     }
   }
   catch(...)
@@ -72,7 +72,7 @@ VkDescriptorSet VolatileDescriptorPool::allocateDescriptorSet(
                               &allocInfo,
                               &newSet) != VK_SUCCESS)
   {
-    throw std::runtime_error("Failed to allocate uniform descriptor set.");
+    throw std::runtime_error("VolatileDescriptorPool: Failed to allocate uniform descriptor set.");
   }
 
   _descriptorsLeft.reduce(descriptorsNumber);
@@ -85,7 +85,7 @@ void VolatileDescriptorPool::reset()
 {
   if(vkResetDescriptorPool(_device.handle(), _handle, 0) != VK_SUCCESS)
   {
-    throw std::runtime_error("Failed to reset volatile descriptor pool.");
+    throw std::runtime_error("VolatileDescriptorPool: Failed to reset volatile descriptor pool.");
   }
   _descriptorsLeft = _totalDescriptors;
   _setsLeft = _totalSets;

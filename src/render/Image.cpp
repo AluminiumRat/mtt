@@ -143,7 +143,7 @@ void Image::_buildEmpty(VkImageUsageFlags usageFlags,
                       &_allocation,
                       &allocInfo) != VK_SUCCESS)
     {
-      throw std::runtime_error("Failed to create image.");
+      throw std::runtime_error("Image: Failed to create image.");
     }
 
     _memorySize = allocInfo.size;

@@ -256,7 +256,7 @@ void AbstractRenderPass::_createHandle() const
                           nullptr,
                           &_handle) != VK_SUCCESS)
   {
-    throw std::runtime_error("Failed to create render pass.");
+    throw std::runtime_error("AbstractRenderPass: Failed to create render pass.");
   }
 }
 

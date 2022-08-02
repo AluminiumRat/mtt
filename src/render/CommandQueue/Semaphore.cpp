@@ -18,7 +18,7 @@ Semaphore::Semaphore(LogicalDevice& device) :
                           nullptr,
                           &_handle) != VK_SUCCESS)
     {
-      throw std::runtime_error("Failed to create semaphore.");
+      throw std::runtime_error("Semaphore: Failed to create semaphore.");
     }
   }
   catch(...)

@@ -43,7 +43,7 @@ void EffectExportTask::_writeHead(QFile& file, mtt::DataStream& stream)
 {
   file.write( mtt::PSTDataSource::fileHead.c_str(),
               mtt::PSTDataSource::fileHead.length());
-  stream << mtt::PSTDataSource::fileVersion;
+  stream << mtt::PSTDataSource::lastfileVersion;
 }
 
 void EffectExportTask::_writeFieldInfo( mtt::DataStream& stream,
@@ -406,7 +406,7 @@ void EffectExportTask::_restoreScene() noexcept
     if (_restoreCommand != nullptr) _restoreCommand->make();
     _restoreCommand.reset();
   }
-  catch (std::runtime_error& error)
+  catch (std::exception& error)
   {
     mtt::Log() << error.what();
     mtt::Abort("EffectExportTask::restorePart: unable to restore initail state.");

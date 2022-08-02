@@ -16,12 +16,26 @@ inline void RemoveObjectCommand::make()
 {
   if (_object != nullptr) Abort("RemoveObjectCommand::make: object is not null");
   _object = _group.tryRemoveSubobject(_objectRef, true);
-  if (_object == nullptr) throw(std::runtime_error("Unable to remove subobject."));
+  if (_object == nullptr)
+  {
+    std::string errorString("RemoveObjectCommand:: Unable to remove ");
+    errorString += _objectRef.name().toLocal8Bit().data();
+    errorString += " from ";
+    errorString += _group.name().toLocal8Bit().data();
+    throw(std::runtime_error(errorString));
+  }
 }
 
 inline void RemoveObjectCommand::undo()
 {
   if (_object == nullptr) Abort("RemoveObjectCommand::make: object is null");
   _object = _group.tryAddSubobject(std::move(_object));
-  if (_object != nullptr) throw(std::runtime_error("Unable to add subobject."));
+  if (_object != nullptr)
+  {
+    std::string errorString("RemoveObjectCommand:: Unable to add ");
+    errorString += _objectRef.name().toLocal8Bit().data();
+    errorString += " to ";
+    errorString += _group.name().toLocal8Bit().data();
+    throw(std::runtime_error(errorString));
+  }
 }

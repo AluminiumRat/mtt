@@ -4,16 +4,24 @@
 
 int main(int argc, char* argv[])
 {
-  VkPhysicalDeviceFeatures features{};
-  features.samplerAnisotropy = VK_TRUE;
+  try
+  {
+    VkPhysicalDeviceFeatures features{};
+    features.samplerAnisotropy = VK_TRUE;
 
-  mtt::EditorApplication application( argc,
-                                      argv,
-                                      "Mtt object editor",
-                                      { 0, 0, 0 },
-                                      features);
-  MainWindow mainWindow;
-  mainWindow.show();
+    mtt::EditorApplication application( argc,
+                                        argv,
+                                        "Mtt object editor",
+                                        { 0, 0, 0 },
+                                        features);
+    MainWindow mainWindow;
+    mainWindow.show();
 
-  return application.exec();
+    return application.exec();
+  }
+  catch (std::exception& error)
+  {
+    mtt::Log() << error.what();
+    return 1;
+  }
 }

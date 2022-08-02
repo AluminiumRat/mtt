@@ -129,7 +129,7 @@ void FbxDrawableImporter::_resolveBoneLinks()
     for(Bone& bone : link.bones)
     {
       SkeletonMap::const_iterator iBone = _skeletonMap.find(bone.node);
-      if(iBone == _skeletonMap.end()) throw std::runtime_error("Unable to find the bone node.");
+      if(iBone == _skeletonMap.end()) throw std::runtime_error("FbxDrawableImporter: Unable to resolve bone references.");
       mtt::SkeletonObject* skeleton = iBone->second;
 
       std::unique_ptr<BoneRefObject> newRef(

@@ -34,18 +34,31 @@ void LoadEnvironmentTask::_checkHead()
   std::string head;
   head.resize(SaveEnvironmentTask::fileHead.size());
   _file->read(head.data(), head.size());
-  if(head != SaveEnvironmentTask::fileHead) throw std::runtime_error("Invalid enm file header");
+  if(head != SaveEnvironmentTask::fileHead) throw std::runtime_error("LoadEnvironmentTask: Invalid enm file header");
   uint32_t fileVersion;
   *_stream >> fileVersion;
-  if(fileVersion > SaveEnvironmentTask::fileVersion) throw std::runtime_error("Unsupported version of enm file");
+  if(fileVersion > SaveEnvironmentTask::fileVersion)
+  {
+    throw std::runtime_error("LoadEnvironmentTask: Unsupported version of enm file: " + std::to_string(fileVersion));
+  }
 }
 
 void LoadEnvironmentTask::asyncPart()
 {
-  if(!_fileDirectory.exists()) throw std::runtime_error("The file directory does not exist");
+  if(!_fileDirectory.exists())
+  {
+    std::string errorString = "The directory does not exist: ";
+    errorString += _fileDirectory.canonicalPath().toLocal8Bit().data();
+    throw std::runtime_error(errorString);
+  }
 
   QFile file(_filename);
-  if(!file.open(QFile::ReadOnly)) throw std::runtime_error("Unable to open model file");
+  if(!file.open(QFile::ReadOnly))
+  {
+    std::string errorString("LoadEnvironmentTask: Unable to open file ");
+    errorString += _filename.toLocal8Bit().data();
+    throw std::runtime_error(errorString);
+  }
   _file = &file;
 
   DataStream stream(&file);

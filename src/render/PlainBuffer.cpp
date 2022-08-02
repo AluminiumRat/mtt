@@ -14,7 +14,7 @@ PlainBuffer::MemoryMapper::MemoryMapper(PlainBuffer& buffer) :
                   _buffer._allocation,
                   &_data) != VK_SUCCESS)
   {
-    throw std::runtime_error("Failed to map buffer's memory.");
+    throw std::runtime_error("PlainBuffer: Failed to map buffer's memory.");
   }
 }
 
@@ -105,7 +105,7 @@ PlainBuffer::PlainBuffer( LogicalDevice& device,
                         &_allocation,
                         nullptr) != VK_SUCCESS)
     {
-      throw std::runtime_error("Failed to create vertex buffer.");
+      throw std::runtime_error("PlainBuffer: Failed to create buffer.");
     }
   }
   catch(...)
@@ -142,7 +142,7 @@ PlainBuffer::PlainBuffer( LogicalDevice& device,
                         &_allocation,
                         nullptr) != VK_SUCCESS)
     {
-      throw std::runtime_error("Failed to create vertex buffer.");
+      throw std::runtime_error("PlainBuffer: Failed to create buffer.");
     }
   }
   catch(...)
@@ -174,7 +174,7 @@ void PlainBuffer::uploadData(const void* data, size_t shift, size_t dataSize)
                   _allocation,
                   &bufferData) != VK_SUCCESS)
   {
-    throw std::runtime_error("Failed to map buffer's memory.");
+    throw std::runtime_error("PlainBuffer: Failed to map buffer's memory.");
   }
 
   memcpy((char*)bufferData + shift, data, dataSize);

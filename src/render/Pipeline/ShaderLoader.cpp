@@ -12,7 +12,7 @@ using namespace mtt;
 std::string ShaderLoader::loadText(const std::string& filename) const
 {
   std::string text = loadDefault(filename);
-  if(text.empty()) throw std::runtime_error("Failed to read shader file :" + filename);
+  if(text.empty()) throw std::runtime_error("ShaderLoader: Failed to read shader file :" + filename);
   return text;
 }
 

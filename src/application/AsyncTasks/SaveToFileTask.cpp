@@ -20,14 +20,24 @@ void SaveToFileTask::asyncPart()
   QFileInfo targetFileInfo(_filename);
   QDir targetFileDir = targetFileInfo.dir();
 
-  if (!targetFileDir.exists()) throw std::runtime_error("The file directory does not exist");
+  if (!targetFileDir.exists())
+  {
+    std::string errorString("SaveToFileTask: The directory does not exist: ");
+    errorString += targetFileDir.canonicalPath().toLocal8Bit().data();
+    throw std::runtime_error(errorString);
+  }
 
   QString targetFilename = targetFileInfo.fileName();
   QString tmpFileName = targetFileDir.filePath(targetFilename + ".tmp");
   QFileInfo tmpFileInfo(tmpFileName);
 
   QFile tmpFile(tmpFileName);
-  if (!tmpFile.open(QFile::WriteOnly)) throw std::runtime_error("Unable to open file");
+  if (!tmpFile.open(QFile::WriteOnly))
+  {
+    std::string errorString("SaveToFileTask: Unable to create temporary file ");
+    errorString += tmpFileName.toLocal8Bit().data();
+    throw std::runtime_error(errorString);
+  }
 
   try
   {
@@ -46,8 +56,20 @@ void SaveToFileTask::asyncPart()
   if(targetFileInfo.exists())
   {
     QFile targetFile(_filename);
-    if(!targetFile.remove()) throw std::runtime_error("Unable to remove old file");
+    if(!targetFile.remove())
+    {
+      std::string errorString("SaveToFileTask: Unable to remove old file ");
+      errorString += _filename.toLocal8Bit().data();
+      throw std::runtime_error(errorString);
+    }
   }
 
-  tmpFile.rename(_filename);
+  if (!tmpFile.rename(_filename))
+  {
+    std::string errorString("SaveToFileTask: Unable to rename file ");
+    errorString += tmpFileName.toLocal8Bit().data();
+    errorString += " to file ";
+    errorString += _filename.toLocal8Bit().data();
+    throw std::runtime_error(errorString);
+  }
 }

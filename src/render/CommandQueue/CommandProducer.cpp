@@ -59,7 +59,7 @@ void CommandProducer::startNewBuffer()
     beginInfo.pInheritanceInfo = nullptr;
     if (vkBeginCommandBuffer(_currentBuffer->handle(), &beginInfo) != VK_SUCCESS)
     {
-      throw std::runtime_error("Failed to begin recording command buffer.");
+      throw std::runtime_error("CommandProducer: Failed to begin recording command buffer.");
     }
 
     _uniformMemoryPool = &_currentBuffer->uniformMemoryPool();

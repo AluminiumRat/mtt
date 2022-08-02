@@ -131,7 +131,7 @@ void PipelineResourceSet::_buildLayouts()
                               nullptr,
                               &newHandles->pipelineLayout) != VK_SUCCESS)
   {
-    throw std::runtime_error("Failed to create pipeline layout.");
+    throw std::runtime_error("PipelineResourceSet: Failed to create pipeline layout.");
   }
 
   _layoutHandles = std::move(newHandles);
@@ -163,7 +163,7 @@ void PipelineResourceSet::_buildCommonSetLayout(LayoutHandles& target)
                         nullptr,
                         &target.commonDescriptorSetLayout) != VK_SUCCESS)
   {
-    throw std::runtime_error("Failed to create common descriptor set layout.");
+    throw std::runtime_error("PipelineResourceSet: Failed to create common descriptor set layout.");
   }
 }
 
@@ -193,7 +193,7 @@ void PipelineResourceSet::_buildVolatileSetLayout(LayoutHandles& target)
                         nullptr,
                         &target.volatileDescriptorSetLayout) != VK_SUCCESS)
   {
-    throw std::runtime_error("Failed to create volatile descriptor set layout.");
+    throw std::runtime_error("PipelineResourceSet: Failed to create volatile descriptor set layout.");
   }
 }
 
@@ -226,7 +226,7 @@ void PipelineResourceSet::_buildDescriptors()
                               nullptr,
                               &newHandles->descriptorPool) != VK_SUCCESS)
   {
-    throw std::runtime_error("Failed to create descriptor pool.");
+    throw std::runtime_error("PipelineResourceSet: Failed to create descriptor pool.");
   }
 
   VkDescriptorSetAllocateInfo allocInfo{};
@@ -238,7 +238,7 @@ void PipelineResourceSet::_buildDescriptors()
                                 &allocInfo,
                                 &newHandles->descriptorSet) != VK_SUCCESS)
   {
-    throw std::runtime_error("Failed to allocate descriptor set.");
+    throw std::runtime_error("PipelineResourceSet: Failed to allocate descriptor set.");
   }
 
   _descriptorHandles = std::move(newHandles);

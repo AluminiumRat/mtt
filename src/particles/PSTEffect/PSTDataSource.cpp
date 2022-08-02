@@ -21,7 +21,12 @@ PSTDataSource::PSTDataSource( const QString& filename,
   _lodSmoothing(1.f)
 {
   QFile file(filename);
-  if (!file.open(QFile::ReadOnly)) throw std::runtime_error("Unable to open file");
+  if (!file.open(QFile::ReadOnly))
+  {
+    std::string errorString("PSTDataSource: Unable to open file ");
+    errorString += filename.toLocal8Bit().data();
+    throw std::runtime_error(errorString);
+  }
   mtt::DataStream stream(&file);
   QDir fileDirectory(QFileInfo(filename).dir());
 
@@ -49,10 +54,15 @@ void PSTDataSource::_checkHead(QFile& file, DataStream& stream)
   std::string head;
   head.resize(fileHead.size());
   file.read(head.data(), head.size());
-  if(head != fileHead) throw std::runtime_error("Invalid file header");
+  if(head != fileHead) throw std::runtime_error("PSTDataSource: Invalid file header");
   uint32_t fileVersion;
   stream >> fileVersion;
-  if(fileVersion > fileVersion) throw std::runtime_error("Unsupported file version");
+  if(fileVersion > lastfileVersion)
+  {
+    std::string errorString("PSTDataSource: Unsupported file version ");
+    errorString += std::to_string(fileVersion);
+    throw std::runtime_error(errorString);
+  }
 }
 
 void PSTDataSource::_loadTextures(DataStream& stream,

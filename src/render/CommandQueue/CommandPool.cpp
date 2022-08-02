@@ -24,7 +24,7 @@ CommandPool::CommandPool(CommandQueue& queue) :
                             nullptr,
                             &_handle) != VK_SUCCESS)
     {
-      throw std::runtime_error("Failed to create command pool.");
+      throw std::runtime_error("CommandPool: Failed to create command pool");
     }
   }
   catch(...)
@@ -59,7 +59,7 @@ void CommandPool::reset()
 
   if(vkResetCommandPool(_device.handle(), _handle, 0) != VK_SUCCESS)
   {
-    throw std::runtime_error("Unable to reset command pool");
+    throw std::runtime_error("CommandPool: Unable to reset command pool");
   }
   _nextBuffer = 0;
 }

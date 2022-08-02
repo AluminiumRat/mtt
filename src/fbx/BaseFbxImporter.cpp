@@ -39,13 +39,13 @@ void BaseFbxImporter::startImporting(const char* filename)
     FbxContainer<FbxImporter> importer(manager, "");
     if(!importer().Initialize(filename, -1, manager->GetIOSettings()))
     {
-      std::string errorString("Unable to initialize fbx importer: ");
+      std::string errorString("BaseFbxImporter: Unable to initialize fbx importer: ");
       throw std::runtime_error(errorString + importer().GetStatus().GetErrorString());
     }
 
     if (!importer().Import(&scene()))
     {
-      std::string errorString("Unable to import scene: ");
+      std::string errorString("BaseFbxImporter: Unable to import scene: ");
       throw std::runtime_error(errorString + importer().GetStatus().GetErrorString());
     }
   }
@@ -136,16 +136,28 @@ void BaseFbxImporter::_importMesh(FbxMesh& mesh)
 
 void BaseFbxImporter::_readLayers(FbxMesh& mesh)
 {
-  if(mesh.GetLayerCount() != 1) throw std::runtime_error("Wrong number of layers in fbx mesh.");
+  if(mesh.GetLayerCount() != 1)
+  {
+    std::string errorString("BaseFbxImporter: Wrong number of layers in mesh ");
+    errorString += mesh.GetName();
+    throw std::runtime_error(errorString);
+  }
   FbxLayer* layer = mesh.GetLayer(0);
 
   _normalLayer = layer->GetNormals();
-  if(_normalLayer == nullptr) throw std::runtime_error("Normal data not found in fbx mesh.");
+  if(_normalLayer == nullptr)
+  {
+    std::string errorString("BaseFbxImporter: Normal data not found in mesh ");
+    errorString += mesh.GetName();
+    throw std::runtime_error(errorString);
+  }
   if( _normalLayer->GetMappingMode() != FbxLayerElement::eByControlPoint &&
       _normalLayer->GetMappingMode() != FbxLayerElement::eByPolygonVertex &&
       _normalLayer->GetMappingMode() != FbxLayerElement::eByPolygon)
   {
-    throw std::runtime_error("Wrong normal mapping in fbx mesh.");
+    std::string errorString("BaseFbxImporter: Wrong normal mapping in mesh ");
+    errorString += mesh.GetName();
+    throw std::runtime_error(errorString);
   }
 
   _tangentLayer = layer->GetTangents();
@@ -154,7 +166,9 @@ void BaseFbxImporter::_readLayers(FbxMesh& mesh)
       _tangentLayer->GetMappingMode() != FbxLayerElement::eByPolygonVertex &&
       _tangentLayer->GetMappingMode() != FbxLayerElement::eByPolygon)
   {
-    throw std::runtime_error("Wrong tangent mapping in fbx mesh.");
+    std::string errorString("BaseFbxImporter: Wrong tangent mapping in mesh ");
+    errorString += mesh.GetName();
+    throw std::runtime_error(errorString);
   }
 
   _binormalLayer = layer->GetBinormals();
@@ -163,7 +177,9 @@ void BaseFbxImporter::_readLayers(FbxMesh& mesh)
       _binormalLayer->GetMappingMode() != FbxLayerElement::eByPolygonVertex &&
       _binormalLayer->GetMappingMode() != FbxLayerElement::eByPolygon)
   {
-    throw std::runtime_error("Wrong binormal mapping in fbx mesh.");
+    std::string errorString("BaseFbxImporter: Wrong binormal mapping in mesh ");
+    errorString += mesh.GetName();
+    throw std::runtime_error(errorString);
   }
 
   _texCoordLayer = layer->GetUVs();
@@ -171,7 +187,9 @@ void BaseFbxImporter::_readLayers(FbxMesh& mesh)
       _texCoordLayer->GetMappingMode() != FbxLayerElement::eByControlPoint &&
       _texCoordLayer->GetMappingMode() != FbxLayerElement::eByPolygonVertex)
   {
-    throw std::runtime_error("Wrong uv mapping in fbx mesh.");
+    std::string errorString("BaseFbxImporter: Wrong uv mapping in mesh ");
+    errorString += mesh.GetName();
+    throw std::runtime_error(errorString);
   }
 
   _materialLayer = layer->GetMaterials();
@@ -179,7 +197,9 @@ void BaseFbxImporter::_readLayers(FbxMesh& mesh)
   if( _materialLayer->GetMappingMode() != FbxLayerElement::eByPolygon &&
       _materialLayer->GetMappingMode() != FbxLayerElement::eAllSame)
   {
-    throw std::runtime_error("Wrong material mapping in fbx mesh.");
+    std::string errorString("BaseFbxImporter: Wrong material mapping in mesh ");
+    errorString += mesh.GetName();
+    throw std::runtime_error(errorString);
   }
 }
 
@@ -192,14 +212,20 @@ void BaseFbxImporter::_readSkinData(FbxMesh& mesh)
   _skeletonRefs.resize(mesh.GetControlPointsCount());
 
   if(mesh.GetDeformerCount() == 0) return;
-  if (mesh.GetDeformerCount() > 1)
+  if (mesh.GetDeformerCount() != 1)
   {
-    throw std::runtime_error("Only one deformer per mesh was supported.");
+    std::string errorString("BaseFbxImporter: Wrong deformer count in mesh ");
+    errorString += mesh.GetName();
+    errorString += ". Only one deformer per mesh was supported.";
+    throw std::runtime_error(errorString);
   }
   FbxDeformer* deformer = mesh.GetDeformer(0);
   if(deformer->GetDeformerType() != FbxDeformer::eSkin)
   {
-    throw std::runtime_error("Only skin deformer was supported.");
+    std::string errorString("BaseFbxImporter: Wrong deformer type in mesh ");
+    errorString += mesh.GetName();
+    errorString += ". Only skin deformer was supported.";
+    throw std::runtime_error(errorString);
   }
   FbxSkin* skin = static_cast<FbxSkin*>(deformer);
 
@@ -338,7 +364,12 @@ void BaseFbxImporter::_distributePoints(FbxMesh& mesh)
     }
 
     int polygonSize = mesh.GetPolygonSize(polygonIndex);
-    if (polygonSize < 1) throw std::runtime_error("Fbx file error: the number of vertices in the polygon is less than 1.");
+    if (polygonSize < 1)
+    {
+      std::string errorString("BaseFbxImporter: the number of vertices in the polygon is less than 1. Mesh: ");
+      errorString += mesh.GetName();
+      throw std::runtime_error(errorString);
+    }
 
     _addPolygonIndices(materialIndex, polygonSize);
 
@@ -487,7 +518,10 @@ QString BaseFbxImporter::textureFullFilePath(const FbxProperty& theProperty)
 {
   int textureCount = theProperty.GetSrcObjectCount<FbxTexture>();
   if(textureCount == 0) return QString();
-  if(textureCount > 1) throw std::runtime_error("The import of multiple textures per property is not supported.");
+  if(textureCount > 1)
+  {
+    throw std::runtime_error("BaseFbxImporter: too many textures attached to the property. The import of multiple textures per property is not supported.");
+  }
 
   FbxLayeredTexture* layeredTexture =
                                 theProperty.GetSrcObject<FbxLayeredTexture>(0);
@@ -520,7 +554,12 @@ BaseFbxImporter::MaterialDescription
   {
     lambert = static_cast<const FbxSurfaceLambert*>(&material);
   }
-  if(lambert == nullptr) throw std::runtime_error("Unsupported material in fbx model.");
+  if(lambert == nullptr)
+  {
+    std::string errorString("BaseFbxImporter: Unsupported material type. Material name: ");
+    errorString += material.GetName();
+    throw std::runtime_error(errorString);
+  }
 
   description.normalTextureFilename = textureFullFilePath(lambert->NormalMap);
   if(description.normalTextureFilename.isEmpty())

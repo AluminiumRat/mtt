@@ -37,14 +37,14 @@ std::unique_ptr<Texture2D> Texture2DLibrary::loadTexture(
   QImage image(filename);
   if(image.isNull() || image.width() == 0 || image.height() == 0)
   {
-    std::string errorString("Unable to read image from ");
+    std::string errorString("CubeTextureLibrary: Unable to read image from ");
     errorString += filename.toLocal8Bit().data();
     throw std::runtime_error(errorString);
   }
   if(image.format() != QImage::Format_RGBA8888)
   {
     image = image.convertToFormat(QImage::Format_RGBA8888);
-    if(image.isNull()) throw std::runtime_error("Unable to convert texture image to rgba format.");
+    if(image.isNull()) throw std::runtime_error("CubeTextureLibrary: Unable to convert texture image to rgba format.");
   }
 
   std::unique_ptr<Texture2D> newTexture(new Texture2D(device));

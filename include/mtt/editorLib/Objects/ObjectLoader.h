@@ -111,7 +111,11 @@ namespace mtt
                                                                 id);
     if (dynamic_cast<ObjectType*>(object.get()) == nullptr)
     {
-      throw std::runtime_error("Object type index does not match requested class");
+      std::string errorString("ObjectLoader: Object type index ");
+      errorString += std::to_string(typeIndex);
+      errorString += " does not match requested class ";
+      errorString += ObjectType::staticMetaObject.className();
+      throw std::runtime_error(errorString);
     }
 
     _readObjectData(*object, stream, fileDirectory, mixUIDValue, objectFactory);
