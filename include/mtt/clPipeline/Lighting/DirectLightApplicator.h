@@ -6,6 +6,7 @@
 
 #include <mtt/clPipeline/Lighting/CascadeShadowMapProvider.h>
 #include <mtt/clPipeline/Lighting/DirectLightData.h>
+#include <mtt/render/Drawable/PipelineDrawable.h>
 #include <mtt/render/Pipeline/GraphicsPipeline.h>
 #include <mtt/render/Pipeline/Sampler.h>
 #include <mtt/render/Pipeline/Texture2D.h>
@@ -37,7 +38,7 @@ namespace mtt
       virtual void buildDrawActions(DrawPlanBuildInfo& buildInfo) override;
 
     private:
-      class DrawTechnique
+      class DrawTechnique : public PipelineDrawable
       {
       public:
         DrawTechnique(DirectLight& light,
@@ -46,15 +47,11 @@ namespace mtt
         DrawTechnique& operator = (const DrawTechnique&) = delete;
         virtual ~DrawTechnique() = default;
 
-        void invalidatePipeline() noexcept;
-        void addToDrawPlan(
-                      DrawPlanBuildInfo& buildInfo,
-                      const CascadeShadowMapProvider::CascadeInfo& cascadeInfo);
+      protected:
+        virtual void adjustPipeline(GraphicsPipeline& pipeline) override;
+        virtual void buildDrawActions(DrawPlanBuildInfo& buildInfo) override;
 
       private:
-        void _rebuildPipeline(AbstractRenderPass& renderPass);
-        void _adjustPipeline();
-
         void _makeNonshadowCommand( DrawPlanBuildInfo& buildInfo,
                                     const DirectLightData& lightData);
 
@@ -64,7 +61,6 @@ namespace mtt
                       const CascadeShadowMapProvider::CascadeInfo& cascadeInfo);
 
       private:
-        std::optional<GraphicsPipeline> _pipeline;
         DirectLight& _light;
         DirectLightApplicator& _applicator;
       };

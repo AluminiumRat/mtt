@@ -15,70 +15,51 @@ using namespace mtt::clPipeline;
 DirectLightApplicator::DrawTechnique::DrawTechnique(
                                             DirectLight& light,
                                             DirectLightApplicator& applicator) :
+  PipelineDrawable(colorFrameType, lightingStage),
   _light(light),
   _applicator(applicator)
 {
 }
 
-void DirectLightApplicator::DrawTechnique::invalidatePipeline() noexcept
+void DirectLightApplicator::DrawTechnique::adjustPipeline(
+                                                    GraphicsPipeline& pipeline)
 {
-  _pipeline.reset();
-}
+  pipeline.addResource( "lightDataBinding",
+                        _applicator._lightDataUniform,
+                        VK_SHADER_STAGE_VERTEX_BIT |
+                        VK_SHADER_STAGE_FRAGMENT_BIT);
 
-void DirectLightApplicator::DrawTechnique::_rebuildPipeline(
-                                                AbstractRenderPass& renderPass)
-{
-  try
-  {
-    _pipeline.emplace(renderPass, lightingStage);
-    _adjustPipeline();
-    _pipeline->forceBuild();
-  }
-  catch(...)
-  {
-    invalidatePipeline();
-    throw;
-  }
-}
+  pipeline.addResource( "depthMapBinding",
+                        _applicator._depthMapSampler,
+                        VK_SHADER_STAGE_FRAGMENT_BIT);
 
-void DirectLightApplicator::DrawTechnique::_adjustPipeline()
-{
-  _pipeline->addResource( "lightDataBinding",
-                          _applicator._lightDataUniform,
-                          VK_SHADER_STAGE_VERTEX_BIT |
-                          VK_SHADER_STAGE_FRAGMENT_BIT);
+  pipeline.addResource( "normalMapBinding",
+                        _applicator._normalMapSampler,
+                        VK_SHADER_STAGE_FRAGMENT_BIT);
 
-  _pipeline->addResource( "depthMapBinding",
-                          _applicator._depthMapSampler,
-                          VK_SHADER_STAGE_FRAGMENT_BIT);
+  pipeline.addResource( "albedoMapBinding",
+                        _applicator._albedoMapSampler,
+                        VK_SHADER_STAGE_FRAGMENT_BIT);
 
-  _pipeline->addResource( "normalMapBinding",
-                          _applicator._normalMapSampler,
-                          VK_SHADER_STAGE_FRAGMENT_BIT);
-
-  _pipeline->addResource( "albedoMapBinding",
-                          _applicator._albedoMapSampler,
-                          VK_SHADER_STAGE_FRAGMENT_BIT);
-
-  _pipeline->addResource( "specularMapBinding",
-                          _applicator._specularMapSampler,
-                          VK_SHADER_STAGE_FRAGMENT_BIT);
+  pipeline.addResource( "specularMapBinding",
+                        _applicator._specularMapSampler,
+                        VK_SHADER_STAGE_FRAGMENT_BIT);
 
   std::unique_ptr<ShaderModule> vertexShader(
                                   new ShaderModule( ShaderModule::VERTEX_SHADER,
-                                                    _pipeline->device()));
+                                                    pipeline.device()));
   vertexShader->newFragment().loadFromFile(
                                         "clPipeline/directLightDrawable.vert");
-  _pipeline->addShader(std::move(vertexShader));
+  pipeline.addShader(std::move(vertexShader));
 
   std::unique_ptr<ShaderModule> fragmentShader(
                                 new ShaderModule( ShaderModule::FRAGMENT_SHADER,
-                                                  _pipeline->device()));
+                                                  pipeline.device()));
 
   fragmentShader->newFragment().loadFromFile("clPipeline/materialLib.glsl");
   if(_light.shadowmapProvider() != nullptr)
   {
-    _pipeline->setDefine("SHADOW_MAP_ENABLED");
+    pipeline.setDefine("SHADOW_MAP_ENABLED");
 
     ShaderModule::Fragment& shadowLibFragment = fragmentShader->newFragment();
     shadowLibFragment.loadFromFile("clPipeline/cascadeShadowmapLib.glsl");
@@ -87,41 +68,46 @@ void DirectLightApplicator::DrawTechnique::_adjustPipeline()
     shadowLibFragment.replace("$SHADOW_CASCADE_SIZE$",
                               std::to_string(_light.cascadeSize()));
 
-    _pipeline->addResource( "opaqueShadowMapBinding",
-                            *_light.opaqueShadowmapSampler(),
-                            VK_SHADER_STAGE_FRAGMENT_BIT);
+    pipeline.addResource( "opaqueShadowMapBinding",
+                          *_light.opaqueShadowmapSampler(),
+                          VK_SHADER_STAGE_FRAGMENT_BIT);
 
-    _pipeline->addResource( "transparentShadowMapBinding",
-                            *_light.transparentShadowmapSampler(),
-                            VK_SHADER_STAGE_FRAGMENT_BIT);
+    pipeline.addResource( "transparentShadowMapBinding",
+                          *_light.transparentShadowmapSampler(),
+                          VK_SHADER_STAGE_FRAGMENT_BIT);
 
-    _pipeline->addResource( "shadowCoordsCorrectionBinding",
-                            _applicator._coordsCorrectionUniform,
-                            VK_SHADER_STAGE_FRAGMENT_BIT);
+    pipeline.addResource( "shadowCoordsCorrectionBinding",
+                          _applicator._coordsCorrectionUniform,
+                          VK_SHADER_STAGE_FRAGMENT_BIT);
   }
   fragmentShader->newFragment().loadFromFile(
                                         "clPipeline/directLightDrawable.frag");
-  _pipeline->addShader(std::move(fragmentShader));
+  pipeline.addShader(std::move(fragmentShader));
 
-  _pipeline->setTopology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP);
+  pipeline.setTopology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP);
 }
 
-void DirectLightApplicator::DrawTechnique::addToDrawPlan(
-                      DrawPlanBuildInfo& buildInfo,
-                      const CascadeShadowMapProvider::CascadeInfo& cascadeInfo)
+void DirectLightApplicator::DrawTechnique::buildDrawActions(
+                                                  DrawPlanBuildInfo& buildInfo)
 {
-  AbstractRenderPass* renderPass = buildInfo.builder->stagePass(lightingStage);
-  if(renderPass == nullptr) return;
-
-  if (!_pipeline.has_value() || !_pipeline->isCompatible(*renderPass))
-  {
-    _rebuildPipeline(*renderPass);
-  }
-
   DirectLightData lightData = _light.buildDrawData(buildInfo);
 
-  if(cascadeInfo.empty()) _makeNonshadowCommand(buildInfo, lightData);
-  else _makeShadowCommand( buildInfo, lightData, cascadeInfo);
+  if(_light.shadowmapProvider() != nullptr)
+  {
+    CameraNode shadowmapCamera;
+    CameraNode viewCamera;
+    _light.updateCameras(shadowmapCamera, viewCamera, buildInfo);
+
+    CascadeShadowMapProvider::CascadeInfo cascadeInfo;
+    cascadeInfo = _light.shadowmapProvider()->getShadowMaps(
+                                                          shadowmapCamera,
+                                                          viewCamera,
+                                                          _light.cascadeSize(),
+                                                          buildInfo);
+    if (cascadeInfo.size() == 0) return;
+    _makeShadowCommand(buildInfo, lightData, cascadeInfo);
+  }
+  else _makeNonshadowCommand(buildInfo, lightData);
 }
 
 void DirectLightApplicator::DrawTechnique::_makeNonshadowCommand(
@@ -144,7 +130,7 @@ void DirectLightApplicator::DrawTechnique::_makeNonshadowCommand(
                                     Texture2D,
                                     size_t>;
   renderBin->createAction<DrawAction>(0,
-                                      *_pipeline,
+                                      *pipeline(),
                                       buildInfo.viewport,
                                       buildInfo.scissor,
                                       pointsNumber,
@@ -215,7 +201,7 @@ void DirectLightApplicator::DrawTechnique::_makeShadowCommand(
                                     Texture2D,
                                     size_t>;
   renderBin->createAction<DrawAction>(0,
-                                      *_pipeline,
+                                      *pipeline(),
                                       buildInfo.viewport,
                                       buildInfo.scissor,
                                       pointsNumber,
@@ -274,27 +260,10 @@ DirectLightApplicator::DirectLightApplicator( DirectLight& light,
 
 void DirectLightApplicator::resetPipelines() noexcept
 {
-  _technique.invalidatePipeline();
+  _technique.resetPipeline();
 }
 
 void DirectLightApplicator::buildDrawActions(DrawPlanBuildInfo& buildInfo)
 {
-  if (buildInfo.frameType != colorFrameType) return;
-
-  CascadeShadowMapProvider::CascadeInfo cascadeInfo;
-  if(_light.shadowmapProvider() != nullptr)
-  {
-    CameraNode shadowmapCamera;
-    CameraNode viewCamera;
-    _light.updateCameras(shadowmapCamera, viewCamera, buildInfo);
-
-    cascadeInfo = _light.shadowmapProvider()->getShadowMaps(
-                                                          shadowmapCamera,
-                                                          viewCamera,
-                                                          _light.cascadeSize(),
-                                                          buildInfo);
-    if (cascadeInfo.size() == 0) return;
-  }
-
-  _technique.addToDrawPlan(buildInfo, cascadeInfo);
+  _technique.addToDrawPlan(buildInfo);
 }

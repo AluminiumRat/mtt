@@ -12,35 +12,15 @@ AmbientLightApplicator::DrawTechnique::DrawTechnique(
                                               bool weightRender,
                                               bool fullScreenRender,
                                               AmbientLightApplicator& parent) :
+  PipelineDrawable( colorFrameType,
+                    weightRender ? ambientWeightStage : lightingStage),
   _weightRender(weightRender),
   _fullScreenRender(fullScreenRender),
   _parent(parent)
 {
 }
 
-void AmbientLightApplicator::DrawTechnique::invalidate() noexcept
-{
-  _pipeline.reset();
-}
-
-void AmbientLightApplicator::DrawTechnique::_rebuildPipeline(
-                                                AbstractRenderPass& renderPass,
-                                                StageIndex stage)
-{
-  try
-  {
-    _pipeline.emplace(renderPass, stage);
-    _adjustPipeline(*_pipeline);
-    _pipeline->forceBuild();
-  }
-  catch(...)
-  {
-    _pipeline.reset();
-    throw;
-  }
-}
-
-void AmbientLightApplicator::DrawTechnique::_adjustPipeline(
+void AmbientLightApplicator::DrawTechnique::adjustPipeline(
                                                     GraphicsPipeline & pipeline)
 {
   pipeline.addResource( "lightDataBinding",
@@ -106,33 +86,23 @@ void AmbientLightApplicator::DrawTechnique::_adjustPipeline(
 
   if(_fullScreenRender)
   {
-    _pipeline->setTopology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP);
-    _pipeline->setDefine("FULLSCREEN_ENABLED");
+    pipeline.setTopology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP);
+    pipeline.setDefine("FULLSCREEN_ENABLED");
   }
   else
   {
-    _pipeline->addResource( DrawMatrices::bindingName,
-                            _parent._matricesUniform,
-                            VK_SHADER_STAGE_VERTEX_BIT);
-    _pipeline->setTopology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+    pipeline.addResource( DrawMatrices::bindingName,
+                          _parent._matricesUniform,
+                          VK_SHADER_STAGE_VERTEX_BIT);
+    pipeline.setTopology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
   }
 
-  if(_parent._lightData.infinityAreaMode) _pipeline->setDefine("INFINITY_AREA");
+  if(_parent._lightData.infinityAreaMode) pipeline.setDefine("INFINITY_AREA");
 }
 
-void AmbientLightApplicator::DrawTechnique::addToDrawPlan(
+void AmbientLightApplicator::DrawTechnique::buildDrawActions(
                                                   DrawPlanBuildInfo& buildInfo)
 {
-  StageIndex stage = _weightRender ? ambientWeightStage : lightingStage;
-
-  AbstractRenderPass* renderPass = buildInfo.builder->stagePass(stage);
-  if(renderPass == nullptr) return;
-
-  if(!_pipeline.has_value() || !_pipeline->isCompatible(*renderPass))
-  {
-    _rebuildPipeline(*renderPass, stage);
-  }
-
   uint32_t pointsNumber = _fullScreenRender ? 4 : 36;
 
   AmbientLightDrawData lightData;
@@ -143,7 +113,7 @@ void AmbientLightApplicator::DrawTechnique::addToDrawPlan(
   lightData.viewToLocal =
                         glm::inverse(buildInfo.drawMatrices.localToViewMatrix);
 
-  DrawBin* renderBin = buildInfo.currentFramePlan->getBin(stage);
+  DrawBin* renderBin = buildInfo.currentFramePlan->getBin(stageIndex());
   if(renderBin == nullptr) Abort("AmbientLightApplicator::DrawTechnique::addToDrawPlan: light render bin is not supported.");
 
   if(_weightRender)
@@ -167,7 +137,7 @@ void AmbientLightApplicator::DrawTechnique::_makeWeightAction(
                                     size_t>;
   renderBin.createAction<DrawAction>( 
                           0,
-                          *_pipeline,
+                          *pipeline(),
                           buildInfo.viewport,
                           buildInfo.scissor,
                           pointsNumber,
@@ -200,7 +170,7 @@ void AmbientLightApplicator::DrawTechnique::_makeApplyAction(
                                     Texture2D,
                                     size_t>;
   renderBin.createAction<DrawAction>( 0,
-                                      *_pipeline,
+                                      *pipeline(),
                                       buildInfo.viewport,
                                       buildInfo.scissor,
                                       pointsNumber,
@@ -284,11 +254,11 @@ void AmbientLightApplicator::updateBound() noexcept
 
 void AmbientLightApplicator::resetPipelines() noexcept
 {
-  _techniques.shapeSet.weightTechnique->invalidate();
-  _techniques.shapeSet.applyTechnique->invalidate();
+  _techniques.shapeSet.weightTechnique->resetPipeline();
+  _techniques.shapeSet.applyTechnique->resetPipeline();
 
-  _techniques.fullscreenSet.weightTechnique->invalidate();
-  _techniques.fullscreenSet.applyTechnique->invalidate();
+  _techniques.fullscreenSet.weightTechnique->resetPipeline();
+  _techniques.fullscreenSet.applyTechnique->resetPipeline();
 }
 
 bool AmbientLightApplicator::_fullscreen(

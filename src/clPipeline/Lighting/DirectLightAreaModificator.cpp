@@ -122,89 +122,77 @@ void DirectLightAreaModificator::adjustPipeline(
                                               ApplyModel applyModel,
                                               size_t modificatorIndex)
 {
-  try
+  std::string indexStr = std::to_string(modificatorIndex);
+
+  if (_light.shadowmapProvider() != nullptr)
   {
-    std::string indexStr = std::to_string(modificatorIndex);
+    ShaderModule::Fragment& shadowLibFragment = targetShader.newFragment();
+    shadowLibFragment.loadFromFile("clPipeline/cascadeShadowmapLib.glsl");
 
-    if (_light.shadowmapProvider() != nullptr)
-    {
-      ShaderModule::Fragment& shadowLibFragment = targetShader.newFragment();
-      shadowLibFragment.loadFromFile("clPipeline/cascadeShadowmapLib.glsl");
+    shadowLibFragment.replace("$INDEX$", indexStr);
 
-      shadowLibFragment.replace("$INDEX$", indexStr);
+    shadowLibFragment.replace("$SHADOW_CASCADE_SIZE$",
+                              std::to_string(_light.cascadeSize()));
 
-      shadowLibFragment.replace("$SHADOW_CASCADE_SIZE$",
-                                std::to_string(_light.cascadeSize()));
-
-      std::string shadowSamplerBindingName("opaqueShadowMapBinding");
-      shadowSamplerBindingName += indexStr;
-      targetPipeline.addResource( shadowSamplerBindingName,
-                                  *_light.opaqueShadowmapSampler(),
-                                  targetShader.type());
-
-      shadowSamplerBindingName = ("transparentShadowMapBinding");
-      shadowSamplerBindingName += indexStr;
-      targetPipeline.addResource( shadowSamplerBindingName,
-                                  *_light.transparentShadowmapSampler(),
-                                  targetShader.type());
-
-      std::string coordCorrectionBindingName("shadowCoordsCorrectionBinding");
-      coordCorrectionBindingName += indexStr;
-      targetPipeline.addResource(coordCorrectionBindingName,
-                                  _coordsCorrectionUniform,
-                                  targetShader.type());
-    }
-
-    ShaderModule::Fragment& mainFragment = targetShader.newFragment();
-    mainFragment.loadFromFile("clPipeline/directLightModificator.glsl");
-
-    std::string applyFunctionName("modificator");
-    applyFunctionName += indexStr;
-    mainFragment.replace("$APPLY_FUNCTION$", applyFunctionName);
-
-    const std::string* declaration =
-                            targetShader.defineValue("MODIFICATOR_DECLARATION");
-    if (declaration != nullptr)
-    {
-      std::string newDeclaration = *declaration +
-                            (std::string("void ") + applyFunctionName + "();");
-      targetShader.setDefine("MODIFICATOR_DECLARATION", newDeclaration);
-    }
-
-    const std::string* apply = targetShader.defineValue("APPLY_LIGHT");
-    if (apply != nullptr)
-    {
-      std::string newApply = *apply + (applyFunctionName + "();");
-      targetShader.setDefine("APPLY_LIGHT", newApply);
-    }
-
-    mainFragment.replace("$INDEX$", indexStr);
-
-    std::string lightDataBindingName("lightDataBinding");
-    lightDataBindingName += indexStr;
-    targetPipeline.addResource( lightDataBindingName,
-                                _lightDataUniform,
+    std::string shadowSamplerBindingName("opaqueShadowMapBinding");
+    shadowSamplerBindingName += indexStr;
+    targetPipeline.addResource( shadowSamplerBindingName,
+                                *_light.opaqueShadowmapSampler(),
                                 targetShader.type());
 
-    if (_light.shadowmapProvider() != nullptr)
-    {
-      mainFragment.replace("$SHADOW_MAP_ENABLED$", "1");
-    }
-    else mainFragment.replace("$SHADOW_MAP_ENABLED$", "0");
+    shadowSamplerBindingName = ("transparentShadowMapBinding");
+    shadowSamplerBindingName += indexStr;
+    targetPipeline.addResource( shadowSamplerBindingName,
+                                *_light.transparentShadowmapSampler(),
+                                targetShader.type());
 
-    if (applyModel == LAMBERT_SPECULAR_LUMINANCE_MODEL)
-    {
-      mainFragment.replace("$LAMBERT_SPECULAR_LUMINANCE_MODEL$", "1");
-    }
-    else mainFragment.replace("$LAMBERT_SPECULAR_LUMINANCE_MODEL$", "0");
+    std::string coordCorrectionBindingName("shadowCoordsCorrectionBinding");
+    coordCorrectionBindingName += indexStr;
+    targetPipeline.addResource(coordCorrectionBindingName,
+                                _coordsCorrectionUniform,
+                                targetShader.type());
   }
-  catch (std::exception& error)
+
+  ShaderModule::Fragment& mainFragment = targetShader.newFragment();
+  mainFragment.loadFromFile("clPipeline/directLightModificator.glsl");
+
+  std::string applyFunctionName("modificator");
+  applyFunctionName += indexStr;
+  mainFragment.replace("$APPLY_FUNCTION$", applyFunctionName);
+
+  const std::string* declaration =
+                            targetShader.defineValue("MODIFICATOR_DECLARATION");
+  if (declaration != nullptr)
   {
-    mtt::Log() << error.what();
-    mtt::Abort("DirectLightAreaModificator::adjustPipeline: unable to adjust pipeline.");
+    std::string newDeclaration = *declaration +
+                            (std::string("void ") + applyFunctionName + "();");
+    targetShader.setDefine("MODIFICATOR_DECLARATION", newDeclaration);
   }
-  catch (...)
+
+  const std::string* apply = targetShader.defineValue("APPLY_LIGHT");
+  if (apply != nullptr)
   {
-    mtt::Abort("DirectLightAreaModificator::adjustPipeline: unknown error.");
+    std::string newApply = *apply + (applyFunctionName + "();");
+    targetShader.setDefine("APPLY_LIGHT", newApply);
   }
+
+  mainFragment.replace("$INDEX$", indexStr);
+
+  std::string lightDataBindingName("lightDataBinding");
+  lightDataBindingName += indexStr;
+  targetPipeline.addResource( lightDataBindingName,
+                              _lightDataUniform,
+                              targetShader.type());
+
+  if (_light.shadowmapProvider() != nullptr)
+  {
+    mainFragment.replace("$SHADOW_MAP_ENABLED$", "1");
+  }
+  else mainFragment.replace("$SHADOW_MAP_ENABLED$", "0");
+
+  if (applyModel == LAMBERT_SPECULAR_LUMINANCE_MODEL)
+  {
+    mainFragment.replace("$LAMBERT_SPECULAR_LUMINANCE_MODEL$", "1");
+  }
+  else mainFragment.replace("$LAMBERT_SPECULAR_LUMINANCE_MODEL$", "0");
 }

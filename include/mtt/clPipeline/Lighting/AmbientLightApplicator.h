@@ -7,6 +7,7 @@
 #include <glm/vec3.hpp>
 
 #include <mtt/clPipeline/Lighting/AmbientLightData.h>
+#include <mtt/render/Drawable/PipelineDrawable.h>
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
 #include <mtt/render/Pipeline/GraphicsPipeline.h>
 #include <mtt/render/Pipeline/Sampler.h>
@@ -39,7 +40,7 @@ namespace mtt
       virtual void buildDrawActions(DrawPlanBuildInfo& buildInfo) override;
 
     private:
-      class DrawTechnique
+      class DrawTechnique : public PipelineDrawable
       {
       public:
         DrawTechnique(bool weightRender,
@@ -49,16 +50,9 @@ namespace mtt
         DrawTechnique& operator = (const DrawTechnique&) = delete;
         virtual ~DrawTechnique() = default;
 
-        void invalidate() noexcept;
-
-        void addToDrawPlan(DrawPlanBuildInfo& buildInfo);
-
-        void resetPipelines() noexcept;
-
       private:
-        void _rebuildPipeline(AbstractRenderPass& renderPass, StageIndex stage);
-        void _adjustPipeline(GraphicsPipeline& pipeline);
-
+        virtual void adjustPipeline(GraphicsPipeline& pipeline) override;
+        virtual void buildDrawActions(DrawPlanBuildInfo& buildInfo) override;
         void _makeApplyAction(DrawPlanBuildInfo& buildInfo,
                               DrawBin& renderBin,
                               uint32_t pointsNumber,
@@ -69,8 +63,6 @@ namespace mtt
                                 uint32_t pointsNumber,
                                 const AmbientLightDrawData& lightData);
       private:
-        std::optional<GraphicsPipeline> _pipeline;
-
         bool _weightRender;
         bool _fullScreenRender;
 

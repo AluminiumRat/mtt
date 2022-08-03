@@ -8,6 +8,7 @@
 
 #include <mtt/clPipeline/Background/BackgroundProperties.h>
 #include <mtt/render/Drawable/Drawable.h>
+#include <mtt/render/Drawable/PipelineDrawable.h>
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
 #include <mtt/render/Pipeline/GraphicsPipeline.h>
 #include <mtt/render/Pipeline/InputAttachment.h>
@@ -37,7 +38,7 @@ namespace mtt
       virtual void buildDrawActions(DrawPlanBuildInfo& buildInfo) override;
 
     private:
-      class DrawTechnique
+      class DrawTechnique : public PipelineDrawable
       {
       public:
         DrawTechnique(BackgroundDrawable& parent);
@@ -45,14 +46,11 @@ namespace mtt
         DrawTechnique& operator = (const DrawTechnique&) = delete;
         virtual ~DrawTechnique() = default;
 
-        void addToDrawPlan(DrawPlanBuildInfo& buildInfo);
-        void invalidate() noexcept;
+      protected:
+        virtual void adjustPipeline(GraphicsPipeline& pipeline) override;
+        virtual void buildDrawActions(DrawPlanBuildInfo& buildInfo) override;
 
       private:
-        void _rebuildPipeline(AbstractRenderPass& renderPass, StageIndex stage);
-
-      private:
-        std::optional<GraphicsPipeline> _pipeline;
         BackgroundDrawable& _parent;
       };
 

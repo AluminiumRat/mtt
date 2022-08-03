@@ -11,69 +11,50 @@ using namespace mtt;
 using namespace mtt::clPipeline;
 
 PointLightApplicator::DrawTechnique::DrawTechnique(
-                                              bool fullscreenRender,
-                                              PointLight& light,
-                                              PointLightApplicator& applicator) :
+                                            bool fullscreenRender,
+                                            PointLight& light,
+                                            PointLightApplicator& applicator) :
+  PipelineDrawable(colorFrameType, lightingStage),
   _fullscreenRender(fullscreenRender),
   _light(light),
   _applicator(applicator)
 {
 }
 
-void PointLightApplicator::DrawTechnique::invalidatePipeline() noexcept
+void PointLightApplicator::DrawTechnique::adjustPipeline(
+                                                    GraphicsPipeline& pipeline)
 {
-  _pipeline.reset();
-}
+  pipeline.addResource( "lightDataBinding",
+                        _applicator._lightDataUniform,
+                        VK_SHADER_STAGE_VERTEX_BIT |
+                        VK_SHADER_STAGE_FRAGMENT_BIT);
 
-void PointLightApplicator::DrawTechnique::_rebuildPipeline(
-                                                AbstractRenderPass& renderPass)
-{
-  try
-  {
-    _pipeline.emplace(renderPass, lightingStage);
-    _adjustPipeline();
-    _pipeline->forceBuild();
-  }
-  catch(...)
-  {
-    invalidatePipeline();
-    throw;
-  }
-}
+  pipeline.addResource( "depthMapBinding",
+                        _applicator._depthMapSampler,
+                        VK_SHADER_STAGE_FRAGMENT_BIT);
 
-void PointLightApplicator::DrawTechnique::_adjustPipeline()
-{
-  _pipeline->addResource( "lightDataBinding",
-                          _applicator._lightDataUniform,
-                          VK_SHADER_STAGE_VERTEX_BIT |
-                          VK_SHADER_STAGE_FRAGMENT_BIT);
+  pipeline.addResource( "normalMapBinding",
+                        _applicator._normalMapSampler,
+                        VK_SHADER_STAGE_FRAGMENT_BIT);
 
-  _pipeline->addResource( "depthMapBinding",
-                          _applicator._depthMapSampler,
-                          VK_SHADER_STAGE_FRAGMENT_BIT);
+  pipeline.addResource( "albedoMapBinding",
+                        _applicator._albedoMapSampler,
+                        VK_SHADER_STAGE_FRAGMENT_BIT);
 
-  _pipeline->addResource( "normalMapBinding",
-                          _applicator._normalMapSampler,
-                          VK_SHADER_STAGE_FRAGMENT_BIT);
-
-  _pipeline->addResource( "albedoMapBinding",
-                          _applicator._albedoMapSampler,
-                          VK_SHADER_STAGE_FRAGMENT_BIT);
-
-  _pipeline->addResource( "specularMapBinding",
-                          _applicator._specularMapSampler,
-                          VK_SHADER_STAGE_FRAGMENT_BIT);
+  pipeline.addResource( "specularMapBinding",
+                        _applicator._specularMapSampler,
+                        VK_SHADER_STAGE_FRAGMENT_BIT);
 
   std::unique_ptr<ShaderModule> vertexShader(
                                   new ShaderModule( ShaderModule::VERTEX_SHADER,
-                                                    _pipeline->device()));
+                                                    pipeline.device()));
   vertexShader->newFragment().loadFromFile(
                                           "clPipeline/pointLightDrawable.vert");
-  _pipeline->addShader(std::move(vertexShader));
+  pipeline.addShader(std::move(vertexShader));
 
   std::unique_ptr<ShaderModule> fragmentShader(
                                 new ShaderModule( ShaderModule::FRAGMENT_SHADER,
-                                                  _pipeline->device()));
+                                                  pipeline.device()));
 
   fragmentShader->newFragment().loadFromFile("clPipeline/materialLib.glsl");
 
@@ -84,80 +65,76 @@ void PointLightApplicator::DrawTechnique::_adjustPipeline()
 
   if(_light.shadowmapProvider() != nullptr)
   {
-    _pipeline->setDefine("SHADOW_MAP_ENABLED");
+    pipeline.setDefine("SHADOW_MAP_ENABLED");
 
     ShaderModule::Fragment& shadowLibFragment = fragmentShader->newFragment();
     shadowLibFragment.loadFromFile("clPipeline/cubeShadowmapLib.glsl");
 
     shadowLibFragment.replace("$INDEX$", "");
 
-    _pipeline->addResource( "opaqueShadowMapBinding",
-                            *_light.opaqueShadowmapSampler(),
-                            VK_SHADER_STAGE_FRAGMENT_BIT);
+    pipeline.addResource( "opaqueShadowMapBinding",
+                          *_light.opaqueShadowmapSampler(),
+                          VK_SHADER_STAGE_FRAGMENT_BIT);
 
-    _pipeline->addResource( "transparentShadowMapBinding",
-                            *_light.transparentShadowmapSampler(),
-                            VK_SHADER_STAGE_FRAGMENT_BIT);
+    pipeline.addResource( "transparentShadowMapBinding",
+                          *_light.transparentShadowmapSampler(),
+                          VK_SHADER_STAGE_FRAGMENT_BIT);
 
-    _pipeline->addResource( "blurShiftsBinding",
-                            *_light.blurShiftsBuffer(),
-                            VK_SHADER_STAGE_FRAGMENT_BIT);
+    pipeline.addResource( "blurShiftsBinding",
+                          *_light.blurShiftsBuffer(),
+                          VK_SHADER_STAGE_FRAGMENT_BIT);
   }
   fragmentShader->newFragment().loadFromFile(
                                         "clPipeline/pointLightDrawable.frag");
   mtt::Sampler* filterSampler = _light.filterSampler();
   if (filterSampler != nullptr)
   {
-    _pipeline->addResource( "filterSamplerBinding",
-                            *filterSampler,
-                            VK_SHADER_STAGE_FRAGMENT_BIT);
-    _pipeline->setDefine("FILTER_SAMPLER_ENABLED");
+    pipeline.addResource( "filterSamplerBinding",
+                          *filterSampler,
+                          VK_SHADER_STAGE_FRAGMENT_BIT);
+    pipeline.setDefine("FILTER_SAMPLER_ENABLED");
   }
-  _pipeline->addShader(std::move(fragmentShader));
+  pipeline.addShader(std::move(fragmentShader));
 
   if(_fullscreenRender)
   {
-    _pipeline->setTopology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP);
-    _pipeline->setDefine("FULLSCREEN_ENABLED");
+    pipeline.setTopology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP);
+    pipeline.setDefine("FULLSCREEN_ENABLED");
   }
   else
   {
-    _pipeline->addResource( DrawMatrices::bindingName,
-                            _applicator._matricesUniform,
-                            VK_SHADER_STAGE_VERTEX_BIT);
-    _pipeline->setTopology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+    pipeline.addResource( DrawMatrices::bindingName,
+                          _applicator._matricesUniform,
+                          VK_SHADER_STAGE_VERTEX_BIT);
+    pipeline.setTopology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
   }
 }
 
-void PointLightApplicator::DrawTechnique::addToDrawPlan(
-                                              DrawPlanBuildInfo& buildInfo,
-                                              ImageView* opaqueShadowmap,
-                                              ImageView* transparentShadowmap)
+void PointLightApplicator::DrawTechnique::buildDrawActions(
+                                                  DrawPlanBuildInfo& buildInfo)
 {
-  AbstractRenderPass* renderPass = buildInfo.builder->stagePass(lightingStage);
-  if(renderPass == nullptr) return;
-
-  if (!_pipeline.has_value() || !_pipeline->isCompatible(*renderPass))
-  {
-    _rebuildPipeline(*renderPass);
-  }
-
+  PointLightData lightData = _light.buildDrawData(buildInfo);
   uint32_t pointsNumber = _fullscreenRender ? 4 : 36;
 
-  PointLightData lightData = _light.buildDrawData(buildInfo);
+  if(_light.shadowmapProvider() != nullptr)
+  {
+    CubeShadowmapProvider::Shadowmaps shadowmaps;
+    shadowmaps = _light.shadowmapProvider()->getShadowMaps(
+                                                  _light.shadowmapFrontCamera(),
+                                                  buildInfo);
+    if (shadowmaps.opaqueMap == nullptr ||
+        shadowmaps.transparentMap == nullptr)
+    {
+      return;
+    }
 
-  if(opaqueShadowmap == nullptr || transparentShadowmap == nullptr)
-  {
-    _makeNonshadowCommand(buildInfo, pointsNumber, lightData);
-  }
-  else
-  {
     _makeShadowCommand( buildInfo,
                         pointsNumber,
                         lightData,
-                        *opaqueShadowmap,
-                        *transparentShadowmap);
+                        *shadowmaps.opaqueMap,
+                        *shadowmaps.transparentMap);
   }
+  else _makeNonshadowCommand(buildInfo, pointsNumber, lightData);
 }
 
 void PointLightApplicator::DrawTechnique::_makeNonshadowCommand(
@@ -182,7 +159,7 @@ void PointLightApplicator::DrawTechnique::_makeNonshadowCommand(
                                     size_t>;
 
   renderBin->createAction<DrawAction>(0,
-                                      *_pipeline,
+                                      *pipeline(),
                                       buildInfo.viewport,
                                       buildInfo.scissor,
                                       pointsNumber,
@@ -235,7 +212,7 @@ void PointLightApplicator::DrawTechnique::_makeShadowCommand(
                                     Texture2D,
                                     size_t>;
   renderBin->createAction<DrawAction>(0,
-                                      *_pipeline,
+                                      *pipeline(),
                                       buildInfo.viewport,
                                       buildInfo.scissor,
                                       pointsNumber,
@@ -294,8 +271,8 @@ PointLightApplicator::PointLightApplicator( PointLight& light,
 
 void PointLightApplicator::resetPipelines() noexcept
 {
-  _shapeTechnique.invalidatePipeline();
-  _fullscreenTechnique.invalidatePipeline();
+  _shapeTechnique.resetPipeline();
+  _fullscreenTechnique.resetPipeline();
 }
 
 void PointLightApplicator::updateBound() noexcept
@@ -316,24 +293,8 @@ bool PointLightApplicator::_fullscreen(
 
 void PointLightApplicator::buildDrawActions(DrawPlanBuildInfo& buildInfo)
 {
-  if (buildInfo.frameType != colorFrameType) return;
   if (_light.distance() <= 0.f) return;
 
-  CubeShadowmapProvider::Shadowmaps shadowmaps;
-  if(_light.shadowmapProvider() != nullptr)
-  {
-    shadowmaps = _light.shadowmapProvider()->getShadowMaps(
-                                                  _light.shadowmapFrontCamera(),
-                                                  buildInfo);
-  }
-
-  if (_fullscreen(buildInfo))
-  {
-    _fullscreenTechnique.addToDrawPlan( buildInfo,
-                                        shadowmaps.opaqueMap,
-                                        shadowmaps.transparentMap);
-  }
-  else _shapeTechnique.addToDrawPlan( buildInfo,
-                                      shadowmaps.opaqueMap,
-                                      shadowmaps.transparentMap);
+  if (_fullscreen(buildInfo)) _fullscreenTechnique.addToDrawPlan(buildInfo);
+  else _shapeTechnique.addToDrawPlan(buildInfo);
 }

@@ -13,66 +13,47 @@ SpotLightApplicator::DrawTechnique::DrawTechnique(
                                               bool fullscreenRender,
                                               SpotLight& light,
                                               SpotLightApplicator& applicator) :
+  PipelineDrawable(colorFrameType, lightingStage),
   _fullscreenRender(fullscreenRender),
   _light(light),
   _applicator(applicator)
 {
 }
 
-void SpotLightApplicator::DrawTechnique::invalidatePipeline() noexcept
+void SpotLightApplicator::DrawTechnique::adjustPipeline(
+                                                    GraphicsPipeline& pipeline)
 {
-  _pipeline.reset();
-}
+  pipeline.addResource( "lightDataBinding",
+                        _applicator._lightDataUniform,
+                        VK_SHADER_STAGE_VERTEX_BIT |
+                        VK_SHADER_STAGE_FRAGMENT_BIT);
 
-void SpotLightApplicator::DrawTechnique::_rebuildPipeline(
-                                                AbstractRenderPass& renderPass)
-{
-  try
-  {
-    _pipeline.emplace(renderPass, lightingStage);
-    _adjustPipeline();
-    _pipeline->forceBuild();
-  }
-  catch(...)
-  {
-    invalidatePipeline();
-    throw;
-  }
-}
+  pipeline.addResource( "depthMapBinding",
+                        _applicator._depthMapSampler,
+                        VK_SHADER_STAGE_FRAGMENT_BIT);
 
-void SpotLightApplicator::DrawTechnique::_adjustPipeline()
-{
-  _pipeline->addResource( "lightDataBinding",
-                          _applicator._lightDataUniform,
-                          VK_SHADER_STAGE_VERTEX_BIT |
-                          VK_SHADER_STAGE_FRAGMENT_BIT);
+  pipeline.addResource( "normalMapBinding",
+                        _applicator._normalMapSampler,
+                        VK_SHADER_STAGE_FRAGMENT_BIT);
 
-  _pipeline->addResource( "depthMapBinding",
-                          _applicator._depthMapSampler,
-                          VK_SHADER_STAGE_FRAGMENT_BIT);
+  pipeline.addResource( "albedoMapBinding",
+                        _applicator._albedoMapSampler,
+                        VK_SHADER_STAGE_FRAGMENT_BIT);
 
-  _pipeline->addResource( "normalMapBinding",
-                          _applicator._normalMapSampler,
-                          VK_SHADER_STAGE_FRAGMENT_BIT);
-
-  _pipeline->addResource( "albedoMapBinding",
-                          _applicator._albedoMapSampler,
-                          VK_SHADER_STAGE_FRAGMENT_BIT);
-
-  _pipeline->addResource( "specularMapBinding",
-                          _applicator._specularMapSampler,
-                          VK_SHADER_STAGE_FRAGMENT_BIT);
+  pipeline.addResource( "specularMapBinding",
+                        _applicator._specularMapSampler,
+                        VK_SHADER_STAGE_FRAGMENT_BIT);
 
   std::unique_ptr<ShaderModule> vertexShader(
                                   new ShaderModule( ShaderModule::VERTEX_SHADER,
-                                                    _pipeline->device()));
+                                                    pipeline.device()));
   vertexShader->newFragment().loadFromFile(
                                         "clPipeline/spotLightDrawable.vert");
-  _pipeline->addShader(std::move(vertexShader));
+  pipeline.addShader(std::move(vertexShader));
 
   std::unique_ptr<ShaderModule> fragmentShader(
                                 new ShaderModule( ShaderModule::FRAGMENT_SHADER,
-                                                  _pipeline->device()));
+                                                  pipeline.device()));
 
   fragmentShader->newFragment().loadFromFile("clPipeline/materialLib.glsl");
 
@@ -83,76 +64,70 @@ void SpotLightApplicator::DrawTechnique::_adjustPipeline()
 
   if(_light.shadowMapProvider() != nullptr)
   {
-    _pipeline->setDefine("SHADOW_MAP_ENABLED");
+    pipeline.setDefine("SHADOW_MAP_ENABLED");
 
     ShaderModule::Fragment& shadowLibFragment = fragmentShader->newFragment();
     shadowLibFragment.loadFromFile("clPipeline/shadowmapLib.glsl");
 
     shadowLibFragment.replace("$INDEX$", "");
 
-    _pipeline->addResource( "opaqueShadowMapBinding",
-                            *_light.opaqueShadowmapSampler(),
-                            VK_SHADER_STAGE_FRAGMENT_BIT);
+    pipeline.addResource( "opaqueShadowMapBinding",
+                          *_light.opaqueShadowmapSampler(),
+                          VK_SHADER_STAGE_FRAGMENT_BIT);
 
-    _pipeline->addResource( "transparentShadowMapBinding",
-                            *_light.transparentShadowmapSampler(),
-                            VK_SHADER_STAGE_FRAGMENT_BIT);
+    pipeline.addResource( "transparentShadowMapBinding",
+                          *_light.transparentShadowmapSampler(),
+                          VK_SHADER_STAGE_FRAGMENT_BIT);
   }
   fragmentShader->newFragment().loadFromFile(
                                         "clPipeline/spotLightDrawable.frag");
   mtt::Sampler* filterSampler = _light.filterSampler();
   if (filterSampler != nullptr)
   {
-    _pipeline->addResource( "filterSamplerBinding",
+    pipeline.addResource( "filterSamplerBinding",
                             *filterSampler,
                             VK_SHADER_STAGE_FRAGMENT_BIT);
-    _pipeline->setDefine("FILTER_SAMPLER_ENABLED");
+    pipeline.setDefine("FILTER_SAMPLER_ENABLED");
   }
-  _pipeline->addShader(std::move(fragmentShader));
+  pipeline.addShader(std::move(fragmentShader));
 
   if(_fullscreenRender)
   {
-    _pipeline->setTopology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP);
-    _pipeline->setDefine("FULLSCREEN_ENABLED");
+    pipeline.setTopology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP);
+    pipeline.setDefine("FULLSCREEN_ENABLED");
   }
   else
   {
-    _pipeline->addResource( DrawMatrices::bindingName,
+    pipeline.addResource( DrawMatrices::bindingName,
                             _applicator._matricesUniform,
                             VK_SHADER_STAGE_VERTEX_BIT);
-    _pipeline->setTopology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+    pipeline.setTopology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
   }
 }
 
-void SpotLightApplicator::DrawTechnique::addToDrawPlan(
-                                              DrawPlanBuildInfo& buildInfo,
-                                              ImageView* opaqueShadowMap,
-                                              ImageView* transparentShadowMap)
+void SpotLightApplicator::DrawTechnique::buildDrawActions(
+                                                  DrawPlanBuildInfo& buildInfo)
 {
-  AbstractRenderPass* renderPass = buildInfo.builder->stagePass(lightingStage);
-  if(renderPass == nullptr) return;
-
-  if (!_pipeline.has_value() || !_pipeline->isCompatible(*renderPass))
-  {
-    _rebuildPipeline(*renderPass);
-  }
-
   uint32_t pointsNumber = _fullscreenRender ? 4 : 18;
-
   SpotLightData lightData = _light.buildDrawData(buildInfo);
 
-  if(transparentShadowMap == nullptr || opaqueShadowMap == nullptr)
+  if(_light.shadowMapProvider() != nullptr)
   {
-    _makeNonshadowCommand(buildInfo, pointsNumber, lightData);
-  }
-  else
-  {
+    ShadowMapProvider::Shadowmaps shadowmaps =
+            _light.shadowMapProvider()->getShadowMaps(_light.shadowmapCamera(),
+                                                      buildInfo);
+    if (shadowmaps.opaqueMap == nullptr ||
+        shadowmaps.transparentMap == nullptr)
+    {
+      return;
+    }
     _makeShadowCommand( buildInfo,
                         pointsNumber,
                         lightData,
-                        *opaqueShadowMap,
-                        *transparentShadowMap);
+                        *shadowmaps.opaqueMap,
+                        *shadowmaps.transparentMap);
   }
+  else _makeNonshadowCommand(buildInfo, pointsNumber, lightData);
 }
 
 void SpotLightApplicator::DrawTechnique::_makeNonshadowCommand(
@@ -177,7 +152,7 @@ void SpotLightApplicator::DrawTechnique::_makeNonshadowCommand(
                                     size_t>;
 
   renderBin->createAction<DrawAction>(0,
-                                      *_pipeline,
+                                      *pipeline(),
                                       buildInfo.viewport,
                                       buildInfo.scissor,
                                       pointsNumber,
@@ -230,7 +205,7 @@ void SpotLightApplicator::DrawTechnique::_makeShadowCommand(
                                     Texture2D,
                                     size_t>;
   renderBin->createAction<DrawAction>(0,
-                                      *_pipeline,
+                                      *pipeline(),
                                       buildInfo.viewport,
                                       buildInfo.scissor,
                                       pointsNumber,
@@ -289,8 +264,8 @@ SpotLightApplicator::SpotLightApplicator( SpotLight& light,
 
 void SpotLightApplicator::resetPipelines() noexcept
 {
-  _shapeTechnique.invalidatePipeline();
-  _fullscreenTechnique.invalidatePipeline();
+  _shapeTechnique.resetPipeline();
+  _fullscreenTechnique.resetPipeline();
 }
 
 void SpotLightApplicator::updateBound() noexcept
@@ -311,31 +286,9 @@ bool SpotLightApplicator::_fullscreen(
 
 void SpotLightApplicator::buildDrawActions(DrawPlanBuildInfo& buildInfo)
 {
-  if (buildInfo.frameType != colorFrameType) return;
   if (_light.angle() <= .0f) return;
   if (_light.distance() <= 0.f) return;
 
-  ImageView* opaqueShadowmap = nullptr;
-  ImageView* transparentShadowmap = nullptr;
-  if(_light.shadowMapProvider() != nullptr)
-  {
-    ShadowMapProvider::Shadowmaps shadowmaps =
-            _light.shadowMapProvider()->getShadowMaps(_light.shadowmapCamera(),
-                                                      buildInfo);
-    opaqueShadowmap = shadowmaps.opaqueMap;
-    transparentShadowmap = shadowmaps.transparentMap;
-  }
-
-  if (_fullscreen(buildInfo))
-  {
-    _fullscreenTechnique.addToDrawPlan( buildInfo,
-                                        opaqueShadowmap,
-                                        transparentShadowmap);
-  }
-  else
-  {
-    _shapeTechnique.addToDrawPlan(buildInfo,
-                                  opaqueShadowmap,
-                                  transparentShadowmap);
-  }
+  if (_fullscreen(buildInfo)) _fullscreenTechnique.addToDrawPlan(buildInfo);
+  else _shapeTechnique.addToDrawPlan(buildInfo);
 }

@@ -4,6 +4,7 @@
 
 #include <mtt/clPipeline/Lighting/ShadowMapProvider.h>
 #include <mtt/clPipeline/Lighting/PointLightData.h>
+#include <mtt/render/Drawable/PipelineDrawable.h>
 #include <mtt/render/Pipeline/GraphicsPipeline.h>
 #include <mtt/render/Pipeline/Sampler.h>
 #include <mtt/render/Pipeline/Texture2D.h>
@@ -35,7 +36,7 @@ namespace mtt
       virtual void buildDrawActions(DrawPlanBuildInfo& buildInfo) override;
 
     private:
-      class DrawTechnique
+      class DrawTechnique : public PipelineDrawable
       {
       public:
         DrawTechnique(bool fullscreenRender,
@@ -45,15 +46,11 @@ namespace mtt
         DrawTechnique& operator = (const DrawTechnique&) = delete;
         virtual ~DrawTechnique() = default;
 
-        void invalidatePipeline() noexcept;
-        void addToDrawPlan( DrawPlanBuildInfo& buildInfo,
-                            ImageView* opaqueShadowmap,
-                            ImageView* transparentShadowmap);
+      protected:
+        virtual void adjustPipeline(GraphicsPipeline& pipeline) override;
+        virtual void buildDrawActions(DrawPlanBuildInfo& buildInfo) override;
 
       private:
-        void _rebuildPipeline(AbstractRenderPass& renderPass);
-        void _adjustPipeline();
-
         void _makeNonshadowCommand( DrawPlanBuildInfo& buildInfo,
                                     uint32_t pointsNumber,
                                     const PointLightData& lightData);
@@ -66,7 +63,6 @@ namespace mtt
 
       private:
         bool _fullscreenRender;
-        std::optional<GraphicsPipeline> _pipeline;
         PointLight& _light;
         PointLightApplicator& _applicator;
       };

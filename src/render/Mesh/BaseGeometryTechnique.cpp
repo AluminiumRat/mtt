@@ -16,6 +16,7 @@ BaseGeometryTechnique::BaseGeometryTechnique( int availableFeatures,
   _availableFeatures(availableFeatures),
   _stage(stage),
   _priorityOrder(priorityOrder),
+  _initialized(false),
   _positionsBuffer(nullptr),
   _normalBuffer(nullptr),
   _tangentBuffer(nullptr),
@@ -361,22 +362,7 @@ void BaseGeometryTechnique::invalidatePipeline() noexcept
   _pipeline.reset();
   _matricesUniform.reset();
   _boneMatricesUniform.reset();
-}
-
-void BaseGeometryTechnique::_rebuildPipeline(AbstractRenderPass& renderPass)
-{
-  invalidatePipeline();
-  _pipeline.emplace(renderPass, _stage);
-
-  try
-  {
-    adjustPipeline(_pipeline.value(), renderPass);
-  }
-  catch(...)
-  {
-    invalidatePipeline();
-    throw;
-  }
+  _initialized = false;
 }
 
 void BaseGeometryTechnique::adjustPipeline( GraphicsPipeline& pipeline,
@@ -534,9 +520,35 @@ void BaseGeometryTechnique::addToDrawPlan(DrawPlanBuildInfo& buildInfo)
   AbstractRenderPass* renderPass = buildInfo.builder->stagePass(_stage);
   if(renderPass == nullptr) return;
 
-  if (!_pipeline.has_value() || !_pipeline->isCompatible(*renderPass))
+  if (_pipeline.has_value() && !_pipeline->isCompatible(*renderPass))
   {
-    _rebuildPipeline(*renderPass);
+    invalidatePipeline();
+  }
+
+  if (!_pipeline.has_value())
+  {
+    if(_initialized) return;
+    _initialized = true;
+
+    try
+    {
+      _pipeline.emplace(*renderPass, _stage);
+      adjustPipeline(_pipeline.value(), *renderPass);
+    }
+    catch (std::exception& error)
+    {
+      invalidatePipeline();
+      _initialized = true;
+      Log() << "BaseGeometryTechnique::addToDrawPlan: " << error.what();
+      return;
+    }
+    catch (...)
+    {
+      invalidatePipeline();
+      _initialized = true;
+      Log() << "BaseGeometryTechnique::addToDrawPlan: unknown error";
+      return;
+    }
   }
 
   createRenderAction( buildInfo,

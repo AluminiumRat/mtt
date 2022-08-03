@@ -125,14 +125,12 @@ namespace mtt
     struct CollectActionType;
 
   private:
-    void _rebuildPipeline(AbstractRenderPass& renderPass);
-
-  private:
     int _availableFeatures;
     StageIndex _stage;
 
     PriorityOrder _priorityOrder;
 
+    bool _initialized;
     std::optional<GraphicsPipeline> _pipeline;
     std::optional<MatricesUniform> _matricesUniform;
 

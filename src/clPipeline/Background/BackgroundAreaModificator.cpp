@@ -45,63 +45,51 @@ void BackgroundAreaModificator::adjustPipeline(
                                               ShaderModule& targetShader,
                                               size_t modificatorIndex)
 {
-  try
-  {
-    std::string indexStr = std::to_string(modificatorIndex);
+  std::string indexStr = std::to_string(modificatorIndex);
 
-    ShaderModule::Fragment& fragment = targetShader.newFragment();
-    fragment.loadFromFile("clPipeline/backgroundModificator.glsl");
+  ShaderModule::Fragment& fragment = targetShader.newFragment();
+  fragment.loadFromFile("clPipeline/backgroundModificator.glsl");
 
-    std::string applyFunctionName("modificator");
-    applyFunctionName += indexStr;
-    fragment.replace("$APPLY_FUNCTION$", applyFunctionName);
+  std::string applyFunctionName("modificator");
+  applyFunctionName += indexStr;
+  fragment.replace("$APPLY_FUNCTION$", applyFunctionName);
 
-    const std::string* declaration =
+  const std::string* declaration =
                             targetShader.defineValue("MODIFICATOR_DECLARATION");
-    if (declaration != nullptr)
-    {
-      std::string newDeclaration = *declaration +
+  if (declaration != nullptr)
+  {
+    std::string newDeclaration = *declaration +
                             (std::string("void ") + applyFunctionName + "();");
-      targetShader.setDefine("MODIFICATOR_DECLARATION", newDeclaration);
-    }
+    targetShader.setDefine("MODIFICATOR_DECLARATION", newDeclaration);
+  }
 
-    const std::string* apply = targetShader.defineValue("APPLY_POSTEFFECT");
-    if (apply != nullptr)
-    {
-      std::string newApply = *apply + (applyFunctionName + "();");
-      targetShader.setDefine("APPLY_POSTEFFECT", newApply);
-    }
+  const std::string* apply = targetShader.defineValue("APPLY_POSTEFFECT");
+  if (apply != nullptr)
+  {
+    std::string newApply = *apply + (applyFunctionName + "();");
+    targetShader.setDefine("APPLY_POSTEFFECT", newApply);
+  }
 
-    fragment.replace("$INDEX$", indexStr);
+  fragment.replace("$INDEX$", indexStr);
 
-    std::string drawDataBindingName("drawDataBinding");
-    drawDataBindingName += indexStr;
-    targetPipeline.addResource( drawDataBindingName,
-                                _drawDataUniform,
+  std::string drawDataBindingName("drawDataBinding");
+  drawDataBindingName += indexStr;
+  targetPipeline.addResource( drawDataBindingName,
+                              _drawDataUniform,
+                              targetShader.type());
+
+  if(_luminanceSampler.attachedTexture(0) != nullptr)
+  {
+    fragment.replace("$LUMINANCE_SAMPLER_ENABLED$", "1");
+
+    std::string luminanceSamplerBindingName("luminanceTextureBinding");
+    luminanceSamplerBindingName += indexStr;
+    targetPipeline.addResource( luminanceSamplerBindingName,
+                                _luminanceSampler,
                                 targetShader.type());
-
-    if(_luminanceSampler.attachedTexture(0) != nullptr)
-    {
-      fragment.replace("$LUMINANCE_SAMPLER_ENABLED$", "1");
-
-      std::string luminanceSamplerBindingName("luminanceTextureBinding");
-      luminanceSamplerBindingName += indexStr;
-      targetPipeline.addResource( luminanceSamplerBindingName,
-                                  _luminanceSampler,
-                                  targetShader.type());
-    }
-    else
-    {
-      fragment.replace("$LUMINANCE_SAMPLER_ENABLED$", "0");
-    }
   }
-  catch (std::exception& error)
+  else
   {
-    mtt::Log() << error.what();
-    mtt::Abort("BackgroundAreaModificator::adjustPipeline: unable to adjust pipeline.");
-  }
-  catch (...)
-  {
-    mtt::Abort("BackgroundAreaModificator::adjustPipeline: unknown error.");
+    fragment.replace("$LUMINANCE_SAMPLER_ENABLED$", "0");
   }
 }
