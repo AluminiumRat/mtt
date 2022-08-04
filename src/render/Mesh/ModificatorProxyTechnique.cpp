@@ -38,8 +38,12 @@ void ModificatorProxyTechnique::registerAreaModificators(
   }
   catch (...)
   {
-    _subtechniques.pop_back();
+    if (!_subtechniques.empty() && _subtechniques.back().set == &set)
+    {
+      _subtechniques.pop_back();
+    }
     CompositeMeshTechnique::unregisterAreaModificators(set);
+    throw;
   }
 }
 

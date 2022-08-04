@@ -1,12 +1,12 @@
 #pragma once
 
-#include <mtt/clPipeline/MeshTechniques/TransparentProxyTechnique.h>
+#include <mtt/render/Drawable/ModificatorProxyDrawable.h>
 
 namespace mtt
 {
   class ParticlesDrawCommonData;
 
-  class ParticlesProxyTechnique : public ModificatorProxyTechnique
+  class ParticlesProxyTechnique : public ModificatorProxyDrawable
   {
   public:
     ParticlesProxyTechnique(ParticlesDrawCommonData& commonData);
@@ -15,11 +15,11 @@ namespace mtt
                                       const ParticlesProxyTechnique&) = delete;
     virtual ~ParticlesProxyTechnique() noexcept = default;
 
-    void clearPipelines() noexcept;
+    void resetPipelines() noexcept;
 
   protected:
-    virtual std::unique_ptr<AbstractMeshTechnique>
-                              createTechnique(AreaModificatorSet& set) override;
+    virtual std::unique_ptr<Drawable>
+                            createSubdrawable(AreaModificatorSet& set) override;
 
   private:
     ParticlesDrawCommonData& _commonData;

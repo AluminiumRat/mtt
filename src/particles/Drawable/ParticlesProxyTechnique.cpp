@@ -9,20 +9,20 @@ ParticlesProxyTechnique::ParticlesProxyTechnique(
 {
 }
 
-void ParticlesProxyTechnique::clearPipelines() noexcept
+void ParticlesProxyTechnique::resetPipelines() noexcept
 {
   for(size_t techniqueIndex = 0;
-      techniqueIndex < subtechniquesNumber();
+      techniqueIndex < childsNumber();
       techniqueIndex++)
   {
     ParticlesColorTechnique& technqiue =
-            static_cast<ParticlesColorTechnique&>(subtechnique(techniqueIndex));
-    technqiue.clearPipeline();
+            static_cast<ParticlesColorTechnique&>(child(techniqueIndex));
+    technqiue.resetPipeline();
   }
 }
 
-std::unique_ptr<AbstractMeshTechnique>
-              ParticlesProxyTechnique::createTechnique(AreaModificatorSet& set)
+std::unique_ptr<Drawable>
+            ParticlesProxyTechnique::createSubdrawable(AreaModificatorSet& set)
 {
   return std::make_unique<ParticlesColorTechnique>(_commonData, set);
 }

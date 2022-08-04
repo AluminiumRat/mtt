@@ -7,12 +7,17 @@ using namespace mtt;
 
 ParticlesShadowmapTechnique::ParticlesShadowmapTechnique(
                                           ParticlesDrawCommonData& commonData) :
-  ParticlesAbstractTechnique(commonData, clPipeline::shadowmapStage, 3)
+  ParticlesAbstractTechnique( commonData,
+                              clPipeline::transparentShadowmapFrameType,
+                              clPipeline::shadowmapStage,
+                              3)
 {
 }
 
 void ParticlesShadowmapTechnique::adjustPipeline(GraphicsPipeline& pipeline)
 {
+  ParticlesAbstractTechnique::adjustPipeline(pipeline);
+
   pipeline.setDepthTestEnable(false);
   pipeline.setDepthWriteEnable(false);
   pipeline.setDepthCompareOp(VK_COMPARE_OP_GREATER_OR_EQUAL);

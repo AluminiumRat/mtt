@@ -1,35 +1,32 @@
 #pragma once
 
 #include <mtt/particles/Drawable/ParticlesDrawCommonData.h>
+#include <mtt/render/Drawable/PipelineDrawable.h>
 #include <mtt/render/DrawPlan/DrawPlanBuildInfo.h>
-#include <mtt/render/Mesh/AbstractMeshTechnique.h>
-#include <mtt/render/Pipeline/GraphicsPipeline.h>
 #include <mtt/render/Pipeline/VolatileUniform.h>
 
 namespace mtt
 {
   class AbstractRenderPass;
 
-  class ParticlesAbstractTechnique : public AbstractMeshTechnique
+  class ParticlesAbstractTechnique : public PipelineDrawable
   {
   public:
     ParticlesAbstractTechnique( ParticlesDrawCommonData& commonData,
-                                StageIndex stage,
+                                FrameType frameType,
+                                StageIndex stageIndex,
                                 uint8_t thinningFactor);
     ParticlesAbstractTechnique(const ParticlesAbstractTechnique&) = delete;
     ParticlesAbstractTechnique& operator = (
                                     const ParticlesAbstractTechnique&) = delete;
     virtual ~ParticlesAbstractTechnique() noexcept = default;
 
-    inline StageIndex stage() const noexcept;
-
-    void clearPipeline() noexcept;
-    virtual void addToDrawPlan(DrawPlanBuildInfo& buildInfo) override;
-
   protected:
     inline ParticlesDrawCommonData& commonData() const noexcept;
 
-    virtual void adjustPipeline(GraphicsPipeline& pipeline) = 0;
+    virtual void adjustPipeline(GraphicsPipeline& pipeline) override;
+    virtual void buildDrawActions(DrawPlanBuildInfo& buildInfo) override;
+
     virtual void buildDrawAction(
                     DrawBin& renderBin,
                     DrawPlanBuildInfo& buildInfo,
@@ -43,7 +40,6 @@ namespace mtt
 
   private:
     std::string _makeTextureExtentDefine() const;
-    void _rebuildPipeline(AbstractRenderPass& renderPass);
 
     struct IndicesData
     {
@@ -56,22 +52,15 @@ namespace mtt
 
   private:
     ParticlesDrawCommonData& _commonData;
-    StageIndex _stage;
     uint8_t _thinningFactor;
     VolatileUniform<DrawMatrices> _matricesUniform;
     VolatileUniform<MppxDistanceFunction> _mppxFunctionUniform;
     VolatileUniform<glm::vec2> _fallofUniform;
-    std::optional<GraphicsPipeline> _pipeline;
   };
 
   inline ParticlesDrawCommonData&
                         ParticlesAbstractTechnique::commonData() const noexcept
   {
     return _commonData;
-  }
-
-  inline StageIndex ParticlesAbstractTechnique::stage() const noexcept
-  {
-    return _stage;
   }
 }

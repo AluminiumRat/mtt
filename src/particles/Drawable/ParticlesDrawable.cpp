@@ -77,8 +77,8 @@ void ParticlesDrawable::setData(const std::vector<glm::vec3>& positionData,
 void ParticlesDrawable::setParticleTextures(
                                       const std::vector<TextureData>& textures)
 {
-  _colorTechnique.clearPipelines();
-  _shadowmapTechnique.clearPipeline();
+  _colorTechnique.resetPipelines();
+  _shadowmapTechnique.resetPipeline();
   _commonData.textureSampler.reset();
   _commonData.textureData.clear();
 
@@ -124,21 +124,15 @@ void ParticlesDrawable::setLightingType(
   if(newValue == lightingType()) return;
   _commonData.lightingType =
                   static_cast<ParticlesDrawCommonData::LightingType>(newValue);
-  _colorTechnique.clearPipelines();
-  _shadowmapTechnique.clearPipeline();
+  _colorTechnique.resetPipelines();
+  _shadowmapTechnique.resetPipeline();
 }
 
 void ParticlesDrawable::buildDrawActions(DrawPlanBuildInfo& buildInfo)
 {
   if(_commonData.particlesNumber == 0) return;
-  if(buildInfo.frameType == clPipeline::colorFrameType)
-  {
-    _colorTechnique.addToDrawPlan(buildInfo);
-  }
-  if(buildInfo.frameType == clPipeline::transparentShadowmapFrameType)
-  {
-    _shadowmapTechnique.addToDrawPlan(buildInfo);
-  }
+  _colorTechnique.addToDrawPlan(buildInfo);
+  _shadowmapTechnique.addToDrawPlan(buildInfo);
 }
 
 void ParticlesDrawable::registerAreaModificators(AreaModificatorSet& set)

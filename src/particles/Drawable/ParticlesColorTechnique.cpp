@@ -11,7 +11,10 @@ using namespace mtt;
 ParticlesColorTechnique::ParticlesColorTechnique(
                                           ParticlesDrawCommonData& commonData,
                                           AreaModificatorSet& modificatorSet) :
-  ParticlesAbstractTechnique(commonData, clPipeline::forwardLightStage, 1),
+  ParticlesAbstractTechnique( commonData,
+                              clPipeline::colorFrameType,
+                              clPipeline::forwardLightStage,
+                              1),
   _modificatorSet(modificatorSet)
 {
   for (AreaModificator* modificator : _modificatorSet.modificators())
@@ -40,7 +43,7 @@ ParticlesColorTechnique::~ParticlesColorTechnique()
 
 void ParticlesColorTechnique::resetPipeline() noexcept
 {
-  clearPipeline();
+  ParticlesAbstractTechnique::resetPipeline();
 }
 
 void ParticlesColorTechnique::_applyAreaModifictors(ShaderModule& shader,
@@ -79,6 +82,8 @@ void ParticlesColorTechnique::_applyAreaModifictors(ShaderModule& shader,
 
 void ParticlesColorTechnique::adjustPipeline(GraphicsPipeline& pipeline)
 {
+  ParticlesAbstractTechnique::adjustPipeline(pipeline);
+
   pipeline.setDepthTestEnable(true);
   pipeline.setDepthWriteEnable(false);
   pipeline.setDepthCompareOp(VK_COMPARE_OP_GREATER_OR_EQUAL);
