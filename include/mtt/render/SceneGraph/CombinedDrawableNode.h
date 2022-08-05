@@ -16,7 +16,7 @@ namespace mtt
     CombinedDrawableNode(const CombinedDrawableNode&) = delete;
     CombinedDrawableNode& operator = (const CombinedDrawableNode&) = delete;
     virtual ~CombinedDrawableNode() noexcept;
-  
+
     virtual void addNode(DrawableNode& node);
     virtual void removeNode(DrawableNode& node) noexcept;
 

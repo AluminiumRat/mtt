@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/fireExample">
+    <qresource prefix="/">
       <file>fire.pst</file>
       <file>sprites.png</file>
     </qresource>

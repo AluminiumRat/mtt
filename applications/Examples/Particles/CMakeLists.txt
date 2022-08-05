@@ -42,7 +42,7 @@ set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 
 add_executable (Particles
                 "main.cpp"
-                "resources.qrc")
+                "../resources/fire.qrc")
 
 target_link_libraries(Particles
                       ${Vulkan_LIBRARIES}

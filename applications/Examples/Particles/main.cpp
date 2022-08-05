@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
     light.setDistance(5);
     light.setIlluminance(glm::vec3(.225f, .12f, .04f));
 
-    mtt::PSTEffect effect(":/fireExample/fire.pst",
+    mtt::PSTEffect effect(":/fire.pst",
                           nullptr,
                           application.displayDevice());
     QTimer updateTimer;
