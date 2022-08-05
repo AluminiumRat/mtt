@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+      <file>Dino.mmd</file>
+      <file>Dino.png</file>
+      <file>dinoWalk.fbx</file>
+    </qresource>
+</RCC>

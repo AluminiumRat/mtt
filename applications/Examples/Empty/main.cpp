@@ -13,9 +13,6 @@ int main(int argc, char* argv[])
   try
   {
     VkPhysicalDeviceFeatures features{};
-    features.samplerAnisotropy = VK_TRUE;
-    features.geometryShader = VK_TRUE;
-
     mtt::Application application( argc,
                                   argv,
                                   "Mtt particles example",
@@ -28,14 +25,10 @@ int main(int argc, char* argv[])
     window.setFixedSize(800, 600);
     window.show();
 
+    mtt::RenderScene scene;
+
     mtt::CameraNode camera;
     camera.setPerspectiveProjection(glm::pi<float>() / 2.f, 1.33f, 0.1f, 50.f);
-
-    mtt::clPipeline::DirectLight light(true, true, application.displayDevice());
-    light.setTransformMatrix(glm::translate(glm::vec3(0.f, 0.f, 10.f)));
-
-    mtt::RenderScene scene;
-    scene.addCompositeObject(light);
 
     window.setSource(&scene, &camera);
 

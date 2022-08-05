@@ -18,7 +18,6 @@ int main(int argc, char* argv[])
   try
   {
     VkPhysicalDeviceFeatures features{};
-    features.samplerAnisotropy = VK_TRUE;
     features.geometryShader = VK_TRUE;
 
     mtt::Application application( argc,
@@ -32,9 +31,6 @@ int main(int argc, char* argv[])
     mtt::RenderWidget window;
     window.setFixedSize(800, 600);
     window.show();
-
-    mtt::CameraNode camera;
-    camera.setPerspectiveProjection(glm::pi<float>() / 2.f, 1.33f, 0.1f, 50.f);
 
     mtt::clPipeline::PointLight light(true, true, application.displayDevice());
     light.setDistance(5);
@@ -57,6 +53,9 @@ int main(int argc, char* argv[])
     mtt::RenderScene scene;
     scene.addCompositeObject(light);
     scene.addCulledDrawable(effect);
+
+    mtt::CameraNode camera;
+    camera.setPerspectiveProjection(glm::pi<float>() / 2.f, 1.33f, 0.1f, 50.f);
 
     window.setSource(&scene, &camera);
 
