@@ -13,6 +13,42 @@
 #include <mtt/render/SceneGraph/CameraNode.h>
 #include <mtt/render/RenderScene.h>
 
+class Scene : public mtt::RenderScene
+{
+private:
+  mtt::clPipeline::PointLight light;
+  mtt::PSTEffect effect;
+  QTimer updateTimer;
+
+public:
+  Scene(mtt::LogicalDevice& displayDevice) :
+    light(true, true, displayDevice),
+    effect(":/fire.pst", nullptr, displayDevice)
+  {
+    light.setDistance(5);
+    light.setIlluminance(glm::vec3(.225f, .12f, .04f));
+
+    updateTimer.setSingleShot(false);
+    QTimer::connect(&updateTimer,
+                    &QTimer::timeout,
+                    [&]
+                    {
+                      effect.setTime(
+                                  effect.currentTime() + 30 * mtt::millisecond);
+                    });
+    updateTimer.start(30);
+
+    addCompositeObject(light);
+    addCulledDrawable(effect);
+  }
+
+  ~Scene()
+  {
+    removeCompositeObject(light);
+    removeCulledDrawable(effect);
+  }
+};
+
 int main(int argc, char* argv[])
 {
   try
@@ -32,27 +68,7 @@ int main(int argc, char* argv[])
     window.setFixedSize(800, 600);
     window.show();
 
-    mtt::clPipeline::PointLight light(true, true, application.displayDevice());
-    light.setDistance(5);
-    light.setIlluminance(glm::vec3(.225f, .12f, .04f));
-
-    mtt::PSTEffect effect(":/fire.pst",
-                          nullptr,
-                          application.displayDevice());
-    QTimer updateTimer;
-    updateTimer.setSingleShot(false);
-    QTimer::connect(&updateTimer,
-                    &QTimer::timeout,
-                    [&]
-                    {
-                      effect.setTime(
-                                  effect.currentTime() + 30 * mtt::millisecond);
-                    });
-    updateTimer.start(30);
-
-    mtt::RenderScene scene;
-    scene.addCompositeObject(light);
-    scene.addCulledDrawable(effect);
+    Scene scene(application.displayDevice());
 
     mtt::CameraNode camera;
     camera.setPerspectiveProjection(glm::pi<float>() / 2.f, 1.33f, 0.1f, 50.f);
