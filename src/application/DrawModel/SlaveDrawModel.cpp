@@ -14,6 +14,7 @@ SlaveDrawModel::SlaveDrawModel(std::shared_ptr<MasterDrawModel> masterModel) :
   _copyJoints(nodeMap);
   _copyMeshes(nodeMap);
   _connectNodes(nodeMap);
+  _switchBoneRefs(nodeMap);
 
   for(std::unique_ptr<SkinControlNode>& mesh : _meshes)
   {
@@ -71,6 +72,21 @@ void SlaveDrawModel::_connectNodes(const NodeMap& nodeMap)
       NodeMap::const_iterator iChild = nodeMap.find(&originalChild);
       if(iChild != nodeMap.end()) slaveJoint->addChild(*iChild->second);
     }
+  }
+}
+
+void SlaveDrawModel::_switchBoneRefs(const NodeMap& nodeMap)
+{
+  for (std::unique_ptr<SkinControlNode>& mesh : _meshes)
+  {
+    SkinControlNode::BoneRefs boneRefs = mesh->boneRefs();
+    for (SkinControlNode::BoneRefData& refData : boneRefs)
+    {
+      NodeMap::const_iterator iChild = nodeMap.find(refData.joint);
+      if (iChild != nodeMap.end()) refData.joint =
+                                            static_cast<Joint*>(iChild->second);
+    }
+    mesh->setBoneRefs(boneRefs);
   }
 }
 

@@ -54,6 +54,7 @@ namespace mtt
     void _copyJoints(NodeMap& nodeMap);
     void _copyMeshes(NodeMap& nodeMap);
     void _connectNodes(const NodeMap& nodeMap);
+    void _switchBoneRefs(const NodeMap& nodeMap);
 
   private:
     std::shared_ptr<MasterDrawModel> _masterModel;
