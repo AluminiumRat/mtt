@@ -88,24 +88,33 @@ namespace mtt
     void removeVerticesBuffer(size_t index) noexcept;
     void removeVerticesBuffer(const std::string& name) noexcept;
 
+    /// Buffer must contain data in float vec3 format
     inline void setPositionBuffer(std::shared_ptr<Buffer> buffer);
     inline void removePositionBuffer() noexcept;
 
+    /// Buffer must contain data in float vec3 format
     inline void setNormalBuffer(std::shared_ptr<Buffer> buffer);
     inline void removeNormalBuffer() noexcept;
 
+    /// Buffer must contain data in float vec3 format
     inline void setTangentBuffer(std::shared_ptr<Buffer> buffer);
     inline void removeTangentBuffer() noexcept;
 
+    /// Buffer must contain data in float vec3 format
     inline void setBinormalBuffer(std::shared_ptr<Buffer> buffer);
     inline void removeBinormalBuffer() noexcept;
 
+    /// Buffer must contain data in float vec2 format
     inline void setTexCoordBuffer(std::shared_ptr<Buffer> buffer);
     inline void removeTexCoordBuffer() noexcept;
 
+    /// Buffer must contain data in uint32 vec4 format. Each component is an
+    /// index of a referenced bone
     inline void setBoneIndecesBuffer(std::shared_ptr<Buffer> buffer);
     inline void removeBoneIndicesBuffer() noexcept;
 
+    /// Buffer must contain data in vec4 format. Each component is an weight
+    /// of a referenced bone
     inline void setBoneWeightsBuffer(std::shared_ptr<Buffer> buffer);
     inline void removeBoneWeightsBuffer() noexcept;
 
