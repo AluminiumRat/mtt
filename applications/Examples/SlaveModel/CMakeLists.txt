@@ -42,7 +42,7 @@ set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 
 add_executable (SlaveModel
                 "main.cpp"
-                "../resources/Dino.qrc")
+                "../resources/models.qrc")
 
 target_link_libraries(SlaveModel
                       ${Vulkan_LIBRARIES}

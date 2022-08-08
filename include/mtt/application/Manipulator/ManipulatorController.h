@@ -25,7 +25,6 @@ namespace mtt
 
     virtual bool eventFilter(QObject* obj, QEvent* event) override;
 
-  protected:
     void setManipulator(AbstractManipulator* newManipulator);
     void resetManipulator() noexcept;
 

@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
+      <file>crossField.mmd</file>
+      <file>crossField.png</file>
       <file>Dino.mmd</file>
       <file>Dino.png</file>
       <file>dinoWalk.fbx</file>

@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required (VERSION 3.8)
 
-project (Model)
+project (Manipulator)
 
 set(CMAKE_MODULE_PATH &{CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}../../../../cmake)
 
@@ -40,11 +40,11 @@ add_definitions(${Qt5Core_DEFINITIONS}
 
 set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 
-add_executable (Model
+add_executable (Manipulator
                 "main.cpp"
                 "../resources/models.qrc")
 
-target_link_libraries(Model
+target_link_libraries(Manipulator
                       ${Vulkan_LIBRARIES}
                       ${Shaderc_LIBRARIES}
                       Qt5::Core
