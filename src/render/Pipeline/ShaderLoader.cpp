@@ -26,7 +26,7 @@ std::string ShaderLoader::loadDefault(
   }
   if (!file.is_open())
   {
-    const char* patchesEnv = std::getenv("SHADER_SEARCH_PATCHES");
+    const char* patchesEnv = std::getenv("MTT_SHADERS");
     if(patchesEnv != nullptr)
     {
       std::istringstream envStream(patchesEnv);
