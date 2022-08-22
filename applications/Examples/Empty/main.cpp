@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
     VkPhysicalDeviceFeatures features{};
     mtt::Application application( argc,
                                   argv,
-                                  "Mtt particles example",
+                                  "Mtt empty scene example",
                                   { 0, 0, 0 },
                                   VK_API_VERSION_1_2,
                                   features,

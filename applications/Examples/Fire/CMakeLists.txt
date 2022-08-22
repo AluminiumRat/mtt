@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required (VERSION 3.8)
 
-project (Particles)
+project (Fire)
 
 set(CMAKE_MODULE_PATH &{CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}../../../../cmake)
 
@@ -40,11 +40,11 @@ add_definitions(${Qt5Core_DEFINITIONS}
 
 set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 
-add_executable (Particles
+add_executable (Fire
                 "main.cpp"
                 "../resources/fire.qrc")
 
-target_link_libraries(Particles
+target_link_libraries(Fire
                       ${Vulkan_LIBRARIES}
                       ${Shaderc_LIBRARIES}
                       Qt5::Core
