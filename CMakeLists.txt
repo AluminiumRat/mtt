@@ -22,3 +22,5 @@ add_subdirectory(applications/Examples/SlaveModel)
 add_subdirectory(applications/ObjectEditor)
 add_subdirectory(applications/ParticlesEditor)
 add_subdirectory(applications/IDGenerator)
+
+file(COPY ${CMAKE_SOURCE_DIR}/shaders DESTINATION ${CMAKE_BINARY_DIR})
