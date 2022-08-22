@@ -225,7 +225,7 @@ void EmitterObject::simulationStep(mtt::TimeRange time)
   emitParticles(floatParticlesNumber);
 }
 
-glm::vec4 EmitterObject::_getParticlePosition() const noexcept
+glm::vec4 EmitterObject::_getParticlePosition() noexcept
 {
   if(_shape == CIRCLE_SHAPE)
   {
@@ -261,7 +261,7 @@ glm::vec4 EmitterObject::_getParticlePosition() const noexcept
   }
 }
 
-glm::vec4 EmitterObject::_getParticleSpeed() const noexcept
+glm::vec4 EmitterObject::_getParticleSpeed() noexcept
 {
   float angle1 = glm::pi<float>() * _symmetricalDistribution(_randomEngine);
   float startZ = cos(_directionAngle / 2.f);

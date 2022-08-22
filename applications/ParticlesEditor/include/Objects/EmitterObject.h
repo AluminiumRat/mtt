@@ -327,8 +327,8 @@ signals:
 private:
   void _connectToField(ParticleField& field);
   void _disconnectFromField(ParticleField& field) noexcept;
-  glm::vec4 _getParticlePosition() const noexcept;
-  glm::vec4 _getParticleSpeed() const noexcept;
+  glm::vec4 _getParticlePosition() noexcept;
+  glm::vec4 _getParticleSpeed() noexcept;
 
 private:
   bool _enabled;
