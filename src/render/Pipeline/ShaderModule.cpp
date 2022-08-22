@@ -1,4 +1,5 @@
 #include <vector>
+#include <sstream>
 #include <stdexcept>
 
 #include <shaderc/shaderc.hpp>
