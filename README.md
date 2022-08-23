@@ -22,6 +22,7 @@ MTT - это набор инструментов для создания 3D пр
 Скорее всего, вам потребуется указать cmake расположение некоторых библитек. Добавте в переменную окружения CMAKE_PREFIX_PATH путь до cmake папки qt, путь до главной папки FbxSDK, путь до lib папки FbxSDK, путь до glm и vulkan memory allocator. Например так: "C:\Qt\5.15.2\msvc2019_64\lib\cmake;C:\Program Files\Autodesk\FBX\FBX SDK\2020.0.1;C:\Program Files\Autodesk\FBX\FBX SDK\2020.0.1\lib\vs2017\x64;C:\glm;C:\VulkanMemoryAllocator\include".
 
 Для сборки вы можете использовать cmake-gui или собрать из командной строки:
+
     mkdir build
     cd build
     cmake ..
