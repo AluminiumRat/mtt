@@ -52,4 +52,5 @@ target_link_libraries(Mesh
                       application
                       clPipeline
                       render
+                      shaders
                       utilities)

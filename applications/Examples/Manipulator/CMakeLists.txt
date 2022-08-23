@@ -52,4 +52,5 @@ target_link_libraries(Manipulator
                       application
                       clPipeline
                       render
+                      shaders
                       utilities)

@@ -52,4 +52,5 @@ target_link_libraries(SlaveModel
                       application
                       clPipeline
                       render
+                      shaders
                       utilities)

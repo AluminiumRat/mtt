@@ -150,5 +150,6 @@ target_link_libraries(ObjectEditor
                       clPipeline
                       editorLib
                       fbx
+                      shaders
                       render
                       utilities)

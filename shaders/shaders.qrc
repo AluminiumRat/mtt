@@ -1,0 +1,46 @@
+<RCC>
+    <qresource prefix="/shaders">
+      <file>clPipeline/particles/particlesFragmentLighting.frag</file>
+      <file>clPipeline/particles/particlesFragmentLighting.geom</file>
+      <file>clPipeline/particles/particlesFragmentLighting.vert</file>
+      <file>clPipeline/particles/particlesShadow.frag</file>
+      <file>clPipeline/particles/particlesShadow.geom</file>
+      <file>clPipeline/particles/particlesShadow.vert</file>
+      <file>clPipeline/particles/particlesVertexLighting.frag</file>
+      <file>clPipeline/particles/particlesVertexLighting.geom</file>
+      <file>clPipeline/particles/particlesVertexLighting.vert</file>
+
+      <file>clPipeline/ambientLightDrawable.frag</file>
+      <file>clPipeline/ambientLightDrawable.vert</file>
+      <file>clPipeline/ambientLightModificator.glsl</file>
+      <file>clPipeline/backgroundDrawable.frag</file>
+      <file>clPipeline/backgroundDrawable.vert</file>
+      <file>clPipeline/backgroundModificator.glsl</file>
+      <file>clPipeline/cascadeShadowmapLib.glsl</file>
+      <file>clPipeline/cubeShadowmapLib.glsl</file>
+      <file>clPipeline/directLightDrawable.frag</file>
+      <file>clPipeline/directLightDrawable.vert</file>
+      <file>clPipeline/directLightModificator.glsl</file>
+      <file>clPipeline/lightingFadeLib.glsl</file>
+      <file>clPipeline/materialLib.glsl</file>
+      <file>clPipeline/meshEmission.frag</file>
+      <file>clPipeline/meshFL.frag</file>
+      <file>clPipeline/meshGBuffer.frag</file>
+      <file>clPipeline/meshSelection.frag</file>
+      <file>clPipeline/meshShadowmap.frag</file>
+      <file>clPipeline/meshUnlighted.frag</file>
+      <file>clPipeline/pointLightDrawable.frag</file>
+      <file>clPipeline/pointLightDrawable.vert</file>
+      <file>clPipeline/pointLightModificator.glsl</file>
+      <file>clPipeline/shadowmapLib.glsl</file>
+      <file>clPipeline/spotLightDrawable.frag</file>
+      <file>clPipeline/spotLightDrawable.vert</file>
+      <file>clPipeline/spotLightModificator.glsl</file>
+
+      <file>buildDiffuseLuminanceMap.comp</file>
+      <file>filter2D.vert</file>
+      <file>meshCommon.vert</file>
+      <file>meshLib.frag</file>
+      <file>meshUid.frag</file>
+    </qresource>
+</RCC>

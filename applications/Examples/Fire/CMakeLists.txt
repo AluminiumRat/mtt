@@ -53,4 +53,5 @@ target_link_libraries(Fire
                       clPipeline
                       particles
                       render
+                      shaders
                       utilities)

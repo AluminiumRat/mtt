@@ -16,6 +16,8 @@ int main(int argc, char* argv[])
                                         { 0, 0, 0 },
                                         features);
 
+    Q_INIT_RESOURCE(shaders);
+
     MainWindow mainWindow;
     mainWindow.show();
 

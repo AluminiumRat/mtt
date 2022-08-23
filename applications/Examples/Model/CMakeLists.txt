@@ -52,4 +52,5 @@ target_link_libraries(Model
                       application
                       clPipeline
                       render
+                      shaders
                       utilities)

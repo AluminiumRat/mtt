@@ -222,4 +222,5 @@ target_link_libraries(ParticlesEditor
                       fbx
                       particles
                       render
+                      shaders
                       utilities)

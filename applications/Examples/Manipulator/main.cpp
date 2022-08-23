@@ -111,6 +111,8 @@ int main(int argc, char* argv[])
                                   features,
                                   false);
 
+    Q_INIT_RESOURCE(shaders);
+
     mtt::RenderWidget window;
     window.setFixedSize(800, 600);
     window.show();
