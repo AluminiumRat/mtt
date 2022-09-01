@@ -14,7 +14,6 @@
 
 namespace mtt
 {
-  /// Translate along local z axis
   class Simple3DManipulator : public Manipulator3D
   {
   public:
