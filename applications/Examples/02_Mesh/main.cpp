@@ -39,7 +39,6 @@ public:
                             positionsData.size() * sizeof(positionsData[0]));
 
     mesh.setPositionBuffer(positionBuffer);
-    mesh.setVerticesNumber(positionsData.size());
 
     std::vector<glm::vec2> texCoordData = { glm::vec2(0.f, 1.f),
                                             glm::vec2(0.f, 0.f),
@@ -53,6 +52,8 @@ public:
                             texCoordData.size() * sizeof(texCoordData[0]));
 
     mesh.setTexCoordBuffer(texCoordBuffer);
+
+    mesh.setVerticesNumber(positionsData.size());
 
     std::shared_ptr<mtt::Texture2D> texture =
         mtt::Texture2DLibrary::loadTexture(":/scream.jpg", displayDevice, true);
