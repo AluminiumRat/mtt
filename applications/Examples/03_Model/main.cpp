@@ -18,27 +18,20 @@
 class Scene : public mtt::RenderScene
 {
 private:
-  mtt::clPipeline::AmbientLight ambientLight;
-  mtt::clPipeline::DirectLight directLight;
   mtt::MasterDrawModel drawModel;
   QTimer updateTimer;
   mtt::TimeT animationTime;
+  mtt::clPipeline::AmbientLight ambientLight;
+  mtt::clPipeline::DirectLight directLight;
 
 public:
   Scene(mtt::MeshTechniquesFactory& techniquesFactory,
         mtt::LogicalDevice& displayDevice) :
-    ambientLight(true, true, true, displayDevice),
-    directLight(true, true, displayDevice),
     drawModel(":/Dino.mmd", techniquesFactory, nullptr, displayDevice),
-    animationTime(0)
+    animationTime(0),
+    ambientLight(true, true, true, displayDevice),
+    directLight(true, true, displayDevice)
   {
-    ambientLight.setIlluminance(glm::vec3(.5f, .5f, .5f));
-
-    directLight.setTransformMatrix(glm::translate(glm::vec3(0.f, 0.f, 3.f)));
-    directLight.setHeight(5.f);
-    directLight.setDirection(glm::vec3(1.f, 1.f, -1.f));
-    directLight.setIlluminance(glm::vec3(2.5f, 2.5f, 2.5f));
-
     mtt::DrawModelAnimation* animation = drawModel.findAnimation("Walk");
     if (animation == nullptr) mtt::Log() << "Animation not found";
     else
@@ -59,17 +52,23 @@ public:
                       });
       updateTimer.start(30);
     }
-
-    addCompositeObject(ambientLight);
-    addCompositeObject(directLight);
     addCulledDrawable(drawModel);
+
+    ambientLight.setIlluminance(glm::vec3(.5f, .5f, .5f));
+    addCompositeObject(ambientLight);
+
+    directLight.setTransformMatrix(glm::translate(glm::vec3(0.f, 0.f, 3.f)));
+    directLight.setHeight(5.f);
+    directLight.setDirection(glm::vec3(1.f, 1.f, -1.f));
+    directLight.setIlluminance(glm::vec3(2.5f, 2.5f, 2.5f));
+    addCompositeObject(directLight);
   }
 
   ~Scene()
   {
+    removeCulledDrawable(drawModel);
     removeCompositeObject(ambientLight);
     removeCompositeObject(directLight);
-    removeCulledDrawable(drawModel);
   }
 };
 
