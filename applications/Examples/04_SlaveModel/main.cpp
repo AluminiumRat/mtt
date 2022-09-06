@@ -21,19 +21,20 @@ class Scene : public mtt::RenderScene
 private:
   mtt::clPipeline::AmbientLight ambientLight;
   mtt::clPipeline::DirectLight directLight;
-  std::shared_ptr<mtt::MasterDrawModel> masterModel;
   std::vector<std::unique_ptr<mtt::SlaveDrawModel>> slaveModels;
 
 public:
   Scene(mtt::MeshTechniquesFactory& techniquesFactory,
         mtt::LogicalDevice& displayDevice) :
     ambientLight(true, true, true, displayDevice),
-    directLight(true, true, displayDevice),
-    masterModel(new mtt::MasterDrawModel( ":/Dino.mmd",
-                                          techniquesFactory,
-                                          nullptr,
-                                          displayDevice))
+    directLight(true, true, displayDevice)
   {
+    std::shared_ptr<mtt::MasterDrawModel> masterModel(
+                                  new mtt::MasterDrawModel( ":/Dino.mmd",
+                                                            techniquesFactory,
+                                                            nullptr,
+                                                            displayDevice));
+
     for (int modelIndex = 0; modelIndex < 4; modelIndex++)
     {
       std::unique_ptr <mtt::SlaveDrawModel> newModel(
