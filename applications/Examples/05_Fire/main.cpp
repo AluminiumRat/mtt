@@ -16,17 +16,16 @@
 class Scene : public mtt::RenderScene
 {
 private:
-  mtt::clPipeline::PointLight light;
   mtt::PSTEffect effect;
   QTimer updateTimer;
+  mtt::clPipeline::PointLight light;
 
 public:
   Scene(mtt::LogicalDevice& displayDevice) :
-    light(true, true, displayDevice),
-    effect(":/fire.pst", nullptr, displayDevice)
+    effect(":/fire.pst", nullptr, displayDevice),
+    light(true, true, displayDevice)
   {
-    light.setDistance(5);
-    light.setIlluminance(glm::vec3(.225f, .12f, .04f));
+    addCulledDrawable(effect);
 
     updateTimer.setSingleShot(false);
     QTimer::connect(&updateTimer,
@@ -38,8 +37,9 @@ public:
                     });
     updateTimer.start(30);
 
+    light.setDistance(5);
+    light.setIlluminance(glm::vec3(.225f, .12f, .04f));
     addCompositeObject(light);
-    addCulledDrawable(effect);
   }
 
   ~Scene()
