@@ -18,10 +18,10 @@
 class Scene : public mtt::RenderScene
 {
 private:
-  mtt::clPipeline::AmbientLight ambientLight;
-  mtt::clPipeline::PointLight pointLight;
   mtt::MasterDrawModel dinoModel;
   mtt::MasterDrawModel fieldModel;
+  mtt::clPipeline::AmbientLight ambientLight;
+  mtt::clPipeline::PointLight pointLight;
   QTimer updateTimer;
   mtt::TimeT animationTime;
 
@@ -34,12 +34,17 @@ public:
     fieldModel(":/crossField.mmd", techniquesFactory, nullptr, displayDevice),
     animationTime(0)
   {
+    addCulledDrawable(dinoModel);
+    addCulledDrawable(fieldModel);
+
     ambientLight.setIlluminance(glm::vec3(.5f, .5f, .5f));
+    addCompositeObject(ambientLight);
 
     pointLight.setDistance(10.f);
-    pointLight.setShadowmapExtent(1024, 1024);
-    pointLight.setBlurAngle(0.01f);
     pointLight.setShadowmapField(&culledData());
+    pointLight.setShadowmapExtent(1024, 256);
+    pointLight.setBlurAngle(0.01f);
+    addCompositeObject(pointLight);
 
     updateTimer.setSingleShot(false);
     QTimer::connect(&updateTimer,
@@ -54,11 +59,6 @@ public:
                       pointLight.setTransformMatrix(glm::translate(position));
                     });
     updateTimer.start(30);
-
-    addCompositeObject(ambientLight);
-    addCompositeObject(pointLight);
-    addCulledDrawable(dinoModel);
-    addCulledDrawable(fieldModel);
   }
 
   ~Scene()
