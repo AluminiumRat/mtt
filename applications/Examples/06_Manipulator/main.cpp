@@ -54,30 +54,15 @@ public:
     PlaneMove3DManipulator(mtt::AutoscaleDrawableModificator::PIXEL_SCALE_MODE),
     _movableObject(movableObject)
   {
-    std::vector<glm::vec3> positions;
-    positions.reserve(12);
-
     const glm::vec3 p1(-20.f, -20.f, 0.f);
     const glm::vec3 p2(-20.f,  20.f, 0.f);
     const glm::vec3 p3( 20.f,  20.f, 0.f);
     const glm::vec3 p4( 20.f, -20.f, 0.f);
 
-    positions.push_back(p1);
-    positions.push_back(p2);
-    positions.push_back(p3);
-
-    positions.push_back(p1);
-    positions.push_back(p3);
-    positions.push_back(p4);
-
-    positions.push_back(p1);
-    positions.push_back(p3);
-    positions.push_back(p2);
-
-    positions.push_back(p1);
-    positions.push_back(p4);
-    positions.push_back(p3);
-
+    std::vector<glm::vec3> positions{ p1, p2, p3,
+                                      p1, p3, p4,
+                                      p1, p3, p2,
+                                      p1, p4, p3};
     setGeometry(positions);
 
     setTechnique( mtt::clPipeline::colorFrameType,
