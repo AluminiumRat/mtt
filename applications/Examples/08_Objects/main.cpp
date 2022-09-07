@@ -8,53 +8,53 @@
 #include <mtt/application/Scene/SpecialGroup.h>
 #include <mtt/application/Application.h>
 
-class ChildA : public mtt::Object
+class Book : public mtt::Object
 {
   Q_OBJECT
 
 public:
-  ChildA(const QString& name) :
+  Book(const QString& name) :
     Object(name, false)
   {
   }
 };
 
-class GroupA : public mtt::SpecialGroup<mtt::Object, ChildA>
+class Human : public mtt::Object
 {
   Q_OBJECT
 
 public:
-  GroupA(const QString& name) :
+  Human(const QString& name) :
+    Object(name, false)
+  {
+  }
+};
+
+class Bag : public mtt::SpecialGroup<mtt::Object, Book>
+{
+  Q_OBJECT
+
+public:
+  Bag(const QString& name) :
     SpecialGroup(name, false)
   {
   }
 
 signals:
-  void childAdded(ChildA& object) override;
-  void childRemoved(ChildA& object) override;
+  void childAdded(Book& object) override;
+  void childRemoved(Book& object) override;
 };
 
-class ChildB : public mtt::Object
+class Kiosk : public mtt::Object
 {
   Q_OBJECT
 
 public:
-  ChildB(const QString& name) :
+  Kiosk(const QString& name) :
     Object(name, false)
   {
-  }
-};
-
-class ParentB : public mtt::Object
-{
-  Q_OBJECT
-
-public:
-  ParentB(const QString& name) :
-    Object(name, false)
-  {
-    addSubobject(std::make_unique<ChildA>("SubobjectA"));
-    addSubobject(std::make_unique<ChildB>("SubobjectB"));
+    addSubobject(std::make_unique<Human>("Cook"));
+    addSubobject(std::make_unique<Book>("Menu"));
   }
 };
 
@@ -66,18 +66,18 @@ public:
   RootObject() :
     Object("Root", false)
   {
-    std::unique_ptr<GroupA> groupA(new GroupA("GroupA"));
-    groupA->addChild(std::make_unique<ChildA>("ChildA1"));
-    groupA->addChild(std::make_unique<ChildA>("ChildA2"));
-    addSubobject(std::move(groupA));
+    std::unique_ptr<Bag> bag(new Bag("Bag"));
+    bag->addChild(std::make_unique<Book>("Book1"));
+    bag->addChild(std::make_unique<Book>("Book2"));
+    addSubobject(std::move(bag));
 
-    addSubobject(std::make_unique<ParentB>("GroupB"));
+    addSubobject(std::make_unique<Kiosk>("Kiosk"));
 
-    std::unique_ptr<mtt::ObjectGroup> freeGroup(
-                                      new mtt::ObjectGroup("FreeGroup", false));
-    freeGroup->addChild(std::make_unique<ChildA>("ChildA3"));
-    freeGroup->addChild(std::make_unique<ChildB>("ChildB"));
-    addSubobject(std::move(freeGroup));
+    std::unique_ptr<mtt::ObjectGroup> room(
+                                          new mtt::ObjectGroup("Room", false));
+    room->addChild(std::make_unique<Book>("Book3"));
+    room->addChild(std::make_unique<Human>("Human"));
+    addSubobject(std::move(room));
   }
 };
 
@@ -101,8 +101,8 @@ int main(int argc, char* argv[])
     mtt::ObjectItemTreeModel objectModel(root, nullptr);
 
     QTreeView treeWidget;
-    treeWidget.setDragDropMode(QAbstractItemView::InternalMove);
     treeWidget.setModel(&objectModel);
+    treeWidget.setDragDropMode(QAbstractItemView::InternalMove);
     treeWidget.show();
 
     return application.exec();
