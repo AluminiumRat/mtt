@@ -14,12 +14,12 @@
 #include <mtt/application/Scene/SpecialGroup.h>
 #include <mtt/application/Application.h>
 
-class Object : public mtt::Object
+class ObjectWithValue : public mtt::Object
 {
   Q_OBJECT
 
 public:
-  Object(const QString& name) :
+  ObjectWithValue(const QString& name) :
     mtt::Object(name, false),
     _value(0)
   {
@@ -35,11 +35,7 @@ public:
     if(_value == newValue) return;
     _value = newValue;
     mtt::Log() << "New value: " << newValue;
-    emit valueChanged(newValue);
   }
-
-signals:
-  void valueChanged(int newValue);
 
 private:
   int _value;
@@ -56,8 +52,8 @@ void buildObjcts(mtt::ObjectGroup& root, mtt::UndoStack& undoStack)
                     std::make_unique<mtt::AddObjectCommand>(std::move(group),
                                                             root));
 
-  std::unique_ptr<Object> child(new Object("Child"));
-  Object& childRef = *child;
+  std::unique_ptr<ObjectWithValue> child(new ObjectWithValue("Child"));
+  ObjectWithValue& childRef = *child;
 
   undoStack.addAndMake(
                     std::make_unique<mtt::AddObjectCommand>(std::move(child),
@@ -67,15 +63,15 @@ void buildObjcts(mtt::ObjectGroup& root, mtt::UndoStack& undoStack)
                                                                   groupRef));
 
   using SetValueCommand = mtt::SetPropertyCommand<
-                                            Object,
-                                            int,
-                                            int(Object::*)() const noexcept,
-                                            void(Object::*)(int)>;
+                                      ObjectWithValue,
+                                      int,
+                                      int(ObjectWithValue::*)() const noexcept,
+                                      void(ObjectWithValue::*)(int)>;
   std::unique_ptr<SetValueCommand> setCommand(
-                                        new SetValueCommand(childRef,
-                                                            &Object::value,
-                                                            &Object::setValue,
-                                                            10));
+                                new SetValueCommand(childRef,
+                                                    &ObjectWithValue::value,
+                                                    &ObjectWithValue::setValue,
+                                                    10));
   undoStack.addAndMake(std::move(setCommand));
 }
 
