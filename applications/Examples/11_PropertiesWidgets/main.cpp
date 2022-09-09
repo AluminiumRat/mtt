@@ -113,8 +113,8 @@ void fillWindow(QWidget& window, Scene& scene, mtt::UndoStack& undoStack)
 
   QDoubleSpinBox* spin = new QDoubleSpinBox;
   layout->addWidget(spin);
-  spin->setMinimum(0.f);
-  spin->setMaximum(15.f);
+  spin->setMinimum(-10.f);
+  spin->setMaximum(10.f);
   mtt::FloatSpinConnection<Dino>* spinConnction =
                     new mtt::FloatSpinConnection<Dino>( *spin,
                                                         scene.dinoModel,
