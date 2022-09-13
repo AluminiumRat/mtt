@@ -17,6 +17,7 @@ BaseGeometryTechnique::BaseGeometryTechnique( int availableFeatures,
   _stage(stage),
   _priorityOrder(priorityOrder),
   _initialized(false),
+  _lineWidth(1.f),
   _positionsBuffer(nullptr),
   _normalBuffer(nullptr),
   _tangentBuffer(nullptr),
@@ -512,6 +513,8 @@ void BaseGeometryTechnique::adjustPipeline( GraphicsPipeline& pipeline,
     _pipeline->indices().setType(indexType());
   }
   _pipeline->setTopology(topology());
+
+  _pipeline->setLineWidth(_lineWidth);
 }
 
 void BaseGeometryTechnique::addToDrawPlan(DrawPlanBuildInfo& buildInfo)

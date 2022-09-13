@@ -87,6 +87,9 @@ namespace mtt
     inline bool texCoordEnabled() const noexcept;
     inline bool skeletonEnabled() const noexcept;
 
+    inline float lineWidth() const noexcept;
+    inline void setLineWidth(float newValue) noexcept;
+
   protected:
     using MatricesUniform = VolatileUniform<DrawMatrices>;
     using BoneMatrices = std::vector<glm::mat4>;
@@ -133,6 +136,8 @@ namespace mtt
     bool _initialized;
     std::optional<GraphicsPipeline> _pipeline;
     std::optional<MatricesUniform> _matricesUniform;
+
+    float _lineWidth;
 
     Buffer* _positionsBuffer;
     Buffer* _normalBuffer;
@@ -251,6 +256,18 @@ namespace mtt
     return _priorityOrder;
   }
 
+  inline float BaseGeometryTechnique::lineWidth() const noexcept
+  {
+    return _lineWidth;
+  }
+
+  inline void BaseGeometryTechnique::setLineWidth(float newValue) noexcept
+  {
+    if(_lineWidth == newValue) return;
+    _lineWidth = newValue;
+    invalidatePipeline();
+  }
+
   template< typename ResourceType,
             typename ResourceValueType,
             typename... OtherResourceArguments>
@@ -320,7 +337,7 @@ namespace mtt
     {
       priority = buildInfo.getPriorityFarFirstOrder(glm::vec3(0));
     }
-    
+
     DrawBin* renderBin = buildInfo.currentFramePlan->getBin(_stage);
     if (renderBin == nullptr) Abort("BaseGeometryTechnique::createActionTemplate: render bin is not supported.");
 

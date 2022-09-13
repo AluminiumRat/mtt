@@ -21,18 +21,21 @@ CrossRenderObserver::CrossRenderObserver( Object3D& object,
                                                 VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
                                                 false,
                                                 false));
-  _crossMesh.setTechnique(clPipeline::uidFrameType,
-                          std::make_unique<UidMeshTechnique>(
-                                                VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
+
+  std::unique_ptr<UidMeshTechnique> uidTechnique(
+                          new UidMeshTechnique( VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
                                                 false,
                                                 false));
+  uidTechnique->setLineWidth(5.f);
+  _crossMesh.setTechnique(clPipeline::uidFrameType,
+                          std::move(uidTechnique));
 
-  glm::vec3 linePositions[] = { {-50.f,   0.f,   0.f},
-                                { 50.f,   0.f,   0.f},
-                                {  0.f, -50.f,   0.f},
-                                {  0.f,  50.f,   0.f},
-                                {  0.f,   0.f, -50.f},
-                                {  0.0f,  0.f,  50.f}};
+  glm::vec3 linePositions[] = { {-30.f,   0.f,   0.f},
+                                { 30.f,   0.f,   0.f},
+                                {  0.f, -30.f,   0.f},
+                                {  0.f,  30.f,   0.f},
+                                {  0.f,   0.f, -30.f},
+                                {  0.0f,  0.f,  30.f}};
   std::shared_ptr<Buffer> linePositionsBuffer(
                                     new Buffer(device, Buffer::VERTEX_BUFFER));
   linePositionsBuffer->setData(linePositions, sizeof(linePositions));
@@ -43,6 +46,7 @@ CrossRenderObserver::CrossRenderObserver( Object3D& object,
   materialData.albedo = glm::vec3(.7f, .7f, 0.f);
   materialData.roughness = 1;
   materialData.specularStrength = 1;
+  materialData.opaque = 0.5f;
   _crossMesh.extraData().setSurfaceMaterialData(materialData);
 
   _drawableNode.setDrawable(&_crossMesh, Sphere());

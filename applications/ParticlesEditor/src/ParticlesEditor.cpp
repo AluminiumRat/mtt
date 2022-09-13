@@ -7,8 +7,9 @@ int main(int argc, char* argv[])
   try
   {
     VkPhysicalDeviceFeatures features{};
-    features.samplerAnisotropy = VK_TRUE;
     features.geometryShader = VK_TRUE;
+    features.samplerAnisotropy = VK_TRUE;
+    features.wideLines = VK_TRUE;
 
     mtt::EditorApplication application( argc,
                                         argv,

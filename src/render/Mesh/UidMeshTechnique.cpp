@@ -10,7 +10,7 @@ UidMeshTechnique::UidMeshTechnique( VkPrimitiveTopology topology,
   BaseGeometryTechnique(SKELETON_FEATURE,
                         baseStages::uidStage,
                         topology,
-                        _depthTestEnabled ? NEAR_FIRST_ORDER : FAR_FIRST_ORDER),
+                        depthTestEnabled ? NEAR_FIRST_ORDER : FAR_FIRST_ORDER),
   _depthTestEnabled(depthTestEnabled),
   _depthWriteEnabled(depthWriteEnabled)
 {
