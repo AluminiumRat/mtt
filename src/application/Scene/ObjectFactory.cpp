@@ -1,4 +1,4 @@
-#include <mtt/editorLib/Objects/ObjectFactory.h>
+#include <mtt/application/Scene/ObjectFactory.h>
 
 using namespace mtt;
 

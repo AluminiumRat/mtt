@@ -5,9 +5,9 @@
 #include <mtt/application/EditCommands/UndoStack.h>
 #include <mtt/editorLib/AsyncTasks/SaveEnvironmentTask.h>
 #include <mtt/editorLib/AsyncTasks/LoadEnvironmentTask.h>
+#include <mtt/editorLib/Objects/CEObjectLoader.h>
 #include <mtt/editorLib/Objects/EnvironmentObjectFactory.h>
 #include <mtt/editorLib/Objects/EnvironmentGroup.h>
-#include <mtt/editorLib/Objects/ObjectLoader.h>
 #include <mtt/editorLib/EditorCommonData.h>
 #include <mtt/editorLib/EditorScene.h>
 
@@ -66,7 +66,7 @@ void LoadEnvironmentTask::asyncPart()
 
   _checkHead();
 
-  ObjectLoader loader;
+  CEObjectLoader loader;
   EnvironmentObjectFactory factory;
 
   _newEnvironment = loader.loadObject<EnvironmentRootObject>( false,

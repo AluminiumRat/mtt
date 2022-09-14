@@ -1,33 +1,17 @@
 # pragma once
 
-#include <QtCore/QDir>
-#include <QtCore/QString>
-
-#include <mtt/application/DataStream.h>
-#include <mtt/application/TimeT.h>
+#include <mtt/application/Scene/ObjectSaver.h>
 #include <mtt/editorLib/Objects/CEVisitor.h>
-#include <mtt/editorLib/Objects/ObjectFactory.h>
 
 namespace mtt
 {
-  class ObjectSaver : public CEVisitor
+  class CEObjectSaver : public CEVisitorT<ObjectSaver>
   {
   public:
-    ObjectSaver();
-    ObjectSaver(const ObjectSaver&) = delete;
-    ObjectSaver& operator = (const ObjectSaver&) = delete;
-    virtual ~ObjectSaver() noexcept = default;
-
-    void saveObject(const Object& object,
-                    DataStream& stream,
-                    const QDir& fileDirectory,
-                    const ObjectFactory& objectFactory);
-    /// Save without type index and id.
-    /// For embedded objects.
-    void saveObjectData(const Object& object,
-                        DataStream& stream,
-                        const QDir& fileDirectory,
-                        const ObjectFactory& objectFactory);
+    CEObjectSaver() = default;
+    CEObjectSaver(const CEObjectSaver&) = delete;
+    CEObjectSaver& operator = (const CEObjectSaver&) = delete;
+    virtual ~CEObjectSaver() noexcept = default;
 
     virtual void visitConstAmbientLightObject(
                                     const AmbientLightObject& object) override;
@@ -55,7 +39,6 @@ namespace mtt
     virtual void visitConstLightObject(const LightObject& object) override;
     virtual void visitConstLightWithShadowsObject(
                                 const LightWithShadowsObject& object) override;
-    virtual void visitConstObject(const mtt::Object& object) override;
     virtual void visitConstMovableObject(const MovableObject& object) override;
     virtual void visitConstPointLightObject(
                                       const PointLightObject& object) override;
@@ -72,44 +55,6 @@ namespace mtt
                                         const SpotLightObject& object) override;
 
   protected:
-    inline DataStream& stream() const noexcept;
-    inline const QDir& fileDirectory() const noexcept;
-    inline const ObjectFactory& objectFactory() const noexcept;
-
-    void writeFilename(const QString& filename);
-    template<typename ValueType>
-    inline void writeKeypoint(ValueKeypoint<ValueType, TimeT> keypoint);
     void writeCubemapData(const CubemapObject& object);
-
-    void writeChilds(const Object& parent);
-
-  private:
-    DataStream* _stream;
-    QDir _fileDirectory;
-    const ObjectFactory* _objectFactory;
   };
-
-  inline DataStream& ObjectSaver::stream() const noexcept
-  {
-    return *_stream;
-  }
-
-  inline const QDir& ObjectSaver::fileDirectory() const noexcept
-  {
-    return _fileDirectory;
-  }
-
-  inline const ObjectFactory& ObjectSaver::objectFactory() const noexcept
-  {
-    return *_objectFactory;
-  }
-
-  template<typename ValueType>
-  inline void ObjectSaver::writeKeypoint(
-                                      ValueKeypoint<ValueType, TimeT> keypoint)
-  {
-    *_stream << keypoint.time();
-    *_stream << keypoint.value();
-    *_stream << (uint8_t) keypoint.interpolation();
-  }
 }

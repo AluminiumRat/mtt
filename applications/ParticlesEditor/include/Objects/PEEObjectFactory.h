@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mtt/editorLib/Objects/ObjectFactory.h>
+#include <mtt/application/Scene/ObjectFactory.h>
 
 class PEEObjectFactory : public mtt::ObjectFactory
 {

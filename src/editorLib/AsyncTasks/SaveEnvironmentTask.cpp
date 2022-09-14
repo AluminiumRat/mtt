@@ -5,9 +5,9 @@
 #include <QtCore/QFile>
 
 #include <mtt/editorLib/AsyncTasks/SaveEnvironmentTask.h>
+#include <mtt/editorLib/Objects/CEObjectSaver.h>
 #include <mtt/editorLib/Objects/EnvironmentObjectFactory.h>
 #include <mtt/editorLib/Objects/EnvironmentRootObject.h>
-#include <mtt/editorLib/Objects/ObjectSaver.h>
 #include <mtt/editorLib/EditorCommonData.h>
 #include <mtt/editorLib/EditorScene.h>
 
@@ -29,7 +29,7 @@ void SaveEnvironmentTask::saveData( QFile& file,
 {
   _writeHead(file, stream);
 
-  ObjectSaver saver;
+  CEObjectSaver saver;
   EnvironmentObjectFactory factory;
 
   saver.saveObject( _environment,

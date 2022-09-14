@@ -2,6 +2,7 @@
 
 #include <chrono>
 
+#include <glm/gtc/quaternion.hpp>
 #include <glm/common.hpp>
 
 #include <mtt/utilities/Abort.h>

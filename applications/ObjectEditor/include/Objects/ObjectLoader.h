@@ -1,10 +1,10 @@
 #pragma once
 
-#include <mtt/editorLib/Objects/ObjectLoader.h>
+#include <mtt/editorLib/Objects/CEObjectLoader.h>
 
 #include <Objects/OEVisitor.h>
 
-class ObjectLoader : public OEVisitorT<mtt::ObjectLoader>
+class ObjectLoader : public OEVisitorT<mtt::CEObjectLoader>
 {
 public:
   ObjectLoader() = default;

@@ -86,10 +86,13 @@ set(HEADERS
     "../../include/mtt/application/ResourceManager/Texture2DLibrary.h"
 
     "../../include/mtt/application/Scene/Object.h"
+    "../../include/mtt/application/Scene/ObjectFactory.h"
     "../../include/mtt/application/Scene/ObjectGroup.h"
     "../../include/mtt/application/Scene/ObjectItemListModel.h"
     "../../include/mtt/application/Scene/ObjectItemTreeModel.h"
     "../../include/mtt/application/Scene/ObjectLink.h"
+    "../../include/mtt/application/Scene/ObjectLoader.h"
+    "../../include/mtt/application/Scene/ObjectSaver.h"
     "../../include/mtt/application/Scene/ObjectVisitor.h"
     "../../include/mtt/application/Scene/Scene.h"
     "../../include/mtt/application/Scene/SpecialGroup.h"
@@ -189,10 +192,13 @@ set(SOURCES
     "ResourceManager/Texture2DLibrary.cpp"
 
     "Scene/Object.cpp"
+    "Scene/ObjectFactory.cpp"
     "Scene/ObjectGroup.cpp"
     "Scene/ObjectItemListModel.cpp"
     "Scene/ObjectItemTreeModel.cpp"
     "Scene/ObjectLink.cpp"
+    "Scene/ObjectLoader.cpp"
+    "Scene/ObjectSaver.cpp"
     "Scene/ObjectVisitor.cpp"
     "Scene/Scene.cpp"
 

@@ -1,10 +1,10 @@
 #pragma once
 
-#include <mtt/editorLib/Objects/ObjectSaver.h>
+#include <mtt/editorLib/Objects/CEObjectSaver.h>
 
 #include <Objects/PEVisitor.h>
 
-class ObjectSaver : public PEVisitorT<mtt::ObjectSaver>
+class ObjectSaver : public PEVisitorT<mtt::CEObjectSaver>
 {
 public:
   ObjectSaver() = default;
