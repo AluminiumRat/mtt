@@ -141,6 +141,7 @@ void FluidObject::_resetMatrices() noexcept
   _projPressureMatrix.reset();
   _resolveMatrix1.reset();
   _resolveMatrix2.reset();
+  _weightMatrix.reset();
   _movedVelocityMatrix.reset();
   _movedTemperatureMatrix.reset();
   _resetBlockMatrix();
@@ -180,6 +181,7 @@ void FluidObject::_rebuildMatrices()
     _projPressureMatrix.emplace(fieldExtentX, fieldExtentY, fieldExtentZ);
     _resolveMatrix1.emplace(fieldExtentX, fieldExtentY, fieldExtentZ);
     _resolveMatrix2.emplace(fieldExtentX, fieldExtentY, fieldExtentZ);
+    _weightMatrix.emplace(fieldExtentX, fieldExtentY, fieldExtentZ);
     _movedVelocityMatrix.emplace(fieldExtentX, fieldExtentY, fieldExtentZ);
     _movedTemperatureMatrix.emplace(fieldExtentX, fieldExtentY, fieldExtentZ);
   }
@@ -698,45 +700,132 @@ void FluidObject::_applyContinuityEquation(float dTime)
   _makeAsync(stepFunc);
 }
 
-void FluidObject::_moveMatricesStep(size_t startZ, size_t finishZ, float dTime)
+void FluidObject::_clearMovedMatrices()
 {
-  for (size_t z = startZ; z < finishZ; z++)
+  _movedVelocityMatrix->clear(_wind);
+  _movedTemperatureMatrix->clear(defaultTemperature);
+  for (size_t z = 1; z < _velocityMatrix->zSize() - 1; z++)
   {
-    for (size_t y = 1; y < _movedVelocityMatrix->ySize() - 1; y++)
+    for (size_t y = 1; y < _velocityMatrix->ySize() - 1; y++)
     {
-      for (size_t x = 1; x < _movedVelocityMatrix->xSize() - 1; x++)
+      for (size_t x = 1; x < _velocityMatrix->xSize() - 1; x++)
       {
-        glm::vec3 currentVelocity = _velocityMatrix->get(x, y, z);
-        glm::vec3 shift = -currentVelocity / _cellSize * dTime;
-        glm::vec3 shiftedCoord = glm::vec3(x, y, z) + shift + glm::vec3(.5f);
-        _movedVelocityMatrix->set(x,
-                                  y,
-                                  z,
-                                  _velocityMatrix->interpolate(shiftedCoord));
-        _movedTemperatureMatrix->set(
-                                x,
-                                y,
-                                z,
-                                _temperatureMatrix->interpolate(shiftedCoord));
+        _movedVelocityMatrix->set(x, y, z, glm::vec3(0.f));
+        _movedTemperatureMatrix->set(x, y, z, 0.f);
       }
     }
+  }
+  _weightMatrix->clear(0.f);
+}
+
+inline void FluidObject::_moveToCell( int x,
+                                      int y,
+                                      int z,
+                                      glm::vec3 velocity,
+                                      float temperature,
+                                      float weight)
+{
+  if( x > 0 &&
+      x < _velocityMatrix->xSize() - 1 &&
+      y > 0 &&
+      y < _velocityMatrix->ySize() - 1 &&
+      z > 0 &&
+      z < _velocityMatrix->zSize() - 1)
+  {
+    (*_movedVelocityMatrix)(x, y, z) += velocity * weight;
+    (*_movedTemperatureMatrix)(x, y, z) += temperature * weight;
+    (*_weightMatrix)(x, y, z) += weight;
   }
 }
 
 void FluidObject::_moveMatrices(float dTime)
 {
-  _movedVelocityMatrix->clear(_wind);
-  _movedTemperatureMatrix->clear(defaultTemperature);
+  _clearMovedMatrices();
 
-  auto stepFunc =
-    [&](size_t startZ, size_t finishZ)
+  size_t xSize = _velocityMatrix->xSize();
+  size_t ySize = _velocityMatrix->ySize();
+  size_t zSize = _velocityMatrix->zSize();
+
+  for (size_t z = 0; z < zSize; z++)
+  {
+    for (size_t y = 0; y < ySize; y++)
     {
-      _moveMatricesStep(startZ, finishZ, dTime);
-    };
-  _makeAsync(stepFunc);
+      for (size_t x = 0; x < xSize; x++)
+      {
+        float temperature = _temperatureMatrix->get(x, y, z);
+        glm::vec3 velocity = _velocityMatrix->get(x, y, z);
+        glm::vec3 shift = velocity / _cellSize * dTime;
+        glm::vec3 shiftedCoord = glm::vec3(x, y, z) + shift;
+
+        size_t intX = size_t(shiftedCoord.x);
+        float fractX = glm::fract(shiftedCoord.x);
+
+        size_t intY = size_t(shiftedCoord.y);
+        float fractY = glm::fract(shiftedCoord.y);
+
+        size_t intZ = size_t(shiftedCoord.z);
+        float fractZ = glm::fract(shiftedCoord.z);
+
+        float weight = (1.f - fractX) * (1.f - fractY) * (1.f - fractZ);
+        _moveToCell(intX, intY, intZ, velocity, temperature, weight);
+
+        weight = fractX * (1.f - fractY) * (1.f - fractZ);
+        _moveToCell(intX + 1, intY, intZ, velocity, temperature, weight);
+
+        weight = (1.f - fractX) * fractY * (1.f - fractZ);
+        _moveToCell(intX, intY + 1, intZ, velocity, temperature, weight);
+
+        weight = fractX * fractY * (1.f - fractZ);
+        _moveToCell(intX + 1, intY + 1, intZ, velocity, temperature, weight);
+
+        weight = (1.f - fractX) * (1.f - fractY) * fractZ;
+        _moveToCell(intX, intY, intZ + 1, velocity, temperature, weight);
+
+        weight = fractX * (1.f - fractY) * fractZ;
+        _moveToCell(intX + 1, intY, intZ + 1, velocity, temperature, weight);
+
+        weight = (1.f - fractX) * fractY * fractZ;
+        _moveToCell(intX, intY + 1, intZ + 1, velocity, temperature, weight);
+
+        weight = fractX * fractY * fractZ;
+        _moveToCell(intX + 1,
+                    intY + 1,
+                    intZ + 1,
+                    velocity,
+                    temperature,
+                    weight);
+      }
+    }
+  }
+
+  _normalizeMovedMatrices();
 
   _velocityMatrix->swap(*_movedVelocityMatrix);
   _temperatureMatrix->swap(*_movedTemperatureMatrix);
+}
+
+void FluidObject::_normalizeMovedMatrices()
+{
+  for (size_t z = 1; z < _velocityMatrix->zSize() - 1; z++)
+  {
+    for (size_t y = 1; y < _velocityMatrix->ySize() - 1; y++)
+    {
+      for (size_t x = 1; x < _velocityMatrix->xSize() - 1; x++)
+      {
+        float weight = _weightMatrix->get(x, y, z);
+        if(weight != 0.f)
+        {
+          (*_movedVelocityMatrix)(x, y, z) /= weight;
+          (*_movedTemperatureMatrix)(x, y, z) /= weight;
+        }
+        else
+        {
+          (*_movedVelocityMatrix)(x, y, z) = _velocityMatrix->get(x, y, z);
+          (*_movedTemperatureMatrix)(x, y, z) = _temperatureMatrix->get(x, y, z);
+        }
+      }
+    }
+  }
 }
 
 void FluidObject::_updateParticles(float dTime)
