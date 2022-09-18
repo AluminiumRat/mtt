@@ -26,6 +26,12 @@ FluidObject::FluidObject( const QString& name,
           this,
           &FluidObject::_resetMatrices,
           Qt::DirectConnection);
+
+  connect(&parent,
+          &ParticleField::transformChanged,
+          this,
+          &FluidObject::_resetBlockMatrix,
+          Qt::DirectConnection);
 }
 
 void FluidObject::setTypeMask(uint32_t newValue) noexcept
