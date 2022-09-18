@@ -163,8 +163,15 @@ private:
                             size_t finishZ) const;
   void _buildProjPressure(FluidMatrix<float>& target,
                           const FluidMatrix<float>& divirgence);
-  void _moveMatricesStep(size_t startZ, size_t finishZ, float dTime);
+  void _clearMovedMatrices();
+  inline void _moveToCell(int x,
+                          int y,
+                          int z,
+                          glm::vec3 velocity,
+                          float temperature,
+                          float weight);
   void _moveMatrices(float dTime);
+  void _normalizeMovedMatrices();
   void _updateParticles(float dTime);
 
 private:
@@ -188,6 +195,7 @@ private:
   std::optional<FluidMatrix<float>> _projPressureMatrix;
   std::optional<FluidMatrix<float>> _resolveMatrix1;
   std::optional<FluidMatrix<float>> _resolveMatrix2;
+  std::optional<FluidMatrix<float>> _weightMatrix;
 
   std::optional<FluidMatrix<glm::vec3>> _movedVelocityMatrix;
   std::optional<FluidMatrix<float>> _movedTemperatureMatrix;
