@@ -1,6 +1,10 @@
 #pragma once
 
+#include <memory>
+
 #include <QtWidgets/QMenu>
+
+#include <mtt/application/Clipboard/CopyToClipboardOperation.h>
 
 namespace mtt
 {
@@ -11,7 +15,10 @@ namespace mtt
     Q_OBJECT
 
   public:
-    EditMenu(QWidget& window, EditorCommonData& commonData);
+    EditMenu(
+            QWidget& window,
+            EditorCommonData& commonData,
+            std::unique_ptr<CopyToClipboardOperation> copyOperation = nullptr);
     EditMenu(const EditMenu&) = delete;
     EditMenu& operator = (const EditMenu&) = delete;
     virtual ~EditMenu() noexcept = default;
@@ -22,13 +29,18 @@ namespace mtt
   private:
     void _undo() noexcept;
     void _redo() noexcept;
-    void _updateDeleteAction() noexcept;
+    void _updateCopyDeleteActions() noexcept;
+    void _copyObject() noexcept;
+    void _pasteObject() noexcept;
     void _deleteObject() noexcept;
 
   private:
     QWidget& _window;
     EditorCommonData& _commonData;
+    std::unique_ptr<CopyToClipboardOperation> _copyOperation;
 
+    QAction* _copyAction;
+    QAction* _pasteAction;
     QAction* _deleteAction;
   };
 

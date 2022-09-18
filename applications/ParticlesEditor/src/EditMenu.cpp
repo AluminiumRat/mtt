@@ -15,8 +15,10 @@
 #include <Objects/GasEmissionAction.h>
 #include <Objects/GravityModificator.h>
 #include <Objects/HeatingAction.h>
+#include <Objects/ObjectSaver.h>
 #include <Objects/ParticleAnimation.h>
 #include <Objects/ParticlesEmissionAction.h>
+#include <Objects/PEEObjectFactory.h>
 #include <Objects/SizeControlObject.h>
 #include <Objects/VisibilityControlObject.h>
 #include <EditMenu.h>
@@ -24,7 +26,12 @@
 
 EditMenu::EditMenu( QWidget& window,
                     ParticlesEditorCommonData& commonData) :
-  mtt::EditMenu(window, commonData),
+  mtt::EditMenu(window,
+                commonData,
+                std::make_unique<mtt::CopyToClipboardOperation>(
+                                        "application/mttPee",
+                                        std::make_unique<ObjectSaver>(),
+                                        std::make_unique<PEEObjectFactory>())),
   _commonData(commonData)
 {
   addSeparator();
