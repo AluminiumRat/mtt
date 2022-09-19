@@ -65,13 +65,14 @@ void CopyToClipboardOperation::copyToClipboard(
   outStream<<uint32_t(clearedObjects.size());
   for (Object* object : clearedObjects)
   {
+    outStream << object->canBeRenamed();
     _objectSaver->saveObject(*object, outStream, QDir(), *_objectFactory);
   }
 
-  QMimeData mimeData;
-  mimeData.setData(_mimeType, data);
+  std::unique_ptr<QMimeData> mimeData(new QMimeData);
+  mimeData->setData(_mimeType, data);
 
   QClipboard* clipboard = QApplication::clipboard();
   if(clipboard == nullptr) throw std::runtime_error("Clipboard is not available.");
-  clipboard->setMimeData(&mimeData);
+  clipboard->setMimeData(mimeData.release());
 }

@@ -10,13 +10,16 @@
 
 using namespace mtt;
 
-EditMenu::EditMenu( QWidget& window,
-                    EditorCommonData& commonData,
-                    std::unique_ptr<CopyToClipboardOperation> copyOperation) :
+EditMenu::EditMenu(
+                  QWidget& window,
+                  EditorCommonData& commonData,
+                  std::unique_ptr<CopyToClipboardOperation> copyOperation,
+                  std::unique_ptr<PasteFromClipboardOperation> pasteOperation) :
   QMenu(tr("&Edit")),
   _window(window),
   _commonData(commonData),
   _copyOperation(std::move(copyOperation)),
+  _pasteOperation(std::move(pasteOperation)),
   _copyAction(nullptr),
   _pasteAction(nullptr),
   _deleteAction(nullptr)
@@ -32,6 +35,12 @@ EditMenu::EditMenu( QWidget& window,
   {
     _copyAction = addAction(tr("&Copy"), this, &EditMenu::_copyObject);
     _copyAction->setShortcut(Qt::CTRL + Qt::Key_C);
+  }
+
+  if (_pasteOperation != nullptr)
+  {
+    _pasteAction = addAction(tr("&Paste"), this, &EditMenu::_pasteObject);
+    _pasteAction->setShortcut(Qt::CTRL + Qt::Key_V);
   }
 
   _deleteAction = addAction(tr("&Delete"), this, &EditMenu::_deleteObject);
@@ -124,6 +133,7 @@ void EditMenu::_pasteObject() noexcept
 {
   try
   {
+    _pasteOperation->pasteFromClipboard();
   }
   catch (std::exception& error)
   {

@@ -23,15 +23,17 @@
 #include <Objects/VisibilityControlObject.h>
 #include <EditMenu.h>
 #include <ParticlesEditorCommonData.h>
+#include <PasteFromClipboardOperation.h>
 
 EditMenu::EditMenu( QWidget& window,
                     ParticlesEditorCommonData& commonData) :
   mtt::EditMenu(window,
                 commonData,
                 std::make_unique<mtt::CopyToClipboardOperation>(
-                                        "application/mttPee",
+                                        PasteFromClipboardOperation::mimeType,
                                         std::make_unique<ObjectSaver>(),
-                                        std::make_unique<PEEObjectFactory>())),
+                                        std::make_unique<PEEObjectFactory>()),
+                std::make_unique<PasteFromClipboardOperation>(commonData)),
   _commonData(commonData)
 {
   addSeparator();

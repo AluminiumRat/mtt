@@ -5,6 +5,7 @@
 #include <QtWidgets/QMenu>
 
 #include <mtt/application/Clipboard/CopyToClipboardOperation.h>
+#include <mtt/application/Clipboard/PasteFromClipboardOperation.h>
 
 namespace mtt
 {
@@ -16,9 +17,10 @@ namespace mtt
 
   public:
     EditMenu(
-            QWidget& window,
-            EditorCommonData& commonData,
-            std::unique_ptr<CopyToClipboardOperation> copyOperation = nullptr);
+        QWidget& window,
+        EditorCommonData& commonData,
+        std::unique_ptr<CopyToClipboardOperation> copyOperation = nullptr,
+        std::unique_ptr<PasteFromClipboardOperation> pasteOperation = nullptr);
     EditMenu(const EditMenu&) = delete;
     EditMenu& operator = (const EditMenu&) = delete;
     virtual ~EditMenu() noexcept = default;
@@ -38,6 +40,7 @@ namespace mtt
     QWidget& _window;
     EditorCommonData& _commonData;
     std::unique_ptr<CopyToClipboardOperation> _copyOperation;
+    std::unique_ptr<PasteFromClipboardOperation> _pasteOperation;
 
     QAction* _copyAction;
     QAction* _pasteAction;

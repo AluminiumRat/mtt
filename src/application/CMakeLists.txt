@@ -47,6 +47,7 @@ set(HEADERS
     "../../include/mtt/application/AsyncTasks/SaveToFileTask.h"
 
     "../../include/mtt/application/Clipboard/CopyToClipboardOperation.h"
+    "../../include/mtt/application/Clipboard/PasteFromClipboardOperation.h"
 
     "../../include/mtt/application/DrawModel/AbstractDrawModelLoader.h"
     "../../include/mtt/application/DrawModel/DrawModelAnimation.h"
@@ -165,6 +166,7 @@ set(SOURCES
     "AsyncTasks/SaveToFileTask.cpp"
 
     "Clipboard/CopyToClipboardOperation.cpp"
+    "Clipboard/PasteFromClipboardOperation.cpp"
 
     "DrawModel/DrawModelAnimation.cpp"
     "DrawModel/DrawModelAnimationTrack.cpp"

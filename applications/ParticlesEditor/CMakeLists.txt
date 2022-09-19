@@ -111,6 +111,7 @@ set(HEADERS
     "include/MainWindow.h"
     "include/ParticlesEditorCommonData.h"
     "include/ParticlesEditorScene.h"
+    "include/PasteFromClipboardOperation.h"
     "include/PlayerToolbar.h"
     )
 
@@ -178,6 +179,7 @@ set(SOURCES
     "src/ParticlesEditor.cpp"
     "src/ParticlesEditorCommonData.cpp"
     "src/ParticlesEditorScene.cpp"
+    "src/PasteFromClipboardOperation.cpp"
     "src/PlayerToolbar.cpp"
     )
 
