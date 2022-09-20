@@ -1,5 +1,7 @@
 #include <stdexcept>
 
+#include <QtGui/QClipboard>
+#include <QtWidgets/QApplication>
 #include <QtWidgets/QMessageBox>
 
 #include <mtt/application/EditCommands/CompositeCommand.h>
@@ -52,6 +54,17 @@ EditMenu::EditMenu(
           &EditMenu::_updateCopyDeleteActions,
           Qt::DirectConnection);
   _updateCopyDeleteActions();
+
+  QClipboard* clipboard = QApplication::clipboard();
+  if (clipboard != nullptr)
+  {
+    connect(clipboard,
+            &QClipboard::dataChanged,
+            this,
+            &EditMenu::_updatePasteAction,
+            Qt::DirectConnection);
+  }
+  _updatePasteAction();
 }
 
 void EditMenu::_undo() noexcept
@@ -107,6 +120,14 @@ void EditMenu::_updateCopyDeleteActions() noexcept
 
   if(_deleteAction != nullptr) _deleteAction->setEnabled(deleteEnabled);
   if(_copyAction != nullptr) _copyAction->setEnabled(copyEnabled);
+}
+
+void EditMenu::_updatePasteAction() noexcept
+{
+  if(_pasteAction == nullptr) return;
+  if(_pasteOperation == nullptr) return;
+
+  _pasteAction->setEnabled(_pasteOperation->isPasteAvailable());
 }
 
 void EditMenu::_copyObject() noexcept

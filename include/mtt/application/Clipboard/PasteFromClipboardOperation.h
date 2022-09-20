@@ -23,6 +23,7 @@ namespace mtt
                                   const PasteFromClipboardOperation&) = delete;
     virtual ~PasteFromClipboardOperation() noexcept = default;
 
+    virtual bool isPasteAvailable() const noexcept;
     virtual void pasteFromClipboard();
 
   protected:

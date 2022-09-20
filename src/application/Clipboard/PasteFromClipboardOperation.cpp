@@ -80,6 +80,23 @@ PasteFromClipboardOperation::LoaderRecord&
   return *loaderRecord;
 }
 
+bool PasteFromClipboardOperation::isPasteAvailable() const noexcept
+{
+  QClipboard* clipboard = QApplication::clipboard();
+  if (clipboard != nullptr)
+  {
+    const QMimeData* mimeData = clipboard->mimeData();
+    if (mimeData != nullptr)
+    {
+      if (!mimeData->data(CopyToClipboardOperation::mimeType).isEmpty())
+      {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 void PasteFromClipboardOperation::pasteFromClipboard()
 {
   QByteArray data = _getClipboardData();

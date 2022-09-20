@@ -32,6 +32,7 @@ namespace mtt
     void _undo() noexcept;
     void _redo() noexcept;
     void _updateCopyDeleteActions() noexcept;
+    void _updatePasteAction() noexcept;
     void _copyObject() noexcept;
     void _pasteObject() noexcept;
     void _deleteObject() noexcept;
