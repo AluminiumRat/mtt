@@ -13,4 +13,7 @@ public:
     CopyToClipboardOperation& operator = (
                                     const CopyToClipboardOperation&) = delete;
     virtual ~CopyToClipboardOperation() noexcept = default;
+
+    virtual bool objectSupported(
+                            const mtt::Object& object) const noexcept override;
 };

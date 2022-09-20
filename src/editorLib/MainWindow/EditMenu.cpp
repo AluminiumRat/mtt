@@ -89,13 +89,9 @@ void EditMenu::_redo() noexcept
 void EditMenu::_updateCopyDeleteActions() noexcept
 {
   bool deleteEnabled = true;
-  bool copyEnabled = true;
+  bool copyEnabled = false;
 
-  if(_commonData.selectedObjects().size() == 0)
-  {
-    deleteEnabled = false;
-    copyEnabled = false;
-  }
+  if(_commonData.selectedObjects().size() == 0) deleteEnabled = false;
   else
   {
     for(mtt::Object* object : _commonData.selectedObjects())
@@ -104,8 +100,8 @@ void EditMenu::_updateCopyDeleteActions() noexcept
           !object->parent()->subobjectCanBeAddedAndRemoved(*object))
       {
         deleteEnabled = false;
-        break;
       }
+      if( _copyOperation->objectSupported(*object)) copyEnabled = true;
     }
   }
 

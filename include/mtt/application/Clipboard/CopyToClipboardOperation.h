@@ -22,6 +22,8 @@ namespace mtt
                                       const CopyToClipboardOperation&) = delete;
     virtual ~CopyToClipboardOperation() noexcept = default;
 
+    virtual bool objectSupported(const Object& object) const noexcept = 0;
+
     virtual void copyToClipboard(const std::vector<Object*>& objects);
 
   protected:

@@ -36,8 +36,16 @@ std::set<Object*> CopyToClipboardOperation::_clearObjects(
 {
   std::set<Object*> result(objects.begin(), objects.end());
 
+  // Remove unsupported objects
   std::set<Object*>::iterator iObject = result.begin();
+  while (iObject != result.end())
+  {
+    if (!objectSupported(*(*iObject))) iObject = result.erase(iObject);
+    else iObject++;
+  }
 
+  // Remove objects that have a parent in the objects list
+  iObject = result.begin();
   while (iObject != result.end())
   {
     bool toDelete = false;

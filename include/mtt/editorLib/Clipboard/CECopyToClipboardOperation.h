@@ -15,5 +15,7 @@ namespace mtt
     CECopyToClipboardOperation& operator = (
                                     const CECopyToClipboardOperation&) = delete;
     virtual ~CECopyToClipboardOperation() noexcept = default;
+
+    virtual bool objectSupported(const Object& object) const noexcept override;
   };
 }
