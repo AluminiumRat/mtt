@@ -1,14 +1,11 @@
 #pragma once
 
-#include <mtt/application/Clipboard/PasteFromClipboardOperation.h>
+#include <mtt/editorLib/Clipboard/CEPasteFromClipboardOperation.h>
 
 class ParticlesEditorCommonData;
 
-class PasteFromClipboardOperation : public mtt::PasteFromClipboardOperation
+class PasteFromClipboardOperation : public mtt::CEPasteFromClipboardOperation
 {
-public:
-  static constexpr char mimeType[] = "application/mttPee";
-
 public:
   PasteFromClipboardOperation(ParticlesEditorCommonData& commonData);
   PasteFromClipboardOperation(const PasteFromClipboardOperation&) = delete;

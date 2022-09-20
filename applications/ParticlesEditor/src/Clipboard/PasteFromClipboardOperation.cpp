@@ -1,33 +1,31 @@
 #include <mtt/utilities/UID.h>
 
+#include <Clipboard/CopyToClipboardOperation.h>
+#include <Clipboard/PasteFromClipboardOperation.h>
 #include <Objects/ObjectLoader.h>
 #include <Objects/PEEObjectFactory.h>
 #include <Objects/PEVisitor.h>
 #include <ParticlesEditorCommonData.h>
-#include <PasteFromClipboardOperation.h>
 
 class PasteFromClipboardOperation::ObjectHandler : public PEVisitor
 {
 public:
-  ObjectHandler(ParticlesEditorCommonData& commonData,
-                mtt::UID::ValueType uidMixValue) :
-    _commonData(commonData),
-    _uidMixValue(uidMixValue),
+  ObjectHandler(ParticlesEditorCommonData& commonData) :
     _modificatorsGroup(nullptr),
     _selectedFrame(nullptr),
     _field(nullptr),
     _target(nullptr)
   {
-    if (_commonData.scene() != nullptr)
+    if (commonData.scene() != nullptr)
     {
-      _modificatorsGroup = &_commonData.scene()->dataRoot().modificatorsGroup();
-      _field = &_commonData.scene()->dataRoot().particleField();
-      _animation = &_commonData.scene()->dataRoot().animation();
+      _modificatorsGroup = &commonData.scene()->dataRoot().modificatorsGroup();
+      _field = &commonData.scene()->dataRoot().particleField();
+      _animation = &commonData.scene()->dataRoot().animation();
     }
 
-    if (_commonData.selectedObjects().size() == 1)
+    if (commonData.selectedObjects().size() == 1)
     {
-      mtt::Object& selectedObject = *_commonData.selectedObjects().front();
+      mtt::Object& selectedObject = *commonData.selectedObjects().front();
       _selectedFrame = qobject_cast<FrameObject*>(&selectedObject);
       if (_selectedFrame == nullptr)
       {
@@ -67,8 +65,6 @@ public:
   }
 
 private:
-  ParticlesEditorCommonData& _commonData;
-  mtt::UID::ValueType _uidMixValue;
   ModificatorGroup* _modificatorsGroup;
   FrameObject* _selectedFrame;
   ParticleField* _field;
@@ -79,19 +75,22 @@ private:
 
 PasteFromClipboardOperation::PasteFromClipboardOperation(
   ParticlesEditorCommonData& commonData) :
-  mtt::PasteFromClipboardOperation( mimeType,
-                                    std::make_unique<ObjectLoader>(),
-                                    std::make_unique<PEEObjectFactory>(),
-                                    &commonData),
+  mtt::CEPasteFromClipboardOperation(commonData),
   _commonData(commonData)
 {
+  addLoader(CopyToClipboardOperation::particlesCategoryName,
+            std::make_unique<ObjectLoader>(),
+            std::make_unique<PEEObjectFactory>());
 }
 
 mtt::Object* PasteFromClipboardOperation::prepareObjectAndGetTargetGroup(
                                                 mtt::Object& loadedObject,
                                                 mtt::UID::ValueType mixUIDValue)
 {
-  ObjectHandler handler(_commonData, mixUIDValue);
+  ObjectHandler handler(_commonData);
   handler.process(loadedObject);
-  return handler.target();
+  if(handler.target() != nullptr)return handler.target();
+  return CEPasteFromClipboardOperation::prepareObjectAndGetTargetGroup(
+                                                                  loadedObject,
+                                                                  mixUIDValue);
 }

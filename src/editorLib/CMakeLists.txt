@@ -51,6 +51,9 @@ set(HEADERS
     "../../include/mtt/editorLib/AsyncTasks/UploadCubetextureTask.h"
     "../../include/mtt/editorLib/AsyncTasks/UploadTextureTask.h"
 
+    "../../include/mtt/editorLib/Clipboard/CECopyToClipboardOperation.h"
+    "../../include/mtt/editorLib/Clipboard/CEPasteFromClipboardOperation.h"
+
     "../../include/mtt/editorLib/MainWindow/EditMenu.h"
     "../../include/mtt/editorLib/MainWindow/EditorMainWindow.h"
     "../../include/mtt/editorLib/MainWindow/EnvironmentMenu.h"
@@ -174,6 +177,9 @@ set(SOURCES
     "AsyncTasks/SaveEnvironmentTask.cpp"
     "AsyncTasks/UploadCubetextureTask.cpp"
     "AsyncTasks/UploadTextureTask.cpp"
+
+    "Clipboard/CECopyToClipboardOperation.cpp"
+    "Clipboard/CEPasteFromClipboardOperation.cpp"
 
     "MainWindow/EditMenu.cpp"
     "MainWindow/EditorMainWindow.cpp"

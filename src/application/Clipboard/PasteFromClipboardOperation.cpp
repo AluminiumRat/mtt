@@ -1,10 +1,10 @@
 #include <stdexcept>
 
-#include <QtCore/QByteArray>
 #include <QtCore/QMimeData>
 #include <QtGui/QClipboard>
 #include <QtWidgets/QApplication>
 
+#include <mtt/application/Clipboard/CopyToClipboardOperation.h>
 #include <mtt/application/Clipboard/PasteFromClipboardOperation.h>
 #include <mtt/application/EditCommands/AddObjectCommand.h>
 #include <mtt/application/EditCommands/CompositeCommand.h>
@@ -16,26 +16,31 @@
 using namespace mtt;
 
 PasteFromClipboardOperation::PasteFromClipboardOperation(
-                                  const QString& mimeType,
-                                  std::unique_ptr<ObjectLoader> objectLoader,
-                                  std::unique_ptr<ObjectFactory> objectFactory,
-                                  CommonEditData* commonData) :
-  _mimeType(mimeType),
-  _objectLoader(std::move(objectLoader)),
-  _objectFactory(std::move(objectFactory)),
+                                                  CommonEditData* commonData) :
   _commonData(commonData)
 {
-  if (_objectLoader == nullptr) Abort("PasteFromClipboardOperation::PasteFromClipboardOperation: objectLoader is nullptr.");
-  if (_objectFactory == nullptr) Abort("PasteFromClipboardOperation::PasteFromClipboardOperation: objectFactory is nullptr.");
 }
 
-bool PasteFromClipboardOperation::mimeTypeSupported(
-                                        const QString& mimeType) const noexcept
+void PasteFromClipboardOperation::addLoader(
+                                  std::string categoryName,
+                                  std::unique_ptr<ObjectLoader> objectLoader,
+                                  std::unique_ptr<ObjectFactory> objectFactory)
 {
-  return mimeType == _mimeType;
+  if (objectLoader == nullptr) Abort("PasteFromClipboardOperation::addLoader: objectLoader is nullptr.");
+  if (objectFactory == nullptr) Abort("PasteFromClipboardOperation::addLoader: objectFactory is nullptr.");
+  for (const LoaderRecord& record : _loaders)
+  {
+    if(record.categoryName == categoryName) Abort("PasteFromClipboardOperation::addLoader: loader with this categoryName is already registered.");
+  }
+
+  LoaderRecord newRecord;
+  newRecord.categoryName = categoryName;
+  newRecord.loader = std::move(objectLoader);
+  newRecord.factory = std::move(objectFactory);
+  _loaders.push_back(std::move(newRecord));
 }
 
-void PasteFromClipboardOperation::pasteFromClipboard()
+QByteArray PasteFromClipboardOperation::_getClipboardData()
 {
   QClipboard* clipboard = QApplication::clipboard();
   if (clipboard == nullptr) throw std::runtime_error("Clipboard is not available.");
@@ -43,11 +48,41 @@ void PasteFromClipboardOperation::pasteFromClipboard()
   const QMimeData* mimeData = clipboard->mimeData();
   if (mimeData == nullptr)
   {
-    Log() << "PasteFromClipboardOperation::pasteFromClipboard: clipboard is empty.";
-    return;
+    Log() << "PasteFromClipboardOperation::_getClipboardData: clipboard is empty.";
+    return QByteArray();
   }
 
-  QByteArray data = mimeData->data(_mimeType);
+  return mimeData->data(CopyToClipboardOperation::mimeType);
+}
+
+PasteFromClipboardOperation::LoaderRecord& 
+                  PasteFromClipboardOperation::_getLoader(DataStream& inStream)
+{
+  QString categoryName;
+  inStream >> categoryName;
+  std::string category = categoryName.toStdString();
+
+  LoaderRecord* loaderRecord = nullptr;
+  for (LoaderRecord& record : _loaders)
+  {
+    if (record.categoryName == category)
+    {
+      loaderRecord = &record;
+      break;
+    }
+  }
+  if (loaderRecord == nullptr)
+  {
+    std::string errorString("Unknown object category: ");
+    errorString += category;
+    throw std::runtime_error(errorString);
+  }
+  return *loaderRecord;
+}
+
+void PasteFromClipboardOperation::pasteFromClipboard()
+{
+  QByteArray data = _getClipboardData();
   if (data.isEmpty())
   {
     Log() << "PasteFromClipboardOperation::pasteFromClipboard: clipboard is empty or unsupported mime type.";
@@ -64,13 +99,16 @@ void PasteFromClipboardOperation::pasteFromClipboard()
   UID::ValueType mixUidValue = UID::randomValue();
   for (uint32_t objectIndex = 0; objectIndex < objectsNumber; objectIndex++)
   {
+    LoaderRecord& loaderRecord = _getLoader(inStream);
+
     bool canBeRenamed = inStream.readBool();
-    std::unique_ptr<Object> newObject = _objectLoader->loadObject<Object>(
-                                                              canBeRenamed,
-                                                              inStream,
-                                                              QDir(),
-                                                              mixUidValue,
-                                                              *_objectFactory);
+    std::unique_ptr<Object> newObject =
+                      loaderRecord.loader->loadObject<Object>(
+                                                        canBeRenamed,
+                                                        inStream,
+                                                        QDir(),
+                                                        mixUidValue,
+                                                        *loaderRecord.factory);
     Object* targetGroup = prepareObjectAndGetTargetGroup( *newObject,
                                                           mixUidValue);
     if (targetGroup != nullptr)

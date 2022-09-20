@@ -7,6 +7,8 @@
 #include <mtt/editorLib/EditorApplication.h>
 
 #include <AsyncTasks/ImportAnimationTask.h>
+#include <Clipboard/CopyToClipboardOperation.h>
+#include <Clipboard/PasteFromClipboardOperation.h>
 #include <Objects/Fluid/BlockerObject.h>
 #include <Objects/Fluid/GasSource.h>
 #include <Objects/Fluid/HeaterObject.h>
@@ -15,24 +17,18 @@
 #include <Objects/GasEmissionAction.h>
 #include <Objects/GravityModificator.h>
 #include <Objects/HeatingAction.h>
-#include <Objects/ObjectSaver.h>
 #include <Objects/ParticleAnimation.h>
 #include <Objects/ParticlesEmissionAction.h>
-#include <Objects/PEEObjectFactory.h>
 #include <Objects/SizeControlObject.h>
 #include <Objects/VisibilityControlObject.h>
 #include <EditMenu.h>
 #include <ParticlesEditorCommonData.h>
-#include <PasteFromClipboardOperation.h>
 
 EditMenu::EditMenu( QWidget& window,
                     ParticlesEditorCommonData& commonData) :
   mtt::EditMenu(window,
                 commonData,
-                std::make_unique<mtt::CopyToClipboardOperation>(
-                                        PasteFromClipboardOperation::mimeType,
-                                        std::make_unique<ObjectSaver>(),
-                                        std::make_unique<PEEObjectFactory>()),
+                std::make_unique<CopyToClipboardOperation>(),
                 std::make_unique<PasteFromClipboardOperation>(commonData)),
   _commonData(commonData)
 {

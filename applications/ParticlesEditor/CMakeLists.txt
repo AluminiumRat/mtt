@@ -52,6 +52,9 @@ set(HEADERS
     "include/AsyncTasks/SaveEffectTask.h"
     "include/AsyncTasks/UploadParticleTexturesTask.h"
 
+    "include/Clipboard/CopyToClipboardOperation.h"
+    "include/Clipboard/PasteFromClipboardOperation.h"
+
     "include/Objects/Fluid/BlockerObject.h"
     "include/Objects/Fluid/FluidMatrix.h"
     "include/Objects/Fluid/FluidModificator.h"
@@ -111,7 +114,6 @@ set(HEADERS
     "include/MainWindow.h"
     "include/ParticlesEditorCommonData.h"
     "include/ParticlesEditorScene.h"
-    "include/PasteFromClipboardOperation.h"
     "include/PlayerToolbar.h"
     )
 
@@ -121,6 +123,9 @@ set(SOURCES
     "src/AsyncTasks/LoadEffectTask.cpp"
     "src/AsyncTasks/UploadParticleTexturesTask.cpp"
     "src/AsyncTasks/SaveEffectTask.cpp"
+
+    "src/Clipboard/CopyToClipboardOperation.cpp"
+    "src/Clipboard/PasteFromClipboardOperation.cpp"
 
     "src/Objects/Fluid/BlockerObject.cpp"
     "src/Objects/Fluid/FluidModificator.cpp"
@@ -179,7 +184,6 @@ set(SOURCES
     "src/ParticlesEditor.cpp"
     "src/ParticlesEditorCommonData.cpp"
     "src/ParticlesEditorScene.cpp"
-    "src/PasteFromClipboardOperation.cpp"
     "src/PlayerToolbar.cpp"
     )
 
