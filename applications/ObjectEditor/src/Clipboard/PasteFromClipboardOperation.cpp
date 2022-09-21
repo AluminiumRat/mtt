@@ -111,8 +111,10 @@ PasteFromClipboardOperation::PasteFromClipboardOperation(
   mtt::CEPasteFromClipboardOperation(commonData),
   _commonData(commonData)
 {
+  std::unique_ptr<ObjectLoader> loader(new ObjectLoader());
+  loader->setReferenceLoadMode(ObjectLoader::SAVE_ORIGINAL_ID_IN_REFERENCE);
   addLoader(CopyToClipboardOperation::objectEditorCategoryName,
-            std::make_unique<ObjectLoader>(),
+            std::move(loader),
             std::make_unique<MMDObjectFactory>());
 }
 

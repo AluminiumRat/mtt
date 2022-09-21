@@ -1,4 +1,5 @@
 #include <mtt/application/Scene/ObjectGroup.h>
+#include <mtt/application/Scene/ObjectLink.h>
 #include <mtt/application/Scene/ObjectLoader.h>
 #include <mtt/utilities/ScopedSetter.h>
 
@@ -6,7 +7,8 @@ using namespace mtt;
 
 ObjectLoader::ObjectLoader() :
   _stream(nullptr),
-  _objectFactory(nullptr)
+  _objectFactory(nullptr),
+  _referenceLoadMode(APPLY_MIX_UID_TO_REFERENCE)
 {
 }
 
@@ -52,7 +54,12 @@ void ObjectLoader::visitObjectGroup(ObjectGroup& object)
   readChilds<ObjectGroup, Object>(object, true);
 }
 
-UID ObjectLoader::readUID()
+void ObjectLoader::readReference(ObjectRefBase& targetReference)
 {
-  return _stream->readUID().mixedUID(_mixUIDValue);
+  UID referenceID = _stream->readUID();
+  if (_referenceLoadMode == APPLY_MIX_UID_TO_REFERENCE)
+  {
+    referenceID = referenceID.mixedUID(_mixUIDValue);
+  }
+  targetReference.setReferencedId(referenceID);
 }

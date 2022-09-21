@@ -15,8 +15,17 @@
 
 namespace mtt
 {
+  class ObjectRefBase;
+
   class ObjectLoader : public ObjectVisitor
   {
+  public:
+    enum ReferenceLoadMode
+    {
+      APPLY_MIX_UID_TO_REFERENCE,
+      SAVE_ORIGINAL_ID_IN_REFERENCE
+    };
+
   public:
     ObjectLoader();
     ObjectLoader(const ObjectLoader&) = delete;
@@ -42,13 +51,16 @@ namespace mtt
     inline const UID::ValueType& mixUIDValue() const noexcept;
     inline const ObjectFactory& objectFactory() const noexcept;
 
+    inline ReferenceLoadMode referenceLoadMode() const noexcept;
+    inline void setReferenceLoadMode(ReferenceLoadMode newValue) noexcept;
+
     virtual void visitObjectGroup(ObjectGroup& object) override;
 
   protected:
     QString readFilename();
     template<typename ValueType>
     inline void readKeypoint(ValueKeypoint<ValueType, TimeT>& keypoint);
-    UID readUID();
+    void readReference(ObjectRefBase& targetReference);
     template<typename GroupClass, typename ChildClass>
     inline void readChilds(GroupClass& parent, bool canBeRenamed);
 
@@ -64,6 +76,8 @@ namespace mtt
     QDir _fileDirectory;
     UID::ValueType _mixUIDValue;
     const ObjectFactory* _objectFactory;
+
+    ReferenceLoadMode _referenceLoadMode;
   };
 
   template<typename ObjectType>
@@ -118,6 +132,18 @@ namespace mtt
   inline const ObjectFactory& ObjectLoader::objectFactory() const noexcept
   {
     return *_objectFactory;
+  }
+
+  inline ObjectLoader::ReferenceLoadMode
+                                ObjectLoader::referenceLoadMode() const noexcept
+  {
+    return _referenceLoadMode;
+  }
+
+  inline void ObjectLoader::setReferenceLoadMode(
+                                            ReferenceLoadMode newValue) noexcept
+  {
+    _referenceLoadMode = newValue;
   }
 
   template<typename ValueType>

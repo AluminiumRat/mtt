@@ -9,7 +9,7 @@ void ObjectLoader::visitGeometryGroup(GeometryGroup& object)
 void ObjectLoader::visitGeometryObject(GeometryObject& object)
 {
   OEVisitorT::visitGeometryObject(object);
-  object.skeletonRef().setReferencedId(readUID());
+  readReference(object.skeletonRef());
 }
 
 void ObjectLoader::visitLODObject(LODObject& object)
@@ -99,7 +99,7 @@ std::unique_ptr<BoneRefBatch> ObjectLoader::readBoneRefs()
     stream() >> name;
 
     std::unique_ptr<BoneRefObject> refObject(new BoneRefObject(name, true));
-    refObject->boneRef().setReferencedId(readUID());
+    readReference(refObject->boneRef());
     refObject->setBoneInverseMatrix(stream().readMat4());
     refs.push_back(std::move(refObject));
   }
@@ -118,7 +118,7 @@ void ObjectLoader::visitMeshObject(MeshObject& object)
   readGeometry(geometry);
   object.setGeometry(std::move(geometry));
   object.setBoneRefs(readBoneRefs());
-  object.materialRef().setReferencedId(readUID());
+  readReference(object.materialRef());
 }
 
 void ObjectLoader::visitRootObject(RootObject& object)

@@ -172,7 +172,7 @@ void CEObjectLoader::visitPositionAnimator(PositionAnimator& object)
     object.addScaleKeypoint(std::move(keypoint));
   }
 
-  object.targetRef().setReferencedId(readUID());
+  readReference(object.targetRef());
 }
 
 void CEObjectLoader::visitRotatableObject(RotatableObject& object)

@@ -22,7 +22,7 @@ void ObjectLoader::visitEmitterObject(EmitterObject& object)
 
   object.setEnabled(stream().readBool());
   object.setTypeMask(stream().readUint32());
-  object.fieldRef().setReferencedId(readUID());
+  readReference(object.fieldRef());
   object.setIntensity(stream().readFloat());
   object.setSize(stream().readFloat());
   object.setShape(EmitterObject::Shape(stream().readUint8()));
@@ -81,7 +81,7 @@ void ObjectLoader::visitGasEmissionAction(GasEmissionAction& object)
   PEVisitorT::visitGasEmissionAction(object);
 
   object.setEmittedVolume(stream().readFloat());
-  object.gasSourceRef().setReferencedId(readUID());
+  readReference(object.gasSourceRef());
 }
 
 void ObjectLoader::visitGasSource(GasSource& object)
@@ -111,7 +111,7 @@ void ObjectLoader::visitHeatingAction(HeatingAction& object)
   PEVisitorT::visitHeatingAction(object);
 
   object.setEmittedEnergy(stream().readFloat());
-  object.heaterRef().setReferencedId(readUID());
+  readReference(object.heaterRef());
 }
 
 void ObjectLoader::visitModificatorGroup(ModificatorGroup& object)
@@ -126,7 +126,7 @@ void ObjectLoader::visitModificatorObject(ModificatorObject& object)
 
   object.setEnabled(stream().readBool());
   object.setTypeMask(stream().readUint32());
-  object.fieldRef().setReferencedId(readUID());
+  readReference(object.fieldRef());
 }
 
 void ObjectLoader::visitParticleAnimation(ParticleAnimation& object)
@@ -134,7 +134,7 @@ void ObjectLoader::visitParticleAnimation(ParticleAnimation& object)
   PEVisitorT::visitParticleAnimation(object);
 
   object.setDuration(stream().readTime());
-  object.fieldRef().setReferencedId(readUID());
+  readReference(object.fieldRef());
 }
 
 void ObjectLoader::visitParticleField(ParticleField& object)
@@ -171,7 +171,7 @@ void ObjectLoader::visitParticlesEmissionAction(ParticlesEmissionAction& object)
   PEVisitorT::visitParticlesEmissionAction(object);
 
   object.setParticlesNumber(stream().readUint32());
-  object.emitterRef().setReferencedId(readUID());
+  readReference(object.emitterRef());
 }
 
 void ObjectLoader::visitRootObject(RootObject& object)

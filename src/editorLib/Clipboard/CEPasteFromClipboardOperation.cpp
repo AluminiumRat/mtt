@@ -35,8 +35,10 @@ CEPasteFromClipboardOperation::CEPasteFromClipboardOperation(
   PasteFromClipboardOperation(&commonData),
   _commonData(commonData)
 {
+  std::unique_ptr<CEObjectLoader> loader(new CEObjectLoader());
+  loader->setReferenceLoadMode(ObjectLoader::SAVE_ORIGINAL_ID_IN_REFERENCE);
   addLoader(CECopyToClipboardOperation::environmentCategoryName,
-            std::make_unique<CEObjectLoader>(),
+            std::move(loader),
             std::make_unique<EnvironmentObjectFactory>());
 }
 
