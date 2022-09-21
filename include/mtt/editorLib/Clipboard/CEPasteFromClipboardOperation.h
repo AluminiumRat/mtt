@@ -32,7 +32,8 @@ namespace mtt
     };
 
   public:
-    CEPasteFromClipboardOperation(EditorCommonData& commonData);
+    CEPasteFromClipboardOperation(const std::string& mimeType,
+                                  EditorCommonData& commonData);
     CEPasteFromClipboardOperation(
                                 const CEPasteFromClipboardOperation&) = delete;
     CEPasteFromClipboardOperation& operator = (

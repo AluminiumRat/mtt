@@ -5,15 +5,16 @@
 class CopyToClipboardOperation : public mtt::CECopyToClipboardOperation
 {
 public:
+  static constexpr char objectEditorMimeType[] = "application/mttObjectEditor";
   static constexpr char objectEditorCategoryName[] = "MTTObjectEditor";
 
 public:
-    CopyToClipboardOperation();
-    CopyToClipboardOperation(const CopyToClipboardOperation&) = delete;
-    CopyToClipboardOperation& operator = (
+  CopyToClipboardOperation();
+  CopyToClipboardOperation(const CopyToClipboardOperation&) = delete;
+  CopyToClipboardOperation& operator = (
                                     const CopyToClipboardOperation&) = delete;
-    virtual ~CopyToClipboardOperation() noexcept = default;
+  virtual ~CopyToClipboardOperation() noexcept = default;
 
-    virtual bool objectSupported(
+  virtual bool objectSupported(
                             const mtt::Object& object) const noexcept override;
 };

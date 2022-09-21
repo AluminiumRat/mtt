@@ -4,7 +4,6 @@
 #include <QtGui/QClipboard>
 #include <QtWidgets/QApplication>
 
-#include <mtt/application/Clipboard/CopyToClipboardOperation.h>
 #include <mtt/application/Clipboard/PasteFromClipboardOperation.h>
 #include <mtt/application/EditCommands/AddObjectCommand.h>
 #include <mtt/application/EditCommands/CompositeCommand.h>
@@ -16,7 +15,9 @@
 using namespace mtt;
 
 PasteFromClipboardOperation::PasteFromClipboardOperation(
+                                                  const std::string& mimeType,
                                                   CommonEditData* commonData) :
+  _mimeType(mimeType),
   _commonData(commonData)
 {
 }
@@ -40,7 +41,7 @@ void PasteFromClipboardOperation::addLoader(
   _loaders.push_back(std::move(newRecord));
 }
 
-QByteArray PasteFromClipboardOperation::_getClipboardData()
+QByteArray PasteFromClipboardOperation::_getClipboardData() const
 {
   QClipboard* clipboard = QApplication::clipboard();
   if (clipboard == nullptr) throw std::runtime_error("Clipboard is not available.");
@@ -52,7 +53,7 @@ QByteArray PasteFromClipboardOperation::_getClipboardData()
     return QByteArray();
   }
 
-  return mimeData->data(CopyToClipboardOperation::mimeType);
+  return mimeData->data(_mimeType.c_str());
 }
 
 PasteFromClipboardOperation::LoaderRecord& 
@@ -88,7 +89,7 @@ bool PasteFromClipboardOperation::isPasteAvailable() const noexcept
     const QMimeData* mimeData = clipboard->mimeData();
     if (mimeData != nullptr)
     {
-      if (!mimeData->data(CopyToClipboardOperation::mimeType).isEmpty())
+      if (!mimeData->data(_mimeType.c_str()).isEmpty())
       {
         return true;
       }

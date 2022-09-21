@@ -74,7 +74,9 @@ private:
 
 PasteFromClipboardOperation::PasteFromClipboardOperation(
                                         ParticlesEditorCommonData& commonData) :
-  mtt::CEPasteFromClipboardOperation(commonData),
+  mtt::CEPasteFromClipboardOperation(
+                              CopyToClipboardOperation::particlesEditorMimeType,
+                              commonData),
   _commonData(commonData)
 {
   std::unique_ptr<ObjectLoader> loader(new ObjectLoader());

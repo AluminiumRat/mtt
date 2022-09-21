@@ -31,8 +31,9 @@ void CEPasteFromClipboardOperation::EnvironmentObjectHandler::
 }
 
 CEPasteFromClipboardOperation::CEPasteFromClipboardOperation(
+                                                const std::string& mimeType,
                                                 EditorCommonData& commonData) :
-  PasteFromClipboardOperation(&commonData),
+  PasteFromClipboardOperation(mimeType, &commonData),
   _commonData(commonData)
 {
   std::unique_ptr<CEObjectLoader> loader(new CEObjectLoader());

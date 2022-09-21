@@ -5,7 +5,8 @@
 #include <Objects/ObjectSaver.h>
 #include <Objects/PEEObjectFactory.h>
 
-CopyToClipboardOperation::CopyToClipboardOperation()
+CopyToClipboardOperation::CopyToClipboardOperation() :
+  CECopyToClipboardOperation(particlesEditorMimeType)
 {
   std::unique_ptr<ObjectSaver> saver(new ObjectSaver());
   saver->setFilenameWriteMode(ObjectSaver::WRITE_FULL_FILE_PATH);

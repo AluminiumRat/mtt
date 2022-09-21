@@ -10,7 +10,7 @@ namespace mtt
     static constexpr char environmentCategoryName[] = "CEEnvironment";
 
   public:
-    CECopyToClipboardOperation();
+    CECopyToClipboardOperation(const std::string& mimeType);
     CECopyToClipboardOperation(const CECopyToClipboardOperation&) = delete;
     CECopyToClipboardOperation& operator = (
                                     const CECopyToClipboardOperation&) = delete;

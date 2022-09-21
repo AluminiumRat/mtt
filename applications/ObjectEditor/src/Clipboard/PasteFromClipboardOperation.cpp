@@ -107,7 +107,9 @@ private:
 
 PasteFromClipboardOperation::PasteFromClipboardOperation(
                                           ObjectEditorCommonData& commonData) :
-  mtt::CEPasteFromClipboardOperation(commonData),
+  mtt::CEPasteFromClipboardOperation(
+                                CopyToClipboardOperation::objectEditorMimeType,
+                                commonData),
   _commonData(commonData)
 {
   std::unique_ptr<ObjectLoader> loader(new ObjectLoader());

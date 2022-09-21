@@ -12,6 +12,12 @@
 
 using namespace mtt;
 
+CopyToClipboardOperation::CopyToClipboardOperation(
+                                                  const std::string& mimeType) :
+  _mimeType(mimeType)
+{
+}
+
 void CopyToClipboardOperation::addSaver(
                                   std::string categoryName,
                                   std::unique_ptr<ObjectSaver> objectSaver,
@@ -101,7 +107,7 @@ void CopyToClipboardOperation::copyToClipboard(
   }
 
   std::unique_ptr<QMimeData> mimeData(new QMimeData);
-  mimeData->setData(mimeType, data);
+  mimeData->setData(_mimeType.c_str(), data);
 
   QClipboard* clipboard = QApplication::clipboard();
   if(clipboard == nullptr) throw std::runtime_error("Clipboard is not available.");

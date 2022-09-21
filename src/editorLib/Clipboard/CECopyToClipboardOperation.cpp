@@ -5,7 +5,9 @@
 
 using namespace mtt;
 
-CECopyToClipboardOperation::CECopyToClipboardOperation()
+CECopyToClipboardOperation::CECopyToClipboardOperation(
+                                                  const std::string& mimeType) :
+  CopyToClipboardOperation(mimeType)
 {
   std::unique_ptr<CEObjectSaver> saver(new CEObjectSaver());
   saver->setFilenameWriteMode(ObjectSaver::WRITE_FULL_FILE_PATH);

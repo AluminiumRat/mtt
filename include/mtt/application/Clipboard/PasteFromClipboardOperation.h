@@ -17,11 +17,14 @@ namespace mtt
   class PasteFromClipboardOperation
   {
   public:
-    PasteFromClipboardOperation(CommonEditData* commonData);
+    PasteFromClipboardOperation(const std::string& mimeType,
+                                CommonEditData* commonData);
     PasteFromClipboardOperation(const PasteFromClipboardOperation&) = delete;
     PasteFromClipboardOperation& operator = (
                                   const PasteFromClipboardOperation&) = delete;
     virtual ~PasteFromClipboardOperation() noexcept = default;
+
+    inline const std::string& mimeType() const noexcept;
 
     virtual bool isPasteAvailable() const noexcept;
     virtual void pasteFromClipboard();
@@ -52,12 +55,18 @@ namespace mtt
     };
 
   private:
-    static QByteArray _getClipboardData();
+    QByteArray _getClipboardData() const;
     LoaderRecord& _getLoader(DataStream& inStream);
 
   private:
+    std::string _mimeType;
     std::vector<LoaderRecord> _loaders;
-
     CommonEditData* _commonData;
   };
+
+  inline const std::string&
+                          PasteFromClipboardOperation::mimeType() const noexcept
+  {
+    return _mimeType;
+  }
 }

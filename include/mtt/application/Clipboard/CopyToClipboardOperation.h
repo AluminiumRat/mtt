@@ -13,17 +13,15 @@ namespace mtt
   class CopyToClipboardOperation
   {
   public:
-    static constexpr char mimeType[] = "application/mttObjects";
-
-  public:
-    CopyToClipboardOperation() = default;
+    CopyToClipboardOperation(const std::string& mimeType);
     CopyToClipboardOperation(const CopyToClipboardOperation&) = delete;
     CopyToClipboardOperation& operator = (
                                       const CopyToClipboardOperation&) = delete;
     virtual ~CopyToClipboardOperation() noexcept = default;
 
-    virtual bool objectSupported(const Object& object) const noexcept = 0;
+    inline const std::string& mimeType() const noexcept;
 
+    virtual bool objectSupported(const Object& object) const noexcept = 0;
     virtual void copyToClipboard(const std::vector<Object*>& objects);
 
   protected:
@@ -51,5 +49,11 @@ namespace mtt
     };
 
     std::vector<SaverRecord> _savers;
+    std::string _mimeType;
   };
+
+  inline const std::string& CopyToClipboardOperation::mimeType() const noexcept
+  {
+    return _mimeType;
+  }
 }
