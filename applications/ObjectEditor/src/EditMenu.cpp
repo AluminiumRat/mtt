@@ -11,13 +11,18 @@
 #include <mtt/editorLib/EditorApplication.h>
 
 #include <AsyncTasks/AddModelFromFbxTask.h>
+#include <Clipboard/CopyToClipboardOperation.h>
+#include <Clipboard/PasteFromClipboardOperation.h>
 #include <Objects/LODObject.h>
 #include <Objects/MaterialObject.h>
 #include <EditMenu.h>
 #include <ObjectEditorCommonData.h>
 
 EditMenu::EditMenu(QWidget& window, ObjectEditorCommonData& commonData) :
-  mtt::EditMenu(window, commonData),
+  mtt::EditMenu(window,
+                commonData,
+                std::make_unique<CopyToClipboardOperation>(),
+                std::make_unique<PasteFromClipboardOperation>(commonData)),
   _commonData(commonData)
 {
   addSeparator();

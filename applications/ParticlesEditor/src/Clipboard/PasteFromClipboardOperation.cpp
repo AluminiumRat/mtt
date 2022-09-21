@@ -74,7 +74,7 @@ private:
 
 
 PasteFromClipboardOperation::PasteFromClipboardOperation(
-  ParticlesEditorCommonData& commonData) :
+                                        ParticlesEditorCommonData& commonData) :
   mtt::CEPasteFromClipboardOperation(commonData),
   _commonData(commonData)
 {

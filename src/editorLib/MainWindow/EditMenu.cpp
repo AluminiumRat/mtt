@@ -114,7 +114,10 @@ void EditMenu::_updateCopyDeleteActions() noexcept
       {
         deleteEnabled = false;
       }
-      if( _copyOperation->objectSupported(*object)) copyEnabled = true;
+      if(_copyOperation != nullptr && _copyOperation->objectSupported(*object))
+      {
+        copyEnabled = true;
+      }
     }
   }
 

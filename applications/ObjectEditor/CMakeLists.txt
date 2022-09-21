@@ -50,6 +50,9 @@ set(HEADERS
     "include/AsyncTasks/LoadModelTask.h"
     "include/AsyncTasks/SaveModelTask.h"
 
+    "include/Clipboard/CopyToClipboardOperation.h"
+    "include/Clipboard/PasteFromClipboardOperation.h"
+
     "include/Objects/BoneRefBatch.h"
     "include/Objects/BoneRefObject.h"
     "include/Objects/GeometryGroup.h"
@@ -91,6 +94,9 @@ set(SOURCES
     "src/AsyncTasks/AddModelFromFbxTask.cpp"
     "src/AsyncTasks/LoadModelTask.cpp"
     "src/AsyncTasks/SaveModelTask.cpp"
+
+    "src/Clipboard/CopyToClipboardOperation.cpp"
+    "src/Clipboard/PasteFromClipboardOperation.cpp"
 
     "src/Objects/BoneRefBatch.cpp"
     "src/Objects/BoneRefObject.cpp"
