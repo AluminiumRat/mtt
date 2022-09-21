@@ -7,8 +7,10 @@
 
 CopyToClipboardOperation::CopyToClipboardOperation()
 {
+  std::unique_ptr<ObjectSaver> saver(new ObjectSaver());
+  saver->setFilenameWriteMode(ObjectSaver::WRITE_FULL_FILE_PATH);
   addSaver( particlesCategoryName,
-            std::make_unique<ObjectSaver>(),
+            std::move(saver),
             std::make_unique<PEEObjectFactory>());
 }
 

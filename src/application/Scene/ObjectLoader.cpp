@@ -8,7 +8,8 @@ using namespace mtt;
 ObjectLoader::ObjectLoader() :
   _stream(nullptr),
   _objectFactory(nullptr),
-  _referenceLoadMode(APPLY_MIX_UID_TO_REFERENCE)
+  _referenceLoadMode(APPLY_MIX_UID_TO_REFERENCE),
+  _filenameReadMode(READ_FILENAME_AS_RELATIVE_PATH)
 {
 }
 
@@ -25,10 +26,10 @@ void ObjectLoader::loadEmbeddedObject(Object& object,
 }
 
 void ObjectLoader::_readObjectData( Object& object,
-                                      DataStream& stream,
-                                      const QDir& fileDirectory,
-                                      UID::ValueType mixUIDValue,
-                                      const ObjectFactory& objectFactory)
+                                    DataStream& stream,
+                                    const QDir& fileDirectory,
+                                    UID::ValueType mixUIDValue,
+                                    const ObjectFactory& objectFactory)
 {
   ScopedSetter<DataStream*> setStream(_stream, &stream);
   ScopedSetter<QDir> setFileDir(_fileDirectory, fileDirectory);
@@ -41,11 +42,20 @@ void ObjectLoader::_readObjectData( Object& object,
 
 QString ObjectLoader::readFilename()
 {
-  QString relativePath;
-  *_stream >> relativePath;
-  if(relativePath.isEmpty()) return QString();
-  QFileInfo fileInfo(_fileDirectory.absoluteFilePath(relativePath));
-  return fileInfo.canonicalFilePath();
+  if(_filenameReadMode == READ_FILENAME_AS_RELATIVE_PATH)
+  {
+    QString relativePath;
+    *_stream >> relativePath;
+    if(relativePath.isEmpty()) return QString();
+    QFileInfo fileInfo(_fileDirectory.absoluteFilePath(relativePath));
+    return fileInfo.canonicalFilePath();
+  }
+  else
+  {
+    QString filePath;
+    *_stream >> filePath;
+    return filePath;
+  }
 }
 
 void ObjectLoader::visitObjectGroup(ObjectGroup& object)

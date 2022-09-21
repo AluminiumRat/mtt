@@ -7,8 +7,10 @@ using namespace mtt;
 
 CECopyToClipboardOperation::CECopyToClipboardOperation()
 {
+  std::unique_ptr<CEObjectSaver> saver(new CEObjectSaver());
+  saver->setFilenameWriteMode(ObjectSaver::WRITE_FULL_FILE_PATH);
   addSaver( environmentCategoryName,
-            std::make_unique<CEObjectSaver>(),
+            std::move(saver),
             std::make_unique<EnvironmentObjectFactory>());
 }
 

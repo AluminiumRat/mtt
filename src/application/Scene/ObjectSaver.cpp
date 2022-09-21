@@ -9,7 +9,8 @@ using namespace mtt;
 
 ObjectSaver::ObjectSaver() :
   _stream(nullptr),
-  _objectFactory(nullptr)
+  _objectFactory(nullptr),
+  _filenameWriteMode(WRITE_RELATIVE_FILE_PATH)
 {
 }
 
@@ -31,9 +32,9 @@ void ObjectSaver::saveObject( const mtt::Object& object,
 }
 
 void ObjectSaver::saveObjectData( const Object& object,
-                                    DataStream& stream,
-                                    const QDir& fileDirectory,
-                                    const ObjectFactory& objectFactory)
+                                  DataStream& stream,
+                                  const QDir& fileDirectory,
+                                  const ObjectFactory& objectFactory)
 {
   ScopedSetter<DataStream*> setStream(_stream, &stream);
   ScopedSetter<QDir> setFileDir(_fileDirectory, fileDirectory);
@@ -44,7 +45,11 @@ void ObjectSaver::saveObjectData( const Object& object,
 
 void ObjectSaver::writeFilename(const QString& filename)
 {
-  *_stream << _fileDirectory.relativeFilePath(filename);
+  if(_filenameWriteMode == WRITE_RELATIVE_FILE_PATH)
+  {
+    *_stream << _fileDirectory.relativeFilePath(filename);
+  }
+  else *_stream << filename;
 }
 
 void ObjectSaver::writeChilds(const Object& parent)

@@ -14,6 +14,13 @@ namespace mtt
   class ObjectSaver : public ObjectVisitor
   {
   public:
+    enum FilenameWriteMode
+    {
+      WRITE_RELATIVE_FILE_PATH,
+      WRITE_FULL_FILE_PATH
+    };
+
+  public:
     ObjectSaver();
     ObjectSaver(const ObjectSaver&) = delete;
     ObjectSaver& operator = (const ObjectSaver&) = delete;
@@ -29,6 +36,9 @@ namespace mtt
                         DataStream& stream,
                         const QDir& fileDirectory,
                         const ObjectFactory& objectFactory);
+
+    inline FilenameWriteMode filenameWriteMode() const noexcept;
+    inline void setFilenameWriteMode(FilenameWriteMode newValue) noexcept;
 
     virtual void visitConstObject(const Object& object) override;
     virtual void visitConstObjectGroup(const ObjectGroup& object) override;
@@ -48,7 +58,20 @@ namespace mtt
     DataStream* _stream;
     QDir _fileDirectory;
     const ObjectFactory* _objectFactory;
+    FilenameWriteMode _filenameWriteMode;
   };
+
+  inline ObjectSaver::FilenameWriteMode
+                                ObjectSaver::filenameWriteMode() const noexcept
+  {
+    return _filenameWriteMode;
+  }
+
+  inline void ObjectSaver::setFilenameWriteMode(
+                                            FilenameWriteMode newValue) noexcept
+  {
+    _filenameWriteMode = newValue;
+  }
 
   inline DataStream& ObjectSaver::stream() const noexcept
   {

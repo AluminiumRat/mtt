@@ -105,7 +105,6 @@ private:
   mtt::Object* _target;
 };
 
-
 PasteFromClipboardOperation::PasteFromClipboardOperation(
                                           ObjectEditorCommonData& commonData) :
   mtt::CEPasteFromClipboardOperation(commonData),
@@ -113,6 +112,7 @@ PasteFromClipboardOperation::PasteFromClipboardOperation(
 {
   std::unique_ptr<ObjectLoader> loader(new ObjectLoader());
   loader->setReferenceLoadMode(ObjectLoader::SAVE_ORIGINAL_ID_IN_REFERENCE);
+  loader->setFilenameReadMode(ObjectLoader::READ_FILENAME_AS_ABSOLUTE_PATH);
   addLoader(CopyToClipboardOperation::objectEditorCategoryName,
             std::move(loader),
             std::make_unique<MMDObjectFactory>());

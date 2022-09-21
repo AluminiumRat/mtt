@@ -37,6 +37,7 @@ CEPasteFromClipboardOperation::CEPasteFromClipboardOperation(
 {
   std::unique_ptr<CEObjectLoader> loader(new CEObjectLoader());
   loader->setReferenceLoadMode(ObjectLoader::SAVE_ORIGINAL_ID_IN_REFERENCE);
+  loader->setFilenameReadMode(ObjectLoader::READ_FILENAME_AS_ABSOLUTE_PATH);
   addLoader(CECopyToClipboardOperation::environmentCategoryName,
             std::move(loader),
             std::make_unique<EnvironmentObjectFactory>());

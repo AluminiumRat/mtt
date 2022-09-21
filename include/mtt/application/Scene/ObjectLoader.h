@@ -26,6 +26,12 @@ namespace mtt
       SAVE_ORIGINAL_ID_IN_REFERENCE
     };
 
+    enum FilenameReadMode
+    {
+      READ_FILENAME_AS_RELATIVE_PATH,
+      READ_FILENAME_AS_ABSOLUTE_PATH
+    };
+
   public:
     ObjectLoader();
     ObjectLoader(const ObjectLoader&) = delete;
@@ -54,6 +60,9 @@ namespace mtt
     inline ReferenceLoadMode referenceLoadMode() const noexcept;
     inline void setReferenceLoadMode(ReferenceLoadMode newValue) noexcept;
 
+    inline FilenameReadMode filenameReadMode() const noexcept;
+    inline void setFilenameReadMode(FilenameReadMode newValue) noexcept;
+
     virtual void visitObjectGroup(ObjectGroup& object) override;
 
   protected:
@@ -78,6 +87,7 @@ namespace mtt
     const ObjectFactory* _objectFactory;
 
     ReferenceLoadMode _referenceLoadMode;
+    FilenameReadMode _filenameReadMode;
   };
 
   template<typename ObjectType>
@@ -144,6 +154,18 @@ namespace mtt
                                             ReferenceLoadMode newValue) noexcept
   {
     _referenceLoadMode = newValue;
+  }
+
+  inline ObjectLoader::FilenameReadMode
+                                ObjectLoader::filenameReadMode() const noexcept
+  {
+    return _filenameReadMode;
+  }
+
+  inline void ObjectLoader::setFilenameReadMode(
+                                            FilenameReadMode newValue) noexcept
+  {
+    _filenameReadMode = newValue;
   }
 
   template<typename ValueType>
