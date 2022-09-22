@@ -17,7 +17,8 @@ namespace mtt
     HullDrawableNode& operator = (const HullDrawableNode&) = delete;
     virtual ~HullDrawableNode() noexcept = default;
 
-    void setColor(const glm::vec3& color);
+    /// Color in rgba format, a component is opacity
+    void setColor(const glm::vec4& color);
 
     /// newGeometry should be in VK_PRIMITIVE_TOPOLOGY_LINE_LIST topology
     void setGeometry(const std::vector<glm::vec3> newGeometry);

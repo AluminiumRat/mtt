@@ -22,9 +22,38 @@ namespace mtt
 
       virtual void addToDrawPlan(DrawPlanBuildInfo& buildInfo) override;
 
+      inline UnlightedColorTechnique& colorTechnique() noexcept;
+      inline const UnlightedColorTechnique& colorTechnique() const noexcept;
+      inline SelectionMeshTechnique& selectionTechnique() noexcept;
+      inline const SelectionMeshTechnique& selectionTechnique() const noexcept;
+
     private:
       UnlightedColorTechnique _colorTechnique;
       SelectionMeshTechnique _selectionTechnique;
     };
+
+    inline UnlightedColorTechnique&
+                      InstrumentalCompositeTechnique::colorTechnique() noexcept
+    {
+      return _colorTechnique;
+    }
+
+    inline const UnlightedColorTechnique&
+                InstrumentalCompositeTechnique::colorTechnique() const noexcept
+    {
+      return _colorTechnique;
+    }
+
+    inline SelectionMeshTechnique&
+                  InstrumentalCompositeTechnique::selectionTechnique() noexcept
+    {
+      return _selectionTechnique;
+    }
+
+    inline const SelectionMeshTechnique&
+            InstrumentalCompositeTechnique::selectionTechnique() const noexcept
+    {
+      return _selectionTechnique;
+    }
   }
 }

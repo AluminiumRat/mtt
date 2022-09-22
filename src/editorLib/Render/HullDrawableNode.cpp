@@ -11,27 +11,33 @@ using namespace mtt;
 HullDrawableNode::HullDrawableNode() :
   _mesh(Application::instance().displayDevice())
 {
-  _mesh.setTechnique(
-        clPipeline::colorFrameType,
-        std::make_unique<clPipeline::InstrumentalCompositeTechnique>(
+  std::unique_ptr<clPipeline::InstrumentalCompositeTechnique> colorTechnique(
+                new clPipeline::InstrumentalCompositeTechnique(
                                                 VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
                                                 true,
                                                 true));
-  _mesh.setTechnique( clPipeline::uidFrameType,
-                      std::make_unique<UidMeshTechnique>(
-                                                VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
-                                                true,
-                                                true));
+  colorTechnique->selectionTechnique().setLineWidth(2);
+  _mesh.setTechnique( clPipeline::colorFrameType,
+                      std::move(colorTechnique));
 
-  setColor(glm::vec3(.7f, .7f, .4f));
+  std::unique_ptr<UidMeshTechnique> uidTechnique(
+                          new UidMeshTechnique( VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
+                                                true,
+                                                true));
+  uidTechnique->setLineWidth(5.f);
+  _mesh.setTechnique( clPipeline::uidFrameType,
+                      std::move(uidTechnique));
+
+  setColor(glm::vec4(.7f, .7f, .4f, .5f));
 
   setDrawable(&_mesh, Sphere());
 }
 
-void HullDrawableNode::setColor(const glm::vec3& color)
+void HullDrawableNode::setColor(const glm::vec4& color)
 {
   SurfaceMaterialData materialData;
-  materialData.albedo = glm::vec3(.7f, .7f, .4f);
+  materialData.albedo = glm::vec3(color);
+  materialData.opaque = color.a;
   materialData.roughness = 1;
   materialData.specularStrength = 1;
   _mesh.extraData().setSurfaceMaterialData(materialData);
