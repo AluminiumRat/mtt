@@ -2,16 +2,19 @@
 
 #include <memory>
 
-#include <mtt/editorLib/MainWindow/EditMenu.h>
+#include <QtWidgets/QMenu>
+
+#include <mtt/application/Widgets/Actions/CopyAction.h>
+#include <mtt/application/Widgets/Actions/DeleteAction.h>
+#include <mtt/application/Widgets/Actions/PasteAction.h>
+#include <mtt/application/Widgets/Actions/RedoAction.h>
+#include <mtt/application/Widgets/Actions/UndoAction.h>
 
 #include <Objects/HierarhicalObject.h>
 
 class ParticlesEditorCommonData;
-class MainWindow;
 
-class Ui_MainWindow;
-
-class EditMenu : public mtt::EditMenu
+class EditMenu : public QMenu
 {
   Q_OBJECT
 
@@ -43,5 +46,12 @@ private:
   void _addHeatingAction() noexcept;
 
 private:
+  QWidget& _window;
   ParticlesEditorCommonData& _commonData;
+
+  mtt::UndoAction _undoAction;
+  mtt::RedoAction _redoAction;
+  mtt::CopyAction _copyAction;
+  mtt::PasteAction _pasteAction;
+  mtt::DeleteAction _deleteAction;
 };

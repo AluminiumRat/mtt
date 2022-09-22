@@ -54,7 +54,6 @@ set(HEADERS
     "../../include/mtt/editorLib/Clipboard/CECopyToClipboardOperation.h"
     "../../include/mtt/editorLib/Clipboard/CEPasteFromClipboardOperation.h"
 
-    "../../include/mtt/editorLib/MainWindow/EditMenu.h"
     "../../include/mtt/editorLib/MainWindow/EditorMainWindow.h"
     "../../include/mtt/editorLib/MainWindow/EnvironmentMenu.h"
     "../../include/mtt/editorLib/MainWindow/ManipulatorToolbar.h"
@@ -181,7 +180,6 @@ set(SOURCES
     "Clipboard/CECopyToClipboardOperation.cpp"
     "Clipboard/CEPasteFromClipboardOperation.cpp"
 
-    "MainWindow/EditMenu.cpp"
     "MainWindow/EditorMainWindow.cpp"
     "MainWindow/EnvironmentMenu.cpp"
     "MainWindow/ManipulatorToolbar.cpp"

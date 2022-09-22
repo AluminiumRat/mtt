@@ -19,12 +19,26 @@
 #include <ObjectEditorCommonData.h>
 
 EditMenu::EditMenu(QWidget& window, ObjectEditorCommonData& commonData) :
-  mtt::EditMenu(window,
-                commonData,
-                std::make_unique<CopyToClipboardOperation>(),
-                std::make_unique<PasteFromClipboardOperation>(commonData)),
-  _commonData(commonData)
+  QMenu(tr("&Edit")),
+  _window(window),
+  _commonData(commonData),
+  _undoAction(commonData.undoStack(), &window),
+  _redoAction(commonData.undoStack(), &window),
+  _copyAction(std::make_unique<CopyToClipboardOperation>(), commonData,
+              &window),
+  _pasteAction( std::make_unique<PasteFromClipboardOperation>(commonData),
+                &window),
+  _deleteAction(commonData, &window)
 {
+  addAction(&_undoAction);
+  addAction(&_redoAction);
+
+  addSeparator();
+
+  addAction(&_copyAction);
+  addAction(&_pasteAction);
+  addAction(&_deleteAction);
+
   addSeparator();
 
   addAction(tr("Add bone"), this, &EditMenu::_addBone);
@@ -74,13 +88,13 @@ void EditMenu::_addBone() noexcept
   }
   catch(std::exception& error)
   {
-    QMessageBox::critical(&window(),
+    QMessageBox::critical(&_window,
                           tr("Unable to add a bone"),
                           error.what());
   }
   catch(...)
   {
-    QMessageBox::critical(&window(),
+    QMessageBox::critical(&_window,
                           tr("Unable to add a bone"),
                           tr("Unknown error"));
   }
@@ -105,13 +119,13 @@ void EditMenu::_addLOD() noexcept
   }
   catch(std::exception& error)
   {
-    QMessageBox::critical(&window(),
+    QMessageBox::critical(&_window,
                           tr("Unable to add a LOD object"),
                           error.what());
   }
   catch(...)
   {
-    QMessageBox::critical(&window(),
+    QMessageBox::critical(&_window,
                           tr("Unable to add a LOD object"),
                           tr("Unknown error"));
   }
@@ -137,13 +151,13 @@ void EditMenu::_addMaterial() noexcept
   }
   catch(std::exception& error)
   {
-    QMessageBox::critical(&window(),
+    QMessageBox::critical(&_window,
                           tr("Unable to add material"),
                           error.what());
   }
   catch(...)
   {
-    QMessageBox::critical(&window(),
+    QMessageBox::critical(&_window,
                           tr("Unable to add material"),
                           tr("Unknown error"));
   }
@@ -156,7 +170,7 @@ void EditMenu::_addModelFromBlender() noexcept
     ObjectEditorScene* scene = _commonData.scene();
     if (scene == nullptr) return;
 
-    QString fileName = QFileDialog::getOpenFileName(&window(),
+    QString fileName = QFileDialog::getOpenFileName(&_window,
                                                     tr("Import fbx"),
                                                     "",
                                                     tr("fbx (*.fbx)"));
@@ -171,13 +185,13 @@ void EditMenu::_addModelFromBlender() noexcept
   }
   catch(std::exception& error)
   {
-    QMessageBox::critical(&window(),
+    QMessageBox::critical(&_window,
                           tr("Unable to import fbx"),
                           error.what());
   }
   catch (...)
   {
-    QMessageBox::critical(&window(), tr("Error"), tr("Unable to import fbx"));
+    QMessageBox::critical(&_window, tr("Error"), tr("Unable to import fbx"));
   }
 }
 
@@ -188,7 +202,7 @@ void EditMenu::_addModelFrom3DMax() noexcept
     ObjectEditorScene* scene = _commonData.scene();
     if (scene == nullptr) return;
 
-    QString fileName = QFileDialog::getOpenFileName(&window(),
+    QString fileName = QFileDialog::getOpenFileName(&_window,
                                                     tr("Import fbx"),
                                                     "",
                                                     tr("fbx (*.fbx)"));
@@ -203,7 +217,7 @@ void EditMenu::_addModelFrom3DMax() noexcept
   }
   catch (...)
   {
-    QMessageBox::critical(&window(), tr("Error"), tr("Unable to import fbx"));
+    QMessageBox::critical(&_window, tr("Error"), tr("Unable to import fbx"));
   }
 }
 
@@ -214,7 +228,7 @@ void EditMenu::_addModelFromObj() noexcept
     ObjectEditorScene* scene = _commonData.scene();
     if (scene == nullptr) return;
 
-    QString fileName = QFileDialog::getOpenFileName(&window(),
+    QString fileName = QFileDialog::getOpenFileName(&_window,
                                                     tr("Import obj"),
                                                     "",
                                                     tr("obj (*.obj)"));
@@ -229,7 +243,7 @@ void EditMenu::_addModelFromObj() noexcept
   }
   catch (...)
   {
-    QMessageBox::critical(&window(),
+    QMessageBox::critical(&_window,
                           tr("Error"),
                           tr("Unable to import obj file"));
   }
@@ -242,7 +256,7 @@ void EditMenu::_addAnimationFromFbx() noexcept
     ObjectEditorScene* scene = _commonData.scene();
     if (scene == nullptr) return;
 
-    QString fileName = QFileDialog::getOpenFileName(&window(),
+    QString fileName = QFileDialog::getOpenFileName(&_window,
                                                     tr("Import fbx"),
                                                     "",
                                                     tr("fbx (*.fbx)"));
@@ -258,6 +272,6 @@ void EditMenu::_addAnimationFromFbx() noexcept
   }
   catch (...)
   {
-    QMessageBox::critical(&window(), tr("Error"), tr("Unable to import fbx"));
+    QMessageBox::critical(&_window, tr("Error"), tr("Unable to import fbx"));
   }
 }

@@ -26,12 +26,26 @@
 
 EditMenu::EditMenu( QWidget& window,
                     ParticlesEditorCommonData& commonData) :
-  mtt::EditMenu(window,
-                commonData,
-                std::make_unique<CopyToClipboardOperation>(),
-                std::make_unique<PasteFromClipboardOperation>(commonData)),
-  _commonData(commonData)
+  QMenu(tr("&Edit")),
+  _window(window),
+  _commonData(commonData),
+  _undoAction(commonData.undoStack(), &window),
+  _redoAction(commonData.undoStack(), &window),
+  _copyAction(std::make_unique<CopyToClipboardOperation>(), commonData,
+              &window),
+  _pasteAction( std::make_unique<PasteFromClipboardOperation>(commonData),
+                &window),
+  _deleteAction(commonData, &window)
 {
+  addAction(&_undoAction);
+  addAction(&_redoAction);
+
+  addSeparator();
+
+  addAction(&_copyAction);
+  addAction(&_pasteAction);
+  addAction(&_deleteAction);
+
   addSeparator();
 
   addAction(tr("Add frame"), this, &EditMenu::_addFrame);
@@ -94,13 +108,13 @@ void EditMenu::_addFrame() noexcept
   }
   catch(std::exception& error)
   {
-    QMessageBox::critical(&window(),
+    QMessageBox::critical(&_window,
                           tr("Unable to add a frame"),
                           error.what());
   }
   catch(...)
   {
-    QMessageBox::critical(&window(),
+    QMessageBox::critical(&_window,
                           tr("Unable to add a frame"),
                           tr("Unknown error"));
   }
@@ -121,11 +135,11 @@ void EditMenu::_addModificator( const QString& name,
   }
   catch(std::exception& error)
   {
-    QMessageBox::critical(&window(), errorString, error.what());
+    QMessageBox::critical(&_window, errorString, error.what());
   }
   catch(...)
   {
-    QMessageBox::critical(&window(), errorString, tr("Unknown error"));
+    QMessageBox::critical(&_window, errorString, tr("Unknown error"));
   }
 }
 
@@ -178,7 +192,7 @@ void EditMenu::_addAnimationFromFbx() noexcept
     ParticlesEditorScene* scene = _commonData.scene();
     if (scene == nullptr) return;
 
-    QString fileName = QFileDialog::getOpenFileName(&window(),
+    QString fileName = QFileDialog::getOpenFileName(&_window,
                                                     tr("Import fbx"),
                                                     "",
                                                     tr("fbx (*.fbx)"));
@@ -191,7 +205,7 @@ void EditMenu::_addAnimationFromFbx() noexcept
   }
   catch (...)
   {
-    QMessageBox::critical(&window(), tr("Error"), tr("Unable to import fbx"));
+    QMessageBox::critical(&_window, tr("Error"), tr("Unable to import fbx"));
   }
 }
 
@@ -215,11 +229,11 @@ void EditMenu::_addAction(const QString& name,
   }
   catch(std::exception& error)
   {
-    QMessageBox::critical(&window(), errorString, error.what());
+    QMessageBox::critical(&_window, errorString, error.what());
   }
   catch(...)
   {
-    QMessageBox::critical(&window(), errorString, tr("Unknown error"));
+    QMessageBox::critical(&_window, errorString, tr("Unknown error"));
   }
 }
 

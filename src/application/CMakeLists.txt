@@ -100,6 +100,11 @@ set(HEADERS
     "../../include/mtt/application/Scene/Scene.h"
     "../../include/mtt/application/Scene/SpecialGroup.h"
 
+    "../../include/mtt/application/Widgets/Actions/CopyAction.h"
+    "../../include/mtt/application/Widgets/Actions/DeleteAction.h"
+    "../../include/mtt/application/Widgets/Actions/PasteAction.h"
+    "../../include/mtt/application/Widgets/Actions/RedoAction.h"
+    "../../include/mtt/application/Widgets/Actions/UndoAction.h"
     "../../include/mtt/application/Widgets/AsyncTaskDialog/AsyncTaskDialog.h"
     "../../include/mtt/application/Widgets/AsyncTaskDialog/TaskProgressWidget.h"
 
@@ -208,6 +213,11 @@ set(SOURCES
     "Scene/ObjectVisitor.cpp"
     "Scene/Scene.cpp"
 
+    "Widgets/Actions/CopyAction.cpp"
+    "Widgets/Actions/DeleteAction.cpp"
+    "Widgets/Actions/PasteAction.cpp"
+    "Widgets/Actions/RedoAction.cpp"
+    "Widgets/Actions/UndoAction.cpp"
     "Widgets/AsyncTaskDialog/AsyncTaskDialog.cpp"
     "Widgets/AsyncTaskDialog/TaskProgressWidget.cpp"
     "Widgets/PropertiesWidgets/Bitfield32Widget.cpp"
