@@ -36,7 +36,7 @@ RenderWidget::RenderWidget() :
   {
     throw std::runtime_error("RenderWidget: Failed to create render surface");
   }
-  _surface.emplace(application.renderLibInstance, surfaceHandle);
+  _surface.emplace(surfaceHandle);
   if(!application.displayDevice().isSurfaceSuitable(_surface.value()))
   {
     throw std::runtime_error("RenderWidget: Render device is not suitable with surface.");

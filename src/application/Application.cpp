@@ -57,7 +57,7 @@ void Application::createDisplayDevice(const VkPhysicalDeviceFeatures& features)
   {
     throw std::runtime_error("Application: Failed to create Vulkan surface");
   }
-  RenderSurface surface(renderLibInstance, surfaceHandle);
+  RenderSurface surface(surfaceHandle);
 
   PhysicalDevice* gpu = nullptr;
   for(size_t gpuIndex = 0;

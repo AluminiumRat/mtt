@@ -4,13 +4,10 @@
 
 namespace mtt
 {
-  class RenderLibInstance;
-
   class RenderSurface
   {
   public:
-    RenderSurface(RenderLibInstance& renderLibInstance,
-            VkSurfaceKHR& handle) noexcept;
+    RenderSurface(VkSurfaceKHR& handle) noexcept;
     RenderSurface(const RenderSurface&) = delete;
     RenderSurface& operator = (const RenderSurface&) = delete;
     ~RenderSurface() noexcept;
@@ -24,7 +21,6 @@ namespace mtt
     void _cleanup() noexcept;
 
   private:
-    RenderLibInstance& _renderLibInstance;
     VkSurfaceKHR _handle;
   };
 

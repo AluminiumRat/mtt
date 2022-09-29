@@ -5,9 +5,7 @@
 
 using namespace mtt;
 
-RenderSurface::RenderSurface( RenderLibInstance& renderLibInstance,
-                  VkSurfaceKHR& handle) noexcept :
-  _renderLibInstance(renderLibInstance),
+RenderSurface::RenderSurface(VkSurfaceKHR& handle) noexcept :
   _handle(handle)
 {
 }
@@ -21,7 +19,9 @@ void RenderSurface::_cleanup() noexcept
 {
   if (_handle != VK_NULL_HANDLE)
   {
-    vkDestroySurfaceKHR(_renderLibInstance.handle(), _handle, nullptr);
+    vkDestroySurfaceKHR(RenderLibInstance::instance().handle(),
+                        _handle,
+                        nullptr);
     _handle = VK_NULL_HANDLE;
   }
 }
