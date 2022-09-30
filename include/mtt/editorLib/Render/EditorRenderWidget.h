@@ -30,12 +30,6 @@ namespace mtt
     inline const EditorManipulatorController&
                                         manipulatorController() const noexcept;
 
-  protected:
-    virtual std::unique_ptr<RenderSceneAction> buildRenderAction(
-                                    RenderScene& scene,
-                                    CameraNode& camera,
-                                    SceneToSurfaceRenderer& renderer) override;
-
   private:
     clPipeline::ColorFrameBuilder _colorFrameBuilder;
 

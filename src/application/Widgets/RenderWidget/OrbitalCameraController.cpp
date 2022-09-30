@@ -48,12 +48,15 @@ OrbitalCameraController::OrbitalCameraController(
           &OrbitalCameraController::_setRenderScene,
           Qt::DirectConnection);
   _setRenderScene(_widget.scene());
+
+  _updateProjectionMatrix();
 }
 
 void OrbitalCameraController::_setCamera(CameraNode* camera) noexcept
 {
   _widgetCamera = camera;
   _updateCameraPosition();
+  _updateProjectionMatrix();
 }
 
 void OrbitalCameraController::_setRenderScene(RenderScene* newScene) noexcept
@@ -152,6 +155,11 @@ bool OrbitalCameraController::eventFilter(QObject* obj, QEvent* event)
   {
     QWheelEvent* wheelEvent = static_cast<QWheelEvent*>(event);
     _approach(wheelEvent->angleDelta());
+  }
+
+  if (event->type() == QEvent::Resize)
+  {
+    _updateProjectionMatrix();
   }
 
   return QObject::eventFilter(obj, event);
@@ -306,4 +314,21 @@ void OrbitalCameraController::_setCenter(glm::vec3 newCenter) noexcept
   _distance = glm::length(_widgetCamera->eyePoint() - newCenter);
   _centerPosition = newCenter;
   _updateCameraPosition();
+}
+
+void OrbitalCameraController::_updateProjectionMatrix() noexcept
+{
+  if (_widgetCamera == nullptr) return;
+  if (_widget.width() == 0 || _widget.height() == 0) return;
+
+  float aspectRatio = float(_widget.width()) / _widget.height();
+
+  glm::mat4 projectionMatrix = _widgetCamera->projectionMatrix();
+  glm::vec4 yPart = projectionMatrix[1];
+  glm::vec4 xPart(-yPart.y / aspectRatio,
+                  yPart.x * aspectRatio,
+                  yPart.z,
+                  yPart.w);
+  projectionMatrix[0] = xPart;
+  _widgetCamera->setProjectionMatrix(projectionMatrix);
 }

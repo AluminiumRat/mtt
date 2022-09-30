@@ -1,7 +1,4 @@
-#include <glm/gtc/matrix_transform.hpp>
-
 #include <mtt/application/Application.h>
-#include <mtt/editorLib/Render/EditorRenderAction.h>
 #include <mtt/editorLib/Render/EditorRenderWidget.h>
 
 using namespace mtt;
@@ -26,18 +23,7 @@ EditorRenderWidget::EditorRenderWidget( RenderScene& renderScene,
   _manipulatorController(*this, commonEditData),
   _clickSelectHandler(*this, _uidRenderer, commonEditData)
 {
+  _camera.setPerspectiveProjection(glm::radians(45.f), 1.f, .1f, 100.f);
   setFrameBuilder(&_colorFrameBuilder);
   setSource(&renderScene, &_camera);
-}
-
-std::unique_ptr<RenderSceneAction>
-                        EditorRenderWidget::buildRenderAction(
-                                              RenderScene& scene,
-                                              CameraNode& camera,
-                                              SceneToSurfaceRenderer& renderer)
-{
-  return std::make_unique<EditorRenderAction>(renderer,
-                                              scene,
-                                              camera,
-                                              *this);
 }

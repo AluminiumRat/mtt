@@ -86,7 +86,6 @@ int main(int argc, char* argv[])
     Q_INIT_RESOURCE(shaders);
 
     mtt::RenderWidget window;
-    window.setFixedSize(800, 600);
     window.show();
 
     mtt::clPipeline::ModelTechniquesFactory techniquesFactory(

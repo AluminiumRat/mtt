@@ -20,7 +20,6 @@ int main(int argc, char* argv[])
                                   true);
 
     mtt::RenderWidget window;
-    window.setFixedSize(800, 600);
     window.show();
 
     mtt::RenderScene scene;

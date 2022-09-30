@@ -46,6 +46,8 @@ RenderWidget::RenderWidget() :
                     _device.drawQueue(),
                     *_device.presentationQueue(),
                     _surface.value());
+
+  resize(800, 600);
 }
 
 RenderWidget::~RenderWidget() noexcept

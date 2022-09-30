@@ -70,6 +70,7 @@ namespace mtt
     void _approach(const QPoint& angleDelta) noexcept;
     void _findCenterByClick(QMouseEvent& mouseEvent) noexcept;
     void _setCenter(glm::vec3 newCenter) noexcept;
+    void _updateProjectionMatrix() noexcept;
 
   private:
     RenderWidget& _widget;
