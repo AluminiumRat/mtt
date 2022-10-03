@@ -293,7 +293,7 @@ void OrbitalCameraController::_findCenterByClick(
                                                       callback));
     Application& application = Application::instance();
     application.workCycle.addAction(std::move(action),
-                                    WorkCycle::RENDER_CATEGORY,
+                                    RenderImageAction::actionCategory,
                                     WorkCycle::RENDER_PRIORITY,
                                     false);
   }

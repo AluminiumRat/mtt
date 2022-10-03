@@ -6,6 +6,8 @@
 
 using namespace mtt;
 
+const int RenderSceneAction::actionCategory = WorkCycle::createActionCategory();
+
 RenderSceneAction::RenderSceneAction( AbstractSceneRenderer& renderer,
                                       RenderScene& scene,
                                       CameraNode& camera,

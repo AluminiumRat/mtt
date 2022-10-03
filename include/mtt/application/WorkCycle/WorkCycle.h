@@ -9,17 +9,11 @@ namespace mtt
   class WorkCycle
   {
   public:
-    enum ActionCategy
-    {
-      RENDER_CATEGORY = 0
-    };
-    const static size_t totalCategories = 1;
-
     enum ActionPriority
     {
-      PRERENDER_PRIORITY = 1000,
+      PRERENDER_PRIORITY = 3000,
       RENDER_PRIORITY = 2000,
-      POSTRENDER_PRIORITY = 3000
+      POSTRENDER_PRIORITY = 1000
     };
 
   public:
@@ -42,6 +36,9 @@ namespace mtt
     WorkCycle& operator = (const WorkCycle&) = delete;
     virtual ~WorkCycle() noexcept = default;
 
+    /// Returns unique index for new category
+    static int createActionCategory() noexcept;
+
     /// Should be called outside of the step method.
     void addAction( std::unique_ptr<AbstractAction> action,
                     int category,
@@ -50,7 +47,7 @@ namespace mtt
     /// Should be called outside of the step method.
     std::unique_ptr<AbstractAction> removeAction(
                                               AbstractAction& action) noexcept;
-    virtual void step();
+    virtual void step() noexcept;
 
   private:
     struct ActionRecord
@@ -68,7 +65,7 @@ namespace mtt
 
   private:
     Actions _actions;
-  
+
     bool _inProgress;
   };
 }

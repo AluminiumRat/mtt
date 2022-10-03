@@ -1,4 +1,7 @@
+#include <atomic>
 #include <future>
+#include <map>
+#include <stdexcept>
 
 #include <mtt/application/WorkCycle/WorkCycle.h>
 #include <mtt/utilities/Abort.h>
@@ -9,6 +12,12 @@ using namespace mtt;
 WorkCycle::WorkCycle() noexcept :
   _inProgress(false)
 {
+}
+
+int WorkCycle::createActionCategory() noexcept
+{
+  static std::atomic<int> _nextCategory(0);
+  return _nextCategory++;
 }
 
 void WorkCycle::addAction(std::unique_ptr<AbstractAction> action,
@@ -62,31 +71,41 @@ void WorkCycle::removeSingleshots() noexcept
   }
 }
 
-void WorkCycle::step()
+void WorkCycle::step() noexcept
 {
-  ScopedSetter<bool> setInProgress(_inProgress, true);
-
-  std::vector<AbstractAction*> groupTable(totalCategories, nullptr);
-  std::vector<AbstractAction*> group;
-  group.reserve(totalCategories);
-
-  Actions::iterator cursor = _actions.begin();
-  while(cursor != _actions.end())
+  try
   {
-    for(AbstractAction*& tableRec : groupTable) tableRec = nullptr;
-    group.clear();
+    ScopedSetter<bool> setInProgress(_inProgress, true);
 
-    while(cursor != _actions.end() &&
-          groupTable[cursor->category] == nullptr)
+    std::map<int, AbstractAction*> categoriesTable;
+    std::vector<AbstractAction*> group;
+
+    Actions::iterator cursor = _actions.begin();
+    while(cursor != _actions.end())
     {
-      groupTable[cursor->category] = cursor->action.get();
-      group.push_back(cursor->action.get());
-      cursor++;
-    }
-    doGroup(group);
-  }  
+      categoriesTable.clear();
+      group.clear();
 
-  removeSingleshots();
+      while(cursor != _actions.end())
+      {
+        if(categoriesTable.count(cursor->category) != 0) break;
+        categoriesTable[cursor->category] = cursor->action.get();
+        group.push_back(cursor->action.get());
+        cursor++;
+      }
+      doGroup(group);
+    }
+
+    removeSingleshots();
+  }
+  catch (std::exception& error)
+  {
+    Log() << "WorkCycle::step: " << error.what();
+  }
+  catch (...)
+  {
+    Log() << "WorkCycle::step: unknown error";
+  }
 }
 
 void WorkCycle::doGroup(const std::vector<AbstractAction*>& group)

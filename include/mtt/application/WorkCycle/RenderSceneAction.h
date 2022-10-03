@@ -14,6 +14,9 @@ namespace mtt
   class RenderSceneAction : public WorkCycle::AbstractAction
   {
   public:
+    const static int actionCategory;
+
+  public:
     RenderSceneAction(AbstractSceneRenderer& renderer,
                       RenderScene& scene,
                       CameraNode& camera,

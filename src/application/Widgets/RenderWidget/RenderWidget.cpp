@@ -108,7 +108,7 @@ void RenderWidget::rebuildAction(RenderScene* scene, CameraNode* camera)
   RenderSceneAction* actionPtr = action.get();
   Application& application = Application::instance();
   application.workCycle.addAction(std::move(action),
-                                  WorkCycle::RENDER_CATEGORY,
+                                  RenderSceneAction::actionCategory,
                                   WorkCycle::RENDER_PRIORITY,
                                   true);
   _renderAction = actionPtr;
