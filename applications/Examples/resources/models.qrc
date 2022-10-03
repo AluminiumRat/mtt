@@ -2,8 +2,10 @@
     <qresource prefix="/">
       <file>crossField.mmd</file>
       <file>crossField.png</file>
+      <file>cube.mmd</file>
       <file>Dino.mmd</file>
       <file>Dino.png</file>
       <file>dinoWalk.fbx</file>
+      <file>sphere.mmd</file>
     </qresource>
 </RCC>
